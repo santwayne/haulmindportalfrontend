@@ -183,14 +183,14 @@ const LandingSection = () => {
               {filteredLoads.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-secondary">
-                    <FaTruck className="mx-auto mb-3 text-gray-300" size={48} />
+                    <FaTruck className="mx-auto mb-3 text-gray-600" size={48} />
                     <p>No delivered loads found</p>
                   </td>
                 </tr>
               ) : (
                 filteredLoads.map((load) => (
                   <tr key={load._id} className="hover:bg-blue-50">
-                    <td className="px-6 py-4 whitespace-nowrap font-semibold text-[#00D1FF]">
+                    <td className="px-6 py-4 whitespace-nowrap font-semibold text-[#059669]">
                       {load.loadNumber || load._id}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">

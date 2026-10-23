@@ -350,7 +350,7 @@ const CashFlowInsightsPage: React.FC<CashFlowInsightsPageProps> = () => {
                                     </h3>
                                     <div className="space-y-3">
                                         {insightsData.aiInsights.risks.map((risk, index) => (
-                                            <div key={index} className={`p-4 rounded-lg  border border-gray-700`}>
+                                            <div key={index} className={`p-4 rounded-lg  border border-gray-200`}>
                                                 <div className="flex items-start justify-between mb-2">
                                                     <span className="text-xs font-medium uppercase">{risk.severity} Risk</span>
                                                     <span className="text-xs font-medium">{risk.category}</span>
@@ -373,7 +373,7 @@ const CashFlowInsightsPage: React.FC<CashFlowInsightsPageProps> = () => {
                                     </h3>
                                     <div className="space-y-3">
                                         {insightsData.aiInsights.recommendations.map((rec, index) => (
-                                            <div key={index} className={`p-4 rounded-lg  border border-gray-700`}>
+                                            <div key={index} className={`p-4 rounded-lg  border border-gray-200`}>
                                                 <div className="flex items-start justify-between mb-2">
                                                     <span className="text-xs font-medium uppercase">{rec.priority} Priority</span>
                                                     <span className="text-xs font-medium">{rec.category}</span>
@@ -467,13 +467,13 @@ const CashFlowInsightsPage: React.FC<CashFlowInsightsPageProps> = () => {
                                                 <th className="px-4 py-3 text-right text-xs font-medium text-headings uppercase">Net Cash Flow</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-theme divide-white/5">
+                                        <tbody className="divide-theme divide-black/5">
                                             {insightsData.monthlyBreakdown.map((month, index) => (
-                                                <tr key={index} className="hover:bg-[rgba(255,255,255,0.03)]">
+                                                <tr key={index} className="hover:bg-[rgba(15,31,23,0.03)]">
                                                     <td className="px-4 py-3 text-sm font-medium text-primary">{month.monthName}</td>
                                                     <td className="px-4 py-3 text-sm text-right text-green-600">{formatCurrency(month.revenue)}</td>
                                                     <td className="px-4 py-3 text-sm text-right text-[#A855F7]">{formatCurrency(month.expenses)}</td>
-                                                    <td className="px-4 py-3 text-sm text-right text-[#00D1FF]">{formatCurrency(month.payroll)}</td>
+                                                    <td className="px-4 py-3 text-sm text-right text-[#059669]">{formatCurrency(month.payroll)}</td>
                                                     <td className={`px-4 py-3 text-sm text-right font-medium ${month.netCashFlow >= 0 ? 'text-green-600' : 'text-[#A855F7]'}`}>
                                                         {formatCurrency(month.netCashFlow)}
                                                     </td>

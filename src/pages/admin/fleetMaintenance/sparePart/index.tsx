@@ -41,8 +41,8 @@ const focusRingStyle = {
     '--tw-ring-color': ACCENT_PRIMARY
 } as CSSProperties & { '--tw-ring-color': string };
 const notificationInfoStyle: CSSProperties = {
-    backgroundColor: 'rgba(1, 106, 178, 0.08)',
-    borderColor: 'rgba(1, 106, 178, 0.3)'
+    backgroundColor: 'rgba(4,120,87, 0.08)',
+    borderColor: 'rgba(4,120,87, 0.3)'
 };
 
 // Enhanced Types for comprehensive spare parts management
@@ -812,7 +812,7 @@ const SparePartsInventory = () => {
 
     const getStockStatus = (stockQty: number, minStockLevel: number) => {
         if (stockQty <= minStockLevel) return { status: 'Low Stock', color: 'text-[#A855F7] bg-card' };
-        if (stockQty <= minStockLevel * 2) return { status: 'Medium Stock', color: 'text-[#00FFA3] bg-card' };
+        if (stockQty <= minStockLevel * 2) return { status: 'Medium Stock', color: 'text-[#059669] bg-card' };
         return { status: 'Good Stock', color: 'text-green-600 bg-green-50' };
     };
 
@@ -875,7 +875,7 @@ const SparePartsInventory = () => {
                 <button
                     ref={buttonRef}
                     onClick={() => setShowDropdown(!showDropdown)}
-                    className="p-2 text-secondary hover:text-headings hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors"
+                    className="p-2 text-secondary hover:text-headings hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors"
                     title="More actions"
                 >
                     <FaEllipsisH size={16} />
@@ -912,9 +912,9 @@ const SparePartsInventory = () => {
                                 setShowEditModal(true);
                                 setShowDropdown(false);
                             }}
-                            className="flex items-center gap-3 w-full px-4 py-2 text-sm !text-headings hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                            className="flex items-center gap-3 w-full px-4 py-2 text-sm !text-headings hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                         >
-                            <FaEdit size={14} className="text-[#00D1FF]" />
+                            <FaEdit size={14} className="text-[#059669]" />
                             Edit Part
                         </button>
                         <button
@@ -925,9 +925,9 @@ const SparePartsInventory = () => {
                                 setShowUsageModal(true);
                                 setShowDropdown(false);
                             }}
-                            className="flex items-center gap-3 w-full px-4 py-2 text-sm !text-headings hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                            className="flex items-center gap-3 w-full px-4 py-2 text-sm !text-headings hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                         >
-                            <FaHistory size={14} className="text-[#F59E0B]" />
+                            <FaHistory size={14} className="text-[#d97706]" />
                             Use Part
                         </button>
 
@@ -937,7 +937,7 @@ const SparePartsInventory = () => {
                                 setShowDetailsModal(true);
                                 setShowDropdown(false);
                             }}
-                            className="flex items-center gap-3 w-full px-4 py-2 text-sm text-headings hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                            className="flex items-center gap-3 w-full px-4 py-2 text-sm text-headings hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                         >
                             <FaEye size={14} className="text-green-600" />
                             View Details
@@ -1008,13 +1008,13 @@ const SparePartsInventory = () => {
                 <div className="bg-card rounded-lg shadow-sm p-12 text-center border border-theme">
                     <div
                         className="animate-spin rounded-full h-16 w-16 border-b-4 mx-auto mb-4"
-                        style={{ borderColor: 'rgba(1, 106, 178, 0.2)', borderBottomColor: ACCENT_PRIMARY }}
+                        style={{ borderColor: 'rgba(4,120,87, 0.2)', borderBottomColor: ACCENT_PRIMARY }}
                     ></div>
                     <p className="text-secondary text-lg">Loading spare parts...</p>
                 </div>
             ) : filteredParts.length === 0 ? (
                 <div className="bg-card rounded-lg shadow-sm border border-theme p-12 text-center">
-                    <FaBox className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                    <FaBox className="h-16 w-16 text-gray-600 mx-auto mb-4" />
                     <h3 className="text-xl font-semibold text-headings mb-2">No Spare Parts Found</h3>
                     <p className="text-secondary mb-4">
                         {searchTerm
@@ -1082,14 +1082,14 @@ const SparePartsInventory = () => {
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-theme divide-white/5">
+                            <tbody className="divide-y divide-theme divide-black/5">
                                 {filteredParts.map((part) => {
                                     const stockStatus = getStockStatus(part.stockQty, part.minStockLevel);
                                     const supplier = typeof part.supplier === 'object' ? part.supplier : suppliers.find(s => s._id === part.supplier);
                                     return (
                                         <tr
                                             key={part._id}
-                                            className="hover:bg-[rgba(255,255,255,0.03)] transition-colors cursor-pointer"
+                                            className="hover:bg-[rgba(15,31,23,0.03)] transition-colors cursor-pointer"
                                             onClick={() => {
                                                 setSelectedPart(part);
                                                 setShowDetailsModal(true);
@@ -1249,14 +1249,14 @@ const SparePartsInventory = () => {
                                 </button>
                                 <button
                                     onClick={() => setShowSupplierModal(true)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-card text-white border border-white/20 rounded-lg  backdrop-blur-sm transition-colors text-sm font-semibold"
+                                    className="flex items-center gap-2 px-4 py-2 bg-card text-white border border-black/20 rounded-lg  backdrop-blur-sm transition-colors text-sm font-semibold"
                                 >
                                     <FaBuilding />
                                     Add Supplier
                                 </button>
                                 <button
                                     onClick={() => setShowAddModal(true)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-card text-[rgba(0,209,255,0.15)] rounded-lg hover:bg-card/90 shadow-sm transition-all font-bold text-sm"
+                                    className="flex items-center gap-2 px-4 py-2 bg-card text-[rgba(5,150,105,0.15)] rounded-lg hover:bg-card/90 shadow-sm transition-all font-bold text-sm"
                                 >
                                     <FaPlus /> Add New Part
                                 </button>
@@ -1542,7 +1542,7 @@ const SparePartsInventory = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowAddModal(false)}
-                                    className="px-4 py-2 text-secondary border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                                    className="px-4 py-2 text-secondary border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                                     disabled={submitting}
                                 >
                                     Cancel
@@ -1753,7 +1753,7 @@ const SparePartsInventory = () => {
                                                 {supplier.name}
                                             </option>
                                         ))}
-                                        <option value="__create_new__" className="text-[#00D1FF] font-semibold">
+                                        <option value="__create_new__" className="text-[#059669] font-semibold">
                                             + Create New Supplier
                                         </option>
                                     </select>
@@ -1801,7 +1801,7 @@ const SparePartsInventory = () => {
                                         setShowEditModal(false);
                                         setSelectedPart(null);
                                     }}
-                                    className="px-4 py-2 text-secondary border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                                    className="px-4 py-2 text-secondary border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                                     disabled={submitting}
                                 >
                                     Cancel
@@ -1894,7 +1894,7 @@ const SparePartsInventory = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowSupplierModal(false)}
-                                    className="px-4 py-2 text-secondary border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                                    className="px-4 py-2 text-secondary border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                                 >
                                     Cancel
                                 </button>
@@ -1922,7 +1922,7 @@ const SparePartsInventory = () => {
                             <button
                                 onClick={closeDeleteModal}
                                 disabled={deleteLoading}
-                                className="px-4 py-2 text-secondary border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                                className="px-4 py-2 text-secondary border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                                 Cancel
                             </button>
@@ -2018,7 +2018,7 @@ const SparePartsInventory = () => {
                             <h4 className="text-md font-semibold text-headings mb-3">Invoice Items</h4>
                             {invoiceRef.current.items.length === 0 ? (
                                 <div className="text-center py-8 text-secondary bg-card rounded-lg">
-                                    <FaShoppingCart className="h-12 w-12 text-gray-300 mx-auto mb-2" />
+                                    <FaShoppingCart className="h-12 w-12 text-gray-600 mx-auto mb-2" />
                                     <p>No items added yet. Add parts from the inventory.</p>
                                 </div>
                             ) : (
@@ -2075,7 +2075,7 @@ const SparePartsInventory = () => {
                         <div className="flex justify-end space-x-3">
                             <button
                                 onClick={() => setShowInvoiceModal(false)}
-                                className="px-4 py-2 text-secondary border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                                className="px-4 py-2 text-secondary border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                             >
                                 Cancel
                             </button>
@@ -2108,7 +2108,7 @@ const SparePartsInventory = () => {
                                     usageDataRef.current = { unitNumber: '', qtyUsed: '' };
                                     setQtyUsedInput('');
                                 }}
-                                className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors"
+                                className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors"
                             >
                                 <FaTimes className="text-secondary" size={18} />
                             </button>
@@ -2129,7 +2129,7 @@ const SparePartsInventory = () => {
                                     <div className="text-2xl font-bold">{selectedPart.stockQty} units</div>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-white/20">
+                            <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-black/20">
                                 <div>
                                     <div className="text-xs opacity-75">Min Stock Level</div>
                                     <div className="font-semibold">{selectedPart.minStockLevel || 0} units</div>
@@ -2150,15 +2150,15 @@ const SparePartsInventory = () => {
                                     <div className="flex items-center justify-center py-8 bg-card rounded-lg">
                                         <div
                                             className="animate-spin rounded-full h-8 w-8 border-b-2"
-                                            style={{ borderColor: 'rgba(1, 106, 178, 0.2)', borderBottomColor: ACCENT_PRIMARY }}
+                                            style={{ borderColor: 'rgba(4,120,87, 0.2)', borderBottomColor: ACCENT_PRIMARY }}
                                         ></div>
                                         <span className="ml-3 text-sm text-secondary">Loading units...</span>
                                     </div>
                                 ) : units.length === 0 ? (
                                     <div className="py-8 bg-card border border-yellow-200 rounded-lg text-center">
-                                        <FaExclamationCircle className="text-[#00FFA3] mx-auto mb-2" size={24} />
+                                        <FaExclamationCircle className="text-[#059669] mx-auto mb-2" size={24} />
                                         <p className="text-sm text-yellow-800">No vehicles or trailers available</p>
-                                        <p className="text-xs text-[#00FFA3] mt-1">Add vehicles or trailers to your fleet first</p>
+                                        <p className="text-xs text-[#059669] mt-1">Add vehicles or trailers to your fleet first</p>
                                     </div>
                                 ) : (
                                     <select
@@ -2208,7 +2208,7 @@ const SparePartsInventory = () => {
                                         setSelectedPart(null);
                                         usageDataRef.current = { unitNumber: '', qtyUsed: '' };
                                     }}
-                                    className="px-5 py-2.5 bg-card border border-theme text-headings rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors"
+                                    className="px-5 py-2.5 bg-card border border-theme text-headings rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors"
                                     disabled={submitting}
                                 >
                                     Cancel
@@ -2241,7 +2241,7 @@ const SparePartsInventory = () => {
                                         setShowDetailsModal(false);
                                         setSelectedPart(null);
                                     }}
-                                    className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors"
+                                    className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors"
                                 >
                                     <FaTimes className="text-secondary" size={20} />
                                 </button>
@@ -2297,7 +2297,7 @@ const SparePartsInventory = () => {
                                         setShowDetailsModal(false);
                                         setSelectedPart(null);
                                     }}
-                                    className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors"
+                                    className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors"
                                 >
                                     Close
                                 </button>
@@ -2349,7 +2349,7 @@ const SparePartsInventory = () => {
                                         setShowInvoiceDetailsModal(false);
                                         setSelectedInvoice(null);
                                     }}
-                                    className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors"
+                                    className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors"
                                 >
                                     <FaTimes className="text-secondary" size={20} />
                                 </button>
@@ -2382,8 +2382,8 @@ const SparePartsInventory = () => {
                                 <div className="border border-theme rounded-xl p-4">
                                     <div className="text-sm text-secondary">Status</div>
                                     <div className={`text-lg font-bold ${selectedInvoice.status === 'paid' ? 'text-green-600' :
-                                        selectedInvoice.status === 'sent' ? 'text-[#00D1FF]' :
-                                            selectedInvoice.status === 'draft' ? 'text-[#00FFA3]' :
+                                        selectedInvoice.status === 'sent' ? 'text-[#059669]' :
+                                            selectedInvoice.status === 'draft' ? 'text-[#059669]' :
                                                 'text-[#A855F7]'
                                         }`}>
                                         {selectedInvoice.status.charAt(0).toUpperCase() + selectedInvoice.status.slice(1)}
@@ -2463,7 +2463,7 @@ const SparePartsInventory = () => {
                                         setShowInvoiceDetailsModal(false);
                                         setSelectedInvoice(null);
                                     }}
-                                    className="px-6 py-2.5 bg-card border border-theme text-headings rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors"
+                                    className="px-6 py-2.5 bg-card border border-theme text-headings rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors"
                                 >
                                     Close
                                 </button>

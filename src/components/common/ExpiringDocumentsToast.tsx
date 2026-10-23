@@ -70,7 +70,7 @@ const ExpiringDocumentsToast: React.FC<ExpiringDocumentsToastProps> = ({
           <div className="flex items-start justify-between">
             <div className="flex items-start gap-3 flex-1">
               <div className="p-2 bg-orange-100 rounded-lg">
-                <AlertTriangle className="w-5 h-5 text-[#F59E0B]" />
+                <AlertTriangle className="w-5 h-5 text-[#d97706]" />
               </div>
               <div className="flex-1">
                 <h3 className="text-sm font-semibold text-primary mb-1">
@@ -88,7 +88,7 @@ const ExpiringDocumentsToast: React.FC<ExpiringDocumentsToastProps> = ({
                 setVisible(false);
                 onClose();
               }}
-              className="p-1 hover:bg-[rgba(255,255,255,0.03)] rounded transition-colors ml-2"
+              className="p-1 hover:bg-[rgba(15,31,23,0.03)] rounded transition-colors ml-2"
             >
               <X className="w-4 h-4 text-secondary" />
             </button>
@@ -105,7 +105,7 @@ const ExpiringDocumentsToast: React.FC<ExpiringDocumentsToastProps> = ({
                 className="flex items-center gap-1 px-3 py-1.5 text-white text-xs font-medium rounded transition-colors"
                 style={{
                   background:
-                    'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)'
+                    'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)'
                 }}
               >
                 <ExternalLink className="w-3 h-3 text-white" />

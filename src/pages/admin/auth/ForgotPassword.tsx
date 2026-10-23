@@ -53,14 +53,14 @@ export default function ForgotPasswordPage() {
         </a>
 
         <div className="bg-card/80 backdrop-blur-xl rounded-2xl shadow-2xl border overflow-hidden card-premium"
-          style={{ borderColor: "rgba(17,131,224,0.2)" }}>
+          style={{ borderColor: "rgba(5,150,105,0.2)" }}>
 
           {sent ? (
             /* ── Success state ── */
             <div className="p-10 text-center">
               <div
                 className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
-                style={{ backgroundColor: "rgba(17,131,224,0.15)", border: "1px solid rgba(17,131,224,0.3)" }}
+                style={{ backgroundColor: "rgba(5,150,105,0.15)", border: "1px solid rgba(5,150,105,0.3)" }}
               >
                 <CheckCircle className="w-8 h-8" style={{ color: "var(--accent-navyblue)" }} />
               </div>
@@ -86,7 +86,7 @@ export default function ForgotPasswordPage() {
           ) : (
             /* ── Form state ── */
             <>
-              <div className="px-8 pt-8 pb-4 border-b" style={{ borderColor: "rgba(17,131,224,0.15)" }}>
+              <div className="px-8 pt-8 pb-4 border-b" style={{ borderColor: "rgba(5,150,105,0.15)" }}>
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 mx-auto"
                   style={{ backgroundColor: "var(--accent-navyblue)" }}
@@ -119,8 +119,8 @@ export default function ForgotPasswordPage() {
                       className={`block w-full rounded-lg border pl-11 pr-4 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent disabled:opacity-50 ${
                         error ? "border-red-400" : "border-theme"
                       }`}
-                      style={{ "--tw-ring-color": "rgba(17,131,224,0.25)" } as React.CSSProperties}
-                      onFocus={(e) => { e.target.style.borderColor = "var(--accent-navyblue)"; e.target.style.boxShadow = "0 0 0 2px rgba(17,131,224,0.2)"; }}
+                      style={{ "--tw-ring-color": "rgba(5,150,105,0.25)" } as React.CSSProperties}
+                      onFocus={(e) => { e.target.style.borderColor = "var(--accent-navyblue)"; e.target.style.boxShadow = "0 0 0 2px rgba(5,150,105,0.2)"; }}
                       onBlur={(e) => { e.target.style.borderColor = ""; e.target.style.boxShadow = ""; }}
                     />
                   </div>
@@ -139,7 +139,7 @@ export default function ForgotPasswordPage() {
                     loading ? "opacity-60 cursor-not-allowed" : "hover:shadow-xl hover:-translate-y-0.5 transform"
                   }`}
                   style={{ backgroundColor: "var(--accent-navyblue)" }}
-                  onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = "#0d6fc7"; }}
+                  onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = "#047857"; }}
                   onMouseLeave={(e) => { if (!loading) e.currentTarget.style.backgroundColor = "var(--accent-navyblue)"; }}
                 >
                   {loading ? (
@@ -152,7 +152,7 @@ export default function ForgotPasswordPage() {
                   )}
                 </button>
 
-                <div className="text-center pt-2 border-t" style={{ borderColor: "rgba(17,131,224,0.12)" }}>
+                <div className="text-center pt-2 border-t" style={{ borderColor: "rgba(5,150,105,0.12)" }}>
                   <p className="text-sm text-secondary">
                     Remembered your password?{" "}
                     <a

@@ -118,7 +118,7 @@ const Dashboard: React.FC = () => {
         <div className="relative">
           <button
             onClick={() => setMonthDropdownOpen(!monthDropdownOpen)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] hover:border-gray-400 transition"
+            className="flex items-center gap-2 px-4 py-2.5 bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] hover:border-gray-400 transition"
           >
             <Calendar className="text-secondary" size={18} />
             <span className="text-sm font-medium text-headings">
@@ -140,7 +140,7 @@ const Dashboard: React.FC = () => {
                       setSelectedMonth(i);
                       setMonthDropdownOpen(false);
                     }}
-                    className={`w-full px-4 py-2 text-left text-sm hover:bg-[rgba(255,255,255,0.03)] ${selectedMonth === i ? "bg-[var(--accent-blue)]/10 text-[var(--accent-blue)] font-medium" : "text-headings"
+                    className={`w-full px-4 py-2 text-left text-sm hover:bg-[rgba(15,31,23,0.03)] ${selectedMonth === i ? "bg-[var(--accent-blue)]/10 text-[var(--accent-blue)] font-medium" : "text-headings"
                       }`}
                   >
                     {MONTHS[i]} {selectedYear}
@@ -261,7 +261,7 @@ const Dashboard: React.FC = () => {
                 <th className="px-4 py-3 text-left text-xs font-medium text-headings uppercase">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-theme divide-white/5">
+            <tbody className="divide-y divide-theme divide-black/5">
               {recentOrders.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-4 py-8 text-center text-secondary">
@@ -272,7 +272,7 @@ const Dashboard: React.FC = () => {
                 recentOrders.map((order) => (
                   <tr
                     key={order.id}
-                    className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition"
+                    className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition"
                     onClick={() => navigate(`${basePath}/orders`)}
                   >
                     <td className="px-4 py-3 text-sm font-medium text-secondary">{order.unit}</td>

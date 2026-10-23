@@ -51,7 +51,7 @@ import { FLEET_COLORS } from '../../fleetMaintenance/colorUtils';
 
 const ACCENT_PRIMARY = FLEET_COLORS.primary;
 const ACCENT_DARK = FLEET_COLORS.dark;
-const ACCENT_GRADIENT = 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)';
+const ACCENT_GRADIENT = 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)';
 const ACCENT_VARS = {
   '--accent-color': ACCENT_PRIMARY,
   '--accent-dark': ACCENT_DARK
@@ -184,8 +184,8 @@ const Notification = ({ notification, onClose }: { notification: Notification; o
   const infoStyle =
     notification.type === 'info'
       ? {
-        backgroundColor: 'rgba(1, 106, 178, 0.08)',
-        borderColor: 'rgba(1, 106, 178, 0.3)'
+        backgroundColor: 'rgba(4,120,87, 0.08)',
+        borderColor: 'rgba(4,120,87, 0.3)'
       }
       : undefined;
 
@@ -1167,7 +1167,7 @@ const EmployeesPage = () => {
               <button
                 onClick={() => setActiveTab('employees')}
                 className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${activeTab === 'employees'
-                    ? 'border-blue-600 text-[#00D1FF]'
+                    ? 'border-blue-600 text-[#059669]'
                     : 'border-transparent text-secondary hover:text-primary'
                   }`}
                 style={
@@ -1186,7 +1186,7 @@ const EmployeesPage = () => {
               <button
                 onClick={() => setActiveTab('contacts')}
                 className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${activeTab === 'contacts'
-                    ? 'border-blue-600 text-[#00D1FF]'
+                    ? 'border-blue-600 text-[#059669]'
                     : 'border-transparent text-secondary hover:text-primary'
                   }`}
                 style={
@@ -1205,7 +1205,7 @@ const EmployeesPage = () => {
               <button
                 onClick={() => setActiveTab('customers')}
                 className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${activeTab === 'customers'
-                    ? 'border-blue-600 text-[#00D1FF]'
+                    ? 'border-blue-600 text-[#059669]'
                     : 'border-transparent text-secondary hover:text-primary'
                   }`}
                 style={
@@ -1238,10 +1238,10 @@ const EmployeesPage = () => {
               <div className="relative">
                 <button
                   onClick={() => setShowFilterPanel(!showFilterPanel)}
-                  className="px-5 py-3 border border-theme rounded-xl hover:bg-[rgba(255,255,255,0.03)] flex items-center space-x-2 bg-card transition-all"
+                  className="px-5 py-3 border border-theme rounded-xl hover:bg-[rgba(15,31,23,0.03)] flex items-center space-x-2 bg-card transition-all"
                   style={
                     showFilterPanel
-                      ? { backgroundColor: "rgba(66, 174, 236, 0.1)", borderColor: ACCENT_PRIMARY, boxShadow: `0 0 0 3px rgba(66, 174, 236, 0.1)` }
+                      ? { backgroundColor: "rgba(16,185,129, 0.1)", borderColor: ACCENT_PRIMARY, boxShadow: `0 0 0 3px rgba(16,185,129, 0.1)` }
                       : undefined
                   }
                 >
@@ -1304,7 +1304,7 @@ const EmployeesPage = () => {
                               setShowFilterPanel(false);
                               setCurrentPage(1); // Reset to first page when clearing filters
                             }}
-                            className="flex-1 px-3 py-2 text-sm border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] text-primary"
+                            className="flex-1 px-3 py-2 text-sm border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] text-primary"
                           >
                             Clear Status Filter
                           </button>
@@ -1419,7 +1419,7 @@ const EmployeesPage = () => {
                         <tr key="no-data">
                           <td colSpan={7} className="px-4 py-8 text-center">
                             <div className="flex flex-col items-center justify-center">
-                              <User className="w-12 h-12 text-gray-300 mb-3" />
+                              <User className="w-12 h-12 text-gray-600 mb-3" />
                               <p className="text-base font-semibold text-secondary mb-1">
                                 {activeTab === 'employees' && 'No employees found'}
                                 {activeTab === 'contacts' && 'No contacts found'}
@@ -1572,7 +1572,7 @@ const EmployeesPage = () => {
                     <button
                       onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                       disabled={currentPage === 1 || loading}
-                      className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+                      className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
                     >
                       <ChevronLeft className="w-4 h-4" />
                       Previous
@@ -1597,7 +1597,7 @@ const EmployeesPage = () => {
                             disabled={loading}
                             className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${currentPage === pageNum
                                 ? 'bg-blue-600 text-white'
-                                : 'bg-card text-primary border border-theme hover:bg-[rgba(255,255,255,0.03)]'
+                                : 'bg-card text-primary border border-theme hover:bg-[rgba(15,31,23,0.03)]'
                               } disabled:opacity-50 disabled:cursor-not-allowed`}
                             style={
                               currentPage === pageNum
@@ -1613,7 +1613,7 @@ const EmployeesPage = () => {
                     <button
                       onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                       disabled={currentPage === totalPages || loading}
-                      className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+                      className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
                     >
                       Next
                       <ChevronRight className="w-4 h-4" />
@@ -1667,12 +1667,12 @@ const EmployeesPage = () => {
               <div className="px-6 py-4 bg-card border-b border-theme">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 flex-1">
-                    <div className={`flex items-center gap-2 ${currentStep >= 1 ? 'text-[#00D1FF]' : 'text-secondary'}`}>
+                    <div className={`flex items-center gap-2 ${currentStep >= 1 ? 'text-[#059669]' : 'text-secondary'}`}>
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${currentStep >= 1
                         ? 'border-blue-600 bg-card'
                         : 'border-theme bg-card'
                         }`}>
-                        {currentStep > 1 ? <CheckCircle size={16} className="text-[#00D1FF]" /> : '1'}
+                        {currentStep > 1 ? <CheckCircle size={16} className="text-[#059669]" /> : '1'}
                       </div>
                       <span className="text-sm font-medium">Information</span>
                     </div>
@@ -1682,7 +1682,7 @@ const EmployeesPage = () => {
                         style={{ width: currentStep >= 2 ? '100%' : '0%' }}
                       />
                     </div>
-                    <div className={`flex items-center gap-2 ${currentStep >= 2 ? 'text-[#00D1FF]' : 'text-secondary'}`}>
+                    <div className={`flex items-center gap-2 ${currentStep >= 2 ? 'text-[#059669]' : 'text-secondary'}`}>
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${currentStep >= 2
                         ? 'border-blue-600 bg-card'
                         : 'border-theme bg-card'
@@ -1708,7 +1708,7 @@ const EmployeesPage = () => {
                     }
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${currentStep === 1
                       ? '!text-white shadow-sm'
-                      : 'bg-card text-primary border border-theme hover:bg-[rgba(255,255,255,0.03)]'
+                      : 'bg-card text-primary border border-theme hover:bg-[rgba(15,31,23,0.03)]'
                       }`}
                   >
                     Information
@@ -1725,7 +1725,7 @@ const EmployeesPage = () => {
                     }
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${currentStep === 2
                       ? '!text-white shadow-sm'
-                      : 'bg-card text-primary border border-theme hover:bg-[rgba(255,255,255,0.03)]'
+                      : 'bg-card text-primary border border-theme hover:bg-[rgba(15,31,23,0.03)]'
                       }`}
                   >
                     Documents ({employeeDocuments.length})
@@ -1746,7 +1746,7 @@ const EmployeesPage = () => {
                     </div>
                     <button
                       onClick={addDocument}
-                      className="px-3 py-1.5 text-sm bg-card text-[#00D1FF] rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-2"
+                      className="px-3 py-1.5 text-sm bg-card text-[#059669] rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-2"
                     >
                       <Plus size={16} />
                       Add Document
@@ -1774,7 +1774,7 @@ const EmployeesPage = () => {
                             <div className="flex items-center gap-2">
                               <h4 className="font-semibold text-primary">Document {index + 1}</h4>
                               {doc._id && (
-                                <span className="text-xs bg-blue-100 text-[#00D1FF] px-2 py-0.5 rounded">Existing</span>
+                                <span className="text-xs bg-blue-100 text-[#059669] px-2 py-0.5 rounded">Existing</span>
                               )}
                             </div>
                             <button
@@ -2125,7 +2125,7 @@ const EmployeesPage = () => {
                 <>
                   <button
                     onClick={() => setCurrentStep(1)}
-                    className="flex-1 bg-card border border-theme hover:bg-[rgba(255,255,255,0.03)] text-primary px-4 py-2 rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
+                    className="flex-1 bg-card border border-theme hover:bg-[rgba(15,31,23,0.03)] text-primary px-4 py-2 rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
                   >
                     <ChevronLeft size={18} />
                     Back
@@ -2147,7 +2147,7 @@ const EmployeesPage = () => {
                       setShowAddModal(false);
                       resetForm();
                     }}
-                    className="px-6 py-2.5 border border-theme !mr-2 text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors font-medium"
+                    className="px-6 py-2.5 border border-theme !mr-2 text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors font-medium"
                   >
                     Cancel
                   </button>
@@ -2176,7 +2176,7 @@ const EmployeesPage = () => {
                         <>
                           <button
                             onClick={() => setCurrentStep(1)}
-                            className="px-6 py-2.5 border border-theme !mr-2 text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors font-medium flex items-center gap-2"
+                            className="px-6 py-2.5 border border-theme !mr-2 text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors font-medium flex items-center gap-2"
                           >
                             <ChevronLeft size={18} />
                             Back
@@ -2312,7 +2312,7 @@ const EmployeesPage = () => {
                       </thead>
                       <tbody className="divide-y divide-theme">
                         {selectedEmployeeDetails.documents.map((doc: EmployeeDocument, index: number) => (
-                          <tr key={doc._id || index} className="hover:bg-[rgba(255,255,255,0.03)]">
+                          <tr key={doc._id || index} className="hover:bg-[rgba(15,31,23,0.03)]">
                             <td className="px-4 py-2.5">
                               <div className="flex items-center space-x-2">
                                 <FileText className="w-4 h-4 text-secondary" />
@@ -2414,7 +2414,7 @@ const EmployeesPage = () => {
                                       }
                                     }
                                   }}
-                                  className="p-2 hover:bg-blue-50 rounded-lg text-[#00D1FF] transition-colors"
+                                  className="p-2 hover:bg-blue-50 rounded-lg text-[#059669] transition-colors"
                                   title="View Document"
                                 >
                                   <Eye className="w-4 h-4" />
@@ -2436,7 +2436,7 @@ const EmployeesPage = () => {
                   setShowEmployeeDetails(false);
                   setSelectedEmployeeDetails(null);
                 }}
-                className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors font-medium"
+                className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors font-medium"
               >
                 Close
               </button>

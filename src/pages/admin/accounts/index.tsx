@@ -168,7 +168,7 @@ const Dashboard = () => {
       value: `$${totalRevenue.toLocaleString()}`,
       subtitle: `${dashboardStats.invoiceCount} invoices`,
       icon: DollarSign,
-      bgColor: 'bg-[rgba(0,255,163,0.1)]',
+      bgColor: 'bg-[rgba(5,150,105,0.1)]',
       iconColor: 'text-[var(--accent-green)]',
       cardBg: 'bg-card'
     },
@@ -212,7 +212,7 @@ const Dashboard = () => {
       value: `$${dashboardStats.paidInvoices.toLocaleString()}`,
       subtitle: 'Total paid amount',
       icon: CheckCircle,
-      bgColor: 'bg-[rgba(0,255,163,0.1)]',
+      bgColor: 'bg-[rgba(5,150,105,0.1)]',
       iconColor: 'text-[var(--accent-green)]',
       cardBg: 'bg-card'
     },
@@ -416,7 +416,7 @@ const Dashboard = () => {
                           navigate(`${routePrefix}/expenses`);
                         }
                       }}
-                      className={`${feature.cardBg} rounded-lg p-3 shadow-sm hover:shadow-md transition-all cursor-pointer border border-[rgba(255,255,255,0.04)] hover:border-[rgba(0,209,255,0.15)] hover:scale-[1.02] active:scale-[0.98]`}
+                      className={`${feature.cardBg} rounded-lg p-3 shadow-sm hover:shadow-md transition-all cursor-pointer border border-[rgba(15,31,23,0.04)] hover:border-[rgba(5,150,105,0.15)] hover:scale-[1.02] active:scale-[0.98]`}
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
@@ -447,7 +447,7 @@ const Dashboard = () => {
                           navigate(`${routePrefix}/payroll`);
                         }
                       }}
-                      className={`${feature.cardBg} rounded-lg p-3 shadow-sm hover:shadow-md transition-all cursor-pointer border border-[rgba(255,255,255,0.04)] hover:border-[rgba(0,209,255,0.15)] hover:scale-[1.02] active:scale-[0.98]`}
+                      className={`${feature.cardBg} rounded-lg p-3 shadow-sm hover:shadow-md transition-all cursor-pointer border border-[rgba(15,31,23,0.04)] hover:border-[rgba(5,150,105,0.15)] hover:scale-[1.02] active:scale-[0.98]`}
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
@@ -473,7 +473,7 @@ const Dashboard = () => {
                     <div
                       key={feature.id}
                       onClick={() => navigate(`${routePrefix}/payroll`)}
-                      className={`${feature.cardBg} rounded-lg p-3 shadow-sm hover:shadow-md transition-all cursor-pointer border border-[rgba(255,255,255,0.04)] hover:border-[rgba(0,209,255,0.15)] hover:scale-[1.02] active:scale-[0.98]`}
+                      className={`${feature.cardBg} rounded-lg p-3 shadow-sm hover:shadow-md transition-all cursor-pointer border border-[rgba(15,31,23,0.04)] hover:border-[rgba(5,150,105,0.15)] hover:scale-[1.02] active:scale-[0.98]`}
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
@@ -486,7 +486,7 @@ const Dashboard = () => {
                                 <p className="text-xs text-secondary">Paid</p>
                               </div>
                             </div>
-                            <div className="w-px h-8 bg-[rgba(255,255,255,0.06)]" />
+                            <div className="w-px h-8 bg-[rgba(15,31,23,0.06)]" />
                             <div className="flex items-center gap-2">
                               <UserX className="text-[var(--accent-amber)]" size={16} />
                               <div>
@@ -512,7 +512,7 @@ const Dashboard = () => {
                     <div
                       key={feature.id}
                       onClick={() => navigate(`${routePrefix}/driverpayroll`)}
-                      className={`${feature.cardBg} rounded-lg p-3 shadow-sm hover:shadow-md transition-all cursor-pointer border border-[rgba(255,255,255,0.04)] hover:border-[rgba(0,209,255,0.15)] hover:scale-[1.02] active:scale-[0.98]`}
+                      className={`${feature.cardBg} rounded-lg p-3 shadow-sm hover:shadow-md transition-all cursor-pointer border border-[rgba(15,31,23,0.04)] hover:border-[rgba(5,150,105,0.15)] hover:scale-[1.02] active:scale-[0.98]`}
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
@@ -525,7 +525,7 @@ const Dashboard = () => {
                                 <p className="text-xs text-secondary">Paid</p>
                               </div>
                             </div>
-                            <div className="w-px h-8 bg-[rgba(255,255,255,0.06)]" />
+                            <div className="w-px h-8 bg-[rgba(15,31,23,0.06)]" />
                             <div className="flex items-center gap-2">
                               <Clock className="text-[var(--accent-amber)]" size={16} />
                               <div>
@@ -553,7 +553,7 @@ const Dashboard = () => {
                     <div
                       key={card.id}
                       onClick={() => navigate(card.path)}
-                      className="bg-card rounded-lg p-3 shadow-sm hover:shadow-md transition-all cursor-pointer border border-[rgba(255,255,255,0.04)] hover:border-[rgba(0,209,255,0.15)] hover:scale-[1.02] active:scale-[0.98]"
+                      className="bg-card rounded-lg p-3 shadow-sm hover:shadow-md transition-all cursor-pointer border border-[rgba(15,31,23,0.04)] hover:border-[rgba(5,150,105,0.15)] hover:scale-[1.02] active:scale-[0.98]"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
@@ -582,10 +582,10 @@ const Dashboard = () => {
                     <div
                       key={action.id}
                       onClick={() => navigate(action.path)}
-                      className="group p-4 rounded-xl border border-[rgba(255,255,255,0.04)] hover:border-[rgba(0,209,255,0.15)] bg-[var(--bg-card-light)] hover:bg-[rgba(0,209,255,0.04)] transition-all cursor-pointer"
+                      className="group p-4 rounded-xl border border-[rgba(15,31,23,0.04)] hover:border-[rgba(5,150,105,0.15)] bg-[var(--bg-card-light)] hover:bg-[rgba(5,150,105,0.04)] transition-all cursor-pointer"
                     >
                       <div className="flex items-center justify-between mb-3">
-                        <div className="p-2 rounded-lg bg-[rgba(255,255,255,0.04)] group-hover:bg-[rgba(0,209,255,0.08)] transition-colors">
+                        <div className="p-2 rounded-lg bg-[rgba(15,31,23,0.04)] group-hover:bg-[rgba(5,150,105,0.08)] transition-colors">
                           <Icon className={`h-4 w-4 ${action.iconColor}`} />
                         </div>
                         <span className="text-base font-bold text-[var(--text-primary)]">
@@ -603,11 +603,11 @@ const Dashboard = () => {
             {/* Module Highlights */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
               {/* Settlement Module */}
-              <div className="bg-card rounded-lg shadow-sm border border-[rgba(255,255,255,0.04)] overflow-hidden">
-                <div className="p-4 border-b border-[rgba(255,255,255,0.04)]">
+              <div className="bg-card rounded-lg shadow-sm border border-[rgba(15,31,23,0.04)] overflow-hidden">
+                <div className="p-4 border-b border-[rgba(15,31,23,0.04)]">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-[rgba(0,209,255,0.08)] rounded-lg">
+                      <div className="p-2 bg-[rgba(5,150,105,0.08)] rounded-lg">
                         <Calculator className="text-[var(--accent-blue)]" size={18} />
                       </div>
                       <div>
@@ -617,7 +617,7 @@ const Dashboard = () => {
                     </div>
                     <button
                       onClick={() => navigate(`${routePrefix}/settlements`)}
-                      className="px-3 py-1.5 border border-[rgba(0,209,255,0.2)] text-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] rounded-lg text-xs font-medium transition-all"
+                      className="px-3 py-1.5 border border-[rgba(5,150,105,0.2)] text-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] rounded-lg text-xs font-medium transition-all"
                     >
                       View →
                     </button>
@@ -625,14 +625,14 @@ const Dashboard = () => {
                 </div>
                 <div className="p-4">
                   <div className="space-y-2">
-                    <div className="flex items-start gap-2 p-2 bg-[rgba(255,255,255,0.02)] rounded-lg">
+                    <div className="flex items-start gap-2 p-2 bg-[rgba(15,31,23,0.02)] rounded-lg">
                       <CheckCircle2 className="text-[var(--accent-green)] mt-0.5 shrink-0" size={14} />
                       <div>
                         <p className="text-xs font-medium text-[var(--text-primary)]">Trip-wise Calculations</p>
                         <p className="text-xs text-secondary">Miles, Rate, FSC, Accessorials</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-2 p-2 bg-[rgba(255,255,255,0.02)] rounded-lg">
+                    <div className="flex items-start gap-2 p-2 bg-[rgba(15,31,23,0.02)] rounded-lg">
                       <CheckCircle2 className="text-[var(--accent-green)] mt-0.5 shrink-0" size={14} />
                       <div>
                         <p className="text-xs font-medium text-[var(--text-primary)]">Auto-Generated</p>
@@ -644,8 +644,8 @@ const Dashboard = () => {
               </div>
 
               {/* Expense Management */}
-              <div className="bg-card rounded-lg shadow-sm border border-[rgba(255,255,255,0.04)] overflow-hidden">
-                <div className="p-4 border-b border-[rgba(255,255,255,0.04)]">
+              <div className="bg-card rounded-lg shadow-sm border border-[rgba(15,31,23,0.04)] overflow-hidden">
+                <div className="p-4 border-b border-[rgba(15,31,23,0.04)]">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-[rgba(244,63,94,0.08)] rounded-lg">
@@ -658,7 +658,7 @@ const Dashboard = () => {
                     </div>
                     <button
                       onClick={() => navigate(`${routePrefix}/expenses`)}
-                      className="px-3 py-1.5 border border-[rgba(0,209,255,0.2)] text-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] rounded-lg text-xs font-medium transition-all"
+                      className="px-3 py-1.5 border border-[rgba(5,150,105,0.2)] text-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] rounded-lg text-xs font-medium transition-all"
                     >
                       View →
                     </button>
@@ -666,11 +666,11 @@ const Dashboard = () => {
                 </div>
                 <div className="p-4">
                   <div className="grid grid-cols-2 gap-2 mb-3">
-                    <div className="p-2 bg-[rgba(255,255,255,0.02)] rounded-lg border border-[rgba(245,158,11,0.15)]">
+                    <div className="p-2 bg-[rgba(15,31,23,0.02)] rounded-lg border border-[rgba(245,158,11,0.15)]">
                       <CreditCard className="text-[var(--accent-orange)] mb-1" size={14} />
                       <p className="text-xs font-medium text-[var(--text-primary)]">Fuel Receipts</p>
                     </div>
-                    <div className="p-2 bg-[rgba(255,255,255,0.02)] rounded-lg border border-[rgba(0,209,255,0.15)]">
+                    <div className="p-2 bg-[rgba(15,31,23,0.02)] rounded-lg border border-[rgba(5,150,105,0.15)]">
                       <FileText className="text-[var(--accent-blue)] mb-1" size={14} />
                       <p className="text-xs font-medium text-[var(--text-primary)]">Repairs</p>
                     </div>
@@ -691,11 +691,11 @@ const Dashboard = () => {
 
             {/* Alerts */}
             {pendingRevenue > 0 && (
-              <div className="bg-card rounded-lg shadow-sm border border-[rgba(255,255,255,0.04)] p-4">
+              <div className="bg-card rounded-lg shadow-sm border border-[rgba(15,31,23,0.04)] p-4">
                 <h3 className="text-xs font-semibold text-secondary uppercase tracking-widest mb-3">Alerts & Notifications</h3>
                 <div
                   onClick={() => navigate(`${routePrefix}/invoice`)}
-                  className="flex items-center p-3 bg-[rgba(255,255,255,0.02)] border border-[rgba(251,191,36,0.2)] rounded-lg cursor-pointer hover:bg-[rgba(251,191,36,0.05)] transition-colors"
+                  className="flex items-center p-3 bg-[rgba(15,31,23,0.02)] border border-[rgba(251,191,36,0.2)] rounded-lg cursor-pointer hover:bg-[rgba(251,191,36,0.05)] transition-colors"
                 >
                   <AlertCircle className="text-[var(--accent-amber)] mr-3 shrink-0" size={18} />
                   <div className="flex-1">

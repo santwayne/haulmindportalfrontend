@@ -83,7 +83,7 @@ const ExpiringVehicleDocumentsToast: React.FC<ExpiringVehicleDocumentsToastProps
                 setVisible(false);
                 onClose();
               }}
-              className="p-1 hover:bg-[rgba(255,255,255,0.03)] rounded transition-colors ml-2"
+              className="p-1 hover:bg-[rgba(15,31,23,0.03)] rounded transition-colors ml-2"
             >
               <X className="w-4 h-4 text-secondary" />
             </button>
@@ -100,7 +100,7 @@ const ExpiringVehicleDocumentsToast: React.FC<ExpiringVehicleDocumentsToastProps
                 className="flex items-center gap-1 px-3 py-1.5 text-white text-xs font-medium rounded transition-colors"
                 style={{
                   background:
-                    'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)'
+                    'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)'
                 }}
               >
                 <ExternalLink className="w-3 h-3 text-white" />

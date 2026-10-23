@@ -490,7 +490,7 @@ const RegulatorySafety: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pb-10" style={{ backgroundColor: '#EDF8FF', ...ACCENT_VARS }}>
+    <div className="min-h-screen pb-10" style={{ backgroundColor: '#ecfdf5', ...ACCENT_VARS }}>
       <div className="relative w-full mx-auto p-2">
 
 
@@ -516,7 +516,7 @@ const RegulatorySafety: React.FC = () => {
                 <button
                   onClick={handleAddRecord}
                   className="flex items-center gap-2 px-4 py-2 !text-white rounded-lg shadow-sm transition-all font-bold text-sm hover:opacity-90"
-                  style={{ background: 'linear-gradient(to right, #016ab2, #063f6f)' }}
+                  style={{ background: 'linear-gradient(to right, #047857, #065f46)' }}
                 >
                   <Plus className="w-5 h-5" />
                   Add Record
@@ -550,10 +550,10 @@ const RegulatorySafety: React.FC = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 w-full border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
+                style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#016ab2';
-                  e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)';
+                  e.target.style.borderColor = '#047857';
+                  e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)';
                 }}
                 onBlur={(e) => {
                   e.target.style.borderColor = '';
@@ -613,7 +613,7 @@ const RegulatorySafety: React.FC = () => {
               className="overflow-x-auto overflow-y-visible table-container-hidden-scrollbar"
             >
               <table className="w-full" style={{ minWidth: '1200px' }}>
-                <thead className="text-white" style={{ background: 'linear-gradient(to right, #016ab2, #063f6f)' }}>
+                <thead className="text-white" style={{ background: 'linear-gradient(to right, #047857, #065f46)' }}>
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-semibold">Unit No.</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold">Unit Type</th>
@@ -652,7 +652,7 @@ const RegulatorySafety: React.FC = () => {
                       return (
                         <tr
                           key={record._id}
-                          className={`hover:bg-[rgba(255,255,255,0.03)] transition-colors cursor-pointer ${rowAccent}`}
+                          className={`hover:bg-[rgba(15,31,23,0.03)] transition-colors cursor-pointer ${rowAccent}`}
                           onClick={() => {
                             setSelectedRecord(record);
                             setShowRecordDetails(true);
@@ -687,7 +687,7 @@ const RegulatorySafety: React.FC = () => {
                             <div className="flex items-center gap-2">
                               <button
                                 onClick={() => handleEditRecord(record)}
-                                className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition-colors"
+                                className="p-2 text-[#059669] hover:bg-blue-50 rounded-lg transition-colors"
                                 title="Edit"
                               >
                                 <Edit className="w-4 h-4" />
@@ -735,7 +735,7 @@ const RegulatorySafety: React.FC = () => {
                         setShowRecordDetails(false);
                         setTimeout(() => setSelectedRecord(null), 300);
                       }}
-                      className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] transition-all"
+                      className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] transition-all"
                     >
                       <X size={24} />
                     </button>
@@ -859,7 +859,7 @@ const RegulatorySafety: React.FC = () => {
             <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[100]" onClick={closeModals} />
             <div className="fixed top-0 right-0 h-full w-full sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] bg-card shadow-2xl z-[101] border-l border-theme">
               <div className="h-full flex flex-col">
-                <div className="flex-shrink-0 px-6 py-4 flex items-center justify-between text-white" style={{ background: 'linear-gradient(to right, #016ab2, #063f6f)' }}>
+                <div className="flex-shrink-0 px-6 py-4 flex items-center justify-between text-white" style={{ background: 'linear-gradient(to right, #047857, #065f46)' }}>
                   <h2 className="text-2xl font-bold">{showAddModal ? 'Add Safety Record' : 'Edit Safety Record'}</h2>
                   <button onClick={closeModals} className="p-2 hover:bg-card/20 rounded-lg transition-colors">
                     <FaTimes className="w-5 h-5" />
@@ -876,10 +876,10 @@ const RegulatorySafety: React.FC = () => {
                         value={formData.unitNo}
                         onChange={(e) => setFormData({ ...formData, unitNo: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
                         onFocus={(e) => {
-                          e.target.style.borderColor = '#016ab2';
-                          e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)';
+                          e.target.style.borderColor = '#047857';
+                          e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)';
                         }}
                         onBlur={(e) => {
                           e.target.style.borderColor = '';
@@ -901,10 +901,10 @@ const RegulatorySafety: React.FC = () => {
                         value={formData.safetyExpiryDate}
                         onChange={(e) => setFormData({ ...formData, safetyExpiryDate: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
                         onFocus={(e) => {
-                          e.target.style.borderColor = '#016ab2';
-                          e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)';
+                          e.target.style.borderColor = '#047857';
+                          e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)';
                         }}
                         onBlur={(e) => {
                           e.target.style.borderColor = '';
@@ -919,10 +919,10 @@ const RegulatorySafety: React.FC = () => {
                         value={formData.safetyDecalNumber}
                         onChange={(e) => setFormData({ ...formData, safetyDecalNumber: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
                         onFocus={(e) => {
-                          e.target.style.borderColor = '#016ab2';
-                          e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)';
+                          e.target.style.borderColor = '#047857';
+                          e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)';
                         }}
                         onBlur={(e) => {
                           e.target.style.borderColor = '';
@@ -938,10 +938,10 @@ const RegulatorySafety: React.FC = () => {
                         value={formData.safetyPaperNumber}
                         onChange={(e) => setFormData({ ...formData, safetyPaperNumber: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
                         onFocus={(e) => {
-                          e.target.style.borderColor = '#016ab2';
-                          e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)';
+                          e.target.style.borderColor = '#047857';
+                          e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)';
                         }}
                         onBlur={(e) => {
                           e.target.style.borderColor = '';
@@ -957,10 +957,10 @@ const RegulatorySafety: React.FC = () => {
                         value={formData.shopName}
                         onChange={(e) => setFormData({ ...formData, shopName: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
                         onFocus={(e) => {
-                          e.target.style.borderColor = '#016ab2';
-                          e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)';
+                          e.target.style.borderColor = '#047857';
+                          e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)';
                         }}
                         onBlur={(e) => {
                           e.target.style.borderColor = '';
@@ -976,10 +976,10 @@ const RegulatorySafety: React.FC = () => {
                         value={formData.invoiceNo}
                         onChange={(e) => setFormData({ ...formData, invoiceNo: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
                         onFocus={(e) => {
-                          e.target.style.borderColor = '#016ab2';
-                          e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)';
+                          e.target.style.borderColor = '#047857';
+                          e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)';
                         }}
                         onBlur={(e) => {
                           e.target.style.borderColor = '';
@@ -995,10 +995,10 @@ const RegulatorySafety: React.FC = () => {
                         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                         rows={3}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
                         onFocus={(e) => {
-                          e.target.style.borderColor = '#016ab2';
-                          e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)';
+                          e.target.style.borderColor = '#047857';
+                          e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)';
                         }}
                         onBlur={(e) => {
                           e.target.style.borderColor = '';
@@ -1012,7 +1012,7 @@ const RegulatorySafety: React.FC = () => {
                 <div className="flex-shrink-0 bg-card px-6 py-4 flex justify-end gap-3 border-t border-theme">
                   <button
                     onClick={closeModals}
-                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                   >
                     Cancel
                   </button>
@@ -1020,7 +1020,7 @@ const RegulatorySafety: React.FC = () => {
                     onClick={handleSaveRecord}
                     disabled={saving}
                     className={`px-6 py-2 !text-white rounded-lg transition-colors ${saving ? 'opacity-60 cursor-not-allowed' : 'hover:opacity-90'}`}
-                    style={{ background: 'linear-gradient(to right, #016ab2, #063f6f)' }}
+                    style={{ background: 'linear-gradient(to right, #047857, #065f46)' }}
                   >
                     {saving ? 'Saving...' : showAddModal ? 'Add Record' : 'Save Changes'}
                   </button>
@@ -1061,7 +1061,7 @@ const RegulatorySafety: React.FC = () => {
                       setShowDeleteModal(false);
                       setSelectedRecord(null);
                     }}
-                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                   >
                     Cancel
                   </button>

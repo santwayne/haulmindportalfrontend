@@ -143,12 +143,12 @@ const REQUIRED_TRAININGS = [
 const EMPLOYEE_ROLES = ['Driver', 'Mechanic', 'Warehouse Staff', 'Office Staff', 'Manager', 'Safety Officer'];
 
 const CUSTOM_COLORS = {
-  background: '#EDF8FF',
-  primary: '#016ab2',
-  dark: '#063f6f',
-  light: '#398bc3',
-  gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)',
-  gradientVertical: 'linear-gradient(to bottom right, #016ab2, #063f6f)',
+  background: '#ecfdf5',
+  primary: '#047857',
+  dark: '#065f46',
+  light: '#059669',
+  gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)',
+  gradientVertical: 'linear-gradient(to bottom right, #047857, #065f46)',
 };
 
 const TrainingCertificates = () => {
@@ -333,7 +333,7 @@ const TrainingCertificates = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-theme divide-white/5">
+          <table className="min-w-full divide-y divide-theme divide-black/5">
             <thead className="bg-card">
               <tr>
                 <th className="sticky left-0 bg-card px-4 py-3 text-left text-xs font-medium text-headings uppercase z-10">
@@ -349,11 +349,11 @@ const TrainingCertificates = () => {
                 ))}
               </tr>
             </thead>
-            <tbody className="bg-card divide-y divide-theme divide-white/5">
+            <tbody className="bg-card divide-y divide-theme divide-black/5">
               {employees.map(employee => {
                 const employeeData = trainingData.find(t => t.employeeName === employee);
                 return (
-                  <tr key={employee} className="hover:bg-[rgba(255,255,255,0.03)]">
+                  <tr key={employee} className="hover:bg-[rgba(15,31,23,0.03)]">
                     <td className="sticky left-0 bg-card px-4 py-4 whitespace-nowrap border-r border-theme">
                       <div>
                         <div className="text-sm font-semibold text-primary">{employee}</div>
@@ -972,7 +972,7 @@ const TrainingCertificates = () => {
             {!selectedRecord.acknowledgment && (
               <div className="bg-card border border-yellow-200 p-4 rounded-lg">
                 <div className="flex items-center gap-3">
-                  <FaExclamationTriangle className="text-[#00FFA3]" size={24} />
+                  <FaExclamationTriangle className="text-[#059669]" size={24} />
                   <div>
                     <h4 className="font-semibold text-yellow-900">No Acknowledgment on Record</h4>
                     <p className="text-sm text-primary">Employee has not digitally acknowledged this training</p>
@@ -1045,7 +1045,7 @@ const TrainingCertificates = () => {
                 <h3 className="font-bold text-blue-900 mb-3">Certificate Document</h3>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <FaFileAlt className="text-[#00D1FF]" size={24} />
+                    <FaFileAlt className="text-[#059669]" size={24} />
                     <div>
                       <div className="font-semibold text-sm">
                         {selectedRecord.certificateUrl.split('/').pop() || 'Certificate_File.pdf'}
@@ -1412,7 +1412,7 @@ const TrainingCertificates = () => {
       <div className="flex gap-2 mb-6 overflow-x-auto">
         <button
           onClick={() => setActiveTab('matrix')}
-          className={`px-6 py-3 rounded-lg font-medium whitespace-nowrap transition ${activeTab === 'matrix' ? '!text-white' : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)]'
+          className={`px-6 py-3 rounded-lg font-medium whitespace-nowrap transition ${activeTab === 'matrix' ? '!text-white' : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)]'
             }`}
           style={activeTab === 'matrix' ? { background: CUSTOM_COLORS.primary } : {}}
         >
@@ -1420,7 +1420,7 @@ const TrainingCertificates = () => {
         </button>
         <button
           onClick={() => setActiveTab('management')}
-          className={`px-6 py-3 rounded-lg font-medium whitespace-nowrap transition ${activeTab === 'management' ? '!text-white' : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)]'
+          className={`px-6 py-3 rounded-lg font-medium whitespace-nowrap transition ${activeTab === 'management' ? '!text-white' : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)]'
             }`}
           style={activeTab === 'management' ? { background: CUSTOM_COLORS.primary } : {}}
         >
@@ -1428,7 +1428,7 @@ const TrainingCertificates = () => {
         </button>
         <button
           onClick={() => setActiveTab('modules')}
-          className={`px-6 py-3 rounded-lg font-medium whitespace-nowrap transition ${activeTab === 'modules' ? '!text-white' : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)]'
+          className={`px-6 py-3 rounded-lg font-medium whitespace-nowrap transition ${activeTab === 'modules' ? '!text-white' : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)]'
             }`}
           style={activeTab === 'modules' ? { background: CUSTOM_COLORS.primary } : {}}
         >

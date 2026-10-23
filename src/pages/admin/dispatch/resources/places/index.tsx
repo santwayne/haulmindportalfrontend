@@ -316,7 +316,7 @@ const Index = () => {
                         const postalCode = place.postalCode || place.securityAccessCodepostalCode || "N/A";
 
                         return (
-                          <tr key={place._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                          <tr key={place._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                             <td className="px-6 py-4 text-sm text-primary font-medium">{place.name || "N/A"}</td>
                             <td className="px-6 py-4 text-sm text-secondary">
                               <div className="max-w-xs">
@@ -512,7 +512,7 @@ const Index = () => {
               <button
                 onClick={closeEditModal}
                 disabled={editLoading}
-                className="rounded-md border border-theme px-4 py-2 text-sm text-primary transition hover:bg-[rgba(255,255,255,0.03)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-md border border-theme px-4 py-2 text-sm text-primary transition hover:bg-[rgba(15,31,23,0.03)] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Cancel
               </button>
@@ -552,7 +552,7 @@ const Index = () => {
               <button
                 onClick={closeDeleteModal}
                 disabled={deleteLoading}
-                className="rounded-md border border-theme px-4 py-2 text-sm text-primary transition hover:bg-[rgba(255,255,255,0.03)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-md border border-theme px-4 py-2 text-sm text-primary transition hover:bg-[rgba(15,31,23,0.03)] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Cancel
               </button>

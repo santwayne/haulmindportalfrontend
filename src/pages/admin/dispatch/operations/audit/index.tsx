@@ -134,7 +134,7 @@ const AuditTrail = () => {
       case "Assigned":
         return <FaCheckCircle className="text-purple-600" />;
       case "Uploaded":
-        return <FaFileAlt className="text-[#F59E0B]" />;
+        return <FaFileAlt className="text-[#d97706]" />;
       default:
         return <FaClock className="text-secondary" />;
     }
@@ -279,7 +279,7 @@ const AuditTrail = () => {
                 onClick={() => setDateFilter(item.value)}
                 className={`px-4 py-1 rounded-lg text-sm font-medium transition-all ${dateFilter === item.value
                     ? "bg-gradient-to-r from-[var(--accent-blue)] to-[var(--accent-purple)] text-white"
-                    : "bg-card border border-theme text-primary hover:bg-[rgba(255,255,255,0.08)]"
+                    : "bg-card border border-theme text-primary hover:bg-[rgba(15,31,23,0.08)]"
                   }`}
               >
                 {item.label}
@@ -305,7 +305,7 @@ const AuditTrail = () => {
             </div>
           ) : filteredAuditTrail.length === 0 ? (
             <div className="bg-card rounded-lg shadow-sm p-12 text-center">
-              <FaHistory className="mx-auto text-4xl text-gray-300 mb-4" />
+              <FaHistory className="mx-auto text-4xl text-gray-600 mb-4" />
               <h3 className="text-lg font-semibold text-primary mb-2">No audit trail entries found</h3>
               <p className="text-secondary">Try adjusting your filters to see more results.</p>
             </div>

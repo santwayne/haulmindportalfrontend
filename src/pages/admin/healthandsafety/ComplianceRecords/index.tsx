@@ -11,12 +11,12 @@ import {
 import { getComplianceRecords } from '../../../../axios/api/healthSafety';
 
 const CUSTOM_COLORS = {
-  background: '#EDF8FF',
-  primary: '#016ab2',
-  dark: '#063f6f',
-  light: '#398bc3',
-  gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)',
-  gradientVertical: 'linear-gradient(to bottom right, #016ab2, #063f6f)',
+  background: '#ecfdf5',
+  primary: '#047857',
+  dark: '#065f46',
+  light: '#059669',
+  gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)',
+  gradientVertical: 'linear-gradient(to bottom right, #047857, #065f46)',
 };
 
 
@@ -315,8 +315,8 @@ const EnhancedComplianceRecords: React.FC = () => {
       'Policy': <FaBookOpen className="text-purple-600" />,
       'Training': <FaUserCheck className="text-green-600" />,
       'Incident': <FaExclamationTriangle className="text-[#A855F7]" />,
-      'Hazard': <FaExclamationCircle className="text-[#F59E0B]" />,
-      'Inspection': <FaClipboardCheck className="text-[#00D1FF]" />
+      'Hazard': <FaExclamationCircle className="text-[#d97706]" />,
+      'Inspection': <FaClipboardCheck className="text-[#059669]" />
     };
     return iconMap[type] || <FaFileAlt className="text-secondary" />;
   };
@@ -662,7 +662,7 @@ const EnhancedComplianceRecords: React.FC = () => {
                           setSelectedRecord(record);
                           setShowSidebar(true);
                         }}
-                        className="border-b border-theme hover:bg-[rgba(255,255,255,0.03)] cursor-pointer"
+                        className="border-b border-theme hover:bg-[rgba(15,31,23,0.03)] cursor-pointer"
                       >
                         <td className="px-6 py-4 font-medium">{record.recordId}</td>
                         <td className="px-6 py-4">
@@ -727,7 +727,7 @@ const EnhancedComplianceRecords: React.FC = () => {
                         <td className="px-6 py-4">
                           <div className="flex items-center justify-center">
                             <button
-                              className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition"
+                              className="p-2 text-[#059669] hover:bg-blue-50 rounded-lg transition"
                               title="View Details"
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -765,7 +765,7 @@ const EnhancedComplianceRecords: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setShowSidebar(false)}
-                  className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition"
+                  className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition"
                 >
                   <FaTimes size={24} className="text-secondary" />
                 </button>
@@ -773,13 +773,13 @@ const EnhancedComplianceRecords: React.FC = () => {
 
               <div className="p-6 space-y-6">
                 {/* Status Banner */}
-                <div className={`p-4 rounded-xl flex items-center justify-between ${selectedRecord.complianceLevel === 'compliant' ? 'bg-white/5 border border-white/10' :
+                <div className={`p-4 rounded-xl flex items-center justify-between ${selectedRecord.complianceLevel === 'compliant' ? 'bg-black/5 border border-black/10' :
                   selectedRecord.complianceLevel === 'at-risk' ? 'bg-card border border-orange-200' :
                     'bg-card border border-red-200'
                   }`}>
                   <div className="flex items-center gap-3">
                     {selectedRecord.complianceLevel === 'compliant' ? <FaCheckCircle className="text-green-600" size={24} /> :
-                      selectedRecord.complianceLevel === 'at-risk' ? <FaExclamationTriangle className="text-[#F59E0B]" size={24} /> :
+                      selectedRecord.complianceLevel === 'at-risk' ? <FaExclamationTriangle className="text-[#d97706]" size={24} /> :
                         <FaExclamationCircle className="text-[#A855F7]" size={24} />}
                     <div>
                       <div className="font-bold text-primary capitalize">{selectedRecord.complianceLevel.replace('-', ' ')}</div>
@@ -822,7 +822,7 @@ const EnhancedComplianceRecords: React.FC = () => {
                     </div>
                     {selectedRecord.documentUrl && (
                       <div className="mt-4 pt-4 border-t">
-                        <a href={selectedRecord.documentUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-[#00D1FF] hover:underline">
+                        <a href={selectedRecord.documentUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-[#059669] hover:underline">
                           <FaDownload /> Download Policy Document
                         </a>
                       </div>
@@ -839,12 +839,12 @@ const EnhancedComplianceRecords: React.FC = () => {
                       <div><span className="text-secondary">Employee:</span> <div className="font-medium">{selectedRecord.employeeName}</div></div>
                       <div><span className="text-secondary">Instructor:</span> <div className="font-medium">{selectedRecord.instructor}</div></div>
                       <div><span className="text-secondary">Issue Date:</span> <div className="font-medium">{selectedRecord.issueDate}</div></div>
-                      <div><span className="text-secondary">Expiry Date:</span> <div className="font-medium text-[#F59E0B]">{selectedRecord.expiryDate || 'N/A'}</div></div>
+                      <div><span className="text-secondary">Expiry Date:</span> <div className="font-medium text-[#d97706]">{selectedRecord.expiryDate || 'N/A'}</div></div>
                       <div><span className="text-secondary">Certificate No:</span> <div className="font-medium">{selectedRecord.certificateNumber}</div></div>
                     </div>
                     {selectedRecord.certificateUrl && (
                       <div className="mt-4 pt-4 border-t">
-                        <a href={selectedRecord.certificateUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-[#00D1FF] hover:underline">
+                        <a href={selectedRecord.certificateUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-[#059669] hover:underline">
                           <FaCheckCircle /> View Certificate
                         </a>
                       </div>
@@ -874,7 +874,7 @@ const EnhancedComplianceRecords: React.FC = () => {
                           {selectedRecord.photosVideos.map((url, idx) => (
                             <a key={idx} href={url} target="_blank" rel="noreferrer" className="shrink-0 w-20 h-20 bg-gray-200 rounded-lg overflow-hidden border border-theme">
                               {url.endsWith('.mp4') ? (
-                                <div className="w-full h-full flex items-center justify-center bg-gray-800 text-primary text-xs">Video</div>
+                                <div className="w-full h-full flex items-center justify-center bg-gray-100 text-primary text-xs">Video</div>
                               ) : (
                                 <img src={url} alt="evidence" className="w-full h-full object-cover" />
                               )}
@@ -889,7 +889,7 @@ const EnhancedComplianceRecords: React.FC = () => {
                 {'hazardType' in selectedRecord && (
                   <div className="space-y-4">
                     <h3 className="font-bold border-b pb-2 flex items-center gap-2 text-primary">
-                      <FaExclamationCircle className="text-[#F59E0B]" /> Hazard Details
+                      <FaExclamationCircle className="text-[#d97706]" /> Hazard Details
                     </h3>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div><span className="text-secondary">Reported Date:</span> <div className="font-medium">{selectedRecord.reportedDate}</div></div>
@@ -915,7 +915,7 @@ const EnhancedComplianceRecords: React.FC = () => {
                 {'inspectionType' in selectedRecord && (
                   <div className="space-y-4">
                     <h3 className="font-bold border-b pb-2 flex items-center gap-2 text-primary">
-                      <FaClipboardCheck className="text-[#00D1FF]" /> Inspection Results
+                      <FaClipboardCheck className="text-[#059669]" /> Inspection Results
                     </h3>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div><span className="text-secondary">Date:</span> <div className="font-medium">{selectedRecord.inspectionDate}</div></div>
@@ -944,7 +944,7 @@ const EnhancedComplianceRecords: React.FC = () => {
               <div className="p-6 border-t bg-card">
                 <button
                   onClick={() => setShowSidebar(false)}
-                  className="w-full py-3 bg-[var(--accent-navyblue)] border border-theme rounded-lg text-primary font-semibold hover:bg-[rgba(255,255,255,0.03)] transition"
+                  className="w-full py-3 bg-[var(--accent-navyblue)] border border-theme rounded-lg text-primary font-semibold hover:bg-[rgba(15,31,23,0.03)] transition"
                 >
                   Close Details
                 </button>

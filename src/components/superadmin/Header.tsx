@@ -132,14 +132,14 @@ const Header = () => {
             <div className="flex items-center gap-2">
                 <button
                     onClick={() => navigate(-1)}
-                    className="p-2 rounded-full hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="p-2 rounded-full hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                     title="Previous"
                 >
                     <ArrowLeft className="w-4 h-4 text-secondary" />
                 </button>
                 <button
                     onClick={() => navigate(1)}
-                    className="p-2 rounded-full hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="p-2 rounded-full hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                     title="Next"
                 >
                     <ArrowRight className="w-4 h-4 text-secondary" />
@@ -158,7 +158,7 @@ const Header = () => {
                 {/* Search Button */}
                 <button
                     onClick={() => setIsSearchOpen(true)}
-                    className="p-2 rounded-full hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="p-2 rounded-full hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                 >
                     <Search className="w-5 h-5 text-secondary" />
                 </button>
@@ -166,7 +166,7 @@ const Header = () => {
                 <div className="relative" ref={dropdownRef}>
                     <button
                         onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                        className="p-2 rounded-full hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                        className="p-2 rounded-full hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                         aria-label="User menu"
                     >
                         <FaUserCircle className="w-6 h-6 text-secondary cursor-pointer" />
@@ -185,7 +185,7 @@ const Header = () => {
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 {/* User Info */}
-                                <div className="px-4 py-3 border-b border-theme" style={{ backgroundColor: 'rgba(17,131,224,0.06)' }}>
+                                <div className="px-4 py-3 border-b border-theme" style={{ backgroundColor: 'rgba(5,150,105,0.06)' }}>
                                     <p className="text-sm font-semibold text-primary capitalize">
                                         {superAdminInfo?.userData?.name || 'SuperAdmin'}
                                     </p>
@@ -198,14 +198,14 @@ const Header = () => {
                                 <div className="py-1">
                                     <button
                                         onClick={handleProfileClick}
-                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors text-left"
+                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors text-left"
                                     >
                                         <FaUser className="w-4 h-4" />
                                         Profile
                                     </button>
                                     <button
                                         onClick={handleSettingsClick}
-                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors text-left"
+                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors text-left"
                                     >
                                         <FaCog className="w-4 h-4" />
                                         Settings
@@ -253,7 +253,7 @@ const Header = () => {
                                         setSearchQuery("");
                                         setSelectedIndex(0);
                                     }}
-                                    className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors"
+                                    className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors"
                                 >
                                     <X className="text-secondary" size={20} />
                                 </button>
@@ -272,15 +272,15 @@ const Header = () => {
                                                 : 'border-transparent'
                                                 }`}
                                         style={index === selectedIndex
-                                            ? { backgroundColor: 'rgba(17,131,224,0.08)' }
+                                            ? { backgroundColor: 'rgba(5,150,105,0.08)' }
                                             : undefined
                                         }
                                         >
                                             <div className={`flex-shrink-0 ${index === selectedIndex ? 'scale-110' : ''} transition-transform`}>
-                                                <div className={`p-2 rounded-lg ${action.type === 'create' ? 'text-[#00FFA3]' :
+                                                <div className={`p-2 rounded-lg ${action.type === 'create' ? 'text-[#059669]' :
                                                     action.type === 'navigation' ? 'text-[var(--accent-navyblue)]' :
                                                         'text-primary'
-                                                    }`} style={{ backgroundColor: action.type === 'create' ? 'rgba(0,255,163,0.1)' : action.type === 'navigation' ? 'rgba(17,131,224,0.1)' : 'rgba(255,255,255,0.05)' }}>
+                                                    }`} style={{ backgroundColor: action.type === 'create' ? 'rgba(5,150,105,0.1)' : action.type === 'navigation' ? 'rgba(5,150,105,0.1)' : 'rgba(15,31,23,0.05)' }}>
                                                     {action.icon}
                                                 </div>
                                             </div>
@@ -288,12 +288,12 @@ const Header = () => {
                                                 <div className="flex items-center gap-2">
                                                     <span className="font-semibold text-primary truncate">{action.title}</span>
                                                     {action.type === 'create' && (
-                                                        <span className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 text-[#00FFA3]" style={{ backgroundColor: 'rgba(0,255,163,0.1)' }}>
+                                                        <span className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 text-[#059669]" style={{ backgroundColor: 'rgba(5,150,105,0.1)' }}>
                                                             New
                                                         </span>
                                                     )}
                                                     {action.type === 'navigation' && (
-                                                        <span className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 text-[var(--accent-navyblue)]" style={{ backgroundColor: 'rgba(17,131,224,0.1)' }}>
+                                                        <span className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 text-[var(--accent-navyblue)]" style={{ backgroundColor: 'rgba(5,150,105,0.1)' }}>
                                                             Navigate
                                                         </span>
                                                     )}
@@ -304,7 +304,7 @@ const Header = () => {
                                             </div>
                                             <ArrowRight
                                                 className={`flex-shrink-0 transition-all ${index === selectedIndex
-                                                    ? 'text-[#00D1FF] opacity-100 translate-x-0'
+                                                    ? 'text-[#059669] opacity-100 translate-x-0'
                                                     : 'text-secondary opacity-0 -translate-x-1'
                                                     }`}
                                                 size={18}

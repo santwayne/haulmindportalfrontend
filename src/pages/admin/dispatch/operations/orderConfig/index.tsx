@@ -17,7 +17,7 @@ const TabButton: React.FC<TabButtonProps> = ({ label, icon: Icon, isActive, onCl
         className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors
       ${isActive
                 ? "bg-blue-100 text-blue-700 border border-blue-200"
-                : "text-secondary hover:text-primary hover:bg-[rgba(255,255,255,0.03)]"
+                : "text-secondary hover:text-primary hover:bg-[rgba(15,31,23,0.03)]"
             }`}
     >
         <Icon className="w-4 h-4" />

@@ -147,8 +147,8 @@ const ExpiringDocumentsPopup: React.FC<ExpiringDocumentsPopupProps> = ({
 
   const getUrgencyIcon = (daysUntilExpiry: number) => {
     if (daysUntilExpiry <= 7) return <AlertTriangle className="w-4 h-4 text-[#A855F7]" />;
-    if (daysUntilExpiry <= 14) return <Clock className="w-4 h-4 text-[#F59E0B]" />;
-    return <Calendar className="w-4 h-4 text-[#00FFA3]" />;
+    if (daysUntilExpiry <= 14) return <Clock className="w-4 h-4 text-[#d97706]" />;
+    return <Calendar className="w-4 h-4 text-[#059669]" />;
   };
 
   // Don't show popup if it's not open

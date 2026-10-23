@@ -796,7 +796,7 @@ const ComplianceDashboard: React.FC = () => {
             <div className="bg-card rounded-lg shadow-sm border border-theme overflow-hidden">
               <div
                 onClick={() => navigate(`${getBasePath()}/scheduled-services-log`)}
-                className="px-6 py-4 border-b border-theme bg-card cursor-pointer hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                className="px-6 py-4 border-b border-theme bg-card cursor-pointer hover:bg-[rgba(15,31,23,0.03)] transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold text-white flex items-center">
@@ -819,7 +819,7 @@ const ComplianceDashboard: React.FC = () => {
                       <th className="px-6 py-3 text-left text-xs font-semibold text-headings uppercase">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-theme divide-white/5 ">
+                  <tbody className="divide-y divide-theme divide-black/5 ">
                     {pmStatus.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="px-6 py-12 text-center text-secondary">
@@ -843,7 +843,7 @@ const ComplianceDashboard: React.FC = () => {
                         return (
                           <tr
                             key={unit.unitNo}
-                            className={`hover:bg-[rgba(255,255,255,0.03)] transition-colors ${unit.overdueCount > 0 ? 'bg-card' : unit.dueCount > 0 ? 'bg-card' : ''
+                            className={`hover:bg-[rgba(15,31,23,0.03)] transition-colors ${unit.overdueCount > 0 ? 'bg-card' : unit.dueCount > 0 ? 'bg-card' : ''
                               }`}
                           >
                             <td className="px-6 py-4 font-medium text-secondary">{unit.unitNo}</td>

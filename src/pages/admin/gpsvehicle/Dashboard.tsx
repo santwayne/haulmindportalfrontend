@@ -176,11 +176,11 @@ const Dashboard = () => {
 
   const getGradient = (type: string) => {
     switch (type) {
-      case "blue": return "linear-gradient(90deg, #00D1FF, #0066FF)";
-      case "green": return "linear-gradient(90deg, #00FFA3, #00C853)";
+      case "blue": return "linear-gradient(90deg, #059669, #059669)";
+      case "green": return "linear-gradient(90deg, #059669, #00C853)";
       case "purple": return "linear-gradient(90deg, #A855F7, #6D28D9)";
       case "orange": return "linear-gradient(90deg, #F59E0B, #F97316)";
-      default: return "linear-gradient(90deg, #00D1FF, #0066FF)";
+      default: return "linear-gradient(90deg, #059669, #059669)";
     }
   };
 
@@ -200,7 +200,7 @@ const Dashboard = () => {
       value: totalTrucks,
       subtitle: `Active: ${activeTrucks} | With Driver: ${dashboardData?.vehiclesWithDriver ?? 0}`,
       icon: Truck,
-      iconColor: "text-[#00D1FF]",
+      iconColor: "text-[#059669]",
       accentColor: "bg-blue-600",
       gradient: "blue",
       percentage: totalTrucks ? Math.min(100, (activeTrucks / totalTrucks) * 100) : 0,
@@ -222,7 +222,7 @@ const Dashboard = () => {
       value: totalDrivers,
       subtitle: `On Shift: ${dashboardData?.driversOnShift ?? 0} | Active: ${activeDrivers}`,
       icon: Users,
-      iconColor: "text-[#00FFA3]",
+      iconColor: "text-[#059669]",
       accentColor: "bg-green-600",
       gradient: "green",
       percentage: totalDrivers ? Math.min(100, (activeDrivers / totalDrivers) * 100) : 0,
@@ -233,7 +233,7 @@ const Dashboard = () => {
       value: totalTrips,
       subtitle: `In Progress: ${inProgressTrips} | Today: ${dashboardData?.todayTrips ?? 0}`,
       icon: Route,
-      iconColor: "text-[#F59E0B]",
+      iconColor: "text-[#d97706]",
       accentColor: "bg-orange-600",
       gradient: "orange",
       percentage: totalTrips ? Math.min(100, (inProgressTrips / totalTrips) * 100) : 0,
@@ -275,10 +275,10 @@ const Dashboard = () => {
                   <div
                     key={card.id}
                     className="relative overflow-hidden rounded-xl p-4
-                      bg-gradient-to-br from-[#0B1A2A] to-[#0F2A44]
-                      border border-white/10
+                      bg-gradient-to-br from-[#022c22] to-[#065f46]
+                      border border-black/10
                       hover:scale-[1.03] transition-all duration-300
-                      shadow-md hover:shadow-[0_0_12px_rgba(0,209,255,0.15)]"
+                      shadow-md hover:shadow-[0_0_12px_rgba(5,150,105,0.15)]"
                   >
                     <div className="absolute inset-0 opacity-0 hover:opacity-100 transition duration-500">
                       <div className={`absolute inset-0 blur-2xl opacity-10 ${card.accentColor}`} />
@@ -291,12 +291,12 @@ const Dashboard = () => {
                       </div>
                       <div className="relative">
                         <div className={`absolute inset-0 blur-lg opacity-25 ${card.accentColor}`} />
-                        <div className="relative bg-white/5 p-2 rounded-lg">
+                        <div className="relative bg-black/5 p-2 rounded-lg">
                           <Icon className={card.iconColor} size={22} />
                         </div>
                       </div>
                     </div>
-                    <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden relative">
+                    <div className="w-full h-1.5 bg-black/10 rounded-full overflow-hidden relative">
                       <div
                         className="absolute inset-0 blur-md opacity-30"
                         style={{ width: `${getSafePercentage(card.percentage)}%`, background: getGradient(card.gradient) }}
@@ -327,7 +327,7 @@ const Dashboard = () => {
                     <p className="text-xs text-secondary">Scheduled for today</p>
                   </div>
                   <div className="bg-card rounded-lg p-2 shadow-sm">
-                    <Calendar className="text-[#F59E0B]" size={21} strokeWidth={2} />
+                    <Calendar className="text-[#d97706]" size={21} strokeWidth={2} />
                   </div>
                 </div>
               </div>
@@ -346,7 +346,7 @@ const Dashboard = () => {
                     <p className="text-xs text-secondary">Scheduled for tomorrow</p>
                   </div>
                   <div className="bg-card rounded-lg p-2 shadow-sm">
-                    <TrendingUp className="text-[#00FFA3]" size={21} strokeWidth={2} />
+                    <TrendingUp className="text-[#059669]" size={21} strokeWidth={2} />
                   </div>
                 </div>
               </div>
@@ -403,7 +403,7 @@ const Dashboard = () => {
                       </tr>
                     ) : (
                       deliveriesToday.map((delivery) => (
-                        <tr key={delivery.id || delivery._id} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                        <tr key={delivery.id || delivery._id} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                           <td className="px-4 py-3">
                             <div className="text-sm font-medium text-primary">{delivery.orderNumber || 'N/A'}</div>
                             {delivery.customerOrderNo && (
@@ -512,7 +512,7 @@ const Dashboard = () => {
                       </tr>
                     ) : (
                       pickupsTomorrow.map((pickup) => (
-                        <tr key={pickup.id || pickup._id} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                        <tr key={pickup.id || pickup._id} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                           <td className="px-4 py-3">
                             <div className="text-sm font-medium text-primary">{pickup.orderNumber || 'N/A'}</div>
                             {pickup.customerOrderNo && (

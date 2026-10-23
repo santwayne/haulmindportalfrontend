@@ -69,8 +69,8 @@ const GpsDashboard = () => {
       <span
         className="text-xs px-2 py-0.5 rounded-full font-medium"
         style={{
-          backgroundColor: active ? 'rgba(0,255,163,0.1)' : 'rgba(148,163,184,0.15)',
-          color: active ? '#00FFA3' : 'var(--text-secondary)',
+          backgroundColor: active ? 'rgba(5,150,105,0.1)' : 'rgba(148,163,184,0.15)',
+          color: active ? '#059669' : 'var(--text-secondary)',
         }}
       >
         {status || 'unknown'}
@@ -91,7 +91,7 @@ const GpsDashboard = () => {
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
-            <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(17,131,224,0.12)' }}>
+            <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(5,150,105,0.12)' }}>
               <Satellite className="w-5 h-5" style={{ color: 'var(--accent-navyblue)' }} />
             </div>
             <div>
@@ -157,7 +157,7 @@ const GpsDashboard = () => {
                     </tr>
                   ) : (
                     filteredDrivers.map((d) => (
-                      <tr key={d._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                      <tr key={d._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                         <td className="px-4 py-3 text-sm font-medium text-primary whitespace-nowrap">{d.name || 'Unknown'}</td>
                         <td className="px-4 py-3 text-sm text-secondary whitespace-nowrap">{d.email || d.phone || 'N/A'}</td>
                         <td className="px-4 py-3 text-sm text-secondary whitespace-nowrap">
@@ -194,7 +194,7 @@ const GpsDashboard = () => {
                     </tr>
                   ) : (
                     filteredEmployees.map((e) => (
-                      <tr key={e._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                      <tr key={e._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                         <td className="px-4 py-3 text-sm font-medium text-primary whitespace-nowrap">{e.name || 'Unknown'}</td>
                         <td className="px-4 py-3 text-sm text-secondary whitespace-nowrap">{e.email || 'N/A'}</td>
                         <td className="px-4 py-3 text-sm text-secondary whitespace-nowrap capitalize">{e.role || 'N/A'}</td>

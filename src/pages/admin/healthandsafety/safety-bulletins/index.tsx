@@ -420,7 +420,7 @@ const SafetyBulletins: React.FC = () => {
                               />
                             </div>
                             {bulletin.acknowledgmentRate < 100 && (
-                              <span className="text-xs text-[#F59E0B] flex items-center gap-1">
+                              <span className="text-xs text-[#d97706] flex items-center gap-1">
                                 <FaExclamationTriangle /> Pending
                               </span>
                             )}
@@ -440,17 +440,17 @@ const SafetyBulletins: React.FC = () => {
                         setSelectedBulletin(bulletin);
                         setShowDetailModal(true);
                       }}
-                      className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition"
+                      className="p-2 text-[#059669] hover:bg-blue-50 rounded-lg transition"
                       title="View Details"
                     >
                       <FaEye />
                     </button>
                     {bulletin.status === 'draft' && (
-                      <button className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition" title="Edit">
+                      <button className="p-2 text-[#059669] hover:bg-blue-50 rounded-lg transition" title="Edit">
                         <FaEdit />
                       </button>
                     )}
-                    <button className="p-2 text-secondary hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition" title="Download">
+                    <button className="p-2 text-secondary hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition" title="Download">
                       <FaDownload />
                     </button>
                   </div>

@@ -350,8 +350,8 @@ const Billing = () => {
   };
 
   const getPlanHeaderStyle = (plan: Plan): React.CSSProperties => {
-    if (plan.isDefault) return { background: 'linear-gradient(135deg, #091527 0%, #0d1e3a 100%)', borderBottom: '1px solid rgba(17,131,224,0.25)' };
-    return { background: 'linear-gradient(135deg, #0a1a10 0%, #0d2318 100%)', borderBottom: '1px solid rgba(0,255,163,0.15)' };
+    if (plan.isDefault) return { background: 'linear-gradient(135deg, #022c22 0%, #065f46 100%)', borderBottom: '1px solid rgba(5,150,105,0.25)' };
+    return { background: 'linear-gradient(135deg, #0a1a10 0%, #0d2318 100%)', borderBottom: '1px solid rgba(5,150,105,0.15)' };
   };
 
   const toggleSort = (type: SortType) => {
@@ -392,9 +392,9 @@ const Billing = () => {
             <button key={t} onClick={() => onTabChange(t)}
               className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${tab === t ? 'bg-card border-theme shadow-sm text-primary' : 'bg-transparent border-transparent text-secondary hover:text-primary'}`}>
               {t === 'monthly' ? 'Monthly' : t === '6months' ? (
-                <span className="flex items-center gap-1.5">6 Months {bonusDays > 0 && <span className="text-xs px-1.5 py-0.5 rounded-full font-semibold text-[#F59E0B]" style={{ backgroundColor: 'rgba(245,158,11,0.12)' }}>+{bonusDays} days free</span>}</span>
+                <span className="flex items-center gap-1.5">6 Months {bonusDays > 0 && <span className="text-xs px-1.5 py-0.5 rounded-full font-semibold text-[#d97706]" style={{ backgroundColor: 'rgba(245,158,11,0.12)' }}>+{bonusDays} days free</span>}</span>
               ) : (
-                <span className="flex items-center gap-1.5">Annual {freeMonths > 0 && <span className="text-xs px-1.5 py-0.5 rounded-full font-semibold text-[#00FFA3]" style={{ backgroundColor: 'rgba(0,255,163,0.1)' }}>{freeMonths} month free</span>}</span>
+                <span className="flex items-center gap-1.5">Annual {freeMonths > 0 && <span className="text-xs px-1.5 py-0.5 rounded-full font-semibold text-[#059669]" style={{ backgroundColor: 'rgba(5,150,105,0.1)' }}>{freeMonths} month free</span>}</span>
               )}
             </button>
           ))}
@@ -402,12 +402,12 @@ const Billing = () => {
 
         {/* Bonus banner */}
         {tab === '6months' && bonusDays > 0 && (
-          <div className="rounded-lg px-4 py-2.5 mb-3 text-sm border" style={{ backgroundColor: 'rgba(0,255,163,0.06)', borderColor: 'rgba(0,255,163,0.2)', color: '#00FFA3' }}>
+          <div className="rounded-lg px-4 py-2.5 mb-3 text-sm border" style={{ backgroundColor: 'rgba(5,150,105,0.06)', borderColor: 'rgba(5,150,105,0.2)', color: '#059669' }}>
             <strong>6-month bonus:</strong> Pay upfront for 6 months and receive {bonusDays} extra days of usage at no additional cost.
           </div>
         )}
         {tab === 'annual' && freeMonths > 0 && (
-          <div className="rounded-lg px-4 py-2.5 mb-3 text-sm border" style={{ backgroundColor: 'rgba(17,131,224,0.06)', borderColor: 'rgba(17,131,224,0.2)', color: 'var(--accent-navyblue)' }}>
+          <div className="rounded-lg px-4 py-2.5 mb-3 text-sm border" style={{ backgroundColor: 'rgba(5,150,105,0.06)', borderColor: 'rgba(5,150,105,0.2)', color: 'var(--accent-navyblue)' }}>
             <strong>Annual incentive:</strong> Pay for 12 months and get {freeMonths} full month{freeMonths > 1 ? 's' : ''} free — {12 + freeMonths} months of access for the price of 12.
           </div>
         )}
@@ -495,7 +495,7 @@ const Billing = () => {
                   {tab !== 'monthly' && <span className="text-secondary"> (applied per month within your billing period)</span>}
                 </p>
                 <div className="text-right">
-                  <span className="text-xl font-bold text-[#F59E0B]">{formatPrice(periodPrice, extraCur)}</span>
+                  <span className="text-xl font-bold text-[#d97706]">{formatPrice(periodPrice, extraCur)}</span>
                   <span className="text-xs text-orange-500 ml-1">{periodLabel}</span>
                 </div>
               </div>
@@ -543,7 +543,7 @@ const Billing = () => {
           />
         </div>
 
-        <div className="flex items-center gap-3 px-4 py-3 rounded-xl border" style={{ backgroundColor: 'rgba(17,131,224,0.04)', borderColor: 'rgba(17,131,224,0.15)' }}>
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl border" style={{ backgroundColor: 'rgba(5,150,105,0.04)', borderColor: 'rgba(5,150,105,0.15)' }}>
           <Switch checked={formData.isDefault} onChange={(checked) => setFormData({ ...formData, isDefault: checked })} />
           <div>
             <p className="text-sm font-semibold text-primary">Set as Default Plan</p>
@@ -567,7 +567,7 @@ const Billing = () => {
                   <Zap className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs text-[#F59E0B] font-semibold uppercase tracking-wide">Tier 1</p>
+                  <p className="text-xs text-[#d97706] font-semibold uppercase tracking-wide">Tier 1</p>
                   <p className="text-sm font-bold text-primary">1 – 10 Trucks</p>
                 </div>
               </div>
@@ -584,13 +584,13 @@ const Billing = () => {
             </div>
 
             {/* Tier 2: 11–20 Trucks */}
-            <div className="rounded-xl border-2 bg-card p-4" style={{ borderColor: 'rgba(17,131,224,0.25)' }}>
+            <div className="rounded-xl border-2 bg-card p-4" style={{ borderColor: 'rgba(5,150,105,0.25)' }}>
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                   <Star className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs text-[#00D1FF] font-semibold uppercase tracking-wide">Tier 2</p>
+                  <p className="text-xs text-[#059669] font-semibold uppercase tracking-wide">Tier 2</p>
                   <p className="text-sm font-bold text-primary">11 – 20 Trucks</p>
                 </div>
               </div>
@@ -647,7 +647,7 @@ const Billing = () => {
                   onChange={(e) => updateTruckPricing('sixMonthBonusDays', parseInt(e.target.value) || 0)}
                 />
               </div>
-              <div className="rounded-xl p-4 border" style={{ backgroundColor: 'rgba(0,255,163,0.05)', borderColor: 'rgba(0,255,163,0.15)' }}>
+              <div className="rounded-xl p-4 border" style={{ backgroundColor: 'rgba(5,150,105,0.05)', borderColor: 'rgba(5,150,105,0.15)' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <Star className="w-3.5 h-3.5 text-green-500" />
                   <label className="text-sm font-semibold text-primary">Annual Free Months</label>
@@ -707,42 +707,42 @@ const Billing = () => {
   };
 
   const mStyles = {
-    content: { background: 'var(--bg-card)', padding: 0, borderRadius: '16px', overflow: 'hidden' as const, border: '1px solid rgba(17,131,224,0.2)' },
+    content: { background: 'var(--bg-card)', padding: 0, borderRadius: '16px', overflow: 'hidden' as const, border: '1px solid rgba(5,150,105,0.2)' },
     body: { background: 'var(--bg-card)', padding: 0 },
   };
-  const divider = { borderColor: 'rgba(17,131,224,0.12)' };
+  const divider = { borderColor: 'rgba(5,150,105,0.12)' };
 
   // CSS overrides for Ant Design inputs inside dark modals
   const antdDarkInputs = `
     .billing-modal .ant-input, .billing-modal .ant-input-affix-wrapper,
     .billing-modal .ant-input-number, .billing-modal .ant-input-number-input {
       background: transparent !important; color: var(--text-primary) !important;
-      border-color: rgba(17,131,224,0.2) !important;
+      border-color: rgba(5,150,105,0.2) !important;
     }
     .billing-modal .ant-input::placeholder { color: var(--text-secondary) !important; }
     .billing-modal .ant-input-affix-wrapper > input { background: transparent !important; color: var(--text-primary) !important; }
     .billing-modal .ant-input:focus, .billing-modal .ant-input-focused,
     .billing-modal .ant-input-affix-wrapper:focus, .billing-modal .ant-input-affix-wrapper-focused {
-      border-color: var(--accent-navyblue) !important; box-shadow: 0 0 0 2px rgba(17,131,224,0.15) !important;
+      border-color: var(--accent-navyblue) !important; box-shadow: 0 0 0 2px rgba(5,150,105,0.15) !important;
     }
     .billing-modal .ant-input-group-addon {
-      background: rgba(17,131,224,0.06) !important; color: var(--text-secondary) !important;
-      border-color: rgba(17,131,224,0.2) !important;
+      background: rgba(5,150,105,0.06) !important; color: var(--text-secondary) !important;
+      border-color: rgba(5,150,105,0.2) !important;
     }
     .billing-modal .ant-input-number-handler-wrap { background: var(--bg-card) !important; }
-    .billing-modal .ant-input-number-handler { border-color: rgba(17,131,224,0.15) !important; }
-    .billing-modal .ant-input-number-handler:hover { background: rgba(17,131,224,0.08) !important; }
+    .billing-modal .ant-input-number-handler { border-color: rgba(5,150,105,0.15) !important; }
+    .billing-modal .ant-input-number-handler:hover { background: rgba(5,150,105,0.08) !important; }
     .billing-modal .ant-select-selector {
-      background: transparent !important; border-color: rgba(17,131,224,0.2) !important;
+      background: transparent !important; border-color: rgba(5,150,105,0.2) !important;
     }
     .billing-modal .ant-select-selection-item, .billing-modal .ant-select-selection-placeholder {
       color: var(--text-primary) !important;
     }
     .billing-modal textarea.ant-input { background: transparent !important; }
-    .billing-modal .ant-switch { background: rgba(255,255,255,0.15) !important; }
+    .billing-modal .ant-switch { background: rgba(15,31,23,0.15) !important; }
     .billing-modal .ant-switch-checked { background: var(--accent-navyblue) !important; }
-    .billing-modal .ant-btn-sm { background: rgba(17,131,224,0.06) !important; color: var(--text-primary) !important; border-color: rgba(17,131,224,0.2) !important; }
-    .billing-modal .ant-btn-sm:hover { background: rgba(17,131,224,0.12) !important; }
+    .billing-modal .ant-btn-sm { background: rgba(5,150,105,0.06) !important; color: var(--text-primary) !important; border-color: rgba(5,150,105,0.2) !important; }
+    .billing-modal .ant-btn-sm:hover { background: rgba(5,150,105,0.12) !important; }
     .billing-modal .ant-btn-sm.ant-btn-dangerous { background: rgba(244,63,94,0.08) !important; color: var(--accent-red) !important; border-color: rgba(244,63,94,0.2) !important; }
   `;
 
@@ -792,7 +792,7 @@ const Billing = () => {
 
           {/* Statistics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div className="rounded-xl shadow-lg p-4 text-white border" style={{ background: 'linear-gradient(135deg, #091527 0%, #0d1e3a 100%)', borderColor: 'rgba(17,131,224,0.3)' }}>
+            <div className="rounded-xl shadow-lg p-4 text-white border" style={{ background: 'linear-gradient(135deg, #022c22 0%, #065f46 100%)', borderColor: 'rgba(5,150,105,0.3)' }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Total Plans</p>
@@ -801,7 +801,7 @@ const Billing = () => {
                 <CreditCard className="w-8 h-8 opacity-80" />
               </div>
             </div>
-            <div className="rounded-xl shadow-lg p-4 text-white border" style={{ background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)', borderColor: 'rgba(0,255,163,0.2)' }}>
+            <div className="rounded-xl shadow-lg p-4 text-white border" style={{ background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)', borderColor: 'rgba(5,150,105,0.2)' }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Active Plans</p>
@@ -831,9 +831,9 @@ const Billing = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full h-11 rounded-lg border pl-10 pr-4 text-sm text-primary bg-transparent focus:outline-none"
-                style={{ borderColor: 'rgba(17,131,224,0.2)' }}
-                onFocus={(e) => { e.target.style.borderColor = 'var(--accent-navyblue)'; e.target.style.boxShadow = '0 0 0 2px rgba(17,131,224,0.15)'; }}
-                onBlur={(e) => { e.target.style.borderColor = 'rgba(17,131,224,0.2)'; e.target.style.boxShadow = ''; }}
+                style={{ borderColor: 'rgba(5,150,105,0.2)' }}
+                onFocus={(e) => { e.target.style.borderColor = 'var(--accent-navyblue)'; e.target.style.boxShadow = '0 0 0 2px rgba(5,150,105,0.15)'; }}
+                onBlur={(e) => { e.target.style.borderColor = 'rgba(5,150,105,0.2)'; e.target.style.boxShadow = ''; }}
               />
             </div>
 
@@ -843,9 +843,9 @@ const Billing = () => {
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as FilterType)}
                 className="h-11 rounded-lg border px-3 pr-8 text-sm text-primary focus:outline-none w-36"
-                style={{ backgroundColor: 'var(--bg-card)', borderColor: 'rgba(17,131,224,0.2)' }}
+                style={{ backgroundColor: 'var(--bg-card)', borderColor: 'rgba(5,150,105,0.2)' }}
                 onFocus={(e) => { e.target.style.borderColor = 'var(--accent-navyblue)'; }}
-                onBlur={(e) => { e.target.style.borderColor = 'rgba(17,131,224,0.2)'; }}
+                onBlur={(e) => { e.target.style.borderColor = 'rgba(5,150,105,0.2)'; }}
               >
                 <option value="all" style={{ backgroundColor: 'var(--bg-card)' }}>All Plans</option>
                 <option value="active" style={{ backgroundColor: 'var(--bg-card)' }}>Active</option>
@@ -866,15 +866,15 @@ const Billing = () => {
                 trigger={['click']}
               >
                 <button className="h-11 flex items-center gap-2 px-4 rounded-lg border text-sm font-medium text-primary transition-colors"
-                  style={{ backgroundColor: 'transparent', borderColor: 'rgba(17,131,224,0.2)' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(17,131,224,0.06)'; }}
+                  style={{ backgroundColor: 'transparent', borderColor: 'rgba(5,150,105,0.2)' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(5,150,105,0.06)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}>
                   <ArrowUpDown className="w-4 h-4" /> Sort
                 </button>
               </Dropdown>
 
               {/* Grid/List toggle */}
-              <div className="flex rounded-lg overflow-hidden border" style={{ borderColor: 'rgba(17,131,224,0.2)' }}>
+              <div className="flex rounded-lg overflow-hidden border" style={{ borderColor: 'rgba(5,150,105,0.2)' }}>
                 <button onClick={() => setViewMode('grid')}
                   className="w-10 h-10 flex items-center justify-center transition-all"
                   style={viewMode === 'grid'
@@ -885,8 +885,8 @@ const Billing = () => {
                 <button onClick={() => setViewMode('list')}
                   className="w-10 h-10 flex items-center justify-center transition-all border-l"
                   style={viewMode === 'list'
-                    ? { backgroundColor: 'var(--accent-navyblue)', color: '#fff', borderColor: 'rgba(17,131,224,0.2)' }
-                    : { backgroundColor: 'transparent', color: 'var(--text-secondary)', borderColor: 'rgba(17,131,224,0.2)' }}>
+                    ? { backgroundColor: 'var(--accent-navyblue)', color: '#fff', borderColor: 'rgba(5,150,105,0.2)' }
+                    : { backgroundColor: 'transparent', color: 'var(--text-secondary)', borderColor: 'rgba(5,150,105,0.2)' }}>
                   <List className="w-4 h-4" />
                 </button>
               </div>
@@ -939,7 +939,7 @@ const Billing = () => {
                 <div
                   key={plan._id}
                   className="bg-card rounded-3xl shadow-xl overflow-hidden border-2 transition-all duration-300 hover:shadow-2xl"
-                  style={{ borderColor: plan.isDefault ? 'rgba(17,131,224,0.4)' : 'rgba(0,209,255,0.1)' }}
+                  style={{ borderColor: plan.isDefault ? 'rgba(5,150,105,0.4)' : 'rgba(5,150,105,0.1)' }}
                 >
                   {/* ── Plan Header ── */}
                   <div className="px-8 py-6 relative overflow-hidden" style={getPlanHeaderStyle(plan)}>
@@ -1007,7 +1007,7 @@ const Billing = () => {
                                     ? 'shadow-md'
                                     : 'text-secondary hover:text-primary'
                                   }`}
-                                style={planTab === tab ? { backgroundColor: 'rgba(17,131,224,0.15)', color: 'var(--accent-navyblue)', border: '1px solid rgba(17,131,224,0.25)' } : undefined}
+                                style={planTab === tab ? { backgroundColor: 'rgba(5,150,105,0.15)', color: 'var(--accent-navyblue)', border: '1px solid rgba(5,150,105,0.25)' } : undefined}
                               >
                                 <span>{tab === 'monthly' ? 'Monthly' : tab === '6months' ? '6 Months' : 'Annual'}</span>
                                 <span className={`text-[10px] font-bold mt-0.5 ${planTab === tab
@@ -1025,28 +1025,28 @@ const Billing = () => {
                         {planTab === '6months' && bonusDays > 0 && (
                           <div className="mb-6 flex items-center gap-4 rounded-2xl px-6 py-4 border" style={{ backgroundColor: 'rgba(245,158,11,0.08)', borderColor: 'rgba(245,158,11,0.25)' }}>
                             <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(245,158,11,0.15)' }}>
-                              <Zap className="w-5 h-5 text-[#F59E0B]" />
+                              <Zap className="w-5 h-5 text-[#d97706]" />
                             </div>
                             <div>
-                              <p className="text-sm font-bold text-[#F59E0B]">6-Month Plan Bonus</p>
+                              <p className="text-sm font-bold text-[#d97706]">6-Month Plan Bonus</p>
                               <p className="text-xs text-secondary mt-0.5">Admins pay for 6 months and receive <strong>{bonusDays} extra days</strong> of access free</p>
                             </div>
                             <div className="ml-auto flex-shrink-0">
-                              <span className="text-xs font-bold px-3 py-1.5 rounded-full text-[#F59E0B]" style={{ backgroundColor: 'rgba(245,158,11,0.15)' }}>+{bonusDays} Days</span>
+                              <span className="text-xs font-bold px-3 py-1.5 rounded-full text-[#d97706]" style={{ backgroundColor: 'rgba(245,158,11,0.15)' }}>+{bonusDays} Days</span>
                             </div>
                           </div>
                         )}
                         {planTab === 'annual' && freeMonths > 0 && (
-                          <div className="mb-6 flex items-center gap-4 rounded-2xl px-6 py-4 border" style={{ backgroundColor: 'rgba(0,255,163,0.06)', borderColor: 'rgba(0,255,163,0.2)' }}>
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(0,255,163,0.12)' }}>
-                              <Star className="w-5 h-5 text-[#00FFA3]" />
+                          <div className="mb-6 flex items-center gap-4 rounded-2xl px-6 py-4 border" style={{ backgroundColor: 'rgba(5,150,105,0.06)', borderColor: 'rgba(5,150,105,0.2)' }}>
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(5,150,105,0.12)' }}>
+                              <Star className="w-5 h-5 text-[#059669]" />
                             </div>
                             <div>
-                              <p className="text-sm font-bold text-[#00FFA3]">Annual Plan — Best Value</p>
+                              <p className="text-sm font-bold text-[#059669]">Annual Plan — Best Value</p>
                               <p className="text-xs text-secondary mt-0.5">Admins get <strong>{freeMonths} month{freeMonths > 1 ? 's' : ''} free</strong> when paying annually</p>
                             </div>
                             <div className="ml-auto flex-shrink-0">
-                              <span className="text-xs font-bold px-3 py-1.5 rounded-full text-[#00FFA3]" style={{ backgroundColor: 'rgba(0,255,163,0.12)' }}>+{freeMonths} Mo Free</span>
+                              <span className="text-xs font-bold px-3 py-1.5 rounded-full text-[#059669]" style={{ backgroundColor: 'rgba(5,150,105,0.12)' }}>+{freeMonths} Mo Free</span>
                             </div>
                           </div>
                         )}
@@ -1063,7 +1063,7 @@ const Billing = () => {
                               <div
                                 key={idx}
                                 className={`relative rounded-2xl border-2 p-6 transition-all duration-200 flex flex-col ${isPopular ? 'shadow-xl' : 'bg-card hover:shadow-lg'}`}
-                              style={isPopular ? { borderColor: 'rgba(17,131,224,0.5)', backgroundColor: 'rgba(17,131,224,0.06)', boxShadow: '0 0 20px rgba(17,131,224,0.1)' } : { borderColor: 'rgba(0,209,255,0.1)' }}
+                              style={isPopular ? { borderColor: 'rgba(5,150,105,0.5)', backgroundColor: 'rgba(5,150,105,0.06)', boxShadow: '0 0 20px rgba(5,150,105,0.1)' } : { borderColor: 'rgba(5,150,105,0.1)' }}
                               >
                                 {isPopular && (
                                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 text-white text-xs font-bold px-4 py-1 rounded-full shadow-lg whitespace-nowrap" style={{ backgroundColor: 'var(--accent-navyblue)' }}>
@@ -1073,7 +1073,7 @@ const Billing = () => {
 
                                 <div className="flex items-center gap-3 mb-5">
                                   <div className="p-2.5 rounded-xl" style={{ backgroundColor: isPopular ? 'var(--accent-navyblue)' : 'rgba(245,158,11,0.12)' }}>
-                                    <BarChart3 className={`w-5 h-5 ${isPopular ? 'text-white' : 'text-[#F59E0B]'}`} />
+                                    <BarChart3 className={`w-5 h-5 ${isPopular ? 'text-white' : 'text-[#d97706]'}`} />
                                   </div>
                                   <div>
                                     <p className="text-[11px] text-secondary font-semibold uppercase tracking-wider">Fleet Size</p>
@@ -1108,18 +1108,18 @@ const Billing = () => {
                                   return (
                                     <div className="mb-4 rounded-lg overflow-hidden border" style={{ borderColor: 'rgba(245,158,11,0.2)' }}>
                                       <div className="flex items-center gap-1.5 px-3 py-1.5 border-b" style={{ backgroundColor: 'rgba(245,158,11,0.08)', borderColor: 'rgba(245,158,11,0.2)' }}>
-                                        <TrendingUp className="w-3 h-3 text-[#F59E0B]" />
-                                        <span className="text-[10px] font-bold text-[#F59E0B] uppercase tracking-wide">Additional Trucks</span>
+                                        <TrendingUp className="w-3 h-3 text-[#d97706]" />
+                                        <span className="text-[10px] font-bold text-[#d97706] uppercase tracking-wide">Additional Trucks</span>
                                       </div>
                                       <div className="flex items-center justify-between px-3 py-2">
                                         <span className="text-xs text-secondary">Beyond {lastTierMax} trucks</span>
-                                        <span className="text-xs font-bold text-[#F59E0B]">+{formatPrice(extraPrice * billingFactor, tp?.extraTruckCurrency ?? 'CAD')}{billingLabel}/truck</span>
+                                        <span className="text-xs font-bold text-[#d97706]">+{formatPrice(extraPrice * billingFactor, tp?.extraTruckCurrency ?? 'CAD')}{billingLabel}/truck</span>
                                       </div>
                                     </div>
                                   );
                                 })()}
 
-                                <div className="h-px mb-5" style={{ backgroundColor: isPopular ? 'rgba(17,131,224,0.2)' : 'rgba(255,255,255,0.06)' }} />
+                                <div className="h-px mb-5" style={{ backgroundColor: isPopular ? 'rgba(5,150,105,0.2)' : 'rgba(15,31,23,0.06)' }} />
 
                                 <div className="space-y-2">
                                   <div className="flex items-center gap-2 text-sm text-primary">
@@ -1154,8 +1154,8 @@ const Billing = () => {
                           return (
                             <div className="mb-6 rounded-2xl border-2 border-dashed overflow-hidden" style={{ borderColor: 'rgba(245,158,11,0.3)', backgroundColor: 'var(--bg-card)' }}>
                               <div className="flex items-center gap-2 px-5 py-3 border-b" style={{ backgroundColor: 'rgba(245,158,11,0.08)', borderColor: 'rgba(245,158,11,0.2)' }}>
-                                <TrendingUp className="w-4 h-4 text-[#F59E0B]" />
-                                <span className="text-sm font-bold text-[#F59E0B]">Additional Trucks Beyond {lastTierMax}</span>
+                                <TrendingUp className="w-4 h-4 text-[#d97706]" />
+                                <span className="text-sm font-bold text-[#d97706]">Additional Trucks Beyond {lastTierMax}</span>
                               </div>
                               <div className="flex items-center gap-5 flex-wrap px-5 py-4">
                                 <div className="flex-1 min-w-0">
@@ -1163,7 +1163,7 @@ const Billing = () => {
                                   <p className="text-xs text-secondary mt-1">Base rate: {formatPrice(extraPrice, extraCur)}/truck/month</p>
                                 </div>
                                 <div className="text-right flex-shrink-0">
-                                  <p className="text-2xl font-extrabold text-[#F59E0B]">{formatPrice(extraDisplayPrice, extraCur)}</p>
+                                  <p className="text-2xl font-extrabold text-[#d97706]">{formatPrice(extraDisplayPrice, extraCur)}</p>
                                   <p className="text-xs text-orange-500 font-medium">{billingLabel}</p>
                                 </div>
                               </div>
@@ -1180,8 +1180,8 @@ const Billing = () => {
                         <div className={`grid gap-2.5 ${plan.features.filter(f => f.included).length > 4 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}>
                           {plan.features.filter(f => f.included).map((f, fIdx) => (
                             <div key={fIdx} className="flex items-center gap-2.5">
-                              <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(0,255,163,0.1)' }}>
-                                <CheckCircle className="w-3.5 h-3.5 text-[#00FFA3]" />
+                              <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(5,150,105,0.1)' }}>
+                                <CheckCircle className="w-3.5 h-3.5 text-[#059669]" />
                               </div>
                               <span className="text-sm text-primary">{f.name}</span>
                             </div>
@@ -1201,7 +1201,7 @@ const Billing = () => {
               {filteredAndSortedPlans.map((plan) => (
                 <div
                   key={plan._id}
-                  className="p-6 hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                  className="p-6 hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
@@ -1209,18 +1209,18 @@ const Billing = () => {
                         <h3 className="text-lg font-semibold text-primary">{plan.planName}</h3>
                         {plan.isDefault && (
                           <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium"
-                            style={{ backgroundColor: 'rgba(17,131,224,0.12)', color: 'var(--accent-navyblue)' }}>
+                            style={{ backgroundColor: 'rgba(5,150,105,0.12)', color: 'var(--accent-navyblue)' }}>
                             <Star className="w-3 h-3" /> Default
                           </span>
                         )}
                         <span className="text-xs px-2 py-0.5 rounded-full font-medium"
-                          style={{ backgroundColor: 'rgba(0,255,163,0.08)', color: '#00FFA3' }}>
+                          style={{ backgroundColor: 'rgba(5,150,105,0.08)', color: '#059669' }}>
                           {plan.planType === 'lifetime' ? 'Lifetime' : 'Monthly'}
                         </span>
                         <span className="text-xs px-2 py-0.5 rounded-full font-medium"
                           style={{
-                            backgroundColor: plan.status === 'active' ? 'rgba(0,255,163,0.08)' : 'rgba(255,255,255,0.06)',
-                            color: plan.status === 'active' ? '#00FFA3' : 'var(--text-secondary)',
+                            backgroundColor: plan.status === 'active' ? 'rgba(5,150,105,0.08)' : 'rgba(15,31,23,0.06)',
+                            color: plan.status === 'active' ? '#059669' : 'var(--text-secondary)',
                           }}>
                           {plan.status}
                         </span>
@@ -1251,33 +1251,33 @@ const Billing = () => {
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <button onClick={() => handleView(plan)}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
-                        style={{ backgroundColor: 'rgba(17,131,224,0.07)', borderColor: 'rgba(17,131,224,0.2)', color: 'var(--accent-navyblue)' }}
-                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(17,131,224,0.14)'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(17,131,224,0.07)'; }}>
+                        style={{ backgroundColor: 'rgba(5,150,105,0.07)', borderColor: 'rgba(5,150,105,0.2)', color: 'var(--accent-navyblue)' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(5,150,105,0.14)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(5,150,105,0.07)'; }}>
                         <Eye className="w-3.5 h-3.5" /> View
                       </button>
                       <button onClick={() => handleEdit(plan)}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors text-primary"
-                        style={{ backgroundColor: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)' }}
-                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'; }}>
+                        style={{ backgroundColor: 'rgba(15,31,23,0.04)', borderColor: 'rgba(15,31,23,0.1)' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(15,31,23,0.08)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(15,31,23,0.04)'; }}>
                         <Edit className="w-3.5 h-3.5" /> Edit
                       </button>
                       <button
                         onClick={() => handleToggleStatus(plan)}
                         disabled={statusTogglingId === plan._id}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors text-primary disabled:opacity-50"
-                        style={{ backgroundColor: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)' }}
-                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'; }}>
+                        style={{ backgroundColor: 'rgba(15,31,23,0.04)', borderColor: 'rgba(15,31,23,0.1)' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(15,31,23,0.08)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(15,31,23,0.04)'; }}>
                         {plan.status === 'active' ? <ToggleRight className="w-3.5 h-3.5" /> : <ToggleLeft className="w-3.5 h-3.5" />}
                         {plan.status === 'active' ? 'Deactivate' : 'Activate'}
                       </button>
                       <button onClick={() => handleDuplicate(plan)}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors text-primary"
-                        style={{ backgroundColor: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)' }}
-                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'; }}>
+                        style={{ backgroundColor: 'rgba(15,31,23,0.04)', borderColor: 'rgba(15,31,23,0.1)' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(15,31,23,0.08)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(15,31,23,0.04)'; }}>
                         <Copy className="w-3.5 h-3.5" /> Duplicate
                       </button>
                       <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDelete(plan); }}
@@ -1302,7 +1302,7 @@ const Billing = () => {
         <style>{antdDarkInputs}</style>
         {/* Header */}
         <div className="px-6 pt-5 pb-4 flex items-center gap-3 border-b" style={divider}>
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(17,131,224,0.12)' }}>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(5,150,105,0.12)' }}>
             <Plus className="w-5 h-5" style={{ color: 'var(--accent-navyblue)' }} />
           </div>
           <div>
@@ -1323,7 +1323,7 @@ const Billing = () => {
           <button onClick={handleCreate}
             className="px-5 py-2 rounded-lg text-sm font-semibold text-white transition-all hover:-translate-y-0.5 transform flex items-center gap-2"
             style={{ backgroundColor: 'var(--accent-navyblue)' }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#0d6fc7'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#047857'; }}
             onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent-navyblue)'; }}>
             <Plus className="w-4 h-4" /> Create Plan
           </button>
@@ -1335,7 +1335,7 @@ const Billing = () => {
         footer={null} width={500} title={null} styles={mStyles}>
         {/* Header */}
         <div className="px-6 pt-5 pb-4 flex items-center gap-3 border-b" style={divider}>
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(17,131,224,0.12)' }}>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(5,150,105,0.12)' }}>
             <Edit className="w-4 h-4" style={{ color: 'var(--accent-navyblue)' }} />
           </div>
           <div>
@@ -1359,9 +1359,9 @@ const Billing = () => {
               rows={4}
               autoFocus
               className="block w-full rounded-lg border px-3 py-2.5 text-sm text-primary bg-transparent focus:outline-none resize-none"
-              style={{ borderColor: 'rgba(17,131,224,0.2)' }}
-              onFocus={(e) => { e.target.style.borderColor = 'var(--accent-navyblue)'; e.target.style.boxShadow = '0 0 0 2px rgba(17,131,224,0.15)'; }}
-              onBlur={(e) => { e.target.style.borderColor = 'rgba(17,131,224,0.2)'; e.target.style.boxShadow = ''; }}
+              style={{ borderColor: 'rgba(5,150,105,0.2)' }}
+              onFocus={(e) => { e.target.style.borderColor = 'var(--accent-navyblue)'; e.target.style.boxShadow = '0 0 0 2px rgba(5,150,105,0.15)'; }}
+              onBlur={(e) => { e.target.style.borderColor = 'rgba(5,150,105,0.2)'; e.target.style.boxShadow = ''; }}
             />
           </div>
         </div>
@@ -1374,7 +1374,7 @@ const Billing = () => {
           <button onClick={handleUpdate}
             className="px-5 py-2 rounded-lg text-sm font-semibold text-white transition-all hover:-translate-y-0.5 transform"
             style={{ backgroundColor: 'var(--accent-navyblue)' }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#0d6fc7'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#047857'; }}
             onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent-navyblue)'; }}>
             Save Description
           </button>
@@ -1387,7 +1387,7 @@ const Billing = () => {
           footer={null} width={720} title={null} styles={mStyles}>
           {/* Header */}
           <div className="px-6 pt-5 pb-4 flex items-center gap-3 border-b" style={divider}>
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(17,131,224,0.12)' }}>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(5,150,105,0.12)' }}>
               <CreditCard className="w-4 h-4" style={{ color: 'var(--accent-navyblue)' }} />
             </div>
             <div className="flex-1 min-w-0">
@@ -1396,8 +1396,8 @@ const Billing = () => {
                 {selectedPlan.isDefault && <Tag color="blue" icon={<Star className="w-3 h-3" />}>Default</Tag>}
                 <span className="text-xs px-2 py-0.5 rounded-full font-medium"
                   style={{
-                    backgroundColor: selectedPlan.status === 'active' ? 'rgba(0,255,163,0.1)' : 'rgba(244,63,94,0.1)',
-                    color: selectedPlan.status === 'active' ? '#00FFA3' : 'var(--accent-red)',
+                    backgroundColor: selectedPlan.status === 'active' ? 'rgba(5,150,105,0.1)' : 'rgba(244,63,94,0.1)',
+                    color: selectedPlan.status === 'active' ? '#059669' : 'var(--accent-red)',
                   }}>
                   {selectedPlan.status}
                 </span>
@@ -1410,7 +1410,7 @@ const Billing = () => {
         >
           <div className="space-y-6 py-4">
             {/* Header Info */}
-            <div className="rounded-lg p-4 border border-theme" style={{ backgroundColor: 'rgba(17,131,224,0.04)' }}>
+            <div className="rounded-lg p-4 border border-theme" style={{ backgroundColor: 'rgba(5,150,105,0.04)' }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-secondary mb-1">Plan Type</p>
@@ -1452,7 +1452,7 @@ const Billing = () => {
                   Lifetime Pricing Options
                 </h4>
                 <div className="space-y-3">
-                  <div className="p-5 rounded-xl border-2" style={{ background: 'linear-gradient(135deg, rgba(17,131,224,0.08), rgba(17,131,224,0.04))', borderColor: 'rgba(17,131,224,0.25)' }}>
+                  <div className="p-5 rounded-xl border-2" style={{ background: 'linear-gradient(135deg, rgba(5,150,105,0.08), rgba(5,150,105,0.04))', borderColor: 'rgba(5,150,105,0.25)' }}>
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-secondary mb-1">One-time Payment</p>
@@ -1520,7 +1520,7 @@ const Billing = () => {
                     <div key={i} className="flex items-center gap-2 text-sm">
                       {f.included
                         ? <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        : <XCircle className="w-4 h-4 text-gray-300 flex-shrink-0" />}
+                        : <XCircle className="w-4 h-4 text-gray-600 flex-shrink-0" />}
                       <span className={f.included ? 'text-primary' : 'text-secondary line-through'}>{f.name}</span>
                     </div>
                   ))}
@@ -1561,7 +1561,7 @@ const Billing = () => {
             <button onClick={() => { setShowViewModal(false); handleEdit(selectedPlan); }}
               className="px-5 py-2 rounded-lg text-sm font-semibold text-white transition-all hover:-translate-y-0.5 transform flex items-center gap-2"
               style={{ backgroundColor: 'var(--accent-navyblue)' }}
-              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#0d6fc7'; }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#047857'; }}
               onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent-navyblue)'; }}>
               <Edit className="w-3.5 h-3.5" /> Edit Plan
             </button>
@@ -1574,7 +1574,7 @@ const Billing = () => {
         footer={null} width={1000} title={null} styles={mStyles}>
         {/* Header */}
         <div className="px-6 pt-5 pb-4 flex items-center gap-3 border-b" style={divider}>
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(17,131,224,0.12)' }}>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(5,150,105,0.12)' }}>
             <BarChart3 className="w-4 h-4" style={{ color: 'var(--accent-navyblue)' }} />
           </div>
           <div>
@@ -1660,7 +1660,7 @@ const Billing = () => {
                       const plan = plans.find(p => p._id === planId);
                       return plan ? (
                         <td key={planId} className="text-center p-3">
-                          {plan.isDefault ? <CheckCircle className="w-5 h-5 text-green-500 mx-auto" /> : <XCircle className="w-5 h-5 text-gray-300 mx-auto" />}
+                          {plan.isDefault ? <CheckCircle className="w-5 h-5 text-green-500 mx-auto" /> : <XCircle className="w-5 h-5 text-gray-600 mx-auto" />}
                         </td>
                       ) : null;
                     })}
@@ -1741,7 +1741,7 @@ const Billing = () => {
         </div>
         {/* Body */}
         <div className="px-6 py-5 space-y-4">
-          <div className="rounded-xl p-4 border space-y-1" style={{ backgroundColor: 'rgba(17,131,224,0.04)', borderColor: 'rgba(17,131,224,0.12)' }}>
+          <div className="rounded-xl p-4 border space-y-1" style={{ backgroundColor: 'rgba(5,150,105,0.04)', borderColor: 'rgba(5,150,105,0.12)' }}>
             <div className="flex items-center gap-2">
               <CreditCard className="w-4 h-4 text-secondary flex-shrink-0" />
               <span className="text-sm font-medium text-primary">"{deletePlanName}"</span>
@@ -1749,8 +1749,8 @@ const Billing = () => {
           </div>
           <div className="rounded-lg p-3 border flex items-start gap-2.5"
             style={{ backgroundColor: 'rgba(245,158,11,0.08)', borderColor: 'rgba(245,158,11,0.2)' }}>
-            <Sparkles className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#F59E0B]" />
-            <p className="text-xs text-[#F59E0B]">
+            <Sparkles className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#d97706]" />
+            <p className="text-xs text-[#d97706]">
               If this plan has active subscriptions, those customers will need to be migrated before deletion.
             </p>
           </div>

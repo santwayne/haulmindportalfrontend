@@ -660,12 +660,12 @@ const SafetyInspections: React.FC = () => {
                 <div className="space-y-2">
                   {CHECKLIST_TEMPLATES[selectedType as ChecklistTemplateKey].slice(0, 3).map((item: ChecklistTemplateItem, idx: number) => (
                     <div key={idx} className="flex items-center gap-2 text-sm text-blue-800">
-                      <FaCheckCircle className="text-[#00D1FF]" />
+                      <FaCheckCircle className="text-[#059669]" />
                       <span>{item.question}</span>
                       {item.photoRequired && <FaCamera className="text-blue-400" size={12} />}
                     </div>
                   ))}
-                  <p className="text-xs text-[#00D1FF] mt-2">
+                  <p className="text-xs text-[#059669] mt-2">
                     + {CHECKLIST_TEMPLATES[selectedType as ChecklistTemplateKey].length - 3} more items
                   </p>
                 </div>
@@ -810,7 +810,7 @@ const SafetyInspections: React.FC = () => {
                             {item.status === 'pass' && <FaCheckCircle className="text-green-600" size={20} />}
                             {item.status === 'fail' && <FaTimes className="text-[#A855F7]" size={20} />}
                             {item.status === 'na' && <span className="text-secondary">N/A</span>}
-                            {item.status === 'pending' && <FaClock className="text-[#00FFA3]" size={20} />}
+                            {item.status === 'pending' && <FaClock className="text-[#059669]" size={20} />}
                             <span className="font-medium">{item.question}</span>
                             {item.photoRequired && <FaCamera className="text-blue-400" size={14} />}
                           </div>
@@ -962,7 +962,7 @@ const SafetyInspections: React.FC = () => {
           <div className="text-2xl font-bold text-primary">{stats.total}</div>
         </div>
         <div className="bg-card p-4 rounded-xl shadow-sm border border-blue-200">
-          <div className="text-sm text-[#00D1FF] mb-1">Scheduled</div>
+          <div className="text-sm text-[#059669] mb-1">Scheduled</div>
           <div className="text-2xl font-bold text-blue-900">{stats.scheduled}</div>
         </div>
         <div className="bg-card p-4 rounded-xl shadow-sm border border-yellow-200">
@@ -978,8 +978,8 @@ const SafetyInspections: React.FC = () => {
           <div className="text-2xl font-bold text-red-900">{stats.overdue}</div>
         </div>
         <div className="bg-card p-4 rounded-xl shadow-sm border border-orange-200">
-          <div className="text-sm text-[#F59E0B] mb-1">Action Required</div>
-          <div className="text-2xl font-bold text-[#F59E0B]">{stats.actionRequired}</div>
+          <div className="text-sm text-[#d97706] mb-1">Action Required</div>
+          <div className="text-2xl font-bold text-[#d97706]">{stats.actionRequired}</div>
         </div>
         <div className="bg-card p-4 rounded-xl shadow-sm border border-purple-200">
           <div className="text-sm text-purple-900 mb-1">Compliant</div>
@@ -1051,8 +1051,8 @@ const SafetyInspections: React.FC = () => {
             key={tab}
             onClick={() => setCurrentTab(tab)}
             className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition ${currentTab === tab
-              ? 'text-white'
-              : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)]'
+              ? 'text-white bg-[var(--accent-navyblue)]'
+              : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)]'
               }
             style={currentTab === tab ? { background: CUSTOM_COLORS.primary } : {}}`}
           >
@@ -1077,7 +1077,7 @@ const SafetyInspections: React.FC = () => {
                 <th className="px-6 py-4 text-left text-xs font-semibold text-headings uppercase">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-theme divide-white/5">
+            <tbody className="divide-y divide-theme divide-black/5">
               {loading ? (
                 <tr>
                   <td colSpan={8} className="px-6 py-8 text-center text-secondary">Loading...</td>
@@ -1091,7 +1091,7 @@ const SafetyInspections: React.FC = () => {
                   <tr key={inspection._id} onClick={() => {
                     setSelectedInspection(inspection);
                     setShowDetailModal(true);
-                  }} className="hover:bg-[rgba(255,255,255,0.03)] transition cursor-pointer">
+                  }} className="hover:bg-[rgba(15,31,23,0.03)] transition cursor-pointer">
                     <td className="px-6 py-4">
                       <div className="font-semibold text-primary">{inspection.inspectionNumber}</div>
                       <div className="text-xs text-secondary">{inspection.category}</div>

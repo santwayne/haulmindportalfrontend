@@ -1044,7 +1044,7 @@ const FuelReports = () => {
   if (emptyStateMessage) {
     return (
       <div className="min-h-screen bg-card flex flex-col items-center justify-center text-center space-y-4 px-6">
-        <div className="text-5xl text-gray-300">⛽</div>
+        <div className="text-5xl text-gray-600">⛽</div>
         <div className="space-y-2 max-w-md">
           <h2 className="text-2xl font-semibold text-primary">
             No fuel reports available
@@ -1252,14 +1252,14 @@ const FuelReports = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setImportModalOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg text-sm hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg text-sm hover:bg-[rgba(15,31,23,0.03)] transition-colors"
               >
                 <Upload className="w-4 h-4" />
                 Import Fuel (CSV)
               </button>
               <button
                 onClick={() => setOcrModalOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg text-sm hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg text-sm hover:bg-[rgba(15,31,23,0.03)] transition-colors"
               >
                 <FileText className="w-4 h-4" />
                 Upload Receipt (OCR)
@@ -1315,7 +1315,7 @@ const FuelReports = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-theme divide-white/5">
+              <tbody className="divide-y divide-theme divide-black/5">
                 {filteredReports.length === 0 ? (
                   <tr>
                     <td
@@ -1340,7 +1340,7 @@ const FuelReports = () => {
                     const paymentNotes = report.paymentNotes || '—';
 
                     return (
-                      <tr key={report._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                      <tr key={report._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                         <td className="px-6 py-2 text-xs text-primary font-medium">
                           {report.date ? new Date(report.date).toLocaleDateString() : new Date(report.createdAt).toLocaleDateString()}
                         </td>
@@ -1362,7 +1362,7 @@ const FuelReports = () => {
                                   backgroundColor:
                                     unitDetails.badge.toLowerCase().includes("trailer")
                                       ? "rgba(34, 197, 94, 0.15)"
-                                      : "rgba(1, 106, 178, 0.15)",
+                                      : "rgba(4,120,87, 0.15)",
                                   color:
                                     unitDetails.badge.toLowerCase().includes("trailer")
                                       ? "#15803d"
@@ -1456,7 +1456,7 @@ const FuelReports = () => {
                     disabled={currentPage === 1}
                     className={`px-3 py-2 rounded-lg border ${currentPage === 1
                       ? 'bg-card text-secondary cursor-not-allowed border-theme'
-                      : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border-theme'
+                      : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border-theme'
                       }`}
                   >
                     <ChevronLeft size={14} />
@@ -1479,7 +1479,7 @@ const FuelReports = () => {
                           onClick={() => setCurrentPage(pageNum)}
                           className={`px-3 py-2 rounded-lg border ${currentPage === pageNum
                             ? 'bg-blue-600 text-white border-blue-600'
-                            : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border-theme'
+                            : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border-theme'
                             }`}
                         >
                           {pageNum}
@@ -1492,7 +1492,7 @@ const FuelReports = () => {
                     disabled={currentPage === totalPages}
                     className={`px-3 py-2 rounded-lg border ${currentPage === totalPages
                       ? 'bg-card text-secondary cursor-not-allowed border-theme'
-                      : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border-theme'
+                      : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border-theme'
                       }`}
                   >
                     <ChevronRight size={14} />
@@ -1952,7 +1952,7 @@ const FuelReports = () => {
               <button
                 onClick={closeEditModal}
                 disabled={editSubmitting}
-                className="px-6 py-2 border border-theme rounded-lg text-headings hover:bg-[rgba(255,255,255,0.03)] transition-colors disabled:opacity-60"
+                className="px-6 py-2 border border-theme rounded-lg text-headings hover:bg-[rgba(15,31,23,0.03)] transition-colors disabled:opacity-60"
               >
                 Cancel
               </button>
@@ -2001,7 +2001,7 @@ const FuelReports = () => {
                           setNewEditTypeName('');
                         }}
                         disabled={addingEditType}
-                        className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors disabled:opacity-60"
+                        className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors disabled:opacity-60"
                       >
                         Cancel
                       </button>
@@ -2054,7 +2054,7 @@ const FuelReports = () => {
                           setNewEditUnitName('');
                         }}
                         disabled={addingEditUnit}
-                        className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors disabled:opacity-60"
+                        className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors disabled:opacity-60"
                       >
                         Cancel
                       </button>
@@ -2107,7 +2107,7 @@ const FuelReports = () => {
                           setNewEditVendorName('');
                         }}
                         disabled={addingEditVendor}
-                        className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors disabled:opacity-60"
+                        className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors disabled:opacity-60"
                       >
                         Cancel
                       </button>
@@ -2457,7 +2457,7 @@ const FuelReports = () => {
                   <button
                     onClick={closeImportModal}
                     disabled={csvImporting}
-                    className="px-4 py-2 rounded-lg border border-theme text-primary hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-60"
+                    className="px-4 py-2 rounded-lg border border-theme text-primary hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-60"
                   >
                     {csvImportResult ? 'Close' : 'Cancel'}
                   </button>
@@ -2611,7 +2611,7 @@ const FuelReports = () => {
                   <button
                     onClick={closeOcrModal}
                     disabled={ocrExtracting}
-                    className="px-4 py-2 rounded-lg border border-theme text-primary hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-60"
+                    className="px-4 py-2 rounded-lg border border-theme text-primary hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-60"
                   >
                     Cancel
                   </button>

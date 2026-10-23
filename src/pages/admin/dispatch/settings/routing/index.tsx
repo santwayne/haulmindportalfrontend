@@ -40,7 +40,7 @@ export default function RoutingConfig() {
           <button
             onClick={() => setOpen((s) => !s)}
             aria-expanded={open}
-            className="w-full flex items-center justify-between gap-4 p-6 border-b border-theme hover:bg-[rgba(255,255,255,0.03)]"
+            className="w-full flex items-center justify-between gap-4 p-6 border-b border-theme hover:bg-[rgba(15,31,23,0.03)]"
           >
             <div className="flex items-center gap-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 ring-1 ring-indigo-100">
@@ -185,7 +185,7 @@ export default function RoutingConfig() {
                   <button
                     type="button"
                     onClick={handleReset}
-                    className="rounded-md px-4 py-2 text-sm font-medium text-primary ring-1 ring-inset ring-gray-200 hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50"
+                    className="rounded-md px-4 py-2 text-sm font-medium text-primary ring-1 ring-inset ring-gray-200 hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50"
                     disabled={!dirty}
                   >
                     Reset

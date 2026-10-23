@@ -205,7 +205,7 @@ function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
                 <div className="py-1">
                   <button
                     onClick={handleProfileClick}
-                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                   >
                     <FaUser size={14} className="text-secondary" />
                     Profile
@@ -253,7 +253,7 @@ function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
                     setSearchQuery("");
                     setSelectedIndex(0);
                   }}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors"
                 >
                   <X className="text-secondary" size={20} />
                 </button>
@@ -300,7 +300,7 @@ function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
                       </div>
                       <ArrowRight
                         className={`flex-shrink-0 transition-all ${index === selectedIndex
-                          ? 'text-[#00D1FF] opacity-100 translate-x-0'
+                          ? 'text-[#059669] opacity-100 translate-x-0'
                           : 'text-secondary opacity-0 -translate-x-1'
                           }`}
                         size={18}

@@ -62,14 +62,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed }) => {
       <style>{`
         .compliance-sidebar-scroll::-webkit-scrollbar { width: 4px; }
         .compliance-sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
-        .compliance-sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
-        .compliance-sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+        .compliance-sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(15,31,23,0.08); border-radius: 2px; }
+        .compliance-sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgba(15,31,23,0.15); }
         .compliance-sidebar-item-active {
-          background: linear-gradient(to right, #06377a 0%, #06377a 55%, #121A2B 100%);
+          background: linear-gradient(to right, #047857 0%, #059669 60%, #10b981 100%);
           border-radius: 8px;
         }
         .compliance-sidebar-item-hover:hover:not(.compliance-sidebar-item-active) {
-          background: rgba(13, 71, 200, 0.15);
+          background: rgba(4,120,87, 0.15);
           border-radius: 8px;
         }
         .compliance-sidebar-icon-active {
@@ -93,7 +93,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed }) => {
         {/* Menu with scroll */}
         <div
           className="flex-1 flex flex-col relative overflow-y-auto overflow-x-hidden compliance-sidebar-scroll min-h-0"
-          style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.08) transparent' }}
+          style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(15,31,23,0.08) transparent' }}
         >
           <div className="flex-1">
             <ul className="py-2 space-y-0.5">
@@ -217,12 +217,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed }) => {
         </div>
 
         {/* Profile section — fixed at bottom */}
-        <div className="flex-shrink-0 border-t border-[rgba(255,255,255,0.08)]">
+        <div className="flex-shrink-0 border-t border-[rgba(15,31,23,0.08)]">
           {isCollapsed ? (
             <div className="flex flex-col items-center gap-2 py-3 px-2">
               <button
                 onClick={() => navigate(`${basePath}/profile`)}
-                className="w-9 h-9 rounded-full bg-[#42aeec]/20 flex items-center justify-center text-[#42aeec] hover:bg-[#42aeec]/30 transition-all"
+                className="w-9 h-9 rounded-full bg-[#10b981]/20 flex items-center justify-center text-[#10b981] hover:bg-[#10b981]/30 transition-all"
                 title={userInfo?.userData?.name || 'Profile'}
               >
                 <FaUser size={14} />
@@ -230,7 +230,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed }) => {
             </div>
           ) : (
             <div className="flex items-center gap-3 px-4 py-3">
-              <div className="w-9 h-9 rounded-full bg-[#42aeec]/20 flex-shrink-0 flex items-center justify-center text-[#42aeec]">
+              <div className="w-9 h-9 rounded-full bg-[#10b981]/20 flex-shrink-0 flex items-center justify-center text-[#10b981]">
                 <FaUser size={14} />
               </div>
               <button

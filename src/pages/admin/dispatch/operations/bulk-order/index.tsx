@@ -292,7 +292,7 @@ const NewBulkOrderSidebar = ({ order, onClose, onSave }: any) => {
                                                 setSelectedCustomer(null);
                                                 setCustomerSearch("");
                                             }}
-                                            className="p-1 hover:bg-[rgba(255,255,255,0.03)] rounded flex-shrink-0"
+                                            className="p-1 hover:bg-[rgba(15,31,23,0.03)] rounded flex-shrink-0"
                                         >
                                             <X className="w-3.5 h-3.5 text-secondary" />
                                         </button>
@@ -326,7 +326,7 @@ const NewBulkOrderSidebar = ({ order, onClose, onSave }: any) => {
                                                         className={`px-3 py-2 cursor-pointer hover:bg-[var(--accent-blue)]/10 text-[13px] ${selectedCustomer?._id === customer._id ? 'bg-[var(--accent-blue)]/10' : ''
                                                             }`}
                                                     >
-                                                        <div className="font-medium text-[#016ab2]">{customer.name || 'Unnamed Customer'}</div>
+                                                        <div className="font-medium text-[#047857]">{customer.name || 'Unnamed Customer'}</div>
                                                         <div className="text-xs text-secondary">{customer.address || customer.email || customer.phone || ''}</div>
                                                     </div>
                                                 ))
@@ -416,7 +416,7 @@ const NewBulkOrderSidebar = ({ order, onClose, onSave }: any) => {
                                                 setSelectedPickupPlace(null);
                                                 setPickupSearch("");
                                             }}
-                                            className="p-1 hover:bg-[rgba(255,255,255,0.03)] rounded flex-shrink-0"
+                                            className="p-1 hover:bg-[rgba(15,31,23,0.03)] rounded flex-shrink-0"
                                         >
                                             <X className="w-3.5 h-3.5 text-secondary" />
                                         </button>
@@ -450,7 +450,7 @@ const NewBulkOrderSidebar = ({ order, onClose, onSave }: any) => {
                                                         className={`px-3 py-2 cursor-pointer hover:bg-[var(--accent-blue)]/10 text-[13px] ${selectedPickupPlace?._id === place._id ? 'bg-[var(--accent-blue)]/10' : ''
                                                             }`}
                                                     >
-                                                        <div className="font-medium text-[#016ab2]">{place.name || 'Unnamed Place'}</div>
+                                                        <div className="font-medium text-[#047857]">{place.name || 'Unnamed Place'}</div>
                                                         <div className="text-xs text-secondary">{place.currentLocation?.address || `${place.city || ''}, ${place.state || ''}`}</div>
                                                     </div>
                                                 ))
@@ -586,12 +586,12 @@ const NewBulkOrderSidebar = ({ order, onClose, onSave }: any) => {
                                 Tax 1
                             </label>
                             <div className="flex items-center gap-2">
-                                <label className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg cursor-pointer hover:bg-[rgba(255,255,255,0.03)] bg-card min-w-fit">
+                                <label className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg cursor-pointer hover:bg-[rgba(15,31,23,0.03)] bg-card min-w-fit">
                                     <input
                                         type="checkbox"
                                         checked={tax1}
                                         onChange={(e) => setTax1(e.target.checked)}
-                                        className="w-3.5 h-3.5 text-[#016ab2] rounded focus:ring-[var(--accent-blue)]/30"
+                                        className="w-3.5 h-3.5 text-[#047857] rounded focus:ring-[var(--accent-blue)]/30"
                                     />
                                     <span className="text-[13px] whitespace-nowrap">Tax 1</span>
                                 </label>
@@ -657,7 +657,7 @@ const NewBulkOrderSidebar = ({ order, onClose, onSave }: any) => {
             <div className="flex items-center justify-end gap-3 px-5 py-3.5 border-t border-theme bg-card">
                 <button
                     onClick={handleReset}
-                    className="px-5 py-2 text-[13px] font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="px-5 py-2 text-[13px] font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                 >
                     Reset
                 </button>
@@ -819,7 +819,7 @@ const BulkOrder = () => {
                             disabled={saving}
                             className="flex items-center gap-2 px-3 py-1.5 text-white rounded text-[13px] transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                             style={{
-                                background: saving ? '#9ca3af' : 'linear-gradient(to right, #016ab2, #063f6f)'
+                                background: saving ? '#9ca3af' : 'linear-gradient(to right, #047857, #065f46)'
                             }}
                         >
                             {saving ? "Saving..." : `Save All Orders (${orders.length})`}
@@ -842,7 +842,7 @@ const BulkOrder = () => {
                 <div className="bg-card rounded-lg shadow-md overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-xs">
-                            <thead className="bg-gradient-to-r from-[#016ab2] to-[#063f6f] border-b border-theme">
+                            <thead className="bg-gradient-to-r from-[#047857] to-[#065f46] border-b border-theme">
                                 <tr>
                                     <th className="px-3 py-2 text-left text-[11px] font-semibold text-white uppercase">Company</th>
                                     <th className="px-3 py-2 text-left text-[11px] font-semibold text-white uppercase">Customer Name</th>
@@ -880,7 +880,7 @@ const BulkOrder = () => {
                                             <div className="flex items-center gap-1">
                                                 <button
                                                     onClick={() => handleEditOrder(order)}
-                                                    className="p-1 text-[#016ab2] hover:bg-[var(--accent-blue)]/10 rounded"
+                                                    className="p-1 text-[#047857] hover:bg-[var(--accent-blue)]/10 rounded"
                                                     title="Edit"
                                                 >
                                                     <Edit className="w-3 h-3" />
@@ -941,7 +941,7 @@ const BulkOrder = () => {
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={() => setDeleteConfirm({ show: false, orderId: null })}
-                                className="px-4 py-2 text-[13px] font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                                className="px-4 py-2 text-[13px] font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                             >
                                 Cancel
                             </button>

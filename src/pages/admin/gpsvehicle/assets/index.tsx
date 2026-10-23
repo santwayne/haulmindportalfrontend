@@ -94,7 +94,7 @@ const VehicleManagementTable = () => {
 
     const SortableHeader = ({ column, children }: { column: string; children: React.ReactNode }) => (
         <th
-            className="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-[rgba(255,255,255,0.03)] select-none"
+            className="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-[rgba(15,31,23,0.03)] select-none"
             onClick={() => handleSort(column)}
         >
             <div className="flex items-center space-x-1">
@@ -137,7 +137,7 @@ const VehicleManagementTable = () => {
                         </div>
                         <button
                             onClick={() => setShowFilters(!showFilters)}
-                            className="flex items-center space-x-2 px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                            className="flex items-center space-x-2 px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                         >
                             <Filter className="w-4 h-4" />
                             <span>Filters</span>
@@ -182,7 +182,7 @@ const VehicleManagementTable = () => {
                                         setSearchTerm('');
                                         setSortConfig({ key: null, direction: 'asc' });
                                     }}
-                                    className="px-4 py-2 text-sm text-secondary hover:text-primary border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)]"
+                                    className="px-4 py-2 text-sm text-secondary hover:text-primary border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)]"
                                 >
                                     Clear All
                                 </button>
@@ -220,7 +220,7 @@ const VehicleManagementTable = () => {
                             </thead>
                             <tbody className="bg-card divide-y divide-theme">
                                 {filteredAndSortedVehicles.map((vehicle) => (
-                                    <tr key={vehicle.id} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                                    <tr key={vehicle.id} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                                         <td className="px-4 py-4">
                                             <input type="checkbox" className="rounded border-theme" />
                                         </td>
@@ -293,11 +293,11 @@ const VehicleManagementTable = () => {
                             <span className="font-medium">{vehicles.length}</span> results
                         </div>
                         <div className="flex items-center space-x-2">
-                            <button className="px-3 py-1 text-sm border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50">
+                            <button className="px-3 py-1 text-sm border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50">
                                 Previous
                             </button>
                             <button className="px-3 py-1 text-sm bg-blue-600 !text-white rounded-md">1</button>
-                            <button className="px-3 py-1 text-sm border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50">
+                            <button className="px-3 py-1 text-sm border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50">
                                 Next
                             </button>
                         </div>

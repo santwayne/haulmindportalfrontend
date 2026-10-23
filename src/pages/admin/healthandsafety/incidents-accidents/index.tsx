@@ -599,7 +599,7 @@ const IncidentManagement: React.FC = () => {
             <p className="text-[10px] text-secondary font-semibold uppercase tracking-wider">Total Incidents</p>
             <h3 className="text-xl font-bold text-primary">{incidents.length}</h3>
           </div>
-          <div className=" p-2 rounded-lg text-[#00D1FF]">
+          <div className=" p-2 rounded-lg text-[#059669]">
             <FaClipboardList size={16} />
           </div>
         </div>
@@ -608,7 +608,7 @@ const IncidentManagement: React.FC = () => {
             <p className="text-[10px] text-secondary font-semibold uppercase tracking-wider">Open Cases</p>
             <h3 className="text-xl font-bold text-primary">{incidents.filter(i => i.status === 'open').length}</h3>
           </div>
-          <div className="bg-card p-2 rounded-lg text-[#00FFA3]">
+          <div className="bg-card p-2 rounded-lg text-[#059669]">
             <FaExclamationTriangle size={16} />
           </div>
         </div>
@@ -719,7 +719,7 @@ const IncidentManagement: React.FC = () => {
                 <th className="px-4 py-3 text-center text-[10px] font-bold text-headings uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y  divide-theme divide-white/5">
+            <tbody className="divide-y  divide-theme divide-black/5">
               {loading || filteredIncidents.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="px-6 py-12 text-center">
@@ -730,7 +730,7 @@ const IncidentManagement: React.FC = () => {
                       </div>
                     ) : (
                       <div className="flex flex-col items-center justify-center space-y-3">
-                        <FaExclamationTriangle size={32} className="text-gray-300" />
+                        <FaExclamationTriangle size={32} className="text-gray-600" />
                         <p className="text-xs text-secondary font-medium">
                           No incidents found matching your filters
                         </p>
@@ -750,7 +750,7 @@ const IncidentManagement: React.FC = () => {
                       className="hover:bg-[var(--accent-navyblue)]/20 transition-colors group cursor-pointer"
                     >
                       <td className="px-4 py-3">
-                        <span className="text-xs font-bold text-primary group-hover:text-[#00D1FF] transition-colors">
+                        <span className="text-xs font-bold text-primary group-hover:text-[#059669] transition-colors">
                           {incident.incidentNumber}
                         </span>
                       </td>
@@ -803,7 +803,7 @@ const IncidentManagement: React.FC = () => {
                       <td className="px-4 py-3">
                         {incident.capa ? (
                           <div className="flex items-center gap-1">
-                            <span className="text-[10px] font-mono font-medium text-[#00D1FF] bg-card px-1.5 py-0.5 rounded border border-blue-100">
+                            <span className="text-[10px] font-mono font-medium text-[#059669] bg-card px-1.5 py-0.5 rounded border border-blue-100">
                               {incident.capa.capaNumber}
                             </span>
                           </div>
@@ -829,7 +829,7 @@ const IncidentManagement: React.FC = () => {
                               e.stopPropagation();
                               setSelectedIncidentForDetail(incident);
                             }}
-                            className="p-1.5 text-[#00D1FF] hover:bg-[var(--accent-navyblue)]/50 rounded-lg transition-colors"
+                            className="p-1.5 text-[#059669] hover:bg-[var(--accent-navyblue)]/50 rounded-lg transition-colors"
                             title="View Details"
                           >
                             <FaEye size={12} className='text-[var(--accent-blue)]' />
@@ -1129,7 +1129,7 @@ const IncidentManagement: React.FC = () => {
             </div>
           ) : injuryIncidents.length === 0 ? (
             <div className="text-center py-12">
-              <FaUserInjured size={48} className="text-gray-300 mx-auto mb-4" />
+              <FaUserInjured size={48} className="text-gray-600 mx-auto mb-4" />
               <p className="text-secondary font-medium">No incidents with injuries found</p>
             </div>
           ) : (
@@ -1400,7 +1400,7 @@ const IncidentManagement: React.FC = () => {
                     />
                     <p className="text-xs text-secondary mt-1">Upload claim forms, medical reports, doctor notes, etc.</p>
                     {selectedWcbFiles.length > 0 && (
-                      <p className="text-xs text-[#00D1FF] mt-1">{selectedWcbFiles.length} file(s) selected</p>
+                      <p className="text-xs text-[#059669] mt-1">{selectedWcbFiles.length} file(s) selected</p>
                     )}
                   </div>
                   <div>
@@ -1578,7 +1578,7 @@ const IncidentManagement: React.FC = () => {
             {incident.investigation && (
               <div className="bg-card border-2 border-blue-200 rounded-xl p-6">
                 <h3 className="font-bold text-lg text-primary mb-4 flex items-center gap-2">
-                  <FaTools className="text-[#00D1FF]" />
+                  <FaTools className="text-[#059669]" />
                   Investigation & Root Cause Analysis
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -1738,7 +1738,7 @@ const IncidentManagement: React.FC = () => {
                           href={photo.fileUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs text-[#00D1FF] hover:underline mt-1 inline-block"
+                          className="text-xs text-[#059669] hover:underline mt-1 inline-block"
                         >
                           View/Download
                         </a>
@@ -1765,7 +1765,7 @@ const IncidentManagement: React.FC = () => {
                           href={video.fileUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs text-[#00D1FF] hover:underline mt-1 inline-block"
+                          className="text-xs text-[#059669] hover:underline mt-1 inline-block"
                         >
                           View/Download
                         </a>
@@ -1832,28 +1832,28 @@ const IncidentManagement: React.FC = () => {
           <div className="relative">
             <button
               onClick={() => setShowNewReportMenu(!showNewReportMenu)}
-              className="px-3 py-2 bg-card text-[rgba(0,209,255,0.15)] rounded-lg shadow-sm hover:bg-card/90 transition flex items-center gap-2 font-bold text-xs"
+              className="px-3 py-2 bg-card text-[rgba(5,150,105,0.15)] rounded-lg shadow-sm hover:bg-card/90 transition flex items-center gap-2 font-bold text-xs"
             >
               <FaPlus size={10} /> New Report
             </button>
 
             {showNewReportMenu && (
               <div className="absolute right-0 mt-2 w-64 bg-card rounded-lg shadow-xl z-50 
-                border border-white/10 overflow-hidden backdrop-blur-sm">
+                border border-black/10 overflow-hidden backdrop-blur-sm">
 
                 {/* Header */}
                 <p className="px-4 py-2 text-[10px] font-bold text-secondary 
-                border-b border-white/10 bg-card uppercase tracking-wider">
+                border-b border-black/10 bg-card uppercase tracking-wider">
                   Select Report Type
                 </p>
 
                 {/* Options */}
-                <div className="py-1 divide-y divide-white/5">
+                <div className="py-1 divide-y divide-black/5">
 
                   <button
                     className="w-full text-left px-4 py-2 text-xs text-primary
-                 hover:bg-white/10 hover:text-[#00D1FF]
-                 active:bg-white/20
+                 hover:bg-black/10 hover:text-[#059669]
+                 active:bg-black/20
                  transition-all duration-150"
                     onClick={() => {
                       setShowNewReportMenu(false);
@@ -1866,8 +1866,8 @@ const IncidentManagement: React.FC = () => {
 
                   <button
                     className="w-full text-left px-4 py-2 text-xs text-primary
-                 hover:bg-white/10 hover:text-[#00D1FF]
-                 active:bg-white/20
+                 hover:bg-black/10 hover:text-[#059669]
+                 active:bg-black/20
                  transition-all duration-150"
                     onClick={() => {
                       setShowNewReportMenu(false);
@@ -1880,8 +1880,8 @@ const IncidentManagement: React.FC = () => {
 
                   <button
                     className="w-full text-left px-4 py-2 text-xs text-primary
-                 hover:bg-white/10 hover:text-[#00D1FF]
-                 active:bg-white/20
+                 hover:bg-black/10 hover:text-[#059669]
+                 active:bg-black/20
                  transition-all duration-150"
                     onClick={() => {
                       setShowNewReportMenu(false);
@@ -1894,8 +1894,8 @@ const IncidentManagement: React.FC = () => {
 
                   <button
                     className="w-full text-left px-4 py-2 text-xs text-primary
-                 hover:bg-white/10 hover:text-[#00D1FF]
-                 active:bg-white/20
+                 hover:bg-black/10 hover:text-[#059669]
+                 active:bg-black/20
                  transition-all duration-150"
                     onClick={() => {
                       setShowNewReportMenu(false);
@@ -1917,8 +1917,8 @@ const IncidentManagement: React.FC = () => {
           <button
             onClick={() => setCurrentTab(TABS.INCIDENT_LIST)}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${currentTab === TABS.INCIDENT_LIST
-              ? 'bg-card text-[#00D1FF]'
-              : 'text-secondary hover:bg-[rgba(255,255,255,0.03)] hover:text-primary'
+              ? 'bg-card text-[#059669]'
+              : 'text-secondary hover:bg-[rgba(15,31,23,0.03)] hover:text-primary'
               }`}
           >
             <FaClipboardList size={14} />
@@ -1928,8 +1928,8 @@ const IncidentManagement: React.FC = () => {
           <button
             onClick={() => setCurrentTab(TABS.INVESTIGATIONS)}
             className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${currentTab === TABS.INVESTIGATIONS
-              ? 'bg-card text-[#00D1FF]'
-              : 'text-secondary hover:bg-[rgba(255,255,255,0.03)] hover:text-primary'
+              ? 'bg-card text-[#059669]'
+              : 'text-secondary hover:bg-[rgba(15,31,23,0.03)] hover:text-primary'
               }`}
           >
             <FaSearch />
@@ -1938,8 +1938,8 @@ const IncidentManagement: React.FC = () => {
           <button
             onClick={() => setCurrentTab(TABS.INJURY_RTW)}
             className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${currentTab === TABS.INJURY_RTW
-              ? 'bg-card text-[#00D1FF]'
-              : 'text-secondary hover:bg-[rgba(255,255,255,0.03)] hover:text-primary'
+              ? 'bg-card text-[#059669]'
+              : 'text-secondary hover:bg-[rgba(15,31,23,0.03)] hover:text-primary'
               }`}
           >
             <span className="whitespace-nowrap">Injury & RTW</span>
@@ -2262,7 +2262,7 @@ const IncidentManagement: React.FC = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleEditContact(contact)}
-                    className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition"
+                    className="p-2 text-[#059669] hover:bg-blue-50 rounded-lg transition"
                     title="Edit Contact"
                   >
                     <FaEdit size={14} />
@@ -2279,8 +2279,8 @@ const IncidentManagement: React.FC = () => {
               <p className="text-sm text-secondary mb-2">{contact.role}</p>
               <p className="text-sm text-secondary mb-2">{contact.department}</p>
               <div className="flex items-center gap-2 mb-1">
-                <FaPhone className="text-[#00D1FF]" size={14} />
-                <a href={`tel:${contact.phone}`} className="text-lg font-semibold text-[#00D1FF] hover:underline">
+                <FaPhone className="text-[#059669]" size={14} />
+                <a href={`tel:${contact.phone}`} className="text-lg font-semibold text-[#059669] hover:underline">
                   {contact.phone}
                 </a>
               </div>

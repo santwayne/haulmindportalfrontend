@@ -652,7 +652,7 @@ const Index = () => {
             <button
               onClick={() => setActiveTab("customers")}
               className={`pb-2 px-2 text-sm font-medium flex items-center gap-2 transition-colors ${activeTab === "customers"
-                ? "text-[#00D1FF] border-b-2 border-blue-600"
+                ? "text-[#059669] border-b-2 border-blue-600"
                 : "text-secondary hover:text-primary"
                 }`}
             >
@@ -663,7 +663,7 @@ const Index = () => {
             <button
               onClick={() => setActiveTab("contacts")}
               className={`pb-2 px-2 text-sm font-medium flex items-center gap-2 transition-colors ${activeTab === "contacts"
-                ? "text-[#00D1FF] border-b-2 border-blue-600"
+                ? "text-[#059669] border-b-2 border-blue-600"
                 : "text-secondary hover:text-primary"
                 }`}
             >
@@ -806,7 +806,7 @@ const Index = () => {
                       return (
                         <tr
                           key={place._id}
-                          className="hover:bg-[rgba(255,255,255,0.03)] transition-colors cursor-pointer"
+                          className="hover:bg-[rgba(15,31,23,0.03)] transition-colors cursor-pointer"
                           onClick={() => {
                             setSelectedItem(place);
                             setShowDetailsSidebar(true);
@@ -865,7 +865,7 @@ const Index = () => {
                       return (
                         <tr
                           key={contactOrCustomer._id}
-                          className="hover:bg-[rgba(255,255,255,0.03)] transition-colors cursor-pointer"
+                          className="hover:bg-[rgba(15,31,23,0.03)] transition-colors cursor-pointer"
                           onClick={() => {
                             setSelectedItem(contactOrCustomer);
                             setShowDetailsSidebar(true);
@@ -910,9 +910,9 @@ const Index = () => {
                     <td colSpan={activeTab === "places" ? 7 : 8} className="px-6 py-12 text-center text-secondary">
                       <div className="flex flex-col items-center space-y-2">
                         {activeTab === "places" ? (
-                          <MapPin className="w-12 h-12 text-gray-300" />
+                          <MapPin className="w-12 h-12 text-gray-600" />
                         ) : (
-                          <Users className="w-12 h-12 text-gray-300" />
+                          <Users className="w-12 h-12 text-gray-600" />
                         )}
                         <p className="text-sm">No {activeTab} found.</p>
                         {emptyStateMessage && (
@@ -982,7 +982,7 @@ const Index = () => {
                     setShowDetailsSidebar(false);
                     setTimeout(() => setSelectedItem(null), 300);
                   }}
-                  className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] transition-all"
+                  className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] transition-all"
                 >
                   <X size={24} />
                 </button>
@@ -1018,7 +1018,7 @@ const Index = () => {
                 {/* Information Section */}
                 <div className="bg-card p-6 rounded-lg border border-theme">
                   <h4 className="font-semibold text-primary mb-4 text-lg flex items-center gap-2">
-                    <Briefcase size={20} className="text-[#00D1FF]" />
+                    <Briefcase size={20} className="text-[#059669]" />
                     {activeTab === "places" ? "Location" : "Contact"} Information
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1056,7 +1056,7 @@ const Index = () => {
                         {((selectedItem as Place).street1 || (selectedItem as Place).currentLocation?.address) && (
                           <div className="md:col-span-2">
                             <p className="text-sm text-secondary mb-1 flex items-center gap-1">
-                              <MapPin size={14} className="text-[#00D1FF]" />
+                              <MapPin size={14} className="text-[#059669]" />
                               Address
                             </p>
                             <p className="font-medium text-primary">
@@ -1370,7 +1370,7 @@ const Index = () => {
               <button
                 onClick={closeDeleteModal}
                 disabled={deleteLoading}
-                className="rounded-md border border-theme px-4 py-2 text-sm text-primary transition hover:bg-[rgba(255,255,255,0.03)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-md border border-theme px-4 py-2 text-sm text-primary transition hover:bg-[rgba(15,31,23,0.03)] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Cancel
               </button>

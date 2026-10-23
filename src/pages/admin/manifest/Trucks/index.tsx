@@ -103,7 +103,7 @@ const exportToExcel = async (trucks: TruckData[]) => {
 const DR = ({ label, value }: { label: string; value: React.ReactNode }) => (
   <div className="flex flex-col gap-0.5">
     <span className="text-[10px] font-semibold text-secondary uppercase tracking-wider">{label}</span>
-    <span className="text-sm text-primary">{value || <span className="text-gray-300">—</span>}</span>
+    <span className="text-sm text-primary">{value || <span className="text-gray-600">—</span>}</span>
   </div>
 );
 
@@ -127,7 +127,7 @@ const SlidePanel = ({ truck: t, onClose }: { truck: TruckData; onClose: () => vo
         style={{ animation: "slideInRight .22s ease-out" }}
       >
         <div
-          className="flex items-center justify-between px-5 py-4 border-b border-white/10 flex-shrink-0 bg-card"
+          className="flex items-center justify-between px-5 py-4 border-b border-black/10 flex-shrink-0 bg-card"
 
         >
           <div>
@@ -269,7 +269,7 @@ const TrucksPage = () => {
             ))}
           </select>
         </div>
-        <button onClick={load} className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.03)] text-secondary hover:text-[var(--accent-blue)] border border-theme">
+        <button onClick={load} className="p-2 rounded-lg hover:bg-[rgba(15,31,23,0.03)] text-secondary hover:text-[var(--accent-blue)] border border-theme">
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
         </button>
       </div>
@@ -299,7 +299,7 @@ const TrucksPage = () => {
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-theme divide-white/5">
+              <tbody className="divide-y divide-theme divide-black/5">
                 {trucks.map((t) => {
                   const driverName = t.driver?.name || [t.driver?.firstName, t.driver?.lastName].filter(Boolean).join(" ") || "";
                   return (
@@ -324,7 +324,7 @@ const TrucksPage = () => {
                         )}
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap text-right pr-4">
-                        <ChevronRight size={15} className="text-gray-300 group-hover:text-[var(--accent-blue)] transition-colors inline-block" />
+                        <ChevronRight size={15} className="text-gray-600 group-hover:text-[var(--accent-blue)] transition-colors inline-block" />
                       </td>
                     </tr>
                   );

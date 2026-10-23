@@ -479,7 +479,7 @@ const Index = () => {
 
     // ✅ OUTSIDE JSX (top of component)
     const colorStyles = {
-        blue: { bg: "bg-gradient-to-br from-[#0B3B5C] to-[#0F6EA8]", text: "text-[#00D1FF]", bar: "bg-[#00D1FF]", glow: "shadow-[0_0_20px_rgba(0,209,255,0.25)]" },
+        blue: { bg: "bg-gradient-to-br from-[#0B3B5C] to-[#0F6EA8]", text: "text-[#059669]", bar: "bg-[#059669]", glow: "shadow-[0_0_20px_rgba(5,150,105,0.25)]" },
         emerald: { bg: "bg-gradient-to-br from-[#064E3B] to-[#059669]", text: "text-[#34D399]", bar: "bg-[#34D399]", glow: "shadow-[0_0_20px_rgba(52,211,153,0.25)]" },
         purple: { bg: "bg-gradient-to-br from-[#2E1065] to-[#7C3AED]", text: "text-[#A78BFA]", bar: "bg-[#A78BFA]", glow: "shadow-[0_0_20px_rgba(167,139,250,0.25)]" },
         amber: { bg: "bg-gradient-to-br from-[#451A03] to-[#D97706]", text: "text-[#FCD34D]", bar: "bg-[#FCD34D]", glow: "shadow-[0_0_20px_rgba(252,211,77,0.25)]" },
@@ -501,14 +501,14 @@ const Index = () => {
                     {Array.from({ length: 4 }).map((_, i) => (
                         <div key={i} className="rounded-2xl bg-card border border-theme p-4 animate-pulse">
                             <div className="flex items-start gap-4">
-                                <div className="w-11 h-11 rounded-xl bg-[rgba(255,255,255,0.06)]" />
+                                <div className="w-11 h-11 rounded-xl bg-[rgba(15,31,23,0.06)]" />
                                 <div className="flex-1 space-y-2">
-                                    <div className="h-3 w-24 rounded bg-[rgba(255,255,255,0.06)]" />
-                                    <div className="h-6 w-12 rounded bg-[rgba(255,255,255,0.06)]" />
-                                    <div className="h-2 w-20 rounded bg-[rgba(255,255,255,0.04)]" />
+                                    <div className="h-3 w-24 rounded bg-[rgba(15,31,23,0.06)]" />
+                                    <div className="h-6 w-12 rounded bg-[rgba(15,31,23,0.06)]" />
+                                    <div className="h-2 w-20 rounded bg-[rgba(15,31,23,0.04)]" />
                                 </div>
                             </div>
-                            <div className="mt-4 h-[3px] rounded-full bg-[rgba(255,255,255,0.05)]" />
+                            <div className="mt-4 h-[3px] rounded-full bg-[rgba(15,31,23,0.05)]" />
                         </div>
                     ))}
                 </div>
@@ -516,13 +516,13 @@ const Index = () => {
                     {Array.from({ length: 5 }).map((_, i) => (
                         <div key={i} className="rounded-2xl bg-card border border-theme p-4 animate-pulse">
                             <div className="flex items-start gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-[rgba(255,255,255,0.06)]" />
+                                <div className="w-10 h-10 rounded-xl bg-[rgba(15,31,23,0.06)]" />
                                 <div className="flex-1 space-y-2">
-                                    <div className="h-3 w-20 rounded bg-[rgba(255,255,255,0.06)]" />
-                                    <div className="h-5 w-10 rounded bg-[rgba(255,255,255,0.06)]" />
+                                    <div className="h-3 w-20 rounded bg-[rgba(15,31,23,0.06)]" />
+                                    <div className="h-5 w-10 rounded bg-[rgba(15,31,23,0.06)]" />
                                 </div>
                             </div>
-                            <div className="mt-3 h-[3px] rounded-full bg-[rgba(255,255,255,0.05)]" />
+                            <div className="mt-3 h-[3px] rounded-full bg-[rgba(15,31,23,0.05)]" />
                         </div>
                     ))}
                 </div>
@@ -572,7 +572,7 @@ const Index = () => {
                                                 {Math.round(feature.percentage)}%
                                             </div>
                                         </div>
-                                        <div className="mt-3 sm:mt-4 h-[3px] bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
+                                        <div className="mt-3 sm:mt-4 h-[3px] bg-[rgba(15,31,23,0.05)] rounded-full overflow-hidden">
                                             <div className={`h-full rounded-full ${styles.bar}`} style={{ width: `${Math.max(feature.percentage, 4)}%`, opacity: feature.percentage === 0 ? 0.35 : 1 }} />
                                         </div>
                                     </Card>
@@ -601,7 +601,7 @@ const Index = () => {
                                                 <p className="text-xs text-secondary mt-0.5 truncate">{feature.subtitle}</p>
                                             </div>
                                         </div>
-                                        <div className="mt-3 h-[3px] bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
+                                        <div className="mt-3 h-[3px] bg-[rgba(15,31,23,0.05)] rounded-full overflow-hidden">
                                             <div className={`h-full rounded-full ${styles.bar}`} style={{ width: `${Math.max(feature.percentage, 4)}%`, opacity: feature.percentage === 0 ? 0.35 : 1 }} />
                                         </div>
                                     </Card>
@@ -614,14 +614,14 @@ const Index = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
                             {/* ================= LEFT: MAP ================= */}
-                            <div className="lg:col-span-7 bg-card border border-theme rounded-2xl shadow-[0_0_40px_rgba(0,209,255,0.08)] overflow-hidden">
+                            <div className="lg:col-span-7 bg-card border border-theme rounded-2xl shadow-[0_0_40px_rgba(5,150,105,0.08)] overflow-hidden">
 
                                 {/* HEADER */}
-                                <div className="flex items-center justify-between px-5 py-4 border-b border-theme bg-gradient-to-r from-[rgba(0,209,255,0.06)] to-transparent">
+                                <div className="flex items-center justify-between px-5 py-4 border-b border-theme bg-gradient-to-r from-[rgba(5,150,105,0.06)] to-transparent">
                                     <h2 className="text-sm font-semibold text-primary">Live Fleet Map</h2>
                                     <button
                                         onClick={() => navigate('/admin/gpsvehicle/livetracking/truck')}
-                                        className="px-3 py-1 text-xs rounded-md bg-[rgba(0,209,255,0.1)] text-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.2)] transition"
+                                        className="px-3 py-1 text-xs rounded-md bg-[rgba(5,150,105,0.1)] text-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.2)] transition"
                                     >
                                         View Full Map
                                     </button>
@@ -630,7 +630,7 @@ const Index = () => {
                                 {/* MAP — deferred until after cards paint to avoid tile downloads blocking API responses */}
                                 <div className="relative h-[220px] sm:h-[260px] lg:h-[310px] m-4 rounded-xl overflow-hidden border border-theme">
                                     {!mapReady ? (
-                                        <div className="w-full h-full flex items-center justify-center bg-[rgba(0,209,255,0.03)]">
+                                        <div className="w-full h-full flex items-center justify-center bg-[rgba(5,150,105,0.03)]">
                                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--accent-blue)]" />
                                         </div>
                                     ) : (
@@ -653,11 +653,11 @@ const Index = () => {
                                                     icon={createVehicleIcon('active')}
                                                 >
                                                     <Popup className="map-popup">
-                                                        <div style={{ background: '#121A2B', color: '#E6EDF3', padding: '8px', borderRadius: '8px', minWidth: '160px' }}>
+                                                        <div style={{ background: '#ffffff', color: '#0f1f17', padding: '8px', borderRadius: '8px', minWidth: '160px' }}>
                                                             <p style={{ fontWeight: 700, marginBottom: 4 }}>{order.truck?.unitNumber || order.truck?.plateNumber || 'Truck'}</p>
-                                                            <p style={{ fontSize: 11, color: '#8B9BB4' }}>{order.driver?.name}</p>
-                                                            <p style={{ fontSize: 11, color: '#00FFA3', marginTop: 4 }}>● Active — {order.orderCount} order(s)</p>
-                                                            <p style={{ fontSize: 10, color: '#8B9BB4', marginTop: 2 }}>{order.currentLocation.address}</p>
+                                                            <p style={{ fontSize: 11, color: '#5a7066' }}>{order.driver?.name}</p>
+                                                            <p style={{ fontSize: 11, color: '#059669', marginTop: 4 }}>● Active — {order.orderCount} order(s)</p>
+                                                            <p style={{ fontSize: 10, color: '#5a7066', marginTop: 2 }}>{order.currentLocation.address}</p>
                                                         </div>
                                                     </Popup>
                                                 </Marker>
@@ -678,13 +678,13 @@ const Index = () => {
                                                     icon={createVehicleIcon(truck.operationStatus)}
                                                 >
                                                     <Popup>
-                                                        <div style={{ background: '#121A2B', color: '#E6EDF3', padding: '8px', borderRadius: '8px', minWidth: '160px' }}>
+                                                        <div style={{ background: '#ffffff', color: '#0f1f17', padding: '8px', borderRadius: '8px', minWidth: '160px' }}>
                                                             <p style={{ fontWeight: 700, marginBottom: 4 }}>{truck.unitNo} — {truck.licensePlate}</p>
-                                                            <p style={{ fontSize: 11, color: '#8B9BB4' }}>{truck.makeModel}</p>
+                                                            <p style={{ fontSize: 11, color: '#5a7066' }}>{truck.makeModel}</p>
                                                             <p style={{ fontSize: 11, marginTop: 4, color: getStatusColor(truck.operationStatus) }}>
                                                                 ● {truck.operationStatus}
                                                             </p>
-                                                            <p style={{ fontSize: 10, color: '#8B9BB4', marginTop: 2 }}>{truck.address}</p>
+                                                            <p style={{ fontSize: 10, color: '#5a7066', marginTop: 2 }}>{truck.address}</p>
                                                         </div>
                                                     </Popup>
                                                 </Marker>
@@ -703,9 +703,9 @@ const Index = () => {
                                                     icon={createVehicleIcon(trip.status)}
                                                 >
                                                     <Popup>
-                                                        <div style={{ background: '#121A2B', color: '#E6EDF3', padding: '8px', borderRadius: '8px', minWidth: '160px' }}>
+                                                        <div style={{ background: '#ffffff', color: '#0f1f17', padding: '8px', borderRadius: '8px', minWidth: '160px' }}>
                                                             <p style={{ fontWeight: 700, marginBottom: 4 }}>{trip.tripNumber}</p>
-                                                            <p style={{ fontSize: 11, color: '#8B9BB4' }}>{trip.origin} → {trip.destination}</p>
+                                                            <p style={{ fontSize: 11, color: '#5a7066' }}>{trip.origin} → {trip.destination}</p>
                                                             <p style={{ fontSize: 11, marginTop: 4, color: getStatusColor(trip.status) }}>● {trip.status}</p>
                                                         </div>
                                                     </Popup>
@@ -716,9 +716,9 @@ const Index = () => {
                                     )}
 
                                     {/* LEGEND */}
-                                    {/* <div className="absolute bottom-3 left-3 z-[1000] flex gap-3 text-xs bg-[rgba(10,18,32,0.85)] px-3 py-2 rounded-lg border border-[rgba(255,255,255,0.08)] backdrop-blur-md">
+                                    {/* <div className="absolute bottom-3 left-3 z-[1000] flex gap-3 text-xs bg-[rgba(255,255,255,0.85)] px-3 py-2 rounded-lg border border-[rgba(15,31,23,0.08)] backdrop-blur-md">
                                         {[
-                                            { label: 'Active', color: '#22C55E', glow: '#00FFA3', count: (dashboardData?.trucks.filter(t => t.operationStatus?.toLowerCase() === 'active').length ?? 0) + activeOrders.length },
+                                            { label: 'Active', color: '#22C55E', glow: '#059669', count: (dashboardData?.trucks.filter(t => t.operationStatus?.toLowerCase() === 'active').length ?? 0) + activeOrders.length },
                                             { label: 'Idle',   color: '#F59E0B', glow: '#FCD34D', count: dashboardData?.trucks.filter(t => t.operationStatus?.toLowerCase() === 'idle').length ?? 0 },
                                             { label: 'Maintenance', color: '#EA580C', glow: '#FB923C', count: dashboardData?.trucks.filter(t => t.operationStatus?.toLowerCase() === 'maintenance').length ?? 0 },
                                             { label: 'Offline', color: '#6B7280', glow: '#9CA3AF', count: dashboardData?.trucks.filter(t => t.operationStatus?.toLowerCase() === 'offline').length ?? 0 },
@@ -733,7 +733,7 @@ const Index = () => {
                             </div>
 
                             {/* ================= MIDDLE: DISPATCH ================= */}
-                            <div className="lg:col-span-3 bg-card border border-theme rounded-2xl p-4 shadow-[0_0_30px_rgba(0,209,255,0.05)]">
+                            <div className="lg:col-span-3 bg-card border border-theme rounded-2xl p-4 shadow-[0_0_30px_rgba(5,150,105,0.05)]">
 
                                 {/* Header */}
                                 <div className="flex justify-between mb-4">
@@ -776,7 +776,7 @@ const Index = () => {
                                         return (
                                             <div
                                                 key={trip.customerOrderNo || i}
-                                                className="mb-3 p-3 rounded-xl bg-[rgba(255,255,255,0.02)] border border-theme"
+                                                className="mb-3 p-3 rounded-xl bg-[rgba(15,31,23,0.02)] border border-theme"
                                             >
                                                 {/* Top Row */}
                                                 <div className="flex justify-between text-xs mb-1">
@@ -787,10 +787,10 @@ const Index = () => {
                                                     <span
                                                         className={`
                 px-2 py-0.5 rounded-full text-xs
-                ${current.color === "blue" && "bg-[rgba(0,209,255,0.1)] text-[var(--accent-blue)]"}
-                ${current.color === "green" && "bg-[rgba(0,255,163,0.1)] text-[var(--accent-green)]"}
+                ${current.color === "blue" && "bg-[rgba(5,150,105,0.1)] text-[var(--accent-blue)]"}
+                ${current.color === "green" && "bg-[rgba(5,150,105,0.1)] text-[var(--accent-green)]"}
                 ${current.color === "orange" && "bg-[rgba(245,158,11,0.1)] text-[var(--accent-orange)]"}
-                ${current.color === "gray" && "bg-gray-500/20 text-gray-300"}
+                ${current.color === "gray" && "bg-gray-500/20 text-gray-600"}
               `}
                                                     >
                                                         {current.label}
@@ -819,7 +819,7 @@ const Index = () => {
                             </div>
 
                             {/* ================= RIGHT: ALERTS ================= */}
-<div className="lg:col-span-2 bg-card border border-theme rounded-2xl p-4 shadow-[0_0_30px_rgba(0,209,255,0.05)]">
+<div className="lg:col-span-2 bg-card border border-theme rounded-2xl p-4 shadow-[0_0_30px_rgba(5,150,105,0.05)]">
 
   <div className="flex justify-between mb-4">
     <h2 className="text-sm font-semibold text-primary">Expiring Documents</h2>
@@ -877,10 +877,10 @@ const Index = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
 
                             {/* ================= LEFT: RECENT TRIPS ================= */}
-                            <div className="lg:col-span-8 bg-card border border-theme rounded-2xl shadow-[0_0_40px_rgba(0,209,255,0.08)] overflow-hidden">
+                            <div className="lg:col-span-8 bg-card border border-theme rounded-2xl shadow-[0_0_40px_rgba(5,150,105,0.08)] overflow-hidden">
 
                                 <div className="flex items-center justify-between px-5 py-4 border-b border-theme
-    bg-gradient-to-r from-[rgba(0,209,255,0.08)] to-transparent">
+    bg-gradient-to-r from-[rgba(5,150,105,0.08)] to-transparent">
                                     <h2 className="text-sm font-semibold text-primary">Recent Trips</h2>
                                     
                                 </div>
@@ -915,7 +915,7 @@ const Index = () => {
                                                     "In Progress": "bg-blue-500/20 text-blue-400",
                                                     "Scheduled": "bg-green-500/20 text-green-400",
                                                     "Pending": "bg-yellow-500/20 text-yellow-400",
-                                                    "Completed": "bg-gray-500/20 text-gray-300"
+                                                    "Completed": "bg-gray-500/20 text-gray-600"
                                                 };
 
                                                 const formattedStatus = statusMap[trip.status] || "Pending";
@@ -934,7 +934,7 @@ const Index = () => {
                                                 return (
                                                     <tr
                                                         key={trip._id || i}
-                                                        className="border-b border-theme hover:bg-[rgba(0,209,255,0.04)]"
+                                                        className="border-b border-theme hover:bg-[rgba(5,150,105,0.04)]"
                                                     >
                                                         {/* Trip ID */}
                                                         <td className="px-5 py-4 text-primary">
@@ -986,7 +986,7 @@ const Index = () => {
 
 
 
-                            <div className="lg:col-span-4 bg-card border border-theme rounded-2xl p-4 shadow-[0_0_40px_rgba(0,209,255,0.08)]">
+                            <div className="lg:col-span-4 bg-card border border-theme rounded-2xl p-4 shadow-[0_0_40px_rgba(5,150,105,0.08)]">
 
                                 {/* Header */}
                                 <div className="flex justify-between mb-4">
@@ -1026,7 +1026,7 @@ const Index = () => {
 
                                                 {/* Left */}
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded-full bg-[rgba(255,255,255,0.1)] flex items-center justify-center text-xs text-primary">
+                                                    <div className="w-8 h-8 rounded-full bg-[rgba(15,31,23,0.1)] flex items-center justify-center text-xs text-primary">
                                                         {name[0]}
                                                     </div>
 

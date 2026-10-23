@@ -1558,7 +1558,7 @@ const FleetInvoicesPage = () => {
                   <p className="text-sm font-semibold text-headings">Email Sent Successfully</p>
                   <button
                     onClick={() => setEmailToast(null)}
-                    className="flex-shrink-0 p-1 rounded-full hover:bg-[rgba(255,255,255,0.03)] text-secondary transition-colors"
+                    className="flex-shrink-0 p-1 rounded-full hover:bg-[rgba(15,31,23,0.03)] text-secondary transition-colors"
                   >
                     <FaTimes size={11} />
                   </button>
@@ -1604,7 +1604,7 @@ const FleetInvoicesPage = () => {
             <button
               type="button"
               onClick={() => { setUploadFile(null); setUploadError(null); setUploadModalOpen(true); }}
-              className="flex items-center gap-2 px-4 py-2.5 bg-card border border-theme text-headings rounded-lg hover:border-blue-400 hover:text-[#00D1FF] font-medium shadow-sm transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 bg-card border border-theme text-headings rounded-lg hover:border-blue-400 hover:text-[#059669] font-medium shadow-sm transition-colors"
             >
               <FaUpload size={13} /> Upload Invoice
             </button>
@@ -1681,7 +1681,7 @@ const FleetInvoicesPage = () => {
                 )}
               </div>
               <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
-                <FaClock className="text-[#F59E0B]" size={24} />
+                <FaClock className="text-[#d97706]" size={24} />
               </div>
             </div>
           </div>
@@ -1702,7 +1702,7 @@ const FleetInvoicesPage = () => {
                 )}
               </div>
               <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
-                <FaFileInvoice className="text-[#00D1FF]" size={24} />
+                <FaFileInvoice className="text-[#059669]" size={24} />
               </div>
             </div>
           </div>
@@ -1722,7 +1722,7 @@ const FleetInvoicesPage = () => {
                   <th className="px-6 py-4">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-theme divide-white/5 ">
+              <tbody className="divide-y divide-theme divide-black/5 ">
                 {invoicesLoading ? (
                   <tr>
                     <td colSpan={7} className="px-6 py-12 text-center text-secondary">
@@ -1799,7 +1799,7 @@ const FleetInvoicesPage = () => {
                                     ? 'bg-[rgba(239,68,68,0.12)] text-[#F87171] border-[rgba(239,68,68,0.3)]'
                                     : displayStatus === 'overdue'
                                       ? 'bg-[rgba(245,158,11,0.15)] text-[#FBBF24] border-[rgba(245,158,11,0.3)]'
-                                      : 'bg-[rgba(255,255,255,0.05)] text-secondary border border-theme hover:bg-[rgba(255,255,255,0.08)]'
+                                      : 'bg-[rgba(15,31,23,0.05)] text-secondary border border-theme hover:bg-[rgba(15,31,23,0.08)]'
                               }`}
                           >
                             {INVOICE_STATUS_OPTIONS.map((opt) => (
@@ -1820,7 +1820,7 @@ const FleetInvoicesPage = () => {
                             <button
                               type="button"
                               onClick={() => handleEditInvoice(row._id)}
-                              className="p-2 text-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] rounded-lg transition-all"
+                              className="p-2 text-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] rounded-lg transition-all"
                               title="View/Edit"
                             >
                               <FaEdit size={14} />
@@ -1855,7 +1855,7 @@ const FleetInvoicesPage = () => {
                               type="button"
                               onClick={() => handleDownloadInvoicePDF(row._id)}
                               disabled={printingPdfId === row._id}
-                              className="p-2 text-secondary hover:text-white hover:bg-[rgba(255,255,255,0.08)] rounded-lg transition-all disabled:opacity-50"
+                              className="p-2 text-secondary hover:text-white hover:bg-[rgba(15,31,23,0.08)] rounded-lg transition-all disabled:opacity-50"
                               title={printingPdfId === row._id ? 'Generating PDF…' : 'Download PDF'}
                             >
                               <FaPrint size={14} />
@@ -1880,7 +1880,7 @@ const FleetInvoicesPage = () => {
           <div className="fixed top-0 right-0 h-full w-full max-w-4xl bg-card shadow-xl z-50 flex flex-col">
             <div className="flex-shrink-0 px-8 py-5 border-b border-theme flex items-center justify-between bg-card">
               <h2 className="text-xl font-semibold text-headings">{editingInvoiceId ? 'Edit Invoice' : 'New Invoice'}</h2>
-              <button type="button" onClick={() => setSidebarOpen(false)} className="p-2 text-secondary hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition-colors" aria-label="Close">
+              <button type="button" onClick={() => setSidebarOpen(false)} className="p-2 text-secondary hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors" aria-label="Close">
                 <FaTimes size={20} />
               </button>
             </div>
@@ -1963,7 +1963,7 @@ const FleetInvoicesPage = () => {
                         <button
                           type="button"
                           onClick={() => { setShowAddCustomer(true); setAddCustomerError(null); }}
-                          className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-[#00D1FF] hover:text-blue-700 transition-colors"
+                          className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-[#059669] hover:text-blue-700 transition-colors"
                         >
                           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v8M8 12h8" /></svg>
                           Add New Customer
@@ -2025,7 +2025,7 @@ const FleetInvoicesPage = () => {
                             <button
                               type="button"
                               onClick={() => { setShowAddCustomer(false); setAddCustomerError(null); setNewCustomerName(''); setNewCustomerEmail(''); setNewCustomerPhone(''); }}
-                              className="px-3 py-1.5 text-xs font-medium text-secondary bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                              className="px-3 py-1.5 text-xs font-medium text-secondary bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                             >
                               Cancel
                             </button>
@@ -2268,7 +2268,7 @@ const FleetInvoicesPage = () => {
                       )}
                     </div>
                   ))}
-                  <button type="button" onClick={addLineItem} className="text-sm font-medium text-[#00D1FF] hover:text-blue-700">
+                  <button type="button" onClick={addLineItem} className="text-sm font-medium text-[#059669] hover:text-blue-700">
                     + Add line item
                   </button>
                 </div>
@@ -2313,7 +2313,7 @@ const FleetInvoicesPage = () => {
                       <button
                         type="button"
                         onClick={() => { setAddingTaxForLineId(null); setNewTaxName(''); setNewTaxPercent(5); }}
-                        className="px-4 py-2 border border-theme text-sm font-medium rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                        className="px-4 py-2 border border-theme text-sm font-medium rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
                       >
                         Cancel
                       </button>
@@ -2393,7 +2393,7 @@ const FleetInvoicesPage = () => {
                   <div className="mt-3 p-3 bg-card rounded-lg border border-blue-200">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium text-headings">Labour Amount:</span>
-                      <span className="text-lg font-semibold text-[#00D1FF]">
+                      <span className="text-lg font-semibold text-[#059669]">
                         ${labourAmount.toFixed(2)}
                       </span>
                     </div>
@@ -2471,7 +2471,7 @@ const FleetInvoicesPage = () => {
                   setSidebarOpen(false);
                   resetForm();
                 }}
-                className="px-5 py-2.5 text-sm font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                className="px-5 py-2.5 text-sm font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
               >
                 Cancel
               </button>
@@ -2495,12 +2495,12 @@ const FleetInvoicesPage = () => {
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-theme">
               <div className="flex items-center gap-2">
-                <FaUpload className="text-[#00D1FF]" size={18} />
+                <FaUpload className="text-[#059669]" size={18} />
                 <h3 className="text-base font-semibold text-headings">Upload Invoice</h3>
               </div>
               <button
                 onClick={() => { setUploadModalOpen(false); setUploadFile(null); setUploadError(null); }}
-                className="p-1.5 hover:bg-[rgba(255,255,255,0.03)] rounded-lg text-secondary"
+                className="p-1.5 hover:bg-[rgba(15,31,23,0.03)] rounded-lg text-secondary"
               >
                 <FaTimes size={16} />
               </button>
@@ -2522,7 +2522,7 @@ const FleetInvoicesPage = () => {
                   if (f) { setUploadFile(f); setUploadError(null); }
                 }}
                 onClick={() => fileInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${uploadDragging ? 'border-blue-400 bg-card' : 'border-theme hover:border-blue-300 hover:bg-[rgba(255,255,255,0.03)]'
+                className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${uploadDragging ? 'border-blue-400 bg-card' : 'border-theme hover:border-blue-300 hover:bg-[rgba(15,31,23,0.03)]'
                   }`}
               >
                 <input

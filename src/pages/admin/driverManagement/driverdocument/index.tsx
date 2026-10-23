@@ -329,7 +329,7 @@ const DriverDocumentsPage = () => {
             <h2 className="text-2xl font-bold text-primary">Driver Documents</h2>
             <p className="text-sm text-secondary mt-1">Manage CDL, medical certificates, and compliance documents for drivers</p>
             {selectedDriver && (
-              <p className="text-secondary mt-1">Viewing documents for: <span className="font-semibold text-[#00D1FF]">{selectedDriver.name}</span></p>
+              <p className="text-secondary mt-1">Viewing documents for: <span className="font-semibold text-[#059669]">{selectedDriver.name}</span></p>
             )}
           </div>
           <button
@@ -376,7 +376,7 @@ const DriverDocumentsPage = () => {
             <div className="bg-card rounded-lg p-4 border border-blue-200">
               <div className="flex items-center justify-between mb-2">
                 <FileText className="w-5 h-5 text-blue-500" />
-                <span className="text-xs bg-blue-100 text-[#00D1FF] px-2 py-0.5 rounded">Total</span>
+                <span className="text-xs bg-blue-100 text-[#059669] px-2 py-0.5 rounded">Total</span>
               </div>
               <p className="text-sm font-medium text-primary mb-1">Total Documents</p>
               <p className="text-2xl font-bold text-blue-900">{documentStats.totalDocuments}</p>
@@ -392,7 +392,7 @@ const DriverDocumentsPage = () => {
             <div className="bg-card rounded-lg p-4 border border-yellow-200">
               <div className="flex items-center justify-between mb-2">
                 <AlertTriangle className="w-5 h-5 text-yellow-500" />
-                <span className="text-xs bg-yellow-100 text-[#00FFA3] px-2 py-0.5 rounded">Pending</span>
+                <span className="text-xs bg-yellow-100 text-[#059669] px-2 py-0.5 rounded">Pending</span>
               </div>
               <p className="text-sm font-medium text-primary mb-1">Pending Review</p>
               <p className="text-2xl font-bold text-yellow-900">{documentStats.pendingDocuments}</p>
@@ -475,7 +475,7 @@ const DriverDocumentsPage = () => {
                     </thead>
                     <tbody className="divide-y divide-theme">
                       {drvDoc.documents.map((doc: DriverDocument, index: number) => (
-                        <tr key={index} className="hover:bg-[rgba(255,255,255,0.03)]">
+                        <tr key={index} className="hover:bg-[rgba(15,31,23,0.03)]">
                           <td className="px-6 py-4">
                             <div className="flex items-center space-x-2">
                               <FileText className="w-4 h-4 text-secondary" />
@@ -516,14 +516,14 @@ const DriverDocumentsPage = () => {
                               )}
                               <button
                                 onClick={() => handleViewDocument(doc)}
-                                className="p-1.5 hover:bg-blue-50 rounded text-[#00D1FF]"
+                                className="p-1.5 hover:bg-blue-50 rounded text-[#059669]"
                                 title="View"
                               >
                                 <Eye className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleEditDocument(doc)}
-                                className="p-1.5 hover:bg-yellow-50 rounded text-[#00FFA3]"
+                                className="p-1.5 hover:bg-yellow-50 rounded text-[#059669]"
                                 title="Edit"
                               >
                                 <Edit className="w-4 h-4" />
@@ -876,7 +876,7 @@ const UploadDocumentModal = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                 disabled={loading}
               >
                 Cancel
@@ -984,7 +984,7 @@ const ViewDocumentModal = ({
           </button>
           <button
             onClick={onClose}
-            className="text-secondary hover:text-primary px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+            className="text-secondary hover:text-primary px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
           >
             Close
           </button>
@@ -1021,7 +1021,7 @@ const DeleteConfirmationModal = ({
           <div className="flex items-center justify-end gap-3">
             <button
               onClick={onCancel}
-              className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+              className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
             >
               Cancel
             </button>

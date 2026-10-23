@@ -37,7 +37,7 @@ const Layout = () => {
             
             {/* Footer fixed at bottom */}
             <footer className="text-center py-3 text-xs fixed bottom-0 left-0 w-full z-50 border-t"
-                style={{ backgroundColor: 'var(--bg-card)', borderColor: 'rgba(17,131,224,0.12)', color: 'var(--text-secondary)' }}>
+                style={{ backgroundColor: 'var(--bg-card)', borderColor: 'rgba(5,150,105,0.12)', color: 'var(--text-secondary)' }}>
                 © {new Date().getFullYear()} Logistiq Innovation Platform. All rights reserved.
             </footer>
             

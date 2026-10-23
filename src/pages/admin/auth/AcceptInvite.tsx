@@ -76,13 +76,13 @@ export default function AcceptInvitePage() {
       <div className="w-full max-w-md relative">
         <div
           className="bg-card/80 backdrop-blur-xl rounded-2xl shadow-2xl border overflow-hidden card-premium"
-          style={{ borderColor: "rgba(17,131,224,0.2)" }}
+          style={{ borderColor: "rgba(5,150,105,0.2)" }}
         >
           {done ? (
             <div className="p-10 text-center">
               <div
                 className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
-                style={{ backgroundColor: "rgba(17,131,224,0.15)", border: "1px solid rgba(17,131,224,0.3)" }}
+                style={{ backgroundColor: "rgba(5,150,105,0.15)", border: "1px solid rgba(5,150,105,0.3)" }}
               >
                 <CheckCircle className="w-8 h-8" style={{ color: "var(--accent-navyblue)" }} />
               </div>
@@ -95,7 +95,7 @@ export default function AcceptInvitePage() {
             </div>
           ) : (
             <>
-              <div className="px-8 pt-8 pb-4 border-b" style={{ borderColor: "rgba(17,131,224,0.15)" }}>
+              <div className="px-8 pt-8 pb-4 border-b" style={{ borderColor: "rgba(5,150,105,0.15)" }}>
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 mx-auto"
                   style={{ backgroundColor: "var(--accent-navyblue)" }}
@@ -123,8 +123,8 @@ export default function AcceptInvitePage() {
                       placeholder="Create a strong password"
                       autoComplete="new-password"
                       className={`block w-full rounded-lg border pl-11 pr-11 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent disabled:opacity-50 ${errors.password ? "border-red-400" : "border-theme"}`}
-                      style={{ "--tw-ring-color": "rgba(17,131,224,0.25)" } as React.CSSProperties}
-                      onFocus={(e) => { e.target.style.borderColor = "var(--accent-navyblue)"; e.target.style.boxShadow = "0 0 0 2px rgba(17,131,224,0.2)"; }}
+                      style={{ "--tw-ring-color": "rgba(5,150,105,0.25)" } as React.CSSProperties}
+                      onFocus={(e) => { e.target.style.borderColor = "var(--accent-navyblue)"; e.target.style.boxShadow = "0 0 0 2px rgba(5,150,105,0.2)"; }}
                       onBlur={(e) => { e.target.style.borderColor = ""; e.target.style.boxShadow = ""; }}
                     />
                     <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-primary transition-colors">
@@ -134,7 +134,7 @@ export default function AcceptInvitePage() {
                   {password && (
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <div className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.08)" }}>
+                        <div className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: "rgba(15,31,23,0.08)" }}>
                           <div className={`h-1.5 rounded-full transition-all duration-300 ${strength.color} ${strength.width}`} />
                         </div>
                         <span className="text-xs text-secondary w-14 text-right">{strength.label}</span>
@@ -157,8 +157,8 @@ export default function AcceptInvitePage() {
                       placeholder="Re-enter your password"
                       autoComplete="new-password"
                       className={`block w-full rounded-lg border pl-11 pr-11 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent disabled:opacity-50 ${errors.confirm ? "border-red-400" : "border-theme"}`}
-                      style={{ "--tw-ring-color": "rgba(17,131,224,0.25)" } as React.CSSProperties}
-                      onFocus={(e) => { e.target.style.borderColor = "var(--accent-navyblue)"; e.target.style.boxShadow = "0 0 0 2px rgba(17,131,224,0.2)"; }}
+                      style={{ "--tw-ring-color": "rgba(5,150,105,0.25)" } as React.CSSProperties}
+                      onFocus={(e) => { e.target.style.borderColor = "var(--accent-navyblue)"; e.target.style.boxShadow = "0 0 0 2px rgba(5,150,105,0.2)"; }}
                       onBlur={(e) => { e.target.style.borderColor = ""; e.target.style.boxShadow = ""; }}
                     />
                     <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-primary transition-colors">
@@ -180,7 +180,7 @@ export default function AcceptInvitePage() {
                   disabled={loading}
                   className={`w-full inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 ${loading ? "opacity-60 cursor-not-allowed" : "hover:shadow-xl hover:-translate-y-0.5 transform"}`}
                   style={{ backgroundColor: "var(--accent-navyblue)" }}
-                  onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = "#0d6fc7"; }}
+                  onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = "#047857"; }}
                   onMouseLeave={(e) => { if (!loading) e.currentTarget.style.backgroundColor = "var(--accent-navyblue)"; }}
                 >
                   {loading ? (
@@ -196,7 +196,7 @@ export default function AcceptInvitePage() {
                   )}
                 </button>
 
-                <div className="text-center pt-2 border-t" style={{ borderColor: "rgba(17,131,224,0.12)" }}>
+                <div className="text-center pt-2 border-t" style={{ borderColor: "rgba(5,150,105,0.12)" }}>
                   <a href="/" className="text-sm hover:opacity-75 transition-opacity" style={{ color: "var(--accent-navyblue)" }}>
                     Back to Sign In
                   </a>

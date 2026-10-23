@@ -121,12 +121,12 @@ const PolicyManagementModule = () => {
   const bottomScrollRef = useRef<HTMLDivElement>(null);
 
   const CUSTOM_COLORS = {
-    background: '#EDF8FF',
-    primary: '#016ab2',
-    dark: '#063f6f',
-    light: '#398bc3',
-    gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)', // Highlight/Header gradient per user request
-    gradientVertical: 'linear-gradient(to bottom right, #016ab2, #063f6f)',
+    background: '#ecfdf5',
+    primary: '#047857',
+    dark: '#065f46',
+    light: '#059669',
+    gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)', // Highlight/Header gradient per user request
+    gradientVertical: 'linear-gradient(to bottom right, #047857, #065f46)',
   };
 
   const showNotification = (type: 'success' | 'error' | 'info' | 'warning', message: string) => {
@@ -373,7 +373,7 @@ const PolicyManagementModule = () => {
           <h3 className="text-xl font-bold mb-4 text-headings flex items-center gap-2"><FaUserTimes /> Acknowledgment Audit Report</h3>
           <p className='text-sm text-secondary mb-4'>Audit-ready list showing policies where mandatory acknowledgment (Read Receipts) is missing for the **current version**.</p>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-theme divide-white/5">
+            <table className="min-w-full divide-y divide-theme divide-black/5">
               <thead className="bg-card">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase">Policy Title (Version)</th>
@@ -383,7 +383,7 @@ const PolicyManagementModule = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase">Action</th>
                 </tr>
               </thead>
-              <tbody className="bg-card divide-y divide-theme divide-white/5">
+              <tbody className="bg-card divide-y divide-theme divide-black/5">
                 {nonCompliantAcknowledgment.map(p => (
                   <tr key={p._id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary">{p.title} <span className='text-secondary font-normal'>v.**{p.version}**</span></td>
@@ -404,7 +404,7 @@ const PolicyManagementModule = () => {
                       >
                         View Acknowledgment Details
                       </button>
-                      <button className='text-xs text-[#00D1FF] hover:underline'>
+                      <button className='text-xs text-[#059669] hover:underline'>
                         Send Mandatory Reminder
                       </button>
                     </td>
@@ -977,7 +977,7 @@ const PolicyManagementModule = () => {
                       setSelectedPolicy(policy);
                       setShowVersionHistoryModal(true);
                     }}
-                    className="border-b border-theme hover:bg-[rgba(255,255,255,0.03)] cursor-pointer"
+                    className="border-b border-theme hover:bg-[rgba(15,31,23,0.03)] cursor-pointer"
                   >
                     <td className="px-6 py-4 font-medium">{policy.policyNumber || 'N/A'}</td>
                     <td className="px-6 py-4">
@@ -1063,7 +1063,7 @@ const PolicyManagementModule = () => {
                             setSelectedPolicy(policy);
                             setShowVersionHistoryModal(true);
                           }}
-                          className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition"
+                          className="p-2 text-[#059669] hover:bg-blue-50 rounded-lg transition"
                           title="View Version History"
                         >
                           <FaSyncAlt />
@@ -1084,7 +1084,7 @@ const PolicyManagementModule = () => {
                             e.stopPropagation();
                             handleDownloadPolicy(policy, 'inline');
                           }}
-                          className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition"
+                          className="p-2 text-[#059669] hover:bg-blue-50 rounded-lg transition"
                           title="View Policy"
                           disabled={!policy.fileUrl}
                         >

@@ -163,7 +163,7 @@ const ToastNotification = ({ notification, onClose }: { notification: ToastNotif
       style: { backgroundColor: ACCENT_SOFT, borderColor: ACCENT_SOFT_BORDER },
       icon: <FaInfoCircle className="text-[var(--accent-color)]" size={20} />
     },
-    warning: { className: 'bg-card border-yellow-200', icon: <FaExclamationTriangle className="text-[#00FFA3]" size={20} /> }
+    warning: { className: 'bg-card border-yellow-200', icon: <FaExclamationTriangle className="text-[#059669]" size={20} /> }
   };
 
   const tone = toneStyles[notification.type];
@@ -612,11 +612,11 @@ const Tickets: React.FC = () => {
       case 'unpaid':
         return <FaTimesCircle className="text-[#A855F7]" size={20} />;
       case 'fight':
-        return <FaGavel className="text-[#F59E0B]" size={20} />;
+        return <FaGavel className="text-[#d97706]" size={20} />;
       case 'dismissed':
-        return <FaCheckCircle className="text-[#00D1FF]" size={20} />;
+        return <FaCheckCircle className="text-[#059669]" size={20} />;
       case 'reduced':
-        return <FaExclamationTriangle className="text-[#00FFA3]" size={20} />;
+        return <FaExclamationTriangle className="text-[#059669]" size={20} />;
       default:
         return <FaTicketAlt className="text-secondary" size={20} />;
     }
@@ -1000,7 +1000,7 @@ const Tickets: React.FC = () => {
               </div>
               <button
                 onClick={handleAddTicket}
-                className="flex items-center gap-2 px-4 py-2 bg-[var(--accent-navyblue)] text-[rgba(0,209,255,0.15)] rounded-lg hover:bg-card/90 shadow-sm transition-all font-bold text-sm"
+                className="flex items-center gap-2 px-4 py-2 bg-[var(--accent-navyblue)] text-[rgba(5,150,105,0.15)] rounded-lg hover:bg-card/90 shadow-sm transition-all font-bold text-sm"
               >
                 <FaPlus /> Add Ticket
               </button>
@@ -1013,7 +1013,7 @@ const Tickets: React.FC = () => {
               title="Total"
               value={stats.total}
               bgColor="bg-card"
-              iconColor="text-[#00D1FF]"
+              iconColor="text-[#059669]"
               icon={<FaTicketAlt />}
             />
             <StatCard
@@ -1036,7 +1036,7 @@ const Tickets: React.FC = () => {
               title="On Fight"
               value={stats.fight}
               bgColor="bg-card"
-              iconColor="text-[#F59E0B]"
+              iconColor="text-[#d97706]"
               icon={<FaGavel />}
               subtitle={formatCurrency(stats.fightAmount)}
             />
@@ -1044,7 +1044,7 @@ const Tickets: React.FC = () => {
               title="Dismissed"
               value={stats.dismissed}
               bgColor="bg-card"
-              iconColor="text-[#00D1FF]"
+              iconColor="text-[#059669]"
               icon={<FaCheckCircle />}
               subtitle={formatCurrency(stats.dismissedAmount)}
             />
@@ -1052,7 +1052,7 @@ const Tickets: React.FC = () => {
               title="Reduced"
               value={stats.reduced}
               bgColor="bg-card"
-              iconColor="text-[#00FFA3]"
+              iconColor="text-[#059669]"
               icon={<FaExclamationTriangle />}
               subtitle={formatCurrency(stats.reducedAmount)}
             />
@@ -1068,8 +1068,8 @@ const Tickets: React.FC = () => {
             <button
               onClick={() => setActiveTab('all')}
               className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${activeTab === 'all'
-                ? 'bg-[var(--accent-navyblue)] text-[#0284C7]'
-                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                ? 'bg-[var(--accent-navyblue)] text-white'
+                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                 }`}
             >
               All Tickets ({tickets.length})
@@ -1077,8 +1077,8 @@ const Tickets: React.FC = () => {
             <button
               onClick={() => setActiveTab('usa')}
               className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${activeTab === 'usa'
-                ? 'bg-[var(--accent-navyblue)] text-[#0284C7]'
-                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                ? 'bg-[var(--accent-navyblue)] text-white'
+                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                 }`}
             >
               USA ({tickets.filter(t => t.country === 'usa').length})
@@ -1086,8 +1086,8 @@ const Tickets: React.FC = () => {
             <button
               onClick={() => setActiveTab('canada')}
               className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${activeTab === 'canada'
-                ? 'bg-[var(--accent-navyblue)] text-[#0284C7]'
-                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                ? 'bg-[var(--accent-navyblue)] text-white'
+                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                 }`}
             >
               Canada ({tickets.filter(t => t.country === 'canada').length})
@@ -1194,7 +1194,7 @@ const Tickets: React.FC = () => {
             </div>
           ) : filteredTickets.length === 0 ? (
             <div className="text-center py-16">
-              <FaTicketAlt size={64} className="mx-auto mb-4 text-gray-300" />
+              <FaTicketAlt size={64} className="mx-auto mb-4 text-gray-600" />
               <p className="text-xl font-semibold text-secondary">No tickets found</p>
               <p className="text-secondary mt-2">Try adjusting your filters or search criteria</p>
             </div>
@@ -1324,7 +1324,7 @@ const Tickets: React.FC = () => {
                       {filteredTickets.map((ticket) => (
                         <tr
                           key={ticket._id}
-                          className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer"
+                          className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer"
                           onClick={() => handleViewTicket(ticket)}
                         >
                           <td className="px-4 py-3 whitespace-nowrap sticky left-0 bg-card z-10">
@@ -1336,7 +1336,7 @@ const Tickets: React.FC = () => {
                             <div className="text-sm text-primary">
                               {ticket.country === 'usa' ? (
                                 <span className="flex items-center gap-1">
-                                  <FaFlagUsa className="text-[#00D1FF]" size={14} />
+                                  <FaFlagUsa className="text-[#059669]" size={14} />
                                   USA
                                 </span>
                               ) : (
@@ -1451,7 +1451,7 @@ const Tickets: React.FC = () => {
                             <div className="flex gap-2">
                               <button
                                 onClick={() => handleViewTicket(ticket)}
-                                className="text-[#00D1FF] hover:text-blue-800 p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                                className="text-[#059669] hover:text-blue-800 p-2 hover:bg-blue-50 rounded-lg transition-colors"
                                 title="View Details"
                               >
                                 <FaEye size={16} className="text-headings" />
@@ -1493,7 +1493,7 @@ const Tickets: React.FC = () => {
                       disabled={currentPage === 1}
                       className={`px-3 py-2 rounded-lg border ${currentPage === 1
                         ? 'bg-card text-secondary cursor-not-allowed border-theme'
-                        : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border-theme'
+                        : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border-theme'
                         }`}
                     >
                       <FaChevronLeft size={14} />
@@ -1518,7 +1518,7 @@ const Tickets: React.FC = () => {
                             onClick={() => setCurrentPage(pageNum)}
                             className={`px-3 py-2 rounded-lg text-sm font-medium ${currentPage === pageNum
                               ? 'bg-[var(--accent-color)] text-white'
-                              : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border border-theme'
+                              : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border border-theme'
                               }`}
                           >
                             {pageNum}
@@ -1532,7 +1532,7 @@ const Tickets: React.FC = () => {
                       disabled={currentPage === totalPages}
                       className={`px-3 py-2 rounded-lg border ${currentPage === totalPages
                         ? 'bg-card text-secondary cursor-not-allowed border-theme'
-                        : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border-theme'
+                        : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border-theme'
                         }`}
                     >
                       <FaChevronRight size={14} />
@@ -1551,7 +1551,7 @@ const Tickets: React.FC = () => {
               <div className="sticky top-0 bg-card border-b px-6 py-4 rounded-t-2xl z-10">
                 <div className="flex justify-between items-center">
                   <h3 className="text-xl font-bold text-headings">Add New Ticket</h3>
-                  <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors">
+                  <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors">
                     <FaTimesCircle className="text-secondary" size={20} />
                   </button>
                 </div>
@@ -1828,7 +1828,7 @@ const Tickets: React.FC = () => {
                 {ticketForm.status === 'fight' && (
                   <div className="bg-card rounded-xl p-6 border border-orange-200">
                     <h4 className="text-lg font-bold text-primary mb-4 flex items-center gap-2">
-                      <FaGavel className="text-[#F59E0B]" size={20} />
+                      <FaGavel className="text-[#d97706]" size={20} />
                       Lawyer Details
                     </h4>
                     <div className="grid grid-cols-2 gap-4">
@@ -1986,7 +1986,7 @@ const Tickets: React.FC = () => {
               </div>
 
               <div className="sticky bottom-0 bg-card px-6 py-4 flex justify-end gap-3 border-t rounded-b-2xl">
-                <button onClick={() => setShowAddModal(false)} className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors" disabled={loading}>Cancel</button>
+                <button onClick={() => setShowAddModal(false)} className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors" disabled={loading}>Cancel</button>
                 <button onClick={saveNewTicket} className="px-6 py-2.5 bg-[var(--accent-navyblue)] !text-white rounded-lg hover:bg-[var(--accent-navyblue)]/80 font-medium transition-colors disabled:opacity-60" disabled={!validateForm() || loading}>
                   {loading ? 'Saving...' : 'Save Ticket'}
                 </button>
@@ -2002,7 +2002,7 @@ const Tickets: React.FC = () => {
               <div className="sticky top-0 bg-card border-b px-6 py-4 rounded-t-2xl z-10">
                 <div className="flex justify-between items-center">
                   <h3 className="text-xl font-bold text-headings">Edit Ticket: {selectedTicket.ticketNumber}</h3>
-                  <button onClick={() => { setShowEditModal(false); setSelectedTicket(null); resetForm(); }} className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors">
+                  <button onClick={() => { setShowEditModal(false); setSelectedTicket(null); resetForm(); }} className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors">
                     <FaTimesCircle className="text-secondary" size={20} />
                   </button>
                 </div>
@@ -2608,7 +2608,7 @@ const Tickets: React.FC = () => {
               </div>
 
               <div className="sticky bottom-0 bg-card px-6 py-4 flex justify-end gap-3 border-t rounded-b-2xl">
-                <button onClick={() => { setShowEditModal(false); setSelectedTicket(null); resetForm(); }} className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors" disabled={loading}>Cancel</button>
+                <button onClick={() => { setShowEditModal(false); setSelectedTicket(null); resetForm(); }} className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors" disabled={loading}>Cancel</button>
                 <button onClick={updateTicketData} className="px-6 py-2.5 bg-[var(--accent-navyblue)] !text-white rounded-lg hover:bg-[var(--accent-navyblue)]/80 font-medium transition-colors disabled:opacity-60" disabled={!validateForm() || loading}>
                   {loading ? 'Updating...' : 'Update Ticket'}
                 </button>
@@ -2627,7 +2627,7 @@ const Tickets: React.FC = () => {
                   <h3 className="text-base font-bold text-primary">
                     {selectedTicket.ticketNumber}
                   </h3>
-                  <button onClick={() => setShowViewModal(false)} className="p-1.5 hover:bg-[rgba(255,255,255,0.03)] rounded transition-colors">
+                  <button onClick={() => setShowViewModal(false)} className="p-1.5 hover:bg-[rgba(15,31,23,0.03)] rounded transition-colors">
                     <FaTimesCircle className="text-secondary" size={18} />
                   </button>
                 </div>
@@ -2777,7 +2777,7 @@ const Tickets: React.FC = () => {
                 {selectedTicket.status === 'fight' && selectedTicket.lawyerDetails && (
                   <div className="bg-card rounded-lg p-3 border border-orange-200">
                     <h4 className="text-xs font-bold text-primary mb-2 flex items-center gap-1">
-                      <FaGavel className="text-[#F59E0B]" size={14} />
+                      <FaGavel className="text-[#d97706]" size={14} />
                       Lawyer Info
                     </h4>
                     <div className="grid grid-cols-1 gap-2">
@@ -2827,7 +2827,7 @@ const Tickets: React.FC = () => {
               </div>
 
               <div className="sticky bottom-0 bg-card px-3 py-2 flex justify-end gap-2 border-t">
-                <button onClick={() => setShowViewModal(false)} className="px-4 py-1.5 text-xs bg-card border border-theme text-primary rounded hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors">Close</button>
+                <button onClick={() => setShowViewModal(false)} className="px-4 py-1.5 text-xs bg-card border border-theme text-primary rounded hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors">Close</button>
               </div>
             </div>
           </>

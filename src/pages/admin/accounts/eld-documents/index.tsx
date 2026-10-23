@@ -278,7 +278,7 @@ const ELDDocuments = () => {
                     <button
                         onClick={fetchDocuments}
                         disabled={loading}
-                        className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                         <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
                         Refresh
@@ -305,7 +305,7 @@ const ELDDocuments = () => {
                     </div>
                 ) : filteredDocuments.length === 0 ? (
                     <div className="px-6 py-12 text-center">
-                        <FileText className="mx-auto text-gray-300 mb-4" size={48} />
+                        <FileText className="mx-auto text-gray-600 mb-4" size={48} />
                         <p className="text-secondary text-lg mb-2">No ELD documents found</p>
                         <p className="text-secondary text-sm">
                             {searchTerm ? 'Try adjusting your search terms' : 'Upload your first ELD document to get started'}
@@ -324,11 +324,11 @@ const ELDDocuments = () => {
                             </thead>
                             <tbody className="divide-theme">
                                 {filteredDocuments.map((doc) => (
-                                    <tr key={doc._id} className="hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200 border-b border-theme">
+                                    <tr key={doc._id} className="hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 border-b border-theme">
                                         <td className="px-6 py-4 border-r border-theme">
                                             <div className="flex items-center gap-3">
-                                               <div className="w-10 h-10 bg-[rgba(0,209,255,0.08)] rounded-lg flex items-center justify-center border border-theme">
-                                                    <FileText className="text-[#00D1FF]" size={20} />
+                                               <div className="w-10 h-10 bg-[rgba(5,150,105,0.08)] rounded-lg flex items-center justify-center border border-theme">
+                                                    <FileText className="text-[#059669]" size={20} />
                                                 </div>
                                                 <div>
                                                     <p className="font-medium text-primary">{doc.fileName}</p>
@@ -349,7 +349,7 @@ const ELDDocuments = () => {
                                             <button
                                                 onClick={() => handleToggleActive(doc)}
                                                 className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${doc.isActive
-                                                    ? 'bg-[var(--accent-teal)] text-green-900 border border-[rgba(0,209,255,0.3)]'
+                                                    ? 'bg-[var(--accent-teal)] text-green-900 border border-[rgba(5,150,105,0.3)]'
                                                     : 'bg-card text-secondary hover:bg-gray-200 border border-theme'
                                                     }`}
                                             >
@@ -360,7 +360,7 @@ const ELDDocuments = () => {
                                             <div className="flex items-center justify-center gap-2">
                                                 <button
                                                     onClick={() => handleDownload(doc)}
-                                                    className="p-2 text-[#00D1FF] hover:bg-[rgba(0,209,255,0.12)] rounded-lg transition-all border border-transparent hover:border-[rgba(0,209,255,0.3)]"
+                                                    className="p-2 text-[#059669] hover:bg-[rgba(5,150,105,0.12)] rounded-lg transition-all border border-transparent hover:border-[rgba(5,150,105,0.3)]"
                                                     title="Download"
                                                 >
                                                     <Download size={18} />
@@ -399,7 +399,7 @@ const ELDDocuments = () => {
                     <div className="bg-card rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
                         <div className="sticky top-0 bg-card border-b border-theme px-6 py-4 flex items-center justify-between">
                             <h2 className="text-xl font-bold text-primary flex items-center gap-2">
-                                <Upload className="text-[#00D1FF]" size={24} />
+                                <Upload className="text-[#059669]" size={24} />
                                 Upload ELD Document
                             </h2>
                             <button
@@ -431,7 +431,7 @@ const ELDDocuments = () => {
                                         <div className="px-4 py-6 border-2 border-dashed border-theme rounded-lg hover:border-blue-500 transition-colors text-center">
                                             {selectedFile ? (
                                                 <div className="flex items-center justify-center gap-3">
-                                                    <FileText className="text-[#00D1FF]" size={24} />
+                                                    <FileText className="text-[#059669]" size={24} />
                                                     <div className="text-left">
                                                         <p className="font-medium text-primary">{selectedFile.name}</p>
                                                         <p className="text-xs text-secondary">
@@ -496,7 +496,7 @@ const ELDDocuments = () => {
                                         setSelectedFile(null);
                                         setUploadFormData({ title: '', description: '' });
                                     }}
-                                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                                 >
                                     Cancel
                                 </button>
@@ -504,7 +504,7 @@ const ELDDocuments = () => {
                                     onClick={handleUpload}
                                     disabled={!selectedFile || uploading}
                                     style={{
-                                        background: (!selectedFile || uploading) ? '#9CA3AF' : 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)',
+                                        background: (!selectedFile || uploading) ? '#9CA3AF' : 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)',
                                     }}
                                     className="px-6 py-2 !text-white font-semibold rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                                 >
@@ -547,7 +547,7 @@ const ELDDocuments = () => {
                             <div className="flex justify-end gap-4">
                                 <button
                                     onClick={() => setDeleteConfirm({ show: false, documentId: null, fileName: '' })}
-                                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                                 >
                                     Cancel
                                 </button>

@@ -302,7 +302,7 @@ const NewService: React.FC<NewServiceProps> = ({ onClose, onSuccess }) => {
       <div className="px-6 py-4 border-t border-theme bg-card flex justify-end gap-3">
         <button
           onClick={onClose}
-          className="px-6 py-2.5 text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-200 font-medium"
+          className="px-6 py-2.5 text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-200 font-medium"
         >
           Cancel
         </button>

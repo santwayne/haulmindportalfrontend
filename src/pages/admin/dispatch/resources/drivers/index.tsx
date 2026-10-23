@@ -390,7 +390,7 @@ const DriversTable = () => {
                                 </p>
                             </div>
 
-                            <div className="p-1.5 rounded-md bg-card text-[#F59E0B]">
+                            <div className="p-1.5 rounded-md bg-card text-[#d97706]">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                         d="M17 20h5v-1a4 4 0 00-5-4m-4 5H2v-1a4 4 0 015-4m6-6a4 4 0 11-8 0 4 4 0 018 0" />
@@ -503,7 +503,7 @@ const DriversTable = () => {
                                 maxHeight: '20px',
                                 marginBottom: '2px',
                                 scrollbarWidth: 'thin',
-                                scrollbarColor: '#224c75 #111c24'  /* Firefox */
+                                scrollbarColor: '#065f46 #e7f2ec'  /* Firefox */
                             }}
                         >
                             <div className="top-scroll-content" style={{ height: '1px' }}></div>
@@ -553,7 +553,7 @@ const DriversTable = () => {
                                         filteredDrivers.map((driver) => (
                                             <tr
                                                 key={driver._id}
-                                                className="hover:bg-[rgba(255,255,255,0.03)] transition-colors cursor-pointer"
+                                                className="hover:bg-[rgba(15,31,23,0.03)] transition-colors cursor-pointer"
                                                 onClick={() => {
                                                     setSelectedDriver(driver);
                                                     setShowDriverDetails(true);
@@ -578,7 +578,7 @@ const DriversTable = () => {
                                                     {driver.email || 'N/A'}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className="text-sm font-mono text-[#00D1FF] bg-card px-2 py-1 rounded">
+                                                    <span className="text-sm font-mono text-[#059669] bg-card px-2 py-1 rounded">
                                                         {driver.internalId || 'N/A'}
                                                     </span>
                                                 </td>
@@ -599,7 +599,7 @@ const DriversTable = () => {
                                                             >
                                                                 <button
                                                                     type="button"
-                                                                    className={`mt-1 rounded-full border p-2 text-xs font-semibold uppercase ${activeOrder ? 'text-[#00D1FF] border-blue-200' : 'text-secondary border-theme'
+                                                                    className={`mt-1 rounded-full border p-2 text-xs font-semibold uppercase ${activeOrder ? 'text-[#059669] border-blue-200' : 'text-secondary border-theme'
                                                                         }`}
                                                                     title={activeOrder ? 'View assignment details' : 'No active assignment'}
                                                                     onMouseEnter={() => setPreviewDriverId(driver._id)}
@@ -759,7 +759,7 @@ const DriversTable = () => {
                                             <td colSpan={10} className="px-6 py-12 text-center text-secondary">
                                                 <div className="flex flex-col items-center space-y-3">
                                                     <div className="w-16 h-16 bg-card rounded-full flex items-center justify-center">
-                                                        <User className="w-8 h-8 text-gray-300" />
+                                                        <User className="w-8 h-8 text-gray-600" />
                                                     </div>
                                                     <div>
                                                         <p className="text-base font-medium text-primary">No filtered drivers found</p>
@@ -802,7 +802,7 @@ const DriversTable = () => {
                                             setShowDriverDetails(false);
                                             setTimeout(() => setSelectedDriver(null), 300);
                                         }}
-                                        className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] transition-all"
+                                        className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] transition-all"
                                     >
                                         <X size={24} />
                                     </button>
@@ -848,7 +848,7 @@ const DriversTable = () => {
                                     {/* Personal Information */}
                                     <div className="bg-card p-6 rounded-lg border border-theme">
                                         <h4 className="font-semibold text-primary mb-4 text-lg flex items-center gap-2">
-                                            <User size={20} className="text-[#00D1FF]" />
+                                            <User size={20} className="text-[#059669]" />
                                             Personal Information
                                         </h4>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -876,7 +876,7 @@ const DriversTable = () => {
                                     {/* Professional Information */}
                                     <div className=" p-6 rounded-lg ">
                                         <h4 className="font-semibold text-primary mb-4 text-lg flex items-center gap-2">
-                                            <Briefcase size={20} className="text-[#00D1FF]" />
+                                            <Briefcase size={20} className="text-[#059669]" />
                                             Professional Information
                                         </h4>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -917,7 +917,7 @@ const DriversTable = () => {
                                     {selectedDriver.activeOrder && (
                                         <div className="bg-card p-6 rounded-lg border border-theme">
                                             <h4 className="font-semibold text-primary mb-4 text-lg flex items-center gap-2">
-                                                <MapPin size={20} className="text-[#00D1FF]" />
+                                                <MapPin size={20} className="text-[#059669]" />
                                                 Current Assignment
                                             </h4>
                                             <div className="space-y-2">

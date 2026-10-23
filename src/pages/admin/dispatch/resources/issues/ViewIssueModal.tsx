@@ -37,7 +37,7 @@ const ViewIssueModal: React.FC<ViewIssueModalProps> = ({ issue, onClose }) => {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high': return 'text-[#A855F7] bg-red-100';
-      case 'medium': return 'text-[#00FFA3] bg-yellow-100';
+      case 'medium': return 'text-[#059669] bg-yellow-100';
       case 'low': return 'text-green-600 bg-green-100';
       default: return 'text-secondary bg-card';
     }
@@ -47,7 +47,7 @@ const ViewIssueModal: React.FC<ViewIssueModalProps> = ({ issue, onClose }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'open': return 'text-[#A855F7] bg-red-100';
-      case 'in-progress': return 'text-[#00D1FF] bg-blue-100';
+      case 'in-progress': return 'text-[#059669] bg-blue-100';
       case 'closed': return 'text-green-600 bg-green-100';
       default: return 'text-secondary bg-card';
     }
@@ -226,7 +226,7 @@ const ViewIssueModal: React.FC<ViewIssueModalProps> = ({ issue, onClose }) => {
         <div className="p-6 border-t border-theme flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-600 !text-white rounded-lg hover:bg-gray-700 transition-colors"
+            className="px-4 py-2 bg-gray-200 text-primary rounded-lg hover:bg-gray-100 transition-colors"
           >
             Close
           </button>

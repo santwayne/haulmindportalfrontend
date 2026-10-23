@@ -309,8 +309,8 @@ const HRRoleBasedTraining: React.FC = () => {
                     key={role.value}
                     onClick={() => setActiveRole(role.value)}
                     className={`w-full text-left px-4 py-3 rounded-lg mb-1 transition-colors ${activeRole === role.value
-                      ? "bg-[rgba(0,209,255,0.15)] !text-white"
-                      : "text-primary hover:bg-[rgba(255,255,255,0.03)]"
+                      ? "bg-[rgba(5,150,105,0.15)] !text-[#047857]"
+                      : "text-primary hover:bg-[rgba(15,31,23,0.03)]"
                       }`}
                   >
                     {role.label}
@@ -329,7 +329,7 @@ const HRRoleBasedTraining: React.FC = () => {
               >
                 {loading ? (
                   <div className="text-center py-12">
-                    <Loader2 className="w-8 h-8 animate-spin text-[rgba(0,209,255,0.15)] mx-auto mb-4" />
+                    <Loader2 className="w-8 h-8 animate-spin text-[rgba(5,150,105,0.15)] mx-auto mb-4" />
                     <p className="text-secondary">Loading...</p>
                   </div>
                 ) : (
@@ -352,7 +352,7 @@ const HRRoleBasedTraining: React.FC = () => {
                               setUploadDescription('');
                               setUploadFile(null);
                             }}
-                            className="flex items-center gap-2 px-4 py-2 bg-[rgba(0,209,255,0.15)] !text-white rounded-lg hover:bg-[#0d8fc4] transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 bg-[rgba(5,150,105,0.15)] !text-[#047857] rounded-lg hover:bg-[#059669] transition-colors"
                           >
                             <Plus className="w-4 h-4" />
                             Upload Content
@@ -372,13 +372,13 @@ const HRRoleBasedTraining: React.FC = () => {
                               <div key={item._id} className="bg-card rounded-lg p-4 border border-theme relative">
                                 <div className="flex items-start justify-between mb-2">
                                   <div className="flex items-center gap-2 flex-1">
-                                    <div className="text-[rgba(0,209,255,0.15)]">{getIcon(item.type)}</div>
+                                    <div className="text-[rgba(5,150,105,0.15)]">{getIcon(item.type)}</div>
                                     <h3 className="font-semibold text-primary">{item.name}</h3>
                                   </div>
                                   <div className="flex items-center gap-1">
                                     <button
                                       onClick={() => handleViewContent(item)}
-                                      className="text-[#00D1FF] hover:text-blue-700 p-1"
+                                      className="text-[#059669] hover:text-blue-700 p-1"
                                       title="View"
                                     >
                                       <Eye className="w-4 h-4" />
@@ -428,7 +428,7 @@ const HRRoleBasedTraining: React.FC = () => {
                               setCurrentQOptions(['', '', '', '']);
                               setCurrentQCorrectAnswer(0);
                             }}
-                            className="flex items-center gap-2 px-4 py-2 bg-[rgba(0,209,255,0.15)] !text-white rounded-lg hover:bg-[#0d8fc4] transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 bg-[rgba(5,150,105,0.15)] !text-[#047857] rounded-lg hover:bg-[#059669] transition-colors"
                           >
                             <Plus className="w-4 h-4" />
                             Add Q&A
@@ -525,8 +525,8 @@ const HRRoleBasedTraining: React.FC = () => {
                     onClick={() => setUploadType('VIDEO')}
                     disabled={uploading}
                     className={`flex-1 px-4 py-2 rounded-lg border transition-colors ${uploadType === 'VIDEO'
-                      ? 'bg-[rgba(0,209,255,0.15)] !text-white border-[rgba(0,209,255,0.15)]'
-                      : 'bg-card text-primary border-theme hover:bg-[rgba(255,255,255,0.03)]'
+                      ? 'bg-[rgba(5,150,105,0.15)] !text-[#047857] border-[rgba(5,150,105,0.15)]'
+                      : 'bg-card text-primary border-theme hover:bg-[rgba(15,31,23,0.03)]'
                       } ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <Video className="w-4 h-4 inline mr-2" />
@@ -537,8 +537,8 @@ const HRRoleBasedTraining: React.FC = () => {
                     onClick={() => setUploadType('PDF')}
                     disabled={uploading}
                     className={`flex-1 px-4 py-2 rounded-lg border transition-colors ${uploadType === 'PDF'
-                      ? 'bg-[rgba(0,209,255,0.15)] !text-white border-[rgba(0,209,255,0.15)]'
-                      : 'bg-card text-primary border-theme hover:bg-[rgba(255,255,255,0.03)]'
+                      ? 'bg-[rgba(5,150,105,0.15)] !text-[#047857] border-[rgba(5,150,105,0.15)]'
+                      : 'bg-card text-primary border-theme hover:bg-[rgba(15,31,23,0.03)]'
                       } ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <FileText className="w-4 h-4 inline mr-2" />
@@ -549,8 +549,8 @@ const HRRoleBasedTraining: React.FC = () => {
                     onClick={() => setUploadType('IMAGE')}
                     disabled={uploading}
                     className={`flex-1 px-4 py-2 rounded-lg border transition-colors ${uploadType === 'IMAGE'
-                      ? 'bg-[rgba(0,209,255,0.15)] !text-white border-[rgba(0,209,255,0.15)]'
-                      : 'bg-card text-primary border-theme hover:bg-[rgba(255,255,255,0.03)]'
+                      ? 'bg-[rgba(5,150,105,0.15)] !text-[#047857] border-[rgba(5,150,105,0.15)]'
+                      : 'bg-card text-primary border-theme hover:bg-[rgba(15,31,23,0.03)]'
                       } ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <Image className="w-4 h-4 inline mr-2" />
@@ -569,7 +569,7 @@ const HRRoleBasedTraining: React.FC = () => {
                   onChange={(e) => setUploadTitle(e.target.value)}
                   placeholder="Enter content title"
                   disabled={uploading}
-                  className="w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgba(0,209,255,0.15)] disabled:opacity-50"
+                  className="w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgba(5,150,105,0.15)] disabled:opacity-50"
                 />
               </div>
               <div>
@@ -583,7 +583,7 @@ const HRRoleBasedTraining: React.FC = () => {
                   placeholder="Enter content description (optional)"
                   rows={3}
                   disabled={uploading}
-                  className="w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgba(0,209,255,0.15)] disabled:opacity-50"
+                  className="w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgba(5,150,105,0.15)] disabled:opacity-50"
                 />
               </div>
               <div>
@@ -596,21 +596,21 @@ const HRRoleBasedTraining: React.FC = () => {
                   accept={uploadType === 'VIDEO' ? 'video/*' : uploadType === 'PDF' ? 'application/pdf' : 'image/*'}
                   onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
                   disabled={uploading}
-                  className="w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgba(0,209,255,0.15)] disabled:opacity-50"
+                  className="w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgba(5,150,105,0.15)] disabled:opacity-50"
                 />
               </div>
               <div className="flex gap-2 justify-end pt-4">
                 <button
                   onClick={() => !uploading && setShowUploadModal(false)}
                   disabled={uploading}
-                  className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors disabled:opacity-50"
+                  className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleUpload}
                   disabled={uploading || !uploadTitle.trim() || !uploadFile}
-                  className="px-4 py-2 bg-[rgba(0,209,255,0.15)] !text-white rounded-lg hover:bg-[#0d8fc4] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-4 py-2 bg-[rgba(5,150,105,0.15)] !text-[#047857] rounded-lg hover:bg-[#059669] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {uploading ? (
                     <>
@@ -660,7 +660,7 @@ const HRRoleBasedTraining: React.FC = () => {
                   onChange={(e) => setQATitle(e.target.value)}
                   placeholder="Enter Q&A title"
                   disabled={creatingQA}
-                  className="w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgba(0,209,255,0.15)] disabled:opacity-50"
+                  className="w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgba(5,150,105,0.15)] disabled:opacity-50"
                 />
               </div>
 
@@ -676,7 +676,7 @@ const HRRoleBasedTraining: React.FC = () => {
                   placeholder="Enter description (optional)"
                   rows={3}
                   disabled={creatingQA}
-                  className="w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgba(0,209,255,0.15)] disabled:opacity-50"
+                  className="w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgba(5,150,105,0.15)] disabled:opacity-50"
                 />
               </div>
 
@@ -739,7 +739,7 @@ const HRRoleBasedTraining: React.FC = () => {
                       placeholder="Enter question"
                       rows={2}
                       disabled={creatingQA}
-                      className="w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgba(0,209,255,0.15)] disabled:opacity-50"
+                      className="w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgba(5,150,105,0.15)] disabled:opacity-50"
                     />
                   </div>
 
@@ -772,7 +772,7 @@ const HRRoleBasedTraining: React.FC = () => {
                             }}
                             placeholder={`Option ${String.fromCharCode(65 + idx)}`}
                             disabled={creatingQA}
-                            className="flex-1 px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgba(0,209,255,0.15)] disabled:opacity-50"
+                            className="flex-1 px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgba(5,150,105,0.15)] disabled:opacity-50"
                           />
                         </div>
                       ))}
@@ -798,14 +798,14 @@ const HRRoleBasedTraining: React.FC = () => {
                 <button
                   onClick={() => !creatingQA && setShowQAModal(false)}
                   disabled={creatingQA}
-                  className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors disabled:opacity-50"
+                  className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleAddQA}
                   disabled={creatingQA || !qaTitle.trim() || qaQuestions.length === 0}
-                  className="px-4 py-2 bg-[rgba(0,209,255,0.15)] !text-white rounded-lg hover:bg-[#0d8fc4] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-4 py-2 bg-[rgba(5,150,105,0.15)] !text-[#047857] rounded-lg hover:bg-[#059669] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {creatingQA ? (
                     <>

@@ -225,7 +225,7 @@ const Dashboard: React.FC = () => {
             cy={radius}
           />
           <circle
-            stroke={hasData ? "url(#gradient)" : "#E0F2FE"}
+            stroke={hasData ? "url(#gradient)" : "#ecfdf5"}
             fill="transparent"
             strokeWidth={strokeWidth}
             strokeDasharray={strokeDasharray}
@@ -437,10 +437,10 @@ const Dashboard: React.FC = () => {
                       <Line
                         type="monotone"
                         dataKey="value"
-                        stroke={hasUtilizationData ? "var(--accent-blue)" : "#BAE6FD"}
+                        stroke={hasUtilizationData ? "var(--accent-blue)" : "#a7f3d0"}
                         strokeWidth={3}
-                        dot={{ fill: hasUtilizationData ? 'var(--accent-blue)' : '#BAE6FD', strokeWidth: 0, r: 4 }}
-                        activeDot={{ r: 6, fill: hasUtilizationData ? 'var(--accent-blue)' : '#BAE6FD' }}
+                        dot={{ fill: hasUtilizationData ? 'var(--accent-blue)' : '#a7f3d0', strokeWidth: 0, r: 4 }}
+                        activeDot={{ r: 6, fill: hasUtilizationData ? 'var(--accent-blue)' : '#a7f3d0' }}
                       />
                     </LineChart>
                   </ResponsiveContainer>
@@ -482,16 +482,16 @@ const Dashboard: React.FC = () => {
                         type="monotone"
                         dataKey="speeding"
                         stackId="1"
-                        stroke={hasSpeedingData ? "var(--accent-blue)" : "#E0F2FE"}
-                        fill={hasSpeedingData ? "url(#speedingGradient)" : "#F0F9FF"}
+                        stroke={hasSpeedingData ? "var(--accent-blue)" : "#ecfdf5"}
+                        fill={hasSpeedingData ? "url(#speedingGradient)" : "#f0fdf4"}
                         strokeWidth={2}
                       />
                       <Area
                         type="monotone"
                         dataKey="events"
                         stackId="2"
-                        stroke={hasSpeedingData ? "var(--accent-blue)" : "#BAE6FD"}
-                        fill={hasSpeedingData ? "url(#eventsGradient)" : "#E0F2FE"}
+                        stroke={hasSpeedingData ? "var(--accent-blue)" : "#a7f3d0"}
+                        fill={hasSpeedingData ? "url(#eventsGradient)" : "#ecfdf5"}
                         strokeWidth={2}
                       />
                       <defs>
@@ -511,7 +511,7 @@ const Dashboard: React.FC = () => {
                   <div className="flex items-center space-x-2">
                     <div
                       className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: hasSpeedingData ? 'var(--accent-blue)' : '#E0F2FE' }}
+                      style={{ backgroundColor: hasSpeedingData ? 'var(--accent-blue)' : '#ecfdf5' }}
                     ></div>
                     <span className={`text-sm ${hasSpeedingData ? 'text-secondary' : 'text-secondary'}`}>
                       Speeding %
@@ -520,7 +520,7 @@ const Dashboard: React.FC = () => {
                   <div className="flex items-center space-x-2">
                     <div
                       className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: hasSpeedingData ? 'var(--accent-blue)' : '#BAE6FD' }}
+                      style={{ backgroundColor: hasSpeedingData ? 'var(--accent-blue)' : '#a7f3d0' }}
                     ></div>
                     <span className={`text-sm ${hasSpeedingData ? 'text-secondary' : 'text-secondary'}`}>
                       Speeding Events
@@ -549,7 +549,7 @@ const Dashboard: React.FC = () => {
                       return (
                         <div
                           key={a.id}
-                          className="flex items-start gap-3 p-3 rounded-lg hover:bg-[rgba(255,255,255,0.03)] border border-theme"
+                          className="flex items-start gap-3 p-3 rounded-lg hover:bg-[rgba(15,31,23,0.03)] border border-theme"
                         >
                           <div
                             className="p-2 rounded-lg"
@@ -590,7 +590,7 @@ const Dashboard: React.FC = () => {
                     upcomingTasks.map((t) => (
                       <div
                         key={t.id}
-                        className="flex items-center justify-between p-2 rounded-lg border border-theme hover:bg-[rgba(255,255,255,0.03)]"
+                        className="flex items-center justify-between p-2 rounded-lg border border-theme hover:bg-[rgba(15,31,23,0.03)]"
                       >
                         <div>
                           <p className="text-sm font-medium text-primary">

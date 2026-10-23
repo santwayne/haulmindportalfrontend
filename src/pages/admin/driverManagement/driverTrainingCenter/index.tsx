@@ -34,7 +34,7 @@ const DriverTrainingCenter = () => {
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key as TabType)}
                 className={`px-6 py-3 font-medium text-sm transition-colors ${activeTab === tab.key
-                  ? "text-[rgba(0,209,255,0.15)] border-b-2 border-[rgba(0,209,255,0.15)]"
+                  ? "text-[rgba(5,150,105,0.15)] border-b-2 border-[rgba(5,150,105,0.15)]"
                   : "text-secondary hover:text-primary"
                   }`}
               >

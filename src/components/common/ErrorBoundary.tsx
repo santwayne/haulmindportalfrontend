@@ -64,7 +64,7 @@ class ErrorBoundary extends Component<Props, State> {
                 onClick={() => {
                   window.location.href = '/admin/dashboard';
                 }}
-                className="px-4 py-2 bg-gray-600 !text-white rounded-lg hover:bg-gray-700"
+                className="px-4 py-2 bg-gray-200 text-primary rounded-lg hover:bg-gray-100"
               >
                 Go to Dashboard
               </button>

@@ -86,7 +86,7 @@ export default function PaymentsPage() {
             <button
               onClick={() => setActiveTab('all')}
               className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'all'
-                ? 'border-[var(--accent-blue)] text-[#016ab2]'
+                ? 'border-[var(--accent-blue)] text-[#047857]'
                 : 'border-transparent text-secondary hover:text-primary hover:border-theme'
                 }`}
             >
@@ -96,7 +96,7 @@ export default function PaymentsPage() {
             <button
               onClick={() => setActiveTab('scheduled')}
               className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'scheduled'
-                ? 'border-[var(--accent-blue)] text-[#016ab2]'
+                ? 'border-[var(--accent-blue)] text-[#047857]'
                 : 'border-transparent text-secondary hover:text-primary hover:border-theme'
                 }`}
             >
@@ -121,15 +121,15 @@ export default function PaymentsPage() {
                 <div className="flex items-center justify-between mb-4">
                   <div className={`p-3 rounded-lg bg-card`}>
                     <Icon className={`w-6 h-6 ${card.color === 'blue' ? 'text-[var(--accent-blue)]' :
-                      card.color === 'green' ? 'text-[rgba(0,209,255,0.15)]' :
+                      card.color === 'green' ? 'text-[rgba(5,150,105,0.15)]' :
                         card.color === 'purple' ? 'text-[var(--accent-blue)]' :
                           'text-orange-500'
                       }`} />
                   </div>
-                  <span className="text-sm text-[#063f6f] font-medium">{card.change}</span>
+                  <span className="text-sm text-[#065f46] font-medium">{card.change}</span>
                 </div>
-                <h3 className="text-[#063f6f] text-sm font-medium mb-1">{card.title}</h3>
-                <p className="text-2xl font-bold text-[#016ab2]">{card.value}</p>
+                <h3 className="text-[#065f46] text-sm font-medium mb-1">{card.title}</h3>
+                <p className="text-2xl font-bold text-[#047857]">{card.value}</p>
               </div>
             );
           })}
@@ -151,12 +151,12 @@ export default function PaymentsPage() {
                     className="pl-10 pr-4 py-2 border border-theme rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full"
                   />
                 </div>
-                <button className="p-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                <button className="p-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                   <Filter className="w-4 h-4 text-secondary" />
                 </button>
               </div>
               <div className="flex items-center gap-2">
-                <button className="px-4 py-2 text-sm border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors flex items-center gap-2">
+                <button className="px-4 py-2 text-sm border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors flex items-center gap-2">
                   <Download className="w-4 h-4" />
                   Export
                 </button>
@@ -181,8 +181,8 @@ export default function PaymentsPage() {
               </thead>
               <tbody className="bg-card divide-y divide-theme">
                 {filteredPayments.map((payment) => (
-                  <tr key={payment.id} className="hover:bg-[rgba(255,255,255,0.03)]">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#00D1FF]">{payment.id}</td>
+                  <tr key={payment.id} className="hover:bg-[rgba(15,31,23,0.03)]">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#059669]">{payment.id}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">{payment.date}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">{payment.payee}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-primary">${payment.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
@@ -200,7 +200,7 @@ export default function PaymentsPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">{payment.reference}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <button className="p-1 text-secondary hover:text-primary hover:bg-[rgba(255,255,255,0.03)] rounded">
+                      <button className="p-1 text-secondary hover:text-primary hover:bg-[rgba(15,31,23,0.03)] rounded">
                         <MoreHorizontal className="w-4 h-4" />
                       </button>
                     </td>

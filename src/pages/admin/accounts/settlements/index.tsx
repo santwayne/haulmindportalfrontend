@@ -661,12 +661,12 @@ export default function SettlementSystem() {
                   className="pl-10 pr-4 py-2 border border-theme rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64"
                 />
               </div>
-              <button className="p-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+              <button className="p-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                 <Filter className="w-4 h-4 text-secondary" />
               </button>
             </div>
             <div className="flex items-center gap-2">
-              <button className="px-4 py-2 text-sm border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors flex items-center gap-2">
+              <button className="px-4 py-2 text-sm border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors flex items-center gap-2">
                 <Download className="w-4 h-4" />
                 Export
               </button>
@@ -745,17 +745,17 @@ export default function SettlementSystem() {
                       <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-card divide-y divide-theme divide-white/5">
+                  <tbody className="bg-card divide-y divide-theme divide-black/5">
                     {filteredSettlements.map(settlement => (
                       <tr
                         key={settlement._id}
-                        className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                        className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                         onClick={() => {
                           setSelectedItem({ ...settlement, type: 'settlement' });
                           setShowDetailModal(true);
                         }}
                       >
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#00D1FF]">{settlement.settlementId}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#059669]">{settlement.settlementId}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">
                           {formatPayPeriod(settlement.payPeriod.startDate, settlement.payPeriod.endDate)}
                         </td>
@@ -833,11 +833,11 @@ export default function SettlementSystem() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-card divide-y divide-theme divide-white/5 ">
+                  <tbody className="bg-card divide-y divide-theme divide-black/5 ">
                     {filteredDeductions.map(item => (
                       <tr
                         key={item._id}
-                        className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                        className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                         onClick={() => {
                           setSelectedItem({ ...item, type: 'deduction' });
                           setShowDetailModal(true);
@@ -918,11 +918,11 @@ export default function SettlementSystem() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">IFTA Miles</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-card divide-y divide-theme divide-white/5">
+                  <tbody className="bg-card divide-y divide-theme divide-black/5">
                     {filteredMilesTracking.map(record => (
                       <tr
                         key={record._id}
-                        className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                        className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                         onClick={() => {
                           setSelectedItem({ ...record, type: 'miles' });
                           setShowDetailModal(true);
@@ -931,7 +931,7 @@ export default function SettlementSystem() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
                           {new Date(record.date).toLocaleDateString()}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#00D1FF]">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#059669]">
                           {record.vehicle?.plateNumber || record.vehicle?.unitNumber || record.vehicle?.internalId || 'N/A'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">{record.driver?.name || 'Unknown'}</td>
@@ -942,8 +942,8 @@ export default function SettlementSystem() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-primary">{record.totalMiles}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">{record.loadedMiles}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#F59E0B]">{record.emptyMiles}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#00D1FF] font-medium">{record.iftaMiles}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#d97706]">{record.emptyMiles}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#059669] font-medium">{record.iftaMiles}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -1074,7 +1074,7 @@ export default function SettlementSystem() {
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={() => setShowSettlementModal(false)}
-                    className="flex-1 px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                    className="flex-1 px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
                     disabled={submitting}
                   >
                     Cancel
@@ -1231,7 +1231,7 @@ export default function SettlementSystem() {
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={() => setShowDeductionModal(false)}
-                    className="flex-1 px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                    className="flex-1 px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
                     disabled={submitting}
                   >
                     Cancel
@@ -1425,7 +1425,7 @@ export default function SettlementSystem() {
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={() => setShowMilesModal(false)}
-                    className="flex-1 px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                    className="flex-1 px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
                     disabled={submitting}
                   >
                     Cancel
@@ -1558,7 +1558,7 @@ export default function SettlementSystem() {
                           <p className="text-sm text-secondary">{selectedItem.driver.phone}</p>
                         )}
                         {selectedItem.driver?.internalId && (
-                          <p className="text-xs text-[#00D1FF] mt-2">ID: {selectedItem.driver.internalId}</p>
+                          <p className="text-xs text-[#059669] mt-2">ID: {selectedItem.driver.internalId}</p>
                         )}
                       </div>
 
@@ -1605,7 +1605,7 @@ export default function SettlementSystem() {
                         </div>
                         <div className="flex justify-between items-center py-2 border-b border-theme">
                           <span className="text-primary font-medium">Additions</span>
-                          <span className="text-lg font-bold text-[#00D1FF]">+${selectedItem.additions.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                          <span className="text-lg font-bold text-[#059669]">+${selectedItem.additions.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between items-center py-3 bg-gradient-to-r from-purple-100 to-purple-200 rounded-lg px-3 mt-3">
                           <span className="text-purple-900 font-bold text-lg">Net Pay</span>
@@ -1725,10 +1725,10 @@ export default function SettlementSystem() {
                         </div>
                         <div className="bg-card rounded-lg p-3 border border-theme">
                           <label className="text-xs text-secondary mb-1 block">Empty Miles</label>
-                          <p className="text-2xl font-bold text-[#F59E0B]">{selectedItem.emptyMiles.toLocaleString()}</p>
+                          <p className="text-2xl font-bold text-[#d97706]">{selectedItem.emptyMiles.toLocaleString()}</p>
                         </div>
                         <div className="bg-card rounded-lg p-3 border border-blue-300 bg-card">
-                          <label className="text-xs text-[#00D1FF] mb-1 block font-semibold">IFTA Miles</label>
+                          <label className="text-xs text-[#059669] mb-1 block font-semibold">IFTA Miles</label>
                           <p className="text-2xl font-bold text-blue-700">{selectedItem.iftaMiles.toLocaleString()}</p>
                         </div>
                       </div>

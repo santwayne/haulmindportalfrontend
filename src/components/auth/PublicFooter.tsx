@@ -2,7 +2,7 @@ import Logo from "../../assets/FleetGo.png";
 
 export function PublicFooter() {
   return (
-    <footer className="border-t mt-8" style={{ borderColor: "rgba(17, 131, 224, 0.2)" }}>
+    <footer className="border-t mt-8" style={{ borderColor: "rgba(5,150,105, 0.2)" }}>
       <div
         className="mx-auto max-w-7xl px-6 py-16 grid md:grid-cols-4 gap-10"
         style={{ backgroundColor: "var(--bg-main)" }}
@@ -120,7 +120,7 @@ export function PublicFooter() {
             href="https://logistiqinnovations.ca/contact"
             className="inline-block mt-4 px-4 py-2 rounded-lg text-sm font-medium text-white transition-all duration-200"
             style={{ backgroundColor: "var(--accent-navyblue)" }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#0d6fc7")}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#047857")}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "var(--accent-navyblue)")}
           >
             Start free trial
@@ -132,7 +132,7 @@ export function PublicFooter() {
       <div
         className="border-t py-6 text-center text-xs"
         style={{
-          borderColor: "rgba(17, 131, 224, 0.2)",
+          borderColor: "rgba(5,150,105, 0.2)",
           color: "var(--text-secondary)",
           backgroundColor: "var(--bg-main)",
         }}

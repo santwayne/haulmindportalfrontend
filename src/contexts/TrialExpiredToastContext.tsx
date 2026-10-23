@@ -54,14 +54,14 @@ export const TrialExpiredToastProvider: React.FC<TrialExpiredToastProviderProps>
             className="rounded-xl shadow-2xl p-4 animate-slide-in border"
             style={{
               backgroundColor: 'var(--bg-card)',
-              borderColor: 'rgba(17, 131, 224, 0.35)',
-              boxShadow: '0 8px 32px rgba(17, 131, 224, 0.15)',
+              borderColor: 'rgba(5,150,105, 0.35)',
+              boxShadow: '0 8px 32px rgba(5,150,105, 0.15)',
             }}
           >
             <div className="flex items-start gap-3">
               <div
                 className="flex-shrink-0 mt-0.5 w-9 h-9 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: 'rgba(17, 131, 224, 0.12)' }}
+                style={{ backgroundColor: 'rgba(5,150,105, 0.12)' }}
               >
                 <FaExclamationTriangle style={{ color: 'var(--accent-navyblue)' }} size={16} />
               </div>
@@ -81,7 +81,7 @@ export const TrialExpiredToastProvider: React.FC<TrialExpiredToastProviderProps>
                   }}
                   className="mt-1 px-4 py-2.5 text-white text-sm font-semibold rounded-lg transition-all duration-200 w-full hover:-translate-y-0.5 hover:shadow-lg transform"
                   style={{ backgroundColor: 'var(--accent-navyblue)' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#0d6fc7'; }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#047857'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent-navyblue)'; }}
                 >
                   Purchase Now

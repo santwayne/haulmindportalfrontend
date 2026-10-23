@@ -289,7 +289,7 @@ const TruckProfile = () => {
     return (
       <div className="min-h-screen bg-main p-6 flex items-center justify-center">
         <div className="text-center">
-          <FaSpinner className="w-12 h-12 text-[#00D1FF] animate-spin mx-auto mb-4" />
+          <FaSpinner className="w-12 h-12 text-[#059669] animate-spin mx-auto mb-4" />
           <p className="text-secondary font-medium">Loading {activeTab === "truck" ? "truck" : "trailer"} profile...</p>
         </div>
       </div>
@@ -348,14 +348,14 @@ const TruckProfile = () => {
               <div className="flex gap-2 mt-6 ml-1">
                 <button
                   onClick={() => { setActiveTab("truck"); setSelectedUnit(""); }}
-                  className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "truck" ? "bg-[rgba(0,209,255,0.12)] text-[#00D1FF] border border-[rgba(0,209,255,0.3)]" : "bg-[rgba(255,255,255,0.05)] text-secondary hover:bg-[rgba(255,255,255,0.08)] border border-transparent"
+                  className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "truck" ? "bg-[rgba(5,150,105,0.12)] text-[#059669] border border-[rgba(5,150,105,0.3)]" : "bg-[rgba(15,31,23,0.05)] text-secondary hover:bg-[rgba(15,31,23,0.08)] border border-transparent"
                     }`}
                 >
                   Trucks
                 </button>
                 <button
                   onClick={() => { setActiveTab("trailer"); setSelectedUnit(""); }}
-                  className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "trailer" ? "bg-[rgba(0,209,255,0.12)] text-[#00D1FF] border border-[rgba(0,209,255,0.3)]" : "bg-[rgba(255,255,255,0.05)] text-secondary hover:bg-[rgba(255,255,255,0.08)] border border-transparent"
+                  className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "trailer" ? "bg-[rgba(5,150,105,0.12)] text-[#059669] border border-[rgba(5,150,105,0.3)]" : "bg-[rgba(15,31,23,0.05)] text-secondary hover:bg-[rgba(15,31,23,0.08)] border border-transparent"
                     }`}
                 >
                   Trailers
@@ -445,7 +445,7 @@ const TruckProfile = () => {
               <p className="text-xs font-bold uppercase text-secondary tracking-wider">Vehicle Details</p>
               <div className="flex items-center gap-3">
                 <h2 className="text-2xl font-bold text-headings">{selectedVehicle.makeModel}</h2>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[rgba(255,255,255,0.06)] text-secondary border border-theme">{selectedVehicle.year}</span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[rgba(15,31,23,0.06)] text-secondary border border-theme">{selectedVehicle.year}</span>
               </div>
 
               <p className="text-sm text-secondary font-medium">
@@ -458,10 +458,10 @@ const TruckProfile = () => {
                 </p>
               )}
               <div className="mt-4 flex flex-wrap gap-2">
-                <span className={`rounded-lg px-3 py-1 text-xs font-bold border ${selectedVehicle.status === 'Active' ? 'bg-[rgba(0,255,163,0.1)] text-[#00FFA3] border-[rgba(0,255,163,0.3)]' : 'bg-[rgba(255,255,255,0.05)] text-secondary border-[rgba(255,255,255,0.1)]'}`}>
+                <span className={`rounded-lg px-3 py-1 text-xs font-bold border ${selectedVehicle.status === 'Active' ? 'bg-[rgba(5,150,105,0.1)] text-[#059669] border-[rgba(5,150,105,0.3)]' : 'bg-[rgba(15,31,23,0.05)] text-secondary border-[rgba(15,31,23,0.1)]'}`}>
                   {selectedVehicle.status}
                 </span>
-                <span className="rounded-lg px-3 py-1 text-xs font-bold bg-[rgba(0,209,255,0.1)] text-[var(--accent-navyblue)] border border-[rgba(0,209,255,0.3)]">
+                <span className="rounded-lg px-3 py-1 text-xs font-bold bg-[rgba(5,150,105,0.1)] text-[var(--accent-navyblue)] border border-[rgba(5,150,105,0.3)]">
                   {selectedVehicle.operationStatus}
                 </span>
               </div>
@@ -519,12 +519,12 @@ const TruckProfile = () => {
 
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <div className="p-2 bg-[rgba(0,209,255,0.1)] rounded-lg text-[var(--accent-navyblue)]">
+                    <div className="p-2 bg-[rgba(5,150,105,0.1)] rounded-lg text-[var(--accent-navyblue)]">
                       <FaClipboardCheck className="w-4 h-4" />
                     </div>
                     <span className="text-sm font-bold text-headings">Last CVSA Inspection</span>
                   </div>
-                  <span className={`px-2 py-1 text-xs font-bold rounded border ${selectedVehicle.compliance?.cvsa?.result === "Pass" ? "bg-[rgba(0,255,163,0.1)] text-[#00FFA3] border-[rgba(0,255,163,0.3)]" : "bg-[rgba(248,113,113,0.1)] text-[#F87171] border-[rgba(248,113,113,0.3)]"
+                  <span className={`px-2 py-1 text-xs font-bold rounded border ${selectedVehicle.compliance?.cvsa?.result === "Pass" ? "bg-[rgba(5,150,105,0.1)] text-[#059669] border-[rgba(5,150,105,0.3)]" : "bg-[rgba(248,113,113,0.1)] text-[#F87171] border-[rgba(248,113,113,0.3)]"
                     }`}>
                     {selectedVehicle.compliance?.cvsa?.result || "N/A"}
                   </span>
@@ -559,7 +559,7 @@ const TruckProfile = () => {
               <div className="bg-card rounded-xl p-5 border border-theme">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <div className="p-2 bg-[rgba(0,255,163,0.1)] rounded-lg text-[#00FFA3]">
+                    <div className="p-2 bg-[rgba(5,150,105,0.1)] rounded-lg text-[#059669]">
                       <FaTicketAlt className="w-4 h-4" />
                     </div>
                     <span className="text-sm font-bold text-headings">Tickets</span>
@@ -577,7 +577,7 @@ const TruckProfile = () => {
                       <div key={ticket.id} className="bg-card p-3 rounded-lg border border-theme shadow-sm text-xs">
                         <div className="flex justify-between items-start mb-1">
                           <span className="font-bold text-headings">{ticket.category}</span>
-                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${ticket.status === "Paid" ? "bg-[rgba(0,255,163,0.1)] text-[#00FFA3] border-[rgba(0,255,163,0.3)]" : "bg-[rgba(252,211,77,0.1)] text-[#FCD34D] border-[rgba(252,211,77,0.3)]"
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${ticket.status === "Paid" ? "bg-[rgba(5,150,105,0.1)] text-[#059669] border-[rgba(5,150,105,0.3)]" : "bg-[rgba(252,211,77,0.1)] text-[#FCD34D] border-[rgba(252,211,77,0.3)]"
                             }`}>{ticket.status}</span>
                         </div>
                         <div className="flex justify-between text-secondary mt-1">
@@ -610,7 +610,7 @@ const TruckProfile = () => {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="text-sm font-bold text-headings">Service Logs</h4>
-                  <span className="text-xs text-secondary bg-[rgba(255,255,255,0.06)] px-2 py-1 rounded-full border border-theme">{filteredData.serviceLogs.length} Records</span>
+                  <span className="text-xs text-secondary bg-[rgba(15,31,23,0.06)] px-2 py-1 rounded-full border border-theme">{filteredData.serviceLogs.length} Records</span>
                 </div>
                 <div className="space-y-3">
                   {filteredData.serviceLogs.length > 0 ? (
@@ -618,9 +618,9 @@ const TruckProfile = () => {
                       <div key={log.id} className="group border border-theme rounded-lg p-3 hover:border-blue-400 hover:shadow-sm transition-all bg-card">
                         <div className="flex justify-between items-start mb-1.5">
                           <div className="flex-1">
-                            <p className="text-sm font-bold text-headings group-hover:text-[#00D1FF] transition-colors">{log.description}</p>
+                            <p className="text-sm font-bold text-headings group-hover:text-[#059669] transition-colors">{log.description}</p>
                             <p className="text-xs text-secondary mt-1 flex items-center gap-2">
-                              <span className="bg-[rgba(255,255,255,0.06)] px-1.5 py-0.5 rounded text-[10px] uppercase font-bold tracking-wide text-secondary">{log.vendor}</span>
+                              <span className="bg-[rgba(15,31,23,0.06)] px-1.5 py-0.5 rounded text-[10px] uppercase font-bold tracking-wide text-secondary">{log.vendor}</span>
                               <span>{log.date}</span>
                             </p>
                           </div>
@@ -640,7 +640,7 @@ const TruckProfile = () => {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="text-sm font-bold text-headings">Repairs & Issues</h4>
-                  <span className="text-xs text-secondary bg-[rgba(255,255,255,0.06)] px-2 py-1 rounded-full border border-theme">{filteredData.repairs.length} Records</span>
+                  <span className="text-xs text-secondary bg-[rgba(15,31,23,0.06)] px-2 py-1 rounded-full border border-theme">{filteredData.repairs.length} Records</span>
                 </div>
                 <div className="space-y-3">
                   {filteredData.repairs.length > 0 ? (
@@ -648,10 +648,10 @@ const TruckProfile = () => {
                       <div key={repair.id} className="group border border-theme rounded-lg p-3 hover:border-orange-400 hover:shadow-sm transition-all bg-card">
                         <div className="flex justify-between items-start mb-1.5">
                           <div className="flex-1">
-                            <p className="text-sm font-bold text-headings group-hover:text-[#F59E0B] transition-colors">{repair.issue}</p>
+                            <p className="text-sm font-bold text-headings group-hover:text-[#d97706] transition-colors">{repair.issue}</p>
                             <p className="text-xs text-secondary mt-1">{repair.date}</p>
                           </div>
-                          <p className="text-xs font-bold text-[#F59E0B] bg-card px-2 py-1 rounded-lg">{repair.downtimeHours}h Downtime</p>
+                          <p className="text-xs font-bold text-[#d97706] bg-card px-2 py-1 rounded-lg">{repair.downtimeHours}h Downtime</p>
                         </div>
                         <p className="text-xs text-secondary mt-2 p-2 bg-card rounded-md">
                           <span className="font-semibold text-headings">Resolution:</span> {repair.resolution}
@@ -698,14 +698,14 @@ const TruckProfile = () => {
                   <FaRoute className="w-5 h-5 text-white" />
                   <h3 className="text-lg font-bold text-white">Assignment History</h3>
                 </div>
-                <span className="text-xs font-medium text-secondary bg-[rgba(255,255,255,0.06)] px-3 py-1 rounded-full border border-theme">
+                <span className="text-xs font-medium text-secondary bg-[rgba(15,31,23,0.06)] px-3 py-1 rounded-full border border-theme">
                   {filteredData.assignmentHistory.length} assignments
                 </span>
               </div>
 
               <div className="space-y-3">
                 {filteredData.assignmentHistory.map((assignment) => (
-                  <div key={assignment.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-theme rounded-xl hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                  <div key={assignment.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-theme rounded-xl hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                     <div className="flex items-start gap-4">
                       <div className={`p-2 rounded-full ${assignment.type === 'order' ? 'bg-[rgba(168,85,247,0.1)] text-[#A78BFA]' : 'bg-[rgba(129,140,248,0.1)] text-[#818CF8]'}`}>
                         {(assignment.type === 'order') ? <FaTruck className="w-4 h-4 text-[var(--accent-navyblue)]" /> : <FaRoute className="w-4 h-4" />}
@@ -723,12 +723,12 @@ const TruckProfile = () => {
                     <div className="mt-3 sm:mt-0 flex items-center gap-4">
                       {assignment.completedAt && (
                         <div className="text-right">
-                          <p className="text-[10px] text-secondary bg-[rgba(255,255,255,0.06)] px-2 py-1 rounded inline-block border border-theme">
+                          <p className="text-[10px] text-secondary bg-[rgba(15,31,23,0.06)] px-2 py-1 rounded inline-block border border-theme">
                             Completed: {new Date(assignment.completedAt).toLocaleDateString()}
                           </p>
                         </div>
                       )}
-                      <span className={`px-3 py-1 text-xs font-bold rounded-lg border ${assignment.status === "Completed" ? "bg-[rgba(0,255,163,0.1)] text-[#00FFA3] border-[rgba(0,255,163,0.3)]" : "bg-[rgba(0,209,255,0.1)] text-[#00D1FF] border-[rgba(0,209,255,0.3)]"
+                      <span className={`px-3 py-1 text-xs font-bold rounded-lg border ${assignment.status === "Completed" ? "bg-[rgba(5,150,105,0.1)] text-[#059669] border-[rgba(5,150,105,0.3)]" : "bg-[rgba(5,150,105,0.1)] text-[#059669] border-[rgba(5,150,105,0.3)]"
                         }`}>
                         {assignment.status}
                       </span>

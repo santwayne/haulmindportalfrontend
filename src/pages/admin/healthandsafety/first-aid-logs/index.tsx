@@ -21,11 +21,11 @@ import {
 } from '../../../../axios/api/healthSafety';
 
 const CUSTOM_COLORS = {
-    background: '#EDF8FF',
-    primary: '#016ab2',
-    dark: '#063f6f',
-    light: '#398bc3',
-    gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)',
+    background: '#ecfdf5',
+    primary: '#047857',
+    dark: '#065f46',
+    light: '#059669',
+    gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)',
 };
 
 interface FirstAidLog {
@@ -272,7 +272,7 @@ const FirstAidLogsPage: React.FC = () => {
                                         <tr><td colSpan={8} className="text-center py-8 text-secondary">No first aid logs found.</td></tr>
                                     ) : (
                                         firstAidLogs.map((log) => (
-                                            <tr key={log._id} className="hover:bg-[rgba(255,255,255,0.03)] transition">
+                                            <tr key={log._id} className="hover:bg-[rgba(15,31,23,0.03)] transition">
                                                 <td className="px-6 py-4 text-sm">
                                                     <div className="font-medium text-primary">{new Date(log.date).toLocaleDateString()}</div>
                                                     <div className="text-secondary text-xs">{log.time}</div>
@@ -317,7 +317,7 @@ const FirstAidLogsPage: React.FC = () => {
                                                                 });
                                                                 setShowFirstAidForm(true);
                                                             }}
-                                                            className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition" title="Edit"
+                                                            className="p-2 text-[#059669] hover:bg-blue-50 rounded-lg transition" title="Edit"
                                                         >
                                                             <FaEdit />
                                                         </button>

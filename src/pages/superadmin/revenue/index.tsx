@@ -246,13 +246,13 @@ const RevenueDashboard = () => {
                                 </p>
                                 <div className="flex items-center mt-2">
                                     <TrendingUp className="w-4 h-4 text-blue-500 mr-1" />
-                                    <span className="text-sm text-[#00D1FF]">
+                                    <span className="text-sm text-[#059669]">
                                         {monthlyRecurringGrowth >= 0 ? '+' : ''}{monthlyRecurringGrowth}% growth
                                     </span>
                                 </div>
                             </div>
                             <div className="bg-blue-100 p-3 rounded-lg">
-                                <Calendar className="w-6 h-6 text-[#00D1FF]" />
+                                <Calendar className="w-6 h-6 text-[#059669]" />
                             </div>
                         </div>
                     </div>
@@ -372,7 +372,7 @@ const RevenueDashboard = () => {
                             </thead>
                             <tbody className="bg-card  divide-theme">
                                 {filteredRevenue.map((revenue: any) => (
-                                    <tr key={revenue.id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                                    <tr key={revenue.id} className="hover:bg-[rgba(15,31,23,0.03)]">
                                         <td className="px-6 py-4 whitespace-nowrap w-64">
                                             <div className="flex items-center">
                                                 <div className="bg-green-100 p-2 rounded-lg mr-3">
@@ -442,7 +442,7 @@ const RevenueDashboard = () => {
                                                                         handleCopyId(revenue.id);
                                                                         setActiveDropdown(null);
                                                                     }}
-                                                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(255,255,255,0.03)] flex items-center space-x-2 transition-colors"
+                                                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] flex items-center space-x-2 transition-colors"
                                                                 >
                                                                     <Copy className="w-4 h-4" />
                                                                     <span>Copy Revenue ID</span>
@@ -454,7 +454,7 @@ const RevenueDashboard = () => {
                                                                         handleCopyId(revenue.customerId);
                                                                         setActiveDropdown(null);
                                                                     }}
-                                                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(255,255,255,0.03)] flex items-center space-x-2 transition-colors"
+                                                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] flex items-center space-x-2 transition-colors"
                                                                 >
                                                                     <Copy className="w-4 h-4" />
                                                                     <span>Copy Customer ID</span>
@@ -474,7 +474,7 @@ const RevenueDashboard = () => {
                                                                             });
                                                                         }, 300);
                                                                     }}
-                                                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(255,255,255,0.03)] flex items-center space-x-2 transition-colors"
+                                                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] flex items-center space-x-2 transition-colors"
                                                                 >
                                                                     <ExternalLink className="w-4 h-4" />
                                                                     <span>View Customer Profile</span>
@@ -501,7 +501,7 @@ const RevenueDashboard = () => {
                         <button
                             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                             disabled={currentPage === 1}
-                            className="px-3 py-2 border border-theme rounded-lg text-sm hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-3 py-2 border border-theme rounded-lg text-sm hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Previous
                         </button>
@@ -513,7 +513,7 @@ const RevenueDashboard = () => {
                                     onClick={() => setCurrentPage(pageNum)}
                                     className={`px-3 py-2 rounded-lg text-sm ${currentPage === pageNum
                                         ? 'bg-green-600 text-white hover:bg-green-700'
-                                        : 'border border-theme hover:bg-[rgba(255,255,255,0.03)]'
+                                        : 'border border-theme hover:bg-[rgba(15,31,23,0.03)]'
                                         }`}
                                 >
                                     {pageNum}
@@ -523,7 +523,7 @@ const RevenueDashboard = () => {
                         <button
                             onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
                             disabled={currentPage >= pagination.totalPages}
-                            className="px-3 py-2 border border-theme rounded-lg text-sm hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-3 py-2 border border-theme rounded-lg text-sm hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Next
                         </button>
@@ -534,7 +534,7 @@ const RevenueDashboard = () => {
             {/* View Revenue Details Modal */}
             <Modal
                 title={
-                    <div className="flex items-center gap-2 text-slate-200">
+                    <div className="flex items-center gap-2 text-slate-700">
                         <DollarSign className="w-5 h-5 text-blue-500" />
                         <span>Revenue Details</span>
                     </div>
@@ -551,7 +551,7 @@ const RevenueDashboard = () => {
                             setShowViewModal(false);
                             setSelectedRevenue(null);
                         }}
-                        className="bg-slate-800 text-slate-200 border border-slate-700 hover:bg-slate-700"
+                        className="bg-slate-800 text-slate-700 border border-slate-700 hover:bg-slate-700"
                     >
                         Close
                     </Button>
@@ -580,7 +580,7 @@ const RevenueDashboard = () => {
 
                         {/* Customer Information */}
                         <div className="bg-slate-900 rounded-lg p-4 border border-slate-700">
-                            <h3 className="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                            <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
                                 <Building2 className="w-4 h-4 text-slate-400" />
                                 Customer Information
                             </h3>
@@ -588,7 +588,7 @@ const RevenueDashboard = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <p className="text-xs text-slate-400 mb-1">Customer Name</p>
-                                    <p className="text-sm font-medium text-slate-200">
+                                    <p className="text-sm font-medium text-slate-700">
                                         {selectedRevenue.customer || selectedRevenue.adminName || 'N/A'}
                                     </p>
                                 </div>
@@ -596,12 +596,12 @@ const RevenueDashboard = () => {
                                 <div>
                                     <p className="text-xs text-slate-400 mb-1">Customer ID</p>
                                     <div className="flex items-center gap-2">
-                                        <p className="text-sm font-medium text-slate-200">
+                                        <p className="text-sm font-medium text-slate-700">
                                             {selectedRevenue.customerId}
                                         </p>
                                         <button
                                             onClick={() => handleCopyId(selectedRevenue.customerId)}
-                                            className="text-slate-400 hover:text-slate-200"
+                                            className="text-slate-400 hover:text-slate-700"
                                         >
                                             <Copy className="w-3 h-3" />
                                         </button>
@@ -611,7 +611,7 @@ const RevenueDashboard = () => {
                                 {selectedRevenue.companyName && (
                                     <div className="col-span-2">
                                         <p className="text-xs text-slate-400 mb-1">Company Name</p>
-                                        <p className="text-sm font-medium text-slate-200">
+                                        <p className="text-sm font-medium text-slate-700">
                                             {selectedRevenue.companyName}
                                         </p>
                                     </div>
@@ -621,7 +621,7 @@ const RevenueDashboard = () => {
 
                         {/* Payment Information */}
                         <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-lg p-4 border border-slate-700">
-                            <h3 className="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                            <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
                                 <CreditCard className="w-4 h-4 text-slate-400" />
                                 Payment Information
                             </h3>
@@ -638,28 +638,28 @@ const RevenueDashboard = () => {
 
                                 <div>
                                     <p className="text-xs text-slate-400 mb-1">Payment Type</p>
-                                    <p className="text-sm font-medium text-slate-200">
+                                    <p className="text-sm font-medium text-slate-700">
                                         {selectedRevenue.recurring ? 'Monthly Recurring' : 'One-time'}
                                     </p>
                                 </div>
 
                                 <div>
                                     <p className="text-xs text-slate-400 mb-1">Payment Date</p>
-                                    <p className="text-sm font-medium text-slate-200">
+                                    <p className="text-sm font-medium text-slate-700">
                                         {selectedRevenue.paymentDate}
                                     </p>
                                 </div>
 
                                 <div>
                                     <p className="text-xs text-slate-400 mb-1">Next Payment</p>
-                                    <p className="text-sm font-medium text-slate-200">
+                                    <p className="text-sm font-medium text-slate-700">
                                         {selectedRevenue.nextPayment || 'N/A'}
                                     </p>
                                 </div>
 
                                 <div>
                                     <p className="text-xs text-slate-400 mb-1">Payment Method</p>
-                                    <p className="text-sm font-medium text-slate-200">
+                                    <p className="text-sm font-medium text-slate-700">
                                         {selectedRevenue.method || 'N/A'}
                                     </p>
                                 </div>
@@ -671,7 +671,7 @@ const RevenueDashboard = () => {
                                         <span
                                             className={`px-2 py-1 rounded text-xs font-medium ${selectedRevenue.status === "active"
                                                     ? "bg-green-900 text-green-400"
-                                                    : "bg-slate-700 text-slate-300"
+                                                    : "bg-slate-700 text-slate-600"
                                                 }`}
                                         >
                                             {selectedRevenue.status}
@@ -683,7 +683,7 @@ const RevenueDashboard = () => {
 
                         {/* Plan Information */}
                         <div className="bg-slate-900 rounded-lg p-4 border border-slate-700">
-                            <h3 className="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                            <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
                                 <FileText className="w-4 h-4 text-slate-400" />
                                 Plan Information
                             </h3>
@@ -691,14 +691,14 @@ const RevenueDashboard = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <p className="text-xs text-slate-400 mb-1">Plan Name</p>
-                                    <p className="text-sm font-medium text-slate-200">
+                                    <p className="text-sm font-medium text-slate-700">
                                         {selectedRevenue.plan || 'N/A'}
                                     </p>
                                 </div>
 
                                 <div>
                                     <p className="text-xs text-slate-400 mb-1">Plan Type</p>
-                                    <p className="text-sm font-medium text-slate-200">
+                                    <p className="text-sm font-medium text-slate-700">
                                         {selectedRevenue.recurring ? 'Monthly' : 'Lifetime'}
                                     </p>
                                 </div>
@@ -710,14 +710,14 @@ const RevenueDashboard = () => {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-xs text-slate-400 mb-1">Revenue Entry ID</p>
-                                    <p className="text-sm font-mono text-slate-200">
+                                    <p className="text-sm font-mono text-slate-700">
                                         {selectedRevenue.id}
                                     </p>
                                 </div>
 
                                 <button
                                     onClick={() => handleCopyId(selectedRevenue.id)}
-                                    className="text-slate-400 hover:text-slate-200 p-1 rounded"
+                                    className="text-slate-400 hover:text-slate-700 p-1 rounded"
                                 >
                                     <Copy className="w-4 h-4" />
                                 </button>

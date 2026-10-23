@@ -87,7 +87,7 @@ const TripHistory = () => {
                   className={`w-full text-left px-3 py-2 rounded transition-colors ${
                     selectedPeriod === period 
                       ? 'bg-purple-100 text-purple-700 border border-purple-300' 
-                      : 'hover:bg-[rgba(255,255,255,0.03)] text-primary'
+                      : 'hover:bg-[rgba(15,31,23,0.03)] text-primary'
                   }`}
                 >
                   {period}
@@ -200,7 +200,7 @@ const TripHistory = () => {
               {reportFormats.map((format, index) => {
                 const IconComponent = format.icon;
                 return (
-                  <div key={index} className="flex items-center justify-between p-2 hover:bg-[rgba(255,255,255,0.03)] rounded">
+                  <div key={index} className="flex items-center justify-between p-2 hover:bg-[rgba(15,31,23,0.03)] rounded">
                     <div className="flex items-center space-x-2">
                       <IconComponent className="h-4 w-4 text-secondary" />
                       <span className="text-sm text-primary">{format.name}</span>
@@ -339,7 +339,7 @@ const TripHistory = () => {
               {/* Options */}
               <button 
                 onClick={() => setShowOptionsModal(true)}
-                className="flex items-center space-x-1 px-4 py-2 border !mr-3 border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                className="flex items-center space-x-1 px-4 py-2 border !mr-3 border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
               >
                 <span>Options</span>
                 <ChevronDown className="h-4 w-4" />
@@ -348,7 +348,7 @@ const TripHistory = () => {
               {/* Summary */}
               <button 
                 onClick={() => setShowSummary(!showSummary)}
-                className="px-4 py-2 border !mr-3 border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                className="px-4 py-2 border !mr-3 border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
               >
                 Summary
               </button>
@@ -359,7 +359,7 @@ const TripHistory = () => {
               <div className="relative">
                 <button 
                   onClick={() => setShowReportModal(true)}
-                  className="flex items-center space-x-1 px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                  className="flex items-center space-x-1 px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
                 >
                   <span>Report</span>
                   <ChevronDown className="h-4 w-4" />
@@ -368,7 +368,7 @@ const TripHistory = () => {
             </div>
 
             {/* Show All Trips */}
-            <button className="flex items-center space-x-2 bg-gray-800 !text-white px-4 py-2 rounded-lg hover:bg-gray-900">
+            <button className="flex items-center space-x-2 bg-gray-100 text-primary px-4 py-2 rounded-lg hover:bg-gray-900">
               <span>Show All Trips</span>
               <div className="flex space-x-1">
                 <div className="w-2 h-2 bg-card rounded"></div>
@@ -403,11 +403,11 @@ const TripHistory = () => {
                       <span>Total Distance</span>
                       <span className="font-medium">{trip.totalDistance}</span>
                     </div>
-                    {/* <button className="bg-card text-primary px-3 py-1 rounded text-sm font-medium hover:bg-[rgba(255,255,255,0.03)]">
+                    {/* <button className="bg-card text-primary px-3 py-1 rounded text-sm font-medium hover:bg-[rgba(15,31,23,0.03)]">
                       Show Trips
                       <div className="inline-flex ml-2 space-x-1">
-                        <div className="w-1 h-1 bg-gray-800 rounded"></div>
-                        <div className="w-1 h-1 bg-gray-800 rounded"></div>
+                        <div className="w-1 h-1 bg-gray-100 rounded"></div>
+                        <div className="w-1 h-1 bg-gray-100 rounded"></div>
                       </div>
                     </button> */}
                   </div>

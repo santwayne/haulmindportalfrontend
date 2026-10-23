@@ -185,7 +185,7 @@ const ScrollableTable = () => {
                         </thead>
                         <tbody className="bg-card divide-y divide-theme">
                             {tableData.map((row) => (
-                                <tr key={row.id} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                                <tr key={row.id} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                                     <td className="px-4 py-3 whitespace-nowrap text-sm text-primary min-w-32">
                                         {row.invoices}
                                     </td>
@@ -225,7 +225,7 @@ const ScrollableTable = () => {
                                     <td className="px-4 py-3 whitespace-nowrap text-sm text-primary min-w-48">
                                         {row.driver_carrier}
                                     </td>
-                                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#00D1FF] min-w-32">
+                                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#059669] min-w-32">
                                         {row.merged_load}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-primary min-w-28">

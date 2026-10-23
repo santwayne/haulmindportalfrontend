@@ -314,7 +314,7 @@ const ToolboxTalks: React.FC = () => {
                 </tr>
               ) : (
                 filteredTalks.map((talk) => (
-                  <tr key={talk._id} className="hover:bg-[rgba(255,255,255,0.03)] transition">
+                  <tr key={talk._id} className="hover:bg-[rgba(15,31,23,0.03)] transition">
                     <td className="px-6 py-4 font-medium text-primary">{talk.talkNumber}</td>
                     <td className="px-6 py-4">
                       <div className="font-semibold text-primary">{talk.title}</div>
@@ -365,7 +365,7 @@ const ToolboxTalks: React.FC = () => {
                             setSelectedTalk(talk);
                             setShowDetailModal(true);
                           }}
-                          className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition"
+                          className="p-2 text-[#059669] hover:bg-blue-50 rounded-lg transition"
                           title="View Details"
                         >
                           <FaEye />
@@ -468,7 +468,7 @@ const ToolboxTalks: React.FC = () => {
             <button
               onClick={() => setActiveTab('talks')}
               className={`flex-1 px-6 py-4 font-semibold transition ${activeTab === 'talks'
-                ? 'border-b-2 text-[#00D1FF]'
+                ? 'border-b-2 text-[#059669]'
                 : 'text-secondary hover:text-primary'
                 }`}
               style={activeTab === 'talks' ? { borderColor: COLORS.primary.main } : {}}
@@ -479,7 +479,7 @@ const ToolboxTalks: React.FC = () => {
             <button
               onClick={() => setActiveTab('templates')}
               className={`flex-1 px-6 py-4 font-semibold transition ${activeTab === 'templates'
-                ? 'border-b-2 text-[#00D1FF]'
+                ? 'border-b-2 text-[#059669]'
                 : 'text-secondary hover:text-primary'
                 }`}
               style={activeTab === 'templates' ? { borderColor: COLORS.primary.main } : {}}

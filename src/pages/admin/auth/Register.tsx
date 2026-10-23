@@ -214,7 +214,7 @@ export default function RegistrationPage() {
             </div>
 
             {/* Key Benefits */}
-            <div className="space-y-4 rounded-2xl p-6 border" style={{ padding: 'calc(1.5rem * 0.98)', backgroundColor: 'rgba(18, 26, 43, 0.85)', borderColor: 'rgba(17, 131, 224, 0.2)' }}>
+            <div className="space-y-4 rounded-2xl p-6 border" style={{ padding: 'calc(1.5rem * 0.98)', backgroundColor: 'rgba(255,255,255, 0.85)', borderColor: 'rgba(5,150,105, 0.2)' }}>
               <h3 className="text-sm font-semibold text-primary uppercase tracking-wide mb-4" style={{ fontSize: 'calc(0.875rem * 0.98)' }}>What's Included</h3>
               
               <div className="flex items-start gap-3">
@@ -288,7 +288,7 @@ export default function RegistrationPage() {
                 onClick={() => setShowMoreFeatures(!showMoreFeatures)}
                 className="w-full flex items-center justify-center gap-2 text-sm font-medium text-primary hover:text-primary transition-colors pt-2 border-t border-theme"
                 style={{ fontSize: 'calc(0.875rem * 0.98)', color: 'var(--accent-navyblue)' }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#0d6fc7'}
+                onMouseEnter={(e) => e.currentTarget.style.color = '#047857'}
                 onMouseLeave={(e) => e.currentTarget.style.color = 'var(--accent-navyblue)'}
               >
                 {showMoreFeatures ? (
@@ -306,7 +306,7 @@ export default function RegistrationPage() {
             </div>
 
             {/* Trial Info */}
-            <div className="rounded-xl p-4 border" style={{ backgroundColor: 'rgba(18, 26, 43, 0.85)', borderColor: 'rgba(17, 131, 224, 0.2)' }}>
+            <div className="rounded-xl p-4 border" style={{ backgroundColor: 'rgba(255,255,255, 0.85)', borderColor: 'rgba(5,150,105, 0.2)' }}>
               <p className="text-xs text-primary leading-relaxed flex items-center gap-2" style={{ fontSize: 'calc(0.75rem * 0.98)' }}>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold text-white" style={{ backgroundColor: 'var(--accent-navyblue)', fontSize: 'calc(0.75rem * 0.98)' }}>
                 
@@ -343,7 +343,7 @@ export default function RegistrationPage() {
                             className={`block w-full rounded-lg border pl-10 pr-4 py-2.5 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent ${
                               errors.name ? "border-red-400 bg-card focus:ring-red-200" : "border-theme hover:border-theme"
                             }`}
-                            style={{ '--tw-ring-color': 'rgba(17, 131, 224, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
+                            style={{ '--tw-ring-color': 'rgba(5,150,105, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
                             placeholder="John Doe"
                           />
                         </div>
@@ -361,7 +361,7 @@ export default function RegistrationPage() {
                             className={`block w-full rounded-lg border pl-10 pr-4 py-2.5 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent ${
                               errors.email ? "border-red-400 bg-card focus:ring-red-200" : "border-theme hover:border-theme"
                             }`}
-                            style={{ '--tw-ring-color': 'rgba(17, 131, 224, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
+                            style={{ '--tw-ring-color': 'rgba(5,150,105, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
                             placeholder="john@company.com"
                           />
                         </div>
@@ -378,7 +378,7 @@ export default function RegistrationPage() {
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           className="block w-full rounded-lg border border-theme pl-10 pr-4 py-2.5 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent hover:border-theme"
-                          style={{ '--tw-ring-color': 'rgba(17, 131, 224, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
+                          style={{ '--tw-ring-color': 'rgba(5,150,105, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
                           placeholder="+1 (555) 123-4567"
                         />
                       </div>
@@ -395,7 +395,7 @@ export default function RegistrationPage() {
                           value={country}
                           onChange={(e) => setCountry(e.target.value)}
                           className="block w-full rounded-lg border border-theme px-4 py-2.5 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent hover:border-theme"
-                          style={{ '--tw-ring-color': 'rgba(17, 131, 224, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
+                          style={{ '--tw-ring-color': 'rgba(5,150,105, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
                           placeholder="United States"
                         />
                       </div>
@@ -406,7 +406,7 @@ export default function RegistrationPage() {
                           value={state}
                           onChange={(e) => setState(e.target.value)}
                           className="block w-full rounded-lg border border-theme px-4 py-2.5 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent hover:border-theme"
-                          style={{ '--tw-ring-color': 'rgba(17, 131, 224, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
+                          style={{ '--tw-ring-color': 'rgba(5,150,105, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
                           placeholder="California"
                         />
                       </div>
@@ -417,7 +417,7 @@ export default function RegistrationPage() {
                           value={city}
                           onChange={(e) => setCity(e.target.value)}
                           className="block w-full rounded-lg border border-theme px-4 py-2.5 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent hover:border-theme"
-                          style={{ '--tw-ring-color': 'rgba(17, 131, 224, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
+                          style={{ '--tw-ring-color': 'rgba(5,150,105, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
                           placeholder="Los Angeles"
                         />
                       </div>
@@ -431,7 +431,7 @@ export default function RegistrationPage() {
                           value={address}
                           onChange={(e) => setAddress(e.target.value)}
                           className="block w-full rounded-lg border border-theme pl-10 pr-4 py-2.5 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent hover:border-theme"
-                          style={{ '--tw-ring-color': 'rgba(17, 131, 224, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
+                          style={{ '--tw-ring-color': 'rgba(5,150,105, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
                           placeholder="123 Main Street"
                         />
                       </div>
@@ -453,7 +453,7 @@ export default function RegistrationPage() {
                             className={`block w-full rounded-lg border pl-10 pr-10 py-2.5 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent ${
                               errors.password ? "border-red-400 bg-card focus:ring-red-200" : "border-theme hover:border-theme"
                             }`}
-                            style={{ '--tw-ring-color': 'rgba(17, 131, 224, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
+                            style={{ '--tw-ring-color': 'rgba(5,150,105, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
                             placeholder="Create strong password"
                           />
                           <button
@@ -491,7 +491,7 @@ export default function RegistrationPage() {
                             className={`block w-full rounded-lg border pl-10 pr-10 py-2.5 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent ${
                               errors.confirm ? "border-red-400 bg-card focus:ring-red-200" : "border-theme hover:border-theme"
                             }`}
-                            style={{ '--tw-ring-color': 'rgba(17, 131, 224, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
+                            style={{ '--tw-ring-color': 'rgba(5,150,105, 0.3)', fontSize: 'calc(0.875rem * 1.005)', paddingTop: 'calc(0.625rem * 1.005)', paddingBottom: 'calc(0.625rem * 1.005)' } as React.CSSProperties}
                             placeholder="Re-enter password"
                           />
                           <button
@@ -549,7 +549,7 @@ export default function RegistrationPage() {
                           : "hover:shadow-lg transform hover:-translate-y-0.5"
                       }`}
                       style={loading ? { backgroundColor: 'var(--accent-navyblue)', opacity: 0.6, fontSize: 'calc(0.875rem * 0.98)', paddingTop: 'calc(0.75rem * 0.98)', paddingBottom: 'calc(0.75rem * 0.98)' } : { backgroundColor: 'var(--accent-navyblue)', fontSize: 'calc(0.875rem * 0.98)', paddingTop: 'calc(0.75rem * 0.98)', paddingBottom: 'calc(0.75rem * 0.98)' }}
-                      onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#0d6fc7'; }}
+                      onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#047857'; }}
                       onMouseLeave={(e) => { if (!loading) e.currentTarget.style.backgroundColor = 'var(--accent-navyblue)'; }}
                     >
                       {loading ? (

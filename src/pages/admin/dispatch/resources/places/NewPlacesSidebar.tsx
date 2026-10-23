@@ -229,7 +229,7 @@ const NewPlacesSidebar: React.FC<NewPlaceSidebarProps> = ({ isOpen, onClose }) =
         <div className="p-4 border-t border-theme flex justify-end bg-card sticky bottom-0">
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-theme !mr-3 rounded-md text-primary hover:bg-[rgba(255,255,255,0.03)] mr-2"
+            className="px-4 py-2 border border-theme !mr-3 rounded-md text-primary hover:bg-[rgba(15,31,23,0.03)] mr-2"
           >
             Cancel
           </button>

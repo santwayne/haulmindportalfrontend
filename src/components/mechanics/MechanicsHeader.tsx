@@ -182,12 +182,12 @@ const MechanicsHeader: React.FC<MechanicsHeaderProps> = ({
           {/* Search Button */}
           <button
             onClick={() => setIsSearchOpen(true)}
-            className="flex items-center gap-3 px-4 py-2 rounded-lg bg-[var(--bg-card)] border border-[rgba(255,255,255,0.08)] hover:border-[#42aeec]/40 text-secondary hover:text-primary transition-all"
+            className="flex items-center gap-3 px-4 py-2 rounded-lg bg-[var(--bg-card)] border border-[rgba(15,31,23,0.08)] hover:border-[#10b981]/40 text-secondary hover:text-primary transition-all"
             title="Search (Ctrl+K)"
           >
             <Search size={16} className="flex-shrink-0" />
             <span className="text-sm hidden sm:block">Search...</span>
-            <kbd className="text-xs bg-[rgba(255,255,255,0.06)] px-2 py-0.5 rounded text-secondary font-mono hidden sm:block">
+            <kbd className="text-xs bg-[rgba(15,31,23,0.06)] px-2 py-0.5 rounded text-secondary font-mono hidden sm:block">
               Ctrl K
             </kbd>
           </button>
@@ -195,7 +195,7 @@ const MechanicsHeader: React.FC<MechanicsHeaderProps> = ({
           {/* Profile */}
           <button
             onClick={() => navigate(`${basePath}/profile`)}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg-card)] border border-[rgba(255,255,255,0.08)] hover:border-[#42aeec]/40 text-secondary hover:text-primary transition-all"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg-card)] border border-[rgba(15,31,23,0.08)] hover:border-[#10b981]/40 text-secondary hover:text-primary transition-all"
             title="Profile"
           >
             <FaUser size={14} />
@@ -232,7 +232,7 @@ const MechanicsHeader: React.FC<MechanicsHeaderProps> = ({
                 <button
                   type="button"
                   onClick={() => { setIsSearchOpen(false); setSearchQuery(""); setSelectedIndex(0); }}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors"
                 >
                   <X size={20} />
                 </button>
@@ -253,14 +253,14 @@ const MechanicsHeader: React.FC<MechanicsHeaderProps> = ({
                       }`}
                     >
                       <div className={`flex-shrink-0 ${index === selectedIndex ? "scale-110" : ""}`}>
-                        <div className="p-2 rounded-lg bg-[rgba(0,209,255,0.1)] text-[var(--accent-blue)]">
+                        <div className="p-2 rounded-lg bg-[rgba(5,150,105,0.1)] text-[var(--accent-blue)]">
                           {action.icon}
                         </div>
                       </div>
                       <div className="flex-1 text-left min-w-0">
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-primary truncate">{action.title}</span>
-                          <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-[rgba(0,209,255,0.1)] text-[var(--accent-blue)]">
+                          <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-[rgba(5,150,105,0.1)] text-[var(--accent-blue)]">
                             Navigate
                           </span>
                         </div>
@@ -303,7 +303,7 @@ const MechanicsHeader: React.FC<MechanicsHeaderProps> = ({
       {/* LOGOUT CONFIRMATION MODAL */}
       {showLogoutModal && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-[var(--bg-card)] border border-[rgba(255,255,255,0.08)] rounded-xl shadow-2xl w-full max-w-sm mx-4 p-6">
+          <div className="bg-[var(--bg-card)] border border-[rgba(15,31,23,0.08)] rounded-xl shadow-2xl w-full max-w-sm mx-4 p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-red-500/10">
                 <LogOut size={20} className="text-red-400" />
@@ -314,7 +314,7 @@ const MechanicsHeader: React.FC<MechanicsHeaderProps> = ({
             <div className="flex gap-3 justify-end">
               <button
                 onClick={cancelLogout}
-                className="px-4 py-2 text-sm rounded-lg border border-[rgba(255,255,255,0.08)] text-secondary hover:text-primary hover:border-[rgba(255,255,255,0.2)] transition-all"
+                className="px-4 py-2 text-sm rounded-lg border border-[rgba(15,31,23,0.08)] text-secondary hover:text-primary hover:border-[rgba(15,31,23,0.2)] transition-all"
               >
                 Cancel
               </button>

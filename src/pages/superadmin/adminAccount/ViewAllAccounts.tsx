@@ -495,20 +495,20 @@ const ViewAllAccounts = () => {
 
 
     const iCls = "block w-full rounded-lg border px-3 py-2.5 text-sm text-primary bg-transparent focus:outline-none";
-    const iStyle = { borderColor: 'rgba(17,131,224,0.2)' };
+    const iStyle = { borderColor: 'rgba(5,150,105,0.2)' };
     const iFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         e.target.style.borderColor = 'var(--accent-navyblue)';
-        e.target.style.boxShadow = '0 0 0 2px rgba(17,131,224,0.15)';
+        e.target.style.boxShadow = '0 0 0 2px rgba(5,150,105,0.15)';
     };
     const iBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        e.target.style.borderColor = 'rgba(17,131,224,0.2)';
+        e.target.style.borderColor = 'rgba(5,150,105,0.2)';
         e.target.style.boxShadow = '';
     };
     const mStyles = {
-        content: { background: 'var(--bg-card)', padding: 0, borderRadius: '16px', overflow: 'hidden' as const, border: '1px solid rgba(17,131,224,0.2)' },
+        content: { background: 'var(--bg-card)', padding: 0, borderRadius: '16px', overflow: 'hidden' as const, border: '1px solid rgba(5,150,105,0.2)' },
         body: { background: 'var(--bg-card)', padding: 0 },
     };
-    const divider = { borderColor: 'rgba(17,131,224,0.12)' };
+    const divider = { borderColor: 'rgba(5,150,105,0.12)' };
 
     return (
         <div className="min-h-screen bg-card">
@@ -530,7 +530,7 @@ const ViewAllAccounts = () => {
                             }}
                             className="!text-white px-4 py-2 rounded-lg font-medium transition-all flex items-center hover:-translate-y-0.5 transform"
                             style={{ backgroundColor: 'var(--accent-navyblue)' }}
-                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#0d6fc7'; }}
+                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#047857'; }}
                             onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent-navyblue)'; }}
                         >
                             <Plus className="w-4 h-4 mr-2" />
@@ -562,7 +562,7 @@ const ViewAllAccounts = () => {
                             <select
                                 value={selectedFilter}
                                 onChange={(e) => setSelectedFilter(e.target.value)}
-                                className="w-32 bg-slate-900 text-slate-200 border border-slate-700 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-32 bg-slate-900 text-slate-700 border border-slate-700 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                                 <option value="all">All</option>
                                 <option value="active">Active</option>
@@ -586,7 +586,7 @@ const ViewAllAccounts = () => {
                             <thead className="bg-card border-b border-theme">
                                 <tr>
                                     <th
-                                        className="px-6 py-4 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-[rgba(255,255,255,0.03)] min-w-[200px]"
+                                        className="px-6 py-4 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-[rgba(15,31,23,0.03)] min-w-[200px]"
                                         onClick={() => handleSort('company')}
                                     >
                                         <div className="flex items-center space-x-1">
@@ -603,7 +603,7 @@ const ViewAllAccounts = () => {
                                     </th>
 
                                     <th
-                                        className="px-6 py-4 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-[rgba(255,255,255,0.03)] min-w-[120px]"
+                                        className="px-6 py-4 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-[rgba(15,31,23,0.03)] min-w-[120px]"
                                         onClick={() => handleSort('revenue')}
                                     >
                                         <div className="flex items-center space-x-1">
@@ -613,7 +613,7 @@ const ViewAllAccounts = () => {
                                     </th>
 
                                     <th
-                                        className="px-6 py-4 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-[rgba(255,255,255,0.03)] min-w-[150px]"
+                                        className="px-6 py-4 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-[rgba(15,31,23,0.03)] min-w-[150px]"
                                         onClick={() => handleSort('joinDate')}
                                     >
                                         <div className="flex items-center space-x-1">
@@ -648,10 +648,10 @@ const ViewAllAccounts = () => {
                                     </tr>
                                 ) : (
                                     filteredAdmins.map((admin) => (
-                                        <tr key={admin._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                                        <tr key={admin._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                                             <td className="px-6 py-4 whitespace-nowrap min-w-[200px]">
                                                 <div className="flex items-center">
-                                                    <div className="p-2 rounded-lg mr-3" style={{ backgroundColor: 'rgba(17,131,224,0.12)' }}>
+                                                    <div className="p-2 rounded-lg mr-3" style={{ backgroundColor: 'rgba(5,150,105,0.12)' }}>
                                                         <Building2 className="w-5 h-5" style={{ color: 'var(--accent-navyblue)' }} />
                                                     </div>
                                                     <div>
@@ -691,8 +691,8 @@ const ViewAllAccounts = () => {
                                                         </div>
                                                         <span className="text-xs px-2 py-0.5 rounded-full font-medium inline-block"
                                                             style={{
-                                                                backgroundColor: admin.currentSubscription.status === 'active' ? 'rgba(0,255,163,0.1)' : 'rgba(244,63,94,0.1)',
-                                                                color: admin.currentSubscription.status === 'active' ? '#00FFA3' : 'var(--accent-red)',
+                                                                backgroundColor: admin.currentSubscription.status === 'active' ? 'rgba(5,150,105,0.1)' : 'rgba(244,63,94,0.1)',
+                                                                color: admin.currentSubscription.status === 'active' ? '#059669' : 'var(--accent-red)',
                                                             }}>
                                                             {admin.currentSubscription.status}
                                                         </span>
@@ -732,8 +732,8 @@ const ViewAllAccounts = () => {
                                                     />
                                                     <span className="text-xs px-2 py-0.5 rounded-full font-medium"
                                                         style={{
-                                                            backgroundColor: admin.status === 'active' ? 'rgba(0,255,163,0.1)' : 'rgba(244,63,94,0.1)',
-                                                            color: admin.status === 'active' ? '#00FFA3' : 'var(--accent-red)',
+                                                            backgroundColor: admin.status === 'active' ? 'rgba(5,150,105,0.1)' : 'rgba(244,63,94,0.1)',
+                                                            color: admin.status === 'active' ? '#059669' : 'var(--accent-red)',
                                                         }}>
                                                         {admin.status}
                                                     </span>
@@ -761,7 +761,7 @@ const ViewAllAccounts = () => {
                                                     </button>
                                                     <button
                                                         onClick={() => handleEdit(admin)}
-                                                        className="text-secondary hover:text-[#00D1FF] p-1 rounded transition-colors"
+                                                        className="text-secondary hover:text-[#059669] p-1 rounded transition-colors"
                                                         title="Edit Admin"
                                                     >
                                                         <Edit className="w-4 h-4" />
@@ -805,7 +805,7 @@ const ViewAllAccounts = () => {
                             <button
                                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                                 disabled={currentPage === 1}
-                                className="px-3 py-2 border border-theme rounded-lg text-sm hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-3 py-2 border border-theme rounded-lg text-sm hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Previous
                             </button>
@@ -818,7 +818,7 @@ const ViewAllAccounts = () => {
                                         onClick={() => setCurrentPage(pageNum)}
                                         className={`px-3 py-2 rounded-lg text-sm ${currentPage === pageNum
                                                 ? 'text-white'
-                                                : 'border border-theme hover:bg-[rgba(255,255,255,0.03)]'
+                                                : 'border border-theme hover:bg-[rgba(15,31,23,0.03)]'
                                             }`}
                                         style={currentPage === pageNum ? { backgroundColor: 'var(--accent-navyblue)' } : undefined}
                                     >
@@ -829,7 +829,7 @@ const ViewAllAccounts = () => {
                             <button
                                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                                 disabled={currentPage === totalPages}
-                                className="px-3 py-2 border border-theme rounded-lg text-sm hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-3 py-2 border border-theme rounded-lg text-sm hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Next
                             </button>
@@ -844,7 +844,7 @@ const ViewAllAccounts = () => {
                     footer={null} width={620} title={null} styles={mStyles}>
                     {/* Header */}
                     <div className="px-6 pt-5 pb-4 flex items-center gap-3 border-b" style={divider}>
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(17,131,224,0.12)' }}>
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(5,150,105,0.12)' }}>
                             <Plus className="w-5 h-5" style={{ color: 'var(--accent-navyblue)' }} />
                         </div>
                         <div>
@@ -936,7 +936,7 @@ const ViewAllAccounts = () => {
                         <button onClick={handleCreate}
                             className="px-5 py-2 rounded-lg text-sm font-semibold text-white transition-all hover:-translate-y-0.5 transform"
                             style={{ backgroundColor: 'var(--accent-navyblue)' }}
-                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#0d6fc7'; }}
+                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#047857'; }}
                             onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent-navyblue)'; }}>
                             Create Admin
                         </button>
@@ -950,7 +950,7 @@ const ViewAllAccounts = () => {
                     footer={null} width={620} title={null} styles={mStyles}>
                     {/* Header */}
                     <div className="px-6 pt-5 pb-4 flex items-center gap-3 border-b" style={divider}>
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(17,131,224,0.12)' }}>
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(5,150,105,0.12)' }}>
                             <Edit className="w-4 h-4" style={{ color: 'var(--accent-navyblue)' }} />
                         </div>
                         <div>
@@ -1033,7 +1033,7 @@ const ViewAllAccounts = () => {
                         <button onClick={handleUpdate}
                             className="px-5 py-2 rounded-lg text-sm font-semibold text-white transition-all hover:-translate-y-0.5 transform"
                             style={{ backgroundColor: 'var(--accent-navyblue)' }}
-                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#0d6fc7'; }}
+                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#047857'; }}
                             onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent-navyblue)'; }}>
                             Save Changes
                         </button>
@@ -1047,7 +1047,7 @@ const ViewAllAccounts = () => {
                     footer={null} width={580} title={null} styles={mStyles}>
                     {/* Header */}
                     <div className="px-6 pt-5 pb-4 flex items-center gap-3 border-b" style={divider}>
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(17,131,224,0.12)' }}>
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(5,150,105,0.12)' }}>
                             <Building2 className="w-5 h-5" style={{ color: 'var(--accent-navyblue)' }} />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -1056,8 +1056,8 @@ const ViewAllAccounts = () => {
                         </div>
                         <span className="px-2.5 py-1 rounded-full text-xs font-semibold flex-shrink-0"
                             style={{
-                                backgroundColor: selectedAdmin.status === 'active' ? 'rgba(0,255,163,0.1)' : 'rgba(244,63,94,0.1)',
-                                color: selectedAdmin.status === 'active' ? '#00FFA3' : 'var(--accent-red)',
+                                backgroundColor: selectedAdmin.status === 'active' ? 'rgba(5,150,105,0.1)' : 'rgba(244,63,94,0.1)',
+                                color: selectedAdmin.status === 'active' ? '#059669' : 'var(--accent-red)',
                             }}>
                             {selectedAdmin.status}
                         </span>
@@ -1076,7 +1076,7 @@ const ViewAllAccounts = () => {
                                     { label: 'Join Date', value: selectedAdmin.joinDate ? new Date(selectedAdmin.joinDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : null },
                                     { label: 'Created', value: selectedAdmin.createdAt ? new Date(selectedAdmin.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : null },
                                 ].map(({ label, value }) => (
-                                    <div key={label} className="rounded-lg p-3 border" style={{ backgroundColor: 'rgba(17,131,224,0.04)', borderColor: 'rgba(17,131,224,0.12)' }}>
+                                    <div key={label} className="rounded-lg p-3 border" style={{ backgroundColor: 'rgba(5,150,105,0.04)', borderColor: 'rgba(5,150,105,0.12)' }}>
                                         <p className="text-xs text-secondary mb-1">{label}</p>
                                         <p className="text-sm font-medium text-primary truncate">{value || '—'}</p>
                                     </div>
@@ -1087,7 +1087,7 @@ const ViewAllAccounts = () => {
                         {selectedAdmin.company && (
                             <div>
                                 <p className="text-xs font-semibold text-secondary uppercase tracking-wider mb-3">Company</p>
-                                <div className="rounded-xl border p-4 space-y-3" style={{ borderColor: 'rgba(17,131,224,0.12)', backgroundColor: 'rgba(17,131,224,0.03)' }}>
+                                <div className="rounded-xl border p-4 space-y-3" style={{ borderColor: 'rgba(5,150,105,0.12)', backgroundColor: 'rgba(5,150,105,0.03)' }}>
                                     <div className="grid grid-cols-2 gap-3">
                                         <div>
                                             <p className="text-xs text-secondary mb-0.5">Company Name</p>
@@ -1117,7 +1117,7 @@ const ViewAllAccounts = () => {
                         {(selectedAdmin.country || selectedAdmin.state || selectedAdmin.city || selectedAdmin.location?.address) && (
                             <div>
                                 <p className="text-xs font-semibold text-secondary uppercase tracking-wider mb-3">Location</p>
-                                <div className="rounded-xl border p-4" style={{ borderColor: 'rgba(17,131,224,0.12)', backgroundColor: 'rgba(17,131,224,0.03)' }}>
+                                <div className="rounded-xl border p-4" style={{ borderColor: 'rgba(5,150,105,0.12)', backgroundColor: 'rgba(5,150,105,0.03)' }}>
                                     {selectedAdmin.location?.address && <p className="text-sm text-primary mb-1">{selectedAdmin.location.address}</p>}
                                     <p className="text-sm text-secondary">
                                         {[selectedAdmin.city, selectedAdmin.state, selectedAdmin.country].filter(Boolean).join(', ') || '—'}
@@ -1135,7 +1135,7 @@ const ViewAllAccounts = () => {
                         <button onClick={() => { setShowViewModal(false); handleEdit(selectedAdmin); }}
                             className="px-5 py-2 rounded-lg text-sm font-semibold text-white transition-all hover:-translate-y-0.5 transform flex items-center gap-2"
                             style={{ backgroundColor: 'var(--accent-navyblue)' }}
-                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#0d6fc7'; }}
+                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#047857'; }}
                             onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent-navyblue)'; }}>
                             <Edit className="w-3.5 h-3.5" /> Edit Admin
                         </button>
@@ -1149,7 +1149,7 @@ const ViewAllAccounts = () => {
                     footer={null} width={560} title={null} styles={mStyles}>
                     {/* Header */}
                     <div className="px-6 pt-5 pb-4 flex items-center gap-3 border-b" style={divider}>
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(17,131,224,0.12)' }}>
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(5,150,105,0.12)' }}>
                             <Tag className="w-4 h-4" style={{ color: 'var(--accent-navyblue)' }} />
                         </div>
                         <div>
@@ -1159,7 +1159,7 @@ const ViewAllAccounts = () => {
                     </div>
                     {/* Body */}
                     <div className="px-6 py-5 space-y-4">
-                        <div className="rounded-lg p-3 border flex items-start gap-2.5" style={{ backgroundColor: 'rgba(17,131,224,0.06)', borderColor: 'rgba(17,131,224,0.15)' }}>
+                        <div className="rounded-lg p-3 border flex items-start gap-2.5" style={{ backgroundColor: 'rgba(5,150,105,0.06)', borderColor: 'rgba(5,150,105,0.15)' }}>
                             <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: 'var(--accent-navyblue)' }} />
                             <p className="text-xs text-secondary">
                                 This activates the plan immediately for this client without collecting payment through Stripe. Any existing active subscription will be superseded.
@@ -1230,7 +1230,7 @@ const ViewAllAccounts = () => {
 
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-medium text-secondary">Modules / Roles Included</label>
-                                    <div className="grid grid-cols-2 gap-x-3 gap-y-2 p-3 rounded-lg border" style={{ borderColor: 'rgba(17,131,224,0.15)' }}>
+                                    <div className="grid grid-cols-2 gap-x-3 gap-y-2 p-3 rounded-lg border" style={{ borderColor: 'rgba(5,150,105,0.15)' }}>
                                         {ASSIGNABLE_PLAN_ROLES.map(role => (
                                             <label key={role} className="flex items-center gap-2 text-xs text-primary cursor-pointer">
                                                 <input
@@ -1279,7 +1279,7 @@ const ViewAllAccounts = () => {
                 {/* Body */}
                 <div className="px-6 py-5 space-y-4">
                     {selectedAdmin && (
-                        <div className="rounded-xl p-4 border space-y-2" style={{ backgroundColor: 'rgba(17,131,224,0.04)', borderColor: 'rgba(17,131,224,0.12)' }}>
+                        <div className="rounded-xl p-4 border space-y-2" style={{ backgroundColor: 'rgba(5,150,105,0.04)', borderColor: 'rgba(5,150,105,0.12)' }}>
                             <div className="flex items-center gap-2">
                                 <Users className="w-4 h-4 text-secondary flex-shrink-0" />
                                 <span className="text-sm font-medium text-primary">{selectedAdmin.name}</span>

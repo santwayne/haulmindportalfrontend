@@ -474,14 +474,14 @@ const UserProfilesPortfolio: React.FC = () => {
                         <div className="rounded-lg p-4 bg-card border border-theme">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-xs text-[#F59E0B] mb-0.5">
+                                    <p className="text-xs text-[#d97706] mb-0.5">
                                         Driver Miles
                                     </p>
                                     <p className="text-2xl font-semibold text-[var(--accent-orange)]">
                                         {formatNumber(summaryStats.totalMiles)}
                                     </p>
                                 </div>
-                                <MapPin className="text-[#F59E0B]" size={20} />
+                                <MapPin className="text-[#d97706]" size={20} />
                             </div>
                         </div>
                     )}
@@ -538,7 +538,7 @@ focus:border-[var(--accent-blue)] focus:border-transparent"
           px-5 py-2 rounded-l text-sm font-medium transition-all duration-200
           ${isActive
                                                     ? 'bg-[var(--accent-navyblue)] text-white shadow-lg'
-                                                    : 'bg-[#0f2a3a] text-white/70 border border-white/10 hover:bg-[#14394d]'
+                                                    : 'bg-[#0f2a3a] text-white/70 border border-black/10 hover:bg-[#14394d]'
                                                 }
         `}
                                         >
@@ -638,7 +638,7 @@ focus:ring-[var(--accent-blue)]/30 focus:border-transparent"
                                 filteredProfiles.map((profile) => (
                                     <tr
                                         key={profile._id}
-                                        className="hover:bg-[rgba(255,255,255,0.03)] transition-colors cursor-pointer"
+                                        className="hover:bg-[rgba(15,31,23,0.03)] transition-colors cursor-pointer"
                                         onClick={() => {
                                             setSelectedProfile(profile);
                                             setShowProfileSidebar(true);
@@ -731,7 +731,7 @@ focus:ring-[var(--accent-blue)]/30 focus:border-transparent"
                                                 <div className="text-xs text-secondary mt-1 flex gap-2">
                                                     <span className="text-[var(--accent-green)]">✓ {profile.presentDays}</span>
                                                     {profile.absentDays > 0 && <span className="text-[#A855F7]">✗ {profile.absentDays}</span>}
-                                                    {profile.leaveDays > 0 && <span className="text-[#00D1FF]">L {profile.leaveDays}</span>}
+                                                    {profile.leaveDays > 0 && <span className="text-[#059669]">L {profile.leaveDays}</span>}
                                                 </div>
                                             </div>
                                         </td>
@@ -764,7 +764,7 @@ focus:ring-[var(--accent-blue)]/30 focus:border-transparent"
                                                     setShowProfileSidebar(true);
                                                 }}
                                                 className="p-2 rounded-lg transition-colors text-[var(--accent-color)] hover:text-[var(--accent-dark)]"
-                                                style={{ backgroundColor: 'rgba(1, 106, 178, 0.08)' }}
+                                                style={{ backgroundColor: 'rgba(4,120,87, 0.08)' }}
                                                 title="View Profile"
                                             >
                                                 <Eye className="w-5 h-5" />
@@ -936,7 +936,7 @@ focus:ring-[var(--accent-blue)]/30 focus:border-transparent"
                             {/* Time Period Filter */}
                             <div
                                 className="rounded-xl p-4"
-                                style={{ backgroundColor: 'rgba(1, 106, 178, 0.05)', border: '1px solid rgba(1, 106, 178, 0.2)' }}
+                                style={{ backgroundColor: 'rgba(4,120,87, 0.05)', border: '1px solid rgba(4,120,87, 0.2)' }}
                             >
                                 <div className="flex items-center justify-between flex-wrap gap-4">
                                     <div className="flex items-center gap-2">
@@ -950,7 +950,7 @@ focus:ring-[var(--accent-blue)]/30 focus:border-transparent"
                                                 onClick={() => setProfileTimePeriod(period)}
                                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${profileTimePeriod === period
                                                     ? '!text-white shadow-md'
-                                                    : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border border-theme'
+                                                    : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border border-theme'
                                                     }`}
                                                 style={profileTimePeriod === period ? { background: 'var(--accent-navyblue)', borderColor: 'transparent' } : undefined}
                                             >
@@ -992,7 +992,7 @@ focus:ring-[var(--accent-blue)]/30 focus:border-transparent"
                                                 <p className="text-2xl font-bold text-[var(--accent-green)] mb-2">{formatCurrency(periodEarnings)}</p>
                                             </div>
                                             <div className="bg-[var(--accent-blue)]/10 border border-theme to-blue-100 rounded-lg p-4 border border-blue-200">
-                                                <p className="text-sm font-medium text-[#00D1FF] mb-2">Base Salary</p>
+                                                <p className="text-sm font-medium text-[#059669] mb-2">Base Salary</p>
                                                 <p className="text-2xl font-bold text-[var(--accent-blue)] mb-2">{formatCurrency(periodBase)}</p>
                                             </div>
                                             <div className=" bg-[var(--accent-purple)]/10 border border-theme to-purple-100 rounded-lg p-4 border border-theme">
@@ -1011,7 +1011,7 @@ focus:ring-[var(--accent-blue)]/30 focus:border-transparent"
                             {/* Attendance Details */}
                             <div className="bg-card border border-theme rounded-xl p-6">
                                 <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
-                                    <Clock className="w-5 h-5 text-[#00D1FF]" />
+                                    <Clock className="w-5 h-5 text-[#059669]" />
                                     Attendance & Working Hours - {profileTimePeriod === '1week' ? '1 Week' : profileTimePeriod === '2weeks' ? '2 Weeks' : profileTimePeriod === '1month' ? '1 Month' : profileTimePeriod === '6months' ? '6 Months' : profileTimePeriod === '1year' ? '1 Year' : '2 Years'}
                                 </h3>
                                 {(() => {
@@ -1034,7 +1034,7 @@ focus:ring-[var(--accent-blue)]/30 focus:border-transparent"
                                         <>
                                             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                                 <div className="bg-[var(--accent-blue)]/10 rounded-lg p-4  border-blue-200">
-                                                    <p className="text-sm text-[#00D1FF] mb-1">Working Days</p>
+                                                    <p className="text-sm text-[#059669] mb-1">Working Days</p>
                                                     <p className="text-2xl font-bold text-[var(--accent-blue)]">{periodDaysWorked}</p>
                                                 </div>
                                                 <div className="bg-[var(--accent-green)]/10 rounded-lg p-4 border border-theme">
@@ -1065,7 +1065,7 @@ focus:ring-[var(--accent-blue)]/30 focus:border-transparent"
                             {(selectedProfile.role === 'driver' || selectedProfile.milesDriven) && (
                                 <div className="bg-card border border-theme rounded-xl p-6">
                                     <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
-                                        <MapPin className="w-5 h-5 text-[#F59E0B]" />
+                                        <MapPin className="w-5 h-5 text-[#d97706]" />
                                         Driver Performance - {profileTimePeriod === '1week' ? '1 Week' : profileTimePeriod === '2weeks' ? '2 Weeks' : profileTimePeriod === '1month' ? '1 Month' : profileTimePeriod === '6months' ? '6 Months' : profileTimePeriod === '1year' ? '1 Year' : '2 Years'}
                                     </h3>
                                     {(() => {
@@ -1086,13 +1086,13 @@ focus:ring-[var(--accent-blue)]/30 focus:border-transparent"
                                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                                 {selectedProfile.milesDriven && (
                                                     <div className="bg-card rounded-lg p-4 border border-theme">
-                                                        <p className="text-sm text-[#F59E0B] mb-1">Miles Driven</p>
+                                                        <p className="text-sm text-[#d97706] mb-1">Miles Driven</p>
                                                         <p className="text-2xl font-bold text-[var(--accent-orange)]">{formatNumber(periodMiles)}</p>
                                                     </div>
                                                 )}
                                                 {selectedProfile.tripsCompleted && (
                                                     <div className="bg-card rounded-lg p-4 border border-blue-200">
-                                                        <p className="text-sm text-[#00D1FF] mb-1">Trips Completed</p>
+                                                        <p className="text-sm text-[#059669] mb-1">Trips Completed</p>
                                                         <p className="text-2xl font-bold text-[var(--accent-blue)]">{periodTrips}</p>
                                                     </div>
                                                 )}

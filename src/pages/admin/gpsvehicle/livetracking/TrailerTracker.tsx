@@ -284,7 +284,7 @@ const ProfessionalTrailerTracker: React.FC = () => {
             >
                 <div className="h-full flex flex-col ">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-[rgba(0,209,255,0.2)] via-[rgba(0,209,255,0.15)] to-[rgba(168,85,247,0.2)] p-4 border border-theme rounded-lg">
+                    <div className="bg-gradient-to-r from-[rgba(5,150,105,0.2)] via-[rgba(5,150,105,0.15)] to-[rgba(168,85,247,0.2)] p-4 border border-theme rounded-lg">
 
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-xl font-bold flex items-center gap-2 text-[var(--accent-navyblue)]">
@@ -294,7 +294,7 @@ const ProfessionalTrailerTracker: React.FC = () => {
 
                             <button
                                 onClick={() => setSidebarCollapsed(true)}
-                                className="p-1 hover:bg-[rgba(255,255,255,0.08)] rounded-lg transition-colors"
+                                className="p-1 hover:bg-[rgba(15,31,23,0.08)] rounded-lg transition-colors"
                             >
                                 <ChevronLeft className="w-5 h-5 text-secondary hover:text-primary" />
                             </button>
@@ -389,7 +389,7 @@ const ProfessionalTrailerTracker: React.FC = () => {
             {sidebarCollapsed && (
                 <button
                     onClick={() => setSidebarCollapsed(false)}
-                    className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-[rgba(0,209,255,0.15)] text-white p-2 rounded-r-lg shadow-lg hover:bg-[rgba(0,209,255,0.15)]/90 transition-colors z-10"
+                    className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-[rgba(5,150,105,0.15)] text-white p-2 rounded-r-lg shadow-lg hover:bg-[rgba(5,150,105,0.15)]/90 transition-colors z-10"
                 >
                     <ChevronRight className="w-5 h-5" />
                 </button>
@@ -478,7 +478,7 @@ const ProfessionalTrailerTracker: React.FC = () => {
                             <h3 className="text-base font-bold text-[var(--accent-navyblue)]">{selectedTrailer.plateNumber}</h3>
                             <button
                                 onClick={() => setSelectedTrailer(null)}
-                                className="p-1 hover:bg-[rgba(255,255,255,0.03)] rounded transition-colors"
+                                className="p-1 hover:bg-[rgba(15,31,23,0.03)] rounded transition-colors"
                             >
                                 <X className="w-4 h-4" />
                             </button>

@@ -98,9 +98,9 @@ const DarkTooltip = ({
   if (!active || !payload?.length) return null;
   const val = payload[0].value as number;
   return (
-    <div className="bg-[#0B1220] border border-[rgba(6,55,122,0.5)] rounded-lg px-3 py-2 shadow-xl text-xs">
-      <p className="text-[#8B9BB4] mb-0.5">{label}</p>
-      <p className="text-[#42aeec] font-semibold">
+    <div className="bg-[#f2f7f4] border border-[rgba(6,78,59,0.5)] rounded-lg px-3 py-2 shadow-xl text-xs">
+      <p className="text-[#5a7066] mb-0.5">{label}</p>
+      <p className="text-[#10b981] font-semibold">
         {formatter ? formatter(val) : val}
       </p>
     </div>
@@ -254,7 +254,7 @@ export default function QuickStatsUI() {
     return (
       <div className="p-6 flex items-center justify-center min-h-screen bg-main">
         <div className="text-center">
-          <RefreshCw className="animate-spin h-10 w-10 text-[#42aeec] mx-auto mb-3" />
+          <RefreshCw className="animate-spin h-10 w-10 text-[#10b981] mx-auto mb-3" />
           <p className="text-secondary">Loading dashboard...</p>
         </div>
       </div>
@@ -264,12 +264,12 @@ export default function QuickStatsUI() {
   if (error) {
     return (
       <div className="p-6 flex items-center justify-center min-h-screen bg-main">
-        <div className="text-center bg-[#121A2B] p-6 rounded-xl border border-[rgba(6,55,122,0.4)] shadow-lg">
+        <div className="text-center bg-[#ffffff] p-6 rounded-xl border border-[rgba(6,78,59,0.4)] shadow-lg">
           <AlertTriangle className="h-12 w-12 text-rose-500 mx-auto mb-3" />
           <div className="text-[#A855F7] text-lg font-semibold mb-2">{error}</div>
           <button
             onClick={fetchDashboardData}
-            className="mt-3 px-5 py-2 bg-[#06377a] text-white rounded-lg hover:bg-[#1a6db8] transition font-medium inline-flex items-center gap-2"
+            className="mt-3 px-5 py-2 bg-[#064e3b] text-white rounded-lg hover:bg-[#1a6db8] transition font-medium inline-flex items-center gap-2"
           >
             <RefreshCw className="h-4 w-4" />
             Retry
@@ -282,7 +282,7 @@ export default function QuickStatsUI() {
   return (
     <div className="p-5 space-y-5 bg-main min-h-screen relative overflow-hidden ">
       {/* Ambient glow orbs */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-[#06377a]/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 left-0 w-96 h-96 bg-[#064e3b]/8 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#A855F7]/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-[#1a6db8]/6 rounded-full blur-3xl pointer-events-none" />
 
@@ -305,14 +305,14 @@ export default function QuickStatsUI() {
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-primary flex items-center gap-2">
-              <span className="p-1.5 rounded-lg bg-[#06377a]/25">
-                <Package className="h-4 w-4 text-[#42aeec]" />
+              <span className="p-1.5 rounded-lg bg-[#064e3b]/25">
+                <Package className="h-4 w-4 text-[#10b981]" />
               </span>
               Trips per Month
             </h3>
 
-            <span className="flex items-center gap-1.5 text-xs text-[#8B9BB4]">
-              <span className="w-2 h-2 rounded-full bg-[#00FFA3] animate-pulse shadow-[0_0_6px_#00FFA3]" />
+            <span className="flex items-center gap-1.5 text-xs text-[#5a7066]">
+              <span className="w-2 h-2 rounded-full bg-[#059669] animate-pulse shadow-[0_0_6px_#059669]" />
               Live
             </span>
           </div>
@@ -326,21 +326,21 @@ export default function QuickStatsUI() {
 
                     <defs>
                       <linearGradient id="tripBarGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#42aeec" stopOpacity={0.9} />
-                        <stop offset="100%" stopColor="#06377a" stopOpacity={0.6} />
+                        <stop offset="0%" stopColor="#10b981" stopOpacity={0.9} />
+                        <stop offset="100%" stopColor="#064e3b" stopOpacity={0.6} />
                       </linearGradient>
                     </defs>
 
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      stroke="rgba(255,255,255,0.05)"
+                      stroke="rgba(15,31,23,0.05)"
                       vertical={false}
                     />
 
                     {/* ✅ use month */}
                     <XAxis
                       dataKey="month"
-                      stroke="#8B9BB4"
+                      stroke="#5a7066"
                       tick={{ fontSize: 11 }}
                       axisLine={false}
                       tickLine={false}
@@ -348,7 +348,7 @@ export default function QuickStatsUI() {
 
                     {/* Y axis */}
                     <YAxis
-                      stroke="#8B9BB4"
+                      stroke="#5a7066"
                       tick={{ fontSize: 11 }}
                       axisLine={false}
                       tickLine={false}
@@ -358,7 +358,7 @@ export default function QuickStatsUI() {
 
                     <Tooltip
                       content={<DarkTooltip />}
-                      cursor={{ fill: "rgba(6,55,122,0.15)" }}
+                      cursor={{ fill: "rgba(6,78,59,0.15)" }}
                     />
 
                     {/* ✅ use total */}
@@ -384,13 +384,13 @@ export default function QuickStatsUI() {
         <DashCard className="cursor-pointer" onClick={() => navigate("/admin/accounts/invoice")}>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-primary flex items-center gap-2">
-              <span className="p-1.5 rounded-lg bg-[#00FFA3]/10">
-                <FileText className="h-4 w-4 text-[#00FFA3]" />
+              <span className="p-1.5 rounded-lg bg-[#059669]/10">
+                <FileText className="h-4 w-4 text-[#059669]" />
               </span>
               Revenue Trend
             </h3>
             {revenueChange !== null && (
-              <span className={`flex items-center gap-1 text-xs font-semibold ${parseFloat(revenueChange) >= 0 ? "text-[#00FFA3]" : "text-rose-400"}`}>
+              <span className={`flex items-center gap-1 text-xs font-semibold ${parseFloat(revenueChange) >= 0 ? "text-[#059669]" : "text-rose-400"}`}>
                 {parseFloat(revenueChange) >= 0
                   ? <TrendingUp className="h-3.5 w-3.5" />
                   : <TrendingDown className="h-3.5 w-3.5" />}
@@ -405,22 +405,22 @@ export default function QuickStatsUI() {
                 <AreaChart data={revenueData}>
                   <defs>
                     <linearGradient id="revenueAreaGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#00FFA3" stopOpacity={0.3} />
-                      <stop offset="100%" stopColor="#00FFA3" stopOpacity={0} />
+                      <stop offset="0%" stopColor="#059669" stopOpacity={0.3} />
+                      <stop offset="100%" stopColor="#059669" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                  <XAxis dataKey="name" stroke="#8B9BB4" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
-                  <YAxis stroke="#8B9BB4" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={36} tickFormatter={(v) => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`} />
-                  <Tooltip content={<DarkTooltip formatter={(v) => `$${v.toLocaleString()}`} />} cursor={{ stroke: "rgba(0,255,163,0.2)", strokeWidth: 1 }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(15,31,23,0.05)" vertical={false} />
+                  <XAxis dataKey="name" stroke="#5a7066" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <YAxis stroke="#5a7066" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={36} tickFormatter={(v) => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`} />
+                  <Tooltip content={<DarkTooltip formatter={(v) => `$${v.toLocaleString()}`} />} cursor={{ stroke: "rgba(5,150,105,0.2)", strokeWidth: 1 }} />
                   <Area
                     type="monotone"
                     dataKey="value"
-                    stroke="#00FFA3"
+                    stroke="#059669"
                     strokeWidth={2.5}
                     fill="url(#revenueAreaGrad)"
-                    dot={{ r: 3, fill: "#00FFA3", strokeWidth: 0 }}
-                    activeDot={{ r: 5, fill: "#00FFA3", stroke: "#0B1220", strokeWidth: 2 }}
+                    dot={{ r: 3, fill: "#059669", strokeWidth: 0 }}
+                    activeDot={{ r: 5, fill: "#059669", stroke: "#f2f7f4", strokeWidth: 2 }}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -448,7 +448,7 @@ export default function QuickStatsUI() {
               <AlertTriangle className="h-4 w-4 text-amber-400 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-xs font-medium text-amber-300">Alert System Unavailable</p>
-                <p className="text-xs text-[#8B9BB4] mt-0.5">{alertError}</p>
+                <p className="text-xs text-[#5a7066] mt-0.5">{alertError}</p>
               </div>
             </div>
           ) : (
@@ -521,7 +521,7 @@ export default function QuickStatsUI() {
                     <AlertItem
                       key={i}
                       color="orange"
-                      leftIcon={<Package className="h-4 w-4 text-[#F59E0B]" />}
+                      leftIcon={<Package className="h-4 w-4 text-[#d97706]" />}
                       title={`Trip #${trip.loadId || trip._id}`}
                       subtitle={`${formatDate(trip.deliveryDate)} • ${trip.status}`}
                       badge="Delayed"
@@ -541,18 +541,18 @@ export default function QuickStatsUI() {
         <DashCard>
           <h3 className="text-sm font-semibold mb-4 text-primary">Summary</h3>
           <div className="space-y-1">
-            <SummaryItem label="Total Vehicles" value={stats.totalVehicles} icon={<Truck className="h-3.5 w-3.5 text-[#42aeec]" />} />
+            <SummaryItem label="Total Vehicles" value={stats.totalVehicles} icon={<Truck className="h-3.5 w-3.5 text-[#10b981]" />} />
             <SummaryItem label="Active Trips" value={stats.activeTrips || stats.activeLoads || 0} icon={<Package className="h-3.5 w-3.5 text-[#A855F7]" />} />
-            <SummaryItem label="Drivers on Duty" value={stats.driversOnDuty} icon={<Users className="h-3.5 w-3.5 text-[#00FFA3]" />} />
-            <SummaryItem label="Pending Work Orders" value={stats.pendingWorkOrders} icon={<Wrench className="h-3.5 w-3.5 text-[#F59E0B]" />} />
+            <SummaryItem label="Drivers on Duty" value={stats.driversOnDuty} icon={<Users className="h-3.5 w-3.5 text-[#059669]" />} />
+            <SummaryItem label="Pending Work Orders" value={stats.pendingWorkOrders} icon={<Wrench className="h-3.5 w-3.5 text-[#d97706]" />} />
             <SummaryItem label="Pending Invoices" value={stats.pendingInvoices} icon={<FileText className="h-3.5 w-3.5 text-rose-400" />} />
           </div>
 
           <button
             onClick={fetchDashboardData}
             className="mt-5 w-full px-3 py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-300 relative overflow-hidden group
-              bg-[#06377a]/30 border border-[#42aeec]/30 text-[#42aeec]
-              hover:bg-[#06377a]/50 hover:border-[#42aeec]/60 hover:shadow-[0_0_20px_rgba(6,55,122,0.35)]"
+              bg-[#064e3b]/30 border border-[#10b981]/30 text-[#10b981]
+              hover:bg-[#064e3b]/50 hover:border-[#10b981]/60 hover:shadow-[0_0_20px_rgba(6,78,59,0.35)]"
           >
             <span className="absolute inset-0 bg-gradient-to-r from-transparent via-[#1a6db8]/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
             <RefreshCw className="h-3.5 w-3.5 relative z-10" />
@@ -570,7 +570,7 @@ export default function QuickStatsUI() {
 function DashCard({ children, className = "", onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) {
   return (
     <div
-      className={`bg-[#121A2B] backdrop-blur-md rounded-xl p-4 border border-[rgba(6,55,122,0.35)] hover:border-[rgba(6,55,122,0.6)] shadow-md transition-all duration-300 ${onClick ? "cursor-pointer hover:-translate-y-0.5 hover:shadow-[0_0_24px_rgba(6,55,122,0.25)]" : ""} ${className}`}
+      className={`bg-[#ffffff] backdrop-blur-md rounded-xl p-4 border border-[rgba(6,78,59,0.35)] hover:border-[rgba(6,78,59,0.6)] shadow-md transition-all duration-300 ${onClick ? "cursor-pointer hover:-translate-y-0.5 hover:shadow-[0_0_24px_rgba(6,78,59,0.25)]" : ""} ${className}`}
       onClick={onClick}
     >
       {children}
@@ -639,7 +639,7 @@ function AlertItem({
         {leftIcon}
         <div>
           <div className="font-medium text-xs text-primary">{title}</div>
-          <div className="text-[10px] text-[#8B9BB4] flex items-center gap-1 mt-0.5">
+          <div className="text-[10px] text-[#5a7066] flex items-center gap-1 mt-0.5">
             <Calendar className="h-3 w-3" />
             {subtitle}
           </div>
@@ -654,8 +654,8 @@ function AlertItem({
 
 function OkRow({ label }: { label: string }) {
   return (
-    <div className="text-xs text-[#8B9BB4] px-2.5 py-2 bg-[#00FFA3]/5 border border-[#00FFA3]/10 rounded-lg flex items-center gap-2">
-      <span className="h-1.5 w-1.5 rounded-full bg-[#00FFA3] shadow-[0_0_6px_#00FFA3]" />
+    <div className="text-xs text-[#5a7066] px-2.5 py-2 bg-[#059669]/5 border border-[#059669]/10 rounded-lg flex items-center gap-2">
+      <span className="h-1.5 w-1.5 rounded-full bg-[#059669] shadow-[0_0_6px_#059669]" />
       {label}
     </div>
   );
@@ -663,10 +663,10 @@ function OkRow({ label }: { label: string }) {
 
 function SummaryItem({ label, value, icon }: { label: string; value: number; icon: React.ReactNode }) {
   return (
-    <div className="flex justify-between items-center py-2.5 border-b border-[rgba(6,55,122,0.25)] last:border-0">
+    <div className="flex justify-between items-center py-2.5 border-b border-[rgba(6,78,59,0.25)] last:border-0">
       <div className="flex items-center gap-2">
         {icon}
-        <span className="text-xs text-[#8B9BB4]">{label}</span>
+        <span className="text-xs text-[#5a7066]">{label}</span>
       </div>
       <span className="text-sm font-bold text-primary">{value}</span>
     </div>
@@ -675,7 +675,7 @@ function SummaryItem({ label, value, icon }: { label: string; value: number; ico
 
 function EmptyState({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
-    <div className="h-52 flex flex-col items-center justify-center text-[#8B9BB4]">
+    <div className="h-52 flex flex-col items-center justify-center text-[#5a7066]">
       <div className="opacity-20 mb-2">{icon}</div>
       <p className="text-xs">{label}</p>
     </div>
@@ -688,10 +688,10 @@ function StatCard({
   title: string; value: number; icon: React.ReactNode; color: string; onClick?: () => void;
 }) {
   const styles: Record<string, { bg: string; text: string; glow: string }> = {
-    blue: { bg: "bg-[#06377a]/25", text: "text-[#42aeec]", glow: "shadow-[0_0_18px_rgba(6,55,122,0.4)]" },
-    green: { bg: "bg-[#00FFA3]/10", text: "text-[#00FFA3]", glow: "shadow-[0_0_18px_rgba(0,255,163,0.25)]" },
+    blue: { bg: "bg-[#064e3b]/25", text: "text-[#10b981]", glow: "shadow-[0_0_18px_rgba(6,78,59,0.4)]" },
+    green: { bg: "bg-[#059669]/10", text: "text-[#059669]", glow: "shadow-[0_0_18px_rgba(5,150,105,0.25)]" },
     purple: { bg: "bg-[#A855F7]/10", text: "text-[#A855F7]", glow: "shadow-[0_0_18px_rgba(168,85,247,0.25)]" },
-    orange: { bg: "bg-[#F59E0B]/10", text: "text-[#F59E0B]", glow: "shadow-[0_0_18px_rgba(245,158,11,0.25)]" },
+    orange: { bg: "bg-[#F59E0B]/10", text: "text-[#d97706]", glow: "shadow-[0_0_18px_rgba(245,158,11,0.25)]" },
     red: { bg: "bg-rose-500/10", text: "text-rose-400", glow: "shadow-[0_0_18px_rgba(244,63,94,0.25)]" },
   };
   const s = styles[color] || styles.blue;
@@ -703,11 +703,11 @@ function StatCard({
           <div className={s.text}>{icon}</div>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-medium text-[#8B9BB4] truncate">{title}</p>
+          <p className="text-xs font-medium text-[#5a7066] truncate">{title}</p>
           <p className="text-2xl font-bold text-primary mt-0.5">{value}</p>
         </div>
       </div>
-      <div className="mt-3 h-[2px] rounded-full overflow-hidden bg-white/5">
+      <div className="mt-3 h-[2px] rounded-full overflow-hidden bg-black/5">
         <div className={`h-full ${s.bg} w-3/5`} />
       </div>
     </Card>

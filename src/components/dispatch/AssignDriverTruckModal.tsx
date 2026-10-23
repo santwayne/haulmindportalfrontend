@@ -227,7 +227,7 @@ const AssignDriverTruckModal: React.FC<AssignDriverTruckModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition-colors"
+            className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors"
           >
             <FaTimes className="text-secondary" size={20} />
           </button>
@@ -266,7 +266,7 @@ const AssignDriverTruckModal: React.FC<AssignDriverTruckModalProps> = ({
               {load.details?.rate && load.details.rate > 0 && (
                 <div>
                   <span className="text-secondary">Rate:</span>
-                  <span className="ml-2 font-medium text-[#00D1FF]">
+                  <span className="ml-2 font-medium text-[#059669]">
                     {formatCurrency(load.details.rate)}
                   </span>
                 </div>
@@ -305,7 +305,7 @@ const AssignDriverTruckModal: React.FC<AssignDriverTruckModalProps> = ({
                     <div className="text-sm space-y-1">
                       {load.route?.selectPickup && (
                         <div>
-                          <span className="font-medium text-[#00D1FF]">📦 Pickup:</span>
+                          <span className="font-medium text-[#059669]">📦 Pickup:</span>
                           <span className="ml-2">{load.route.selectPickup.place || 'N/A'}</span>
                         </div>
                       )}
@@ -317,7 +317,7 @@ const AssignDriverTruckModal: React.FC<AssignDriverTruckModalProps> = ({
                       )}
                       {load.route?.selectReturn && (
                         <div>
-                          <span className="font-medium text-[#00FFA3]">🔄 Return:</span>
+                          <span className="font-medium text-[#059669]">🔄 Return:</span>
                           <span className="ml-2">{load.route.selectReturn}</span>
                         </div>
                       )}
@@ -382,25 +382,25 @@ const AssignDriverTruckModal: React.FC<AssignDriverTruckModalProps> = ({
               <div className="space-y-2 text-sm">
                 {load.assignedDriver && (
                   <div className="flex items-center gap-2">
-                    <FaUser className="text-[#00D1FF]" />
+                    <FaUser className="text-[#059669]" />
                     <span>Driver: <strong>{load.assignedDriver}</strong></span>
                   </div>
                 )}
                 {load.assignedTruck && (
                   <div className="flex items-center gap-2">
-                    <FaTruck className="text-[#00D1FF]" />
+                    <FaTruck className="text-[#059669]" />
                     <span>Truck: <strong>{load.assignedTruck}</strong></span>
                   </div>
                 )}
                 {load.assignedTrailer && (
                   <div className="flex items-center gap-2">
-                    <FaTrailer className="text-[#00D1FF]" />
+                    <FaTrailer className="text-[#059669]" />
                     <span>Trailer: <strong>{load.assignedTrailer}</strong></span>
                   </div>
                 )}
                 {load.plannedDate && (
                   <div className="flex items-center gap-2">
-                    <FaCalendarAlt className="text-[#00D1FF]" />
+                    <FaCalendarAlt className="text-[#059669]" />
                     <span>Planned Date: <strong>{load.plannedDate}</strong></span>
                   </div>
                 )}
@@ -419,7 +419,7 @@ const AssignDriverTruckModal: React.FC<AssignDriverTruckModalProps> = ({
                 <div className="space-y-5">
                   <div>
                     <label className="block text-sm font-semibold text-primary mb-2">
-                      <FaUser className="inline mr-2 text-[#00D1FF]" />
+                      <FaUser className="inline mr-2 text-[#059669]" />
                       Select Driver <span className="text-red-500">*</span>
                     </label>
                     <select
@@ -479,7 +479,7 @@ const AssignDriverTruckModal: React.FC<AssignDriverTruckModalProps> = ({
 
                   <div>
                     <label className="block text-sm font-semibold text-primary mb-2">
-                      <FaCalendarAlt className="inline mr-2 text-[#F59E0B]" />
+                      <FaCalendarAlt className="inline mr-2 text-[#d97706]" />
                       Plan Date
                     </label>
                     <input
@@ -527,7 +527,7 @@ const AssignDriverTruckModal: React.FC<AssignDriverTruckModalProps> = ({
           {isReadOnly ? (
             <button
               onClick={onClose}
-              className="px-6 py-2 bg-gray-600 !text-white rounded-lg hover:bg-gray-700 font-medium transition-colors"
+              className="px-6 py-2 bg-gray-200 text-primary rounded-lg hover:bg-gray-100 font-medium transition-colors"
             >
               Close
             </button>
@@ -535,7 +535,7 @@ const AssignDriverTruckModal: React.FC<AssignDriverTruckModalProps> = ({
             <>
               <button
                 onClick={onClose}
-                className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors"
+                className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors"
               >
                 Cancel
               </button>

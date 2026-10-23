@@ -17,12 +17,12 @@ import {
 } from '../../../../theme/icons';
 
 const CUSTOM_COLORS = {
-  background: '#EDF8FF',
-  primary: '#016ab2',
-  dark: '#063f6f',
-  light: '#398bc3',
-  gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)',
-  gradientVertical: 'linear-gradient(to bottom right, #016ab2, #063f6f)',
+  background: '#ecfdf5',
+  primary: '#047857',
+  dark: '#065f46',
+  light: '#059669',
+  gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)',
+  gradientVertical: 'linear-gradient(to bottom right, #047857, #065f46)',
 };
 import type { LoadSecurementLog, ReeferFoodSafetyLog, WinterSafetyChecklist, FuelingSpillPreventionLog, DangerousGoodsLog } from '../../../../types';
 import {
@@ -675,9 +675,9 @@ const TruckingOperations: React.FC = () => {
 
               </tr>
             </thead>
-            <tbody className="divide-y divide-theme divide-white/5">
+            <tbody className="divide-y divide-theme divide-black/5">
               {loadSecurementLogs.map((log) => (
-                <tr key={log._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                <tr key={log._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                   <td className="px-6 py-4 text-sm font-medium text-secondary">{log.logNumber}</td>
                   <td className="px-6 py-4 text-sm text-secondary">
                     {formatDateTime(log.date, log.time)}
@@ -759,9 +759,9 @@ const TruckingOperations: React.FC = () => {
 
               </tr>
             </thead>
-            <tbody className="divide-y divide-theme divide-white/5 ">
+            <tbody className="divide-y divide-theme divide-black/5 ">
               {reeferLogs.map((log) => (
-                <tr key={log._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                <tr key={log._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                   <td className="px-6 py-4 text-sm font-medium text-secondary">{log.logNumber}</td>
                   <td className="px-6 py-4 text-sm text-secondary">
                     {formatDateTime(log.date, log.time)}
@@ -853,7 +853,7 @@ const TruckingOperations: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-theme">
               {winterChecklists.map((checklist) => (
-                <tr key={checklist._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                <tr key={checklist._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                   <td className="px-6 py-4 text-sm font-medium text-secondary">{checklist.checklistNumber}</td>
                   <td className="px-6 py-4 text-sm text-secondary">
                     {formatDateTime(checklist.date, checklist.time)}
@@ -933,7 +933,7 @@ const TruckingOperations: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-theme">
               {fuelingLogs.map((log) => (
-                <tr key={log._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                <tr key={log._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                   <td className="px-6 py-4 text-sm font-medium text-secondary">{log.logNumber}</td>
                   <td className="px-6 py-4 text-sm text-secondary">
                     {formatDateTime(log.date, log.time)}
@@ -1017,9 +1017,9 @@ const TruckingOperations: React.FC = () => {
 
               </tr>
             </thead>
-            <tbody className="divide-y divide-theme divide-white/5">
+            <tbody className="divide-y divide-theme divide-black/5">
               {tdgLogs.map((log) => (
-                <tr key={log._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                <tr key={log._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                   <td className="px-6 py-4 text-sm font-medium text-secondary">{log.logNumber}</td>
                   <td className="px-6 py-4 text-sm text-secondary">
                     {formatDateTime(log.date, log.time)}
@@ -1145,7 +1145,7 @@ const TruckingOperations: React.FC = () => {
               onClick={() => setActiveTab(TABS.LOAD_SECUREMENT)}
               className={`flex-1 px-6 py-4 font-semibold transition-all flex items-center justify-center space-x-2 ${activeTab === TABS.LOAD_SECUREMENT
                 ? 'border-b-4 text-primary bg-card'
-                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                 }`}
               style={activeTab === TABS.LOAD_SECUREMENT ? { borderColor: CUSTOM_COLORS.primary } : {}}
             >
@@ -1156,7 +1156,7 @@ const TruckingOperations: React.FC = () => {
               onClick={() => setActiveTab(TABS.REEFER_SAFETY)}
               className={`flex-1 px-6 py-4 font-semibold transition-all flex items-center justify-center space-x-2 ${activeTab === TABS.REEFER_SAFETY
                 ? 'border-b-4 text-primary bg-card'
-                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                 }`}
               style={activeTab === TABS.REEFER_SAFETY ? { borderColor: CUSTOM_COLORS.primary } : {}}
             >
@@ -1167,7 +1167,7 @@ const TruckingOperations: React.FC = () => {
               onClick={() => setActiveTab(TABS.WINTER_SAFETY)}
               className={`flex-1 px-6 py-4 font-semibold transition-all flex items-center justify-center space-x-2 ${activeTab === TABS.WINTER_SAFETY
                 ? 'border-b-4 text-primary bg-card'
-                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                 }`}
               style={activeTab === TABS.WINTER_SAFETY ? { borderColor: CUSTOM_COLORS.primary } : {}}
             >
@@ -1178,7 +1178,7 @@ const TruckingOperations: React.FC = () => {
               onClick={() => setActiveTab(TABS.FUELING_SPILL)}
               className={`flex-1 px-6 py-4 font-semibold transition-all flex items-center justify-center space-x-2 ${activeTab === TABS.FUELING_SPILL
                 ? 'border-b-4 text-primary bg-card'
-                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                 }`}
               style={activeTab === TABS.FUELING_SPILL ? { borderColor: CUSTOM_COLORS.primary } : {}}
             >
@@ -1189,7 +1189,7 @@ const TruckingOperations: React.FC = () => {
               onClick={() => setActiveTab(TABS.TDG_LOGS)}
               className={`flex-1 px-6 py-4 font-semibold transition-all flex items-center justify-center space-x-2 ${activeTab === TABS.TDG_LOGS
                 ? 'border-b-4 text-primary bg-card'
-                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                 }`}
               style={activeTab === TABS.TDG_LOGS ? { borderColor: CUSTOM_COLORS.primary } : {}}
             >
@@ -1915,7 +1915,7 @@ const TruckingOperations: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => { setShowModal(false); setShippingDocumentFile(null); }}
-                  className="px-6 py-2 !mr-3 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                  className="px-6 py-2 !mr-3 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                   disabled={submitting}
                 >
                   Cancel

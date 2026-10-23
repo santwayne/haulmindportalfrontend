@@ -260,7 +260,7 @@ export default function LoginPage() {
 
             {/* Feature Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="rounded-xl p-4 hover:shadow-lg transition-all duration-300" style={{ backgroundColor: 'rgba(18, 26, 43, 0.85)', border: '1px solid rgba(17, 131, 224, 0.2)' }}>
+              <div className="rounded-xl p-4 hover:shadow-lg transition-all duration-300" style={{ backgroundColor: 'rgba(255,255,255, 0.85)', border: '1px solid rgba(5,150,105, 0.2)' }}>
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-2" style={{ backgroundColor: 'var(--accent-navyblue)' }}>
                   <Truck className="w-5 h-5 text-white" />
                 </div>
@@ -268,7 +268,7 @@ export default function LoginPage() {
                 <p className="text-xs text-secondary">Real-time vehicle monitoring</p>
               </div>
 
-              <div className="rounded-xl p-4 hover:shadow-lg transition-all duration-300" style={{ backgroundColor: 'rgba(18, 26, 43, 0.85)', border: '1px solid rgba(17, 131, 224, 0.2)' }}>
+              <div className="rounded-xl p-4 hover:shadow-lg transition-all duration-300" style={{ backgroundColor: 'rgba(255,255,255, 0.85)', border: '1px solid rgba(5,150,105, 0.2)' }}>
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-2" style={{ backgroundColor: 'var(--accent-navyblue)' }}>
                   <MapPin className="w-5 h-5 text-white" />
                 </div>
@@ -276,7 +276,7 @@ export default function LoginPage() {
                 <p className="text-xs text-secondary">Optimized delivery routes</p>
               </div>
 
-              <div className="rounded-xl p-4 hover:shadow-lg transition-all duration-300" style={{ backgroundColor: 'rgba(18, 26, 43, 0.85)', border: '1px solid rgba(17, 131, 224, 0.2)' }}>
+              <div className="rounded-xl p-4 hover:shadow-lg transition-all duration-300" style={{ backgroundColor: 'rgba(255,255,255, 0.85)', border: '1px solid rgba(5,150,105, 0.2)' }}>
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-2" style={{ backgroundColor: 'var(--accent-navyblue)' }}>
                   <Users className="w-5 h-5 text-white" />
                 </div>
@@ -313,7 +313,7 @@ export default function LoginPage() {
                       className={`block w-full rounded-lg border pl-11 pr-4 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed ${errors.email ? "border-red-400 bg-card" : "border-theme hover:border-theme"
                         }`}
                       style={{ '--tw-ring-color': 'var(--accent-navyblue)' } as React.CSSProperties & { '--tw-ring-color': string }}
-                      onFocus={(e) => { e.target.style.borderColor = 'var(--accent-navyblue)'; e.target.style.boxShadow = '0 0 0 2px rgba(17, 131, 224, 0.2)'; }}
+                      onFocus={(e) => { e.target.style.borderColor = 'var(--accent-navyblue)'; e.target.style.boxShadow = '0 0 0 2px rgba(5,150,105, 0.2)'; }}
                       onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                       placeholder="Enter your email"
                       autoComplete="email"
@@ -342,7 +342,7 @@ export default function LoginPage() {
                       className={`block w-full rounded-lg border pl-11 pr-11 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed ${errors.password ? "border-red-400 bg-card" : "border-theme hover:border-theme"
                         }`}
                       style={{ '--tw-ring-color': 'var(--accent-navyblue)' } as React.CSSProperties & { '--tw-ring-color': string }}
-                      onFocus={(e) => { e.target.style.borderColor = 'var(--accent-navyblue)'; e.target.style.boxShadow = '0 0 0 2px rgba(17, 131, 224, 0.2)'; }}
+                      onFocus={(e) => { e.target.style.borderColor = 'var(--accent-navyblue)'; e.target.style.boxShadow = '0 0 0 2px rgba(5,150,105, 0.2)'; }}
                       onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                       placeholder="Enter your password"
                       autoComplete="current-password"
@@ -395,7 +395,7 @@ export default function LoginPage() {
                       : "hover:shadow-xl transform hover:-translate-y-0.5"
                       }`}
                     style={loading ? {} : { backgroundColor: 'var(--accent-navyblue)' }}
-                    onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#0d6fc7'; }}
+                    onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#047857'; }}
                     onMouseLeave={(e) => { if (!loading) e.currentTarget.style.backgroundColor = 'var(--accent-navyblue)'; }}
                   >
                     {loading ? (

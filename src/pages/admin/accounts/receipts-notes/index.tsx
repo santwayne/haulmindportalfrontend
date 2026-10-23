@@ -330,8 +330,8 @@ export default function ReceiptsFinancialNotes() {
       textColor: 'var(--accent-blue)',
       // bgColor: '#E3F2FD',
       // borderColor: '#BBDEFB',
-      // textColor: '#016ab2',
-      // labelColor: '#063f6f'
+      // textColor: '#047857',
+      // labelColor: '#065f46'
     },
     {
       title: 'Total Amount',
@@ -342,8 +342,8 @@ export default function ReceiptsFinancialNotes() {
       textColor: 'var(--accent-green)',
       // bgColor: '#E8F5E9',
       // borderColor: '#C8E6C9',
-      // textColor: '#016ab2',
-      // labelColor: '#063f6f'
+      // textColor: '#047857',
+      // labelColor: '#065f46'
     },
     {
       title: 'Financial Notes',
@@ -354,8 +354,8 @@ export default function ReceiptsFinancialNotes() {
       textColor: 'var(--accent-purple)',
       // bgColor: '#F3E5F5',
       // borderColor: '#E1BEE7',
-      // textColor: '#016ab2',
-      //   labelColor: '#063f6f'
+      // textColor: '#047857',
+      //   labelColor: '#065f46'
     },
     {
       title: 'Pending Reviews',
@@ -366,8 +366,8 @@ export default function ReceiptsFinancialNotes() {
       textColor: 'var(--accent-orange)',
       // bgColor: '#FFF3E0',
       // borderColor: '#FFE0B2',
-      // textColor: '#016ab2',
-      // labelColor: '#063f6f'
+      // textColor: '#047857',
+      // labelColor: '#065f46'
     }
   ];
 
@@ -605,7 +605,7 @@ export default function ReceiptsFinancialNotes() {
                 {activeTab === 'receipts-archive' && (
                   <button
                     onClick={handleCreateReceipt}
-                    className="px-4 py-2 border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors flex items-center gap-2"
+                    className="px-4 py-2 border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors flex items-center gap-2"
                   >
                     <Upload className="w-4 h-4" />
                     Upload Receipt
@@ -635,7 +635,7 @@ export default function ReceiptsFinancialNotes() {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === tab.id
-                      ? 'border-[var(--accent-blue)] text-[#016ab2]'
+                      ? 'border-[var(--accent-blue)] text-[#047857]'
                       : 'border-transparent text-secondary hover:text-primary hover:border-theme'
                       }`}
                   >
@@ -713,12 +713,12 @@ export default function ReceiptsFinancialNotes() {
                     ))}
                   </select>
                 )}
-                <button className="p-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                <button className="p-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                   <Filter className="w-4 h-4 text-secondary" />
                 </button>
               </div>
               <div className="flex items-center gap-2">
-                <button className="px-4 py-2 text-sm border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors flex items-center gap-2">
+                <button className="px-4 py-2 text-sm border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors flex items-center gap-2">
                   <Download className="w-4 h-4" />
                   Export
                 </button>
@@ -746,11 +746,11 @@ export default function ReceiptsFinancialNotes() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-card divide-y divide-theme divide-white/5">
+                  <tbody className="bg-card divide-y divide-theme divide-black/5">
                     {filteredReceipts.map(receipt => (
                       <tr
                         key={receipt._id}
-                        className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                        className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                         onClick={() => {
                           setSelectedRowItem(receipt);
                           setSelectedRowType('receipt');
@@ -804,7 +804,7 @@ export default function ReceiptsFinancialNotes() {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleViewReceipt(receipt)}
-                              className="p-1 text-[#00D1FF] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors"
+                              className="p-1 text-[#059669] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors"
                               title="View Receipt"
                             >
                               <Eye className="w-4 h-4" />
@@ -818,7 +818,7 @@ export default function ReceiptsFinancialNotes() {
                             </button>
                             <button
                               onClick={() => handleEditReceipt(receipt)}
-                              className="p-1 text-[#00D1FF] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors"
+                              className="p-1 text-[#059669] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors"
                               title="Edit"
                             >
                               <Edit className="w-4 h-4" />
@@ -859,11 +859,11 @@ export default function ReceiptsFinancialNotes() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-card divide-y divide-theme divide-white/5">
+                  <tbody className="bg-card divide-y divide-theme divide-black/5">
                     {filteredNotes.map(note => (
                       <tr
                         key={note._id}
-                        className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                        className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                         onClick={() => {
                           setSelectedRowItem(note);
                           setSelectedRowType('note');
@@ -904,14 +904,14 @@ export default function ReceiptsFinancialNotes() {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleViewNote(note)}
-                              className="p-1 text-[#00D1FF] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors"
+                              className="p-1 text-[#059669] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors"
                               title="View Note"
                             >
                               <Eye className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => handleEditNote(note)}
-                              className="p-1 text-[#00D1FF] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors"
+                              className="p-1 text-[#059669] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors"
                               title="Edit"
                             >
                               <Edit className="w-4 h-4" />
@@ -1044,7 +1044,7 @@ export default function ReceiptsFinancialNotes() {
                   <button
                     type="button"
                     onClick={() => setShowReceiptModal(false)}
-                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
                   >
                     Cancel
                   </button>
@@ -1120,7 +1120,7 @@ export default function ReceiptsFinancialNotes() {
                   <button
                     type="button"
                     onClick={() => setShowNoteModal(false)}
-                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
                   >
                     Cancel
                   </button>
@@ -1304,7 +1304,7 @@ export default function ReceiptsFinancialNotes() {
                       <div className="bg-card p-4 rounded-lg border border-blue-200">
                         <label className="text-sm font-medium text-blue-900 mb-1 block">Date</label>
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-5 h-5 text-[#00D1FF]" />
+                          <Calendar className="w-5 h-5 text-[#059669]" />
                           <p className="text-lg font-semibold text-blue-700">{(selectedRowItem as ReceiptData).date}</p>
                         </div>
                       </div>
@@ -1368,7 +1368,7 @@ export default function ReceiptsFinancialNotes() {
                       <div className="bg-card p-4 rounded-lg border border-blue-200">
                         <label className="text-sm font-medium text-blue-900 mb-1 block">Date & Time</label>
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-5 h-5 text-[#00D1FF]" />
+                          <Calendar className="w-5 h-5 text-[#059669]" />
                           <p className="text-sm font-semibold text-blue-700">{(selectedRowItem as FinancialNoteData).date}</p>
                         </div>
                       </div>

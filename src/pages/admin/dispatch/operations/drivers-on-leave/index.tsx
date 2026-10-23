@@ -151,7 +151,7 @@ const DriversOnLeavePage = () => {
                     </tr>
                   ) : (
                     filteredDrivers.map((driver) => (
-                      <tr key={driver.id} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                      <tr key={driver.id} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
@@ -188,7 +188,7 @@ const DriversOnLeavePage = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center text-sm font-medium text-[#F59E0B]">
+                          <div className="flex items-center text-sm font-medium text-[#d97706]">
                             <Clock className="w-4 h-4 mr-1" />
                             {calculateDaysRemaining(driver.leaveEndDate)} days
                           </div>

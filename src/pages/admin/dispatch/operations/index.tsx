@@ -732,7 +732,7 @@ const Index = () => {
       subtitle: `Active: ${stats?.vehicles.active || 0} | With Driver: ${stats?.vehicles.withDriver || 0}`,
       icon: Truck,
       bgColor: "bg-card",
-      iconColor: "text-[#00D1FF]",
+      iconColor: "text-[#059669]",
       accentColor: "bg-blue-600",
       percentage: stats?.vehicles.total ? Math.min(100, (stats.vehicles.active / stats.vehicles.total) * 100) : 0,
     },
@@ -765,7 +765,7 @@ const Index = () => {
       subtitle: `Planned: ${stats?.trips.planned || 0} | In Progress: ${stats?.trips.inProgress || 0} | Completed: ${stats?.trips.completed || 0}`,
       icon: Route,
       bgColor: "bg-card",
-      iconColor: "text-[#F59E0B]",
+      iconColor: "text-[#d97706]",
       accentColor: "bg-orange-600",
       percentage: stats?.trips.total ? Math.min(100, ((stats.trips.inProgress + stats.trips.completed) / stats.trips.total) * 100) : 0,
     },
@@ -791,15 +791,15 @@ const Index = () => {
   const getGradient = (type: string) => {
     switch (type) {
       case "blue":
-        return "linear-gradient(90deg, #00D1FF, #0066FF)";
+        return "linear-gradient(90deg, #059669, #059669)";
       case "green":
-        return "linear-gradient(90deg, #00FFA3, #00C853)";
+        return "linear-gradient(90deg, #059669, #00C853)";
       case "purple":
         return "linear-gradient(90deg, #A855F7, #6D28D9)";
       case "orange":
         return "linear-gradient(90deg, #F59E0B, #F97316)";
       default:
-        return "linear-gradient(90deg, #00D1FF, #0066FF)";
+        return "linear-gradient(90deg, #059669, #059669)";
     }
   };
   return (
@@ -845,10 +845,10 @@ const Index = () => {
                     }
                     className="
           relative overflow-hidden rounded-xl p-4 cursor-pointer
-          bg-gradient-to-br from-[#0B1A2A] to-[#0F2A44]
-          border border-white/10
+          bg-gradient-to-br from-[#022c22] to-[#065f46]
+          border border-black/10
           hover:scale-[1.03] transition-all duration-300
-          shadow-md hover:shadow-[0_0_12px_rgba(0,209,255,0.15)]
+          shadow-md hover:shadow-[0_0_12px_rgba(5,150,105,0.15)]
         "
                   >
                     {/* Glow */}
@@ -865,14 +865,14 @@ const Index = () => {
 
                       <div className="relative">
                         <div className={`absolute inset-0 blur-lg opacity-25 ${feature.accentColor}`} />
-                        <div className="relative bg-white/5 p-2 rounded-lg">
+                        <div className="relative bg-black/5 p-2 rounded-lg">
                           <Icon className={feature.iconColor} size={22} />
                         </div>
                       </div>
                     </div>
 
                     {/* Progress */}
-                    <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden relative">
+                    <div className="w-full h-1.5 bg-black/10 rounded-full overflow-hidden relative">
                       <div
                         className="absolute inset-0 blur-md opacity-30"
                         style={{
@@ -978,10 +978,10 @@ const Index = () => {
                     onClick={() => navigate(`${basePath}${card.path}`)}
                     className="
           relative overflow-hidden rounded-xl p-4 cursor-pointer
-          bg-gradient-to-br from-[#0B1A2A] to-[#0F2A44]
-          border border-white/10
+          bg-gradient-to-br from-[#022c22] to-[#065f46]
+          border border-black/10
           hover:scale-[1.03] transition-all duration-300
-          shadow-md hover:shadow-[0_0_12px_rgba(0,209,255,0.12)]
+          shadow-md hover:shadow-[0_0_12px_rgba(5,150,105,0.12)]
         "
                   >
                     {/* Glow Background */}
@@ -1003,14 +1003,14 @@ const Index = () => {
                           className="absolute inset-0 blur-lg opacity-25 rounded-full"
                           style={{ background: gradient }}
                         />
-                        <div className="relative bg-white/5 p-2 rounded-lg">
+                        <div className="relative bg-black/5 p-2 rounded-lg">
                           <Icon className="text-white" size={22} />
                         </div>
                       </div>
                     </div>
 
 
-                    <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden relative mt-2">
+                    <div className="w-full h-1.5 bg-black/10 rounded-full overflow-hidden relative mt-2">
 
                       {/* Glow base */}
                       <div
@@ -1104,7 +1104,7 @@ const Index = () => {
                   maxHeight: '20px',
                   marginBottom: '2px',
                   scrollbarWidth: 'thin',
-                  scrollbarColor: '#224c75 #111c24' /* Firefox */
+                  scrollbarColor: '#065f46 #e7f2ec' /* Firefox */
                 }}
               >
                 <div className="top-scroll-content" style={{ height: '1px' }}></div>
@@ -1163,7 +1163,7 @@ const Index = () => {
                       filteredOrders.map((order) => (
                         <tr
                           key={order.id}
-                          className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                          className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                           onClick={async () => {
                             try {
                               // Fetch full order data
@@ -1202,14 +1202,14 @@ const Index = () => {
                                 }}
                                 onClick={(e) => e.stopPropagation()}
                                 style={{
-                                  backgroundColor: "#0F1F2E",
+                                  backgroundColor: "#f7fbf8",
                                   color: "#fff"
                                 }}
                                 className={`
         text-xs font-medium rounded-full px-3 py-1.5 pr-8
         border appearance-none cursor-pointer outline-none
-        bg-[#0F1F2E] border-white/10
-        focus:ring-2 focus:ring-[#00D1FF]
+        bg-[#f7fbf8] border-black/10
+        focus:ring-2 focus:ring-[#059669]
 
         ${order.paymentStatus === 'PAID'
                                     ? 'text-green-400 border-green-400/30'
@@ -1217,17 +1217,17 @@ const Index = () => {
                                       ? 'text-orange-400 border-orange-400/30'
                                       : order.paymentStatus === 'OVERDUE'
                                         ? 'text-red-400 border-red-400/30'
-                                        : 'text-white/80 border-white/10'
+                                        : 'text-white/80 border-black/10'
                                   }
       `}
                               >
-                                <option value="PENDING" className="bg-[#0F1F2E] text-orange-400">
+                                <option value="PENDING" className="bg-[#f7fbf8] text-orange-400">
                                   Pending
                                 </option>
-                                <option value="PAID" className="bg-[#0F1F2E] text-green-400">
+                                <option value="PAID" className="bg-[#f7fbf8] text-green-400">
                                   Paid
                                 </option>
-                                <option value="OVERDUE" className="bg-[#0F1F2E] text-red-400">
+                                <option value="OVERDUE" className="bg-[#f7fbf8] text-red-400">
                                   Overdue
                                 </option>
                               </select>
@@ -1330,14 +1330,14 @@ const Index = () => {
                                 }}
                                 onClick={(e) => e.stopPropagation()}
                                 style={{
-                                  backgroundColor: "#0F1F2E",
+                                  backgroundColor: "#f7fbf8",
                                   color: "#fff"
                                 }}
                                 className={`
         text-xs font-medium rounded-full px-3 py-1.5 pr-8
         border appearance-none cursor-pointer outline-none
-        bg-[#0F1F2E] border-white/10
-        focus:ring-2 focus:ring-[#00D1FF]
+        bg-[#f7fbf8] border-black/10
+        focus:ring-2 focus:ring-[#059669]
 
         ${order.status === 'quoted'
                                     ? 'text-yellow-400 border-yellow-400/30'
@@ -1351,16 +1351,16 @@ const Index = () => {
                                             ? 'text-orange-400 border-orange-400/30'
                                             : order.status === 'canceled'
                                               ? 'text-red-400 border-red-400/30'
-                                              : 'text-white/80 border-white/10'
+                                              : 'text-white/80 border-black/10'
                                   }
       `}
                               >
-                                <option value="planned" className="bg-[#0F1F2E] text-white">Planned</option>
-                                <option value="quoted" className="bg-[#0F1F2E] text-white">Quoted</option>
-                                <option value="in-delivery" className="bg-[#0F1F2E] text-orange-400">In Delivery</option>
-                                <option value="delivered" className="bg-[#0F1F2E] text-purple-400">Delivered</option>
-                                <option value="completed" className="bg-[#0F1F2E] text-green-400">Completed</option>
-                                <option value="canceled" className="bg-[#0F1F2E] text-red-400">Canceled</option>
+                                <option value="planned" className="bg-[#f7fbf8] text-white">Planned</option>
+                                <option value="quoted" className="bg-[#f7fbf8] text-white">Quoted</option>
+                                <option value="in-delivery" className="bg-[#f7fbf8] text-orange-400">In Delivery</option>
+                                <option value="delivered" className="bg-[#f7fbf8] text-purple-400">Delivered</option>
+                                <option value="completed" className="bg-[#f7fbf8] text-green-400">Completed</option>
+                                <option value="canceled" className="bg-[#f7fbf8] text-red-400">Canceled</option>
                               </select>
 
                               {/* Custom Arrow */}
@@ -1427,8 +1427,8 @@ const Index = () => {
                       onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                       disabled={currentPage === 1}
                       className={`p-2 border rounded-lg transition-colors ${currentPage === 1
-                        ? "bg-white/5 text-secondary cursor-not-allowed"
-                        : "bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border-theme"
+                        ? "bg-black/5 text-secondary cursor-not-allowed"
+                        : "bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border-theme"
                         }`}
                     >
                       <ChevronLeft className="w-5 h-5" />
@@ -1453,7 +1453,7 @@ const Index = () => {
                             onClick={() => setCurrentPage(pageNum)}
                             className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${currentPage === pageNum
                               ? "bg-blue-600 !text-white"
-                              : "bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border border-theme"
+                              : "bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border border-theme"
                               }`}
                           >
                             {pageNum}
@@ -1466,8 +1466,8 @@ const Index = () => {
                       onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                       disabled={currentPage === totalPages}
                       className={`p-2 border rounded-lg transition-colors ${currentPage === totalPages
-                        ? "bg-white/5 text-secondary cursor-not-allowed"
-                        : "bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border-theme"
+                        ? "bg-black/5 text-secondary cursor-not-allowed"
+                        : "bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border-theme"
                         }`}
                     >
                       <ChevronRight className="w-5 h-5" />

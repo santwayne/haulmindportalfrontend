@@ -236,7 +236,7 @@ const PickupsPage = () => {
                     </tr>
                   ) : (
                     filteredPickups.map((pickup) => (
-                      <tr key={pickup.id} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                      <tr key={pickup.id} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                         <td className="px-6 py-4">
                           <div className="text-sm font-medium text-primary">{pickup.orderNumber || 'N/A'}</div>
                           {pickup.customerOrderNo && (

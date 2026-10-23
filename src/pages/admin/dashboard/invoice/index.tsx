@@ -211,9 +211,9 @@ const InvoiceList = () => {
             value={clientFilter}
             onChange={(e) => setClientFilter(e.target.value)}
             className="pl-10 pr-4 py-2.5 w-full text-sm rounded-lg
-              bg-[var(--bg-card)] text-primary placeholder-[#8B9BB4]
-              border border-[rgba(6,55,122,0.4)]
-              focus:ring-1 focus:ring-[rgba(26,109,184,0.4)] focus:border-[#1a6db8]
+              bg-[var(--bg-card)] text-primary placeholder-[#5a7066]
+              border border-[rgba(6,78,59,0.4)]
+              focus:ring-1 focus:ring-[rgba(4,120,87,0.4)] focus:border-[#1a6db8]
               outline-none transition-all"
           />
         </div>
@@ -225,8 +225,8 @@ const InvoiceList = () => {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="pl-10 pr-4 py-2.5 w-full text-sm rounded-lg
-              bg-[var(--bg-card)] text-primary border border-[rgba(6,55,122,0.4)]
-              focus:ring-1 focus:ring-[rgba(26,109,184,0.4)] focus:border-[#1a6db8]
+              bg-[var(--bg-card)] text-primary border border-[rgba(6,78,59,0.4)]
+              focus:ring-1 focus:ring-[rgba(4,120,87,0.4)] focus:border-[#1a6db8]
               outline-none transition-all appearance-none cursor-pointer"
           >
             <option value="all">All Status</option>
@@ -238,21 +238,21 @@ const InvoiceList = () => {
       </div>
 
       {/* Invoice Table */}
-      <div className="bg-card shadow-lg rounded-lg overflow-hidden border border-[rgba(255,255,255,0.06)]">
+      <div className="bg-card shadow-lg rounded-lg overflow-hidden border border-[rgba(15,31,23,0.06)]">
         {/* Top Scrollbar */}
         <style>{`
           .top-scrollbar-container::-webkit-scrollbar {
             height: 6px;
           }
           .top-scrollbar-container::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.03);
+            background: rgba(15,31,23,0.03);
           }
           .top-scrollbar-container::-webkit-scrollbar-thumb {
-            background: rgba(6,55,122,0.4);
+            background: rgba(6,78,59,0.4);
             border-radius: 3px;
           }
           .top-scrollbar-container::-webkit-scrollbar-thumb:hover {
-            background: rgba(6,55,122,0.65);
+            background: rgba(6,78,59,0.65);
           }
         `}</style>
         <div
@@ -262,7 +262,7 @@ const InvoiceList = () => {
             maxHeight: '20px',
             marginBottom: '2px',
             scrollbarWidth: 'thin',
-            scrollbarColor: 'rgba(0,209,255,0.2) rgba(255,255,255,0.03)'
+            scrollbarColor: 'rgba(5,150,105,0.2) rgba(15,31,23,0.03)'
           }}
         >
           <div className="top-scroll-content" style={{ height: '1px' }}></div>
@@ -283,7 +283,7 @@ const InvoiceList = () => {
           className="overflow-x-auto table-container-hidden-scrollbar"
         >
           <table className="w-full text-sm">
-            <thead className="bg-[rgba(0,209,255,0.08)] border-b border-[rgba(0,209,255,0.15)]">
+            <thead className="bg-[rgba(5,150,105,0.08)] border-b border-[rgba(5,150,105,0.15)]">
               <tr>
                 <th className="p-4 text-left font-semibold text-[var(--accent-navyblue)]">Client</th>
                 <th className="p-4 text-left font-semibold text-[var(--accent-navyblue)]">Company</th>
@@ -296,12 +296,12 @@ const InvoiceList = () => {
                 <th className="p-4 text-center font-semibold text-[var(--accent-navyblue)]">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[rgba(255,255,255,0.06)]">
+            <tbody className="divide-y divide-[rgba(15,31,23,0.06)]">
               {loading ? (
                 <tr>
                   <td className="p-8 text-center text-secondary" colSpan={9}>
                     <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00D1FF]"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#059669]"></div>
                       <span className="ml-3">Loading invoices...</span>
                     </div>
                   </td>
@@ -310,7 +310,7 @@ const InvoiceList = () => {
                 filteredInvoices.map((inv) => (
                   <tr
                     key={inv._id}
-                    className="hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                   >
                     <td className="p-4 font-medium text-primary">
                       {inv.clientName}
@@ -325,7 +325,7 @@ const InvoiceList = () => {
                     <td className="p-4">
                       <span
                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border ${inv.status === "paid"
-                          ? "bg-[rgba(0,255,163,0.1)] text-[#00FFA3] border-[rgba(0,255,163,0.25)]"
+                          ? "bg-[rgba(5,150,105,0.1)] text-[#059669] border-[rgba(5,150,105,0.25)]"
                           : "bg-[rgba(245,158,11,0.1)] text-[#FCD34D] border-[rgba(245,158,11,0.25)]"
                           }`}
                       >
@@ -360,7 +360,7 @@ const InvoiceList = () => {
                     <td className="p-4 text-center">
                       <button
                         onClick={() => handleViewInvoice(inv._id)}
-                        className="inline-flex items-center justify-center p-2 rounded-lg transition-all hover:scale-110 bg-[rgba(0,209,255,0.08)] text-[#00D1FF] hover:bg-[rgba(0,209,255,0.15)] border border-[rgba(0,209,255,0.15)]"
+                        className="inline-flex items-center justify-center p-2 rounded-lg transition-all hover:scale-110 bg-[rgba(5,150,105,0.08)] text-[#059669] hover:bg-[rgba(5,150,105,0.15)] border border-[rgba(5,150,105,0.15)]"
                         title="View Invoice"
                       >
                         <Eye size={18} />
@@ -391,16 +391,16 @@ const InvoiceList = () => {
 
           {/* Sidebar Panel */}
           <div
-            className={`fixed right-0 top-0 h-full w-full md:w-2/3 lg:w-1/2 bg-[var(--bg-card)] shadow-2xl z-50 overflow-y-auto transform transition-transform duration-300 border-l border-[rgba(255,255,255,0.08)] ${showSidebar ? 'translate-x-0' : 'translate-x-full'
+            className={`fixed right-0 top-0 h-full w-full md:w-2/3 lg:w-1/2 bg-[var(--bg-card)] shadow-2xl z-50 overflow-y-auto transform transition-transform duration-300 border-l border-[rgba(15,31,23,0.08)] ${showSidebar ? 'translate-x-0' : 'translate-x-full'
               }`}
           >
             <div className="p-6">
               {/* Header */}
-              <div className="flex justify-between items-center mb-6 pb-4 border-b border-[rgba(255,255,255,0.08)]">
+              <div className="flex justify-between items-center mb-6 pb-4 border-b border-[rgba(15,31,23,0.08)]">
                 <h2 className="text-2xl font-bold text-primary">Invoice Details</h2>
                 <button
                   onClick={handleCloseSidebar}
-                  className="p-2 rounded-lg text-secondary hover:text-primary hover:bg-[rgba(255,255,255,0.06)] transition-all"
+                  className="p-2 rounded-lg text-secondary hover:text-primary hover:bg-[rgba(15,31,23,0.06)] transition-all"
                 >
                   <X size={24} />
                 </button>
@@ -408,13 +408,13 @@ const InvoiceList = () => {
 
               {viewLoading ? (
                 <div className="flex items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00D1FF]"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#059669]"></div>
                   <span className="ml-3 text-secondary">Loading invoice details...</span>
                 </div>
               ) : selectedInvoice ? (
                 <div className="space-y-6">
                   {/* Invoice Header */}
-                  <div className="bg-[rgba(0,209,255,0.08)] border border-[rgba(0,209,255,0.2)] p-6 rounded-xl">
+                  <div className="bg-[rgba(5,150,105,0.08)] border border-[rgba(5,150,105,0.2)] p-6 rounded-xl">
                     <div className="flex justify-between items-start flex-wrap gap-4">
                       <div>
                         <h3 className="text-xl font-bold text-primary mb-2">
@@ -422,14 +422,14 @@ const InvoiceList = () => {
                         </h3>
                         {selectedInvoice.tripId?.tripNumber && (
                           <p className="text-secondary text-sm flex items-center gap-2">
-                            <Truck size={16} className="text-[#00D1FF]" />
-                            Trip: <span className="font-semibold text-[#00D1FF]">{selectedInvoice.tripId.tripNumber}</span>
+                            <Truck size={16} className="text-[#059669]" />
+                            Trip: <span className="font-semibold text-[#059669]">{selectedInvoice.tripId.tripNumber}</span>
                           </p>
                         )}
                       </div>
                       <span
                         className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border ${selectedInvoice.status === "paid"
-                          ? "bg-[rgba(0,255,163,0.12)] text-[#00FFA3] border-[rgba(0,255,163,0.3)]"
+                          ? "bg-[rgba(5,150,105,0.12)] text-[#059669] border-[rgba(5,150,105,0.3)]"
                           : "bg-[rgba(245,158,11,0.12)] text-[#FCD34D] border-[rgba(245,158,11,0.3)]"
                           }`}
                       >
@@ -449,7 +449,7 @@ const InvoiceList = () => {
                   </div>
 
                   {/* Client Information */}
-                  <div className="bg-[rgba(255,255,255,0.03)] p-6 rounded-xl border border-[rgba(255,255,255,0.08)]">
+                  <div className="bg-[rgba(15,31,23,0.03)] p-6 rounded-xl border border-[rgba(15,31,23,0.08)]">
                     <h4 className="font-semibold text-primary mb-4 text-lg">Client Information</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
@@ -484,7 +484,7 @@ const InvoiceList = () => {
                   </div>
 
                   {/* Financial Details */}
-                  <div className="bg-[rgba(0,209,255,0.04)] p-6 rounded-xl border border-[rgba(0,209,255,0.15)]">
+                  <div className="bg-[rgba(5,150,105,0.04)] p-6 rounded-xl border border-[rgba(5,150,105,0.15)]">
                     <h4 className="font-semibold text-primary mb-4 text-lg">Financial Details</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
@@ -540,9 +540,9 @@ const InvoiceList = () => {
 
                   {/* Trip Information */}
                   {selectedInvoice.tripId && (
-                    <div className="bg-[rgba(255,255,255,0.03)] p-6 rounded-xl border border-[rgba(255,255,255,0.08)]">
+                    <div className="bg-[rgba(15,31,23,0.03)] p-6 rounded-xl border border-[rgba(15,31,23,0.08)]">
                       <h4 className="font-semibold text-primary mb-4 text-lg flex items-center gap-2">
-                        <Truck size={20} className="text-[#00D1FF]" />
+                        <Truck size={20} className="text-[#059669]" />
                         Trip Information
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -572,13 +572,13 @@ const InvoiceList = () => {
 
                   {/* Orders Information */}
                   {selectedInvoice.tripId?.orders && selectedInvoice.tripId.orders.length > 0 && (
-                    <div className="bg-[rgba(255,255,255,0.03)] p-6 rounded-xl border border-[rgba(255,255,255,0.08)]">
+                    <div className="bg-[rgba(15,31,23,0.03)] p-6 rounded-xl border border-[rgba(15,31,23,0.08)]">
                       <h4 className="font-semibold text-primary mb-4 text-lg flex items-center gap-2">
-                        <Package size={20} className="text-[#00D1FF]" />
+                        <Package size={20} className="text-[#059669]" />
                         Order Details
                       </h4>
                       {selectedInvoice.tripId.orders.map((order: any, index: number) => (
-                        <div key={index} className="mb-4 last:mb-0 p-4 bg-[rgba(255,255,255,0.03)] rounded-lg border border-[rgba(255,255,255,0.06)]">
+                        <div key={index} className="mb-4 last:mb-0 p-4 bg-[rgba(15,31,23,0.03)] rounded-lg border border-[rgba(15,31,23,0.06)]">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                             <div>
                               <p className="text-secondary mb-1">Order Number</p>
@@ -591,7 +591,7 @@ const InvoiceList = () => {
                             {order.pickupLocation && (
                               <div className="md:col-span-2">
                                 <p className="text-secondary mb-1 flex items-center gap-1">
-                                  <MapPin size={14} className="text-[#00D1FF]" />
+                                  <MapPin size={14} className="text-[#059669]" />
                                   Pickup Location
                                 </p>
                                 <p className="font-medium text-primary text-sm">{order.pickupLocation.place}</p>
@@ -600,7 +600,7 @@ const InvoiceList = () => {
                             {order.deliveryLocation && (
                               <div className="md:col-span-2">
                                 <p className="text-secondary mb-1 flex items-center gap-1">
-                                  <MapPin size={14} className="text-[#00FFA3]" />
+                                  <MapPin size={14} className="text-[#059669]" />
                                   Delivery Location
                                 </p>
                                 <p className="font-medium text-primary text-sm">{order.deliveryLocation.place}</p>
@@ -621,10 +621,10 @@ const InvoiceList = () => {
                   )}
 
                   {/* Close Button */}
-                  <div className="flex justify-end pt-4 border-t border-[rgba(255,255,255,0.08)]">
+                  <div className="flex justify-end pt-4 border-t border-[rgba(15,31,23,0.08)]">
                     <button
                       onClick={handleCloseSidebar}
-                      className="px-6 py-2.5 bg-[rgba(0,209,255,0.1)] text-[#00D1FF] border border-[rgba(0,209,255,0.25)] font-medium rounded-lg hover:bg-[rgba(0,209,255,0.18)] transition-all"
+                      className="px-6 py-2.5 bg-[rgba(5,150,105,0.1)] text-[#059669] border border-[rgba(5,150,105,0.25)] font-medium rounded-lg hover:bg-[rgba(5,150,105,0.18)] transition-all"
                     >
                       Close
                     </button>
@@ -635,7 +635,7 @@ const InvoiceList = () => {
                   <p className="text-secondary">Failed to load invoice details</p>
                   <button
                     onClick={handleCloseSidebar}
-                    className="mt-4 px-6 py-2.5 bg-[rgba(0,209,255,0.1)] text-[#00D1FF] border border-[rgba(0,209,255,0.25)] font-medium rounded-lg hover:bg-[rgba(0,209,255,0.18)] transition-all"
+                    className="mt-4 px-6 py-2.5 bg-[rgba(5,150,105,0.1)] text-[#059669] border border-[rgba(5,150,105,0.25)] font-medium rounded-lg hover:bg-[rgba(5,150,105,0.18)] transition-all"
                   >
                     Close
                   </button>

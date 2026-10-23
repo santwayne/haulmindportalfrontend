@@ -501,7 +501,7 @@ const DrugTest = () => {
                     <button
                         onClick={handleCreateRequestClick}
                         style={{
-                            background: 'linear-gradient(90deg, var(--accent-navyblue) 0%, var(--accent-navyblue) 40%, rgba(0,209,255,0.15) 100%)',
+                            background: 'linear-gradient(90deg, var(--accent-navyblue) 0%, var(--accent-navyblue) 40%, rgba(5,150,105,0.15) 100%)',
                         }}
                         className="flex items-center gap-2 px-6 py-3 !text-white font-semibold rounded-lg hover:opacity-90 transition-opacity"
                     >
@@ -628,12 +628,12 @@ const DrugTest = () => {
                                     <th className="px-6 py-4 text-left text-xs font-semibold text-primary uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-card divide-y divide-theme divide-white/5">
+                            <tbody className="bg-card divide-y divide-theme divide-black/5">
                                 {filteredRequests.map((request) => (
                                     <tr
                                         key={request._id}
                                         onClick={() => handleViewDetails(request)}
-                                        className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                                        className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                                     >
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-primary">{request.driverName || 'Unknown'}</div>
@@ -680,7 +680,7 @@ const DrugTest = () => {
                                             <div className="flex items-center gap-3">
                                                 <button
                                                     onClick={() => handleViewDetails(request)}
-                                                    className="text-[#00D1FF] hover:text-blue-800"
+                                                    className="text-[#059669] hover:text-blue-800"
                                                     title="View Details"
                                                 >
                                                     <Eye size={18} />
@@ -865,7 +865,7 @@ const DrugTest = () => {
                             {/* Document Uploads */}
                             <div className="border-t border-theme pt-4">
                                 <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
-                                    <FileText className="text-[#00D1FF]" size={20} />
+                                    <FileText className="text-[#059669]" size={20} />
                                     Document Uploads
                                 </h3>
                                 <div className="space-y-4">
@@ -884,7 +884,7 @@ const DrugTest = () => {
                                                         href={existingConsentFormUrl}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="text-xs text-[#00D1FF] hover:text-blue-800 underline"
+                                                        className="text-xs text-[#059669] hover:text-blue-800 underline"
                                                     >
                                                         View Document
                                                     </a>
@@ -919,7 +919,7 @@ const DrugTest = () => {
                                                         href={existingDrugTestDocumentUrl}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="text-xs text-[#00D1FF] hover:text-blue-800 underline"
+                                                        className="text-xs text-[#059669] hover:text-blue-800 underline"
                                                     >
                                                         View Document
                                                     </a>
@@ -947,7 +947,7 @@ const DrugTest = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowRequestModal(false)}
-                                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)]"
+                                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)]"
                                     disabled={saving}
                                 >
                                     Cancel
@@ -1046,7 +1046,7 @@ const DrugTest = () => {
                             {(selectedRequest.consentFormUrl || selectedRequest.drugTestDocumentUrl) && (
                                 <div className="border-t border-theme pt-4">
                                     <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
-                                        <FileText className="text-[#00D1FF]" size={20} />
+                                        <FileText className="text-[#059669]" size={20} />
                                         Documents
                                     </h3>
                                     <div className="space-y-3">
@@ -1060,7 +1060,7 @@ const DrugTest = () => {
                                                     href={selectedRequest.consentFormUrl}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="text-sm text-[#00D1FF] hover:text-blue-800 underline"
+                                                    className="text-sm text-[#059669] hover:text-blue-800 underline"
                                                 >
                                                     View Document
                                                 </a>
@@ -1076,7 +1076,7 @@ const DrugTest = () => {
                                                     href={selectedRequest.drugTestDocumentUrl}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="text-sm text-[#00D1FF] hover:text-blue-800 underline"
+                                                    className="text-sm text-[#059669] hover:text-blue-800 underline"
                                                 >
                                                     View Document
                                                 </a>
@@ -1108,7 +1108,7 @@ const DrugTest = () => {
                             <div className="flex justify-end gap-4 pt-4 border-t border-theme">
                                 <button
                                     onClick={() => setShowDetailsModal(false)}
-                                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)]"
+                                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)]"
                                 >
                                     Close
                                 </button>
@@ -1150,7 +1150,7 @@ const DrugTest = () => {
                             <div className="flex items-center justify-end gap-3">
                                 <button
                                     onClick={() => setConfirmDelete({ open: false, id: null, name: null })}
-                                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors font-medium"
+                                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors font-medium"
                                 >
                                     Cancel
                                 </button>

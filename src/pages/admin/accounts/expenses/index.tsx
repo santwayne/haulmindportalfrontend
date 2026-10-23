@@ -969,7 +969,7 @@ const ExpensesPage = () => {
     return (
       <div className="min-h-screen bg-main flex flex-col items-center justify-center text-center space-y-4">
         <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent-blue)]"></div>
-        <p className="text-[#063f6f]">Loading expenses...</p>
+        <p className="text-[#065f46]">Loading expenses...</p>
       </div>
     );
   }
@@ -1044,7 +1044,7 @@ const ExpensesPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
 
           {/* 🔷 TOTAL EXPENSES */}
-          <div className="bg-[var(--bg-card)] p-6 rounded-xl border border-[rgba(255,255,255,0.08)] shadow-sm hover:shadow-lg hover:shadow-[#42aeec]/10 transition-all duration-300">
+          <div className="bg-[var(--bg-card)] p-6 rounded-xl border border-[rgba(15,31,23,0.08)] shadow-sm hover:shadow-lg hover:shadow-[#10b981]/10 transition-all duration-300">
             <div className="flex items-center justify-between gap-3">
               <div className="flex-1 min-w-0 pr-2">
                 <p className="text-secondary text-sm">Total Expenses</p>
@@ -1052,7 +1052,7 @@ const ExpensesPage = () => {
                   ${totalAmount.toLocaleString()}
                 </p>
               </div>
-              <div className="bg-[rgba(66,174,236,0.1)] p-2.5 rounded-full">
+              <div className="bg-[rgba(16,185,129,0.1)] p-2.5 rounded-full">
                 <DollarSign className="text-[var(--accent-blue)]" size={20} />
               </div>
             </div>
@@ -1103,7 +1103,7 @@ const ExpensesPage = () => {
             return (
               <div
                 key={category._id}
-                className="bg-[var(--bg-card)] p-6 rounded-xl border border-[rgba(255,255,255,0.08)] shadow-sm hover:shadow-lg hover:shadow-[#42aeec]/10 transition-all duration-300"
+                className="bg-[var(--bg-card)] p-6 rounded-xl border border-[rgba(15,31,23,0.08)] shadow-sm hover:shadow-lg hover:shadow-[#10b981]/10 transition-all duration-300"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex-1 min-w-0 pr-2">
@@ -1123,7 +1123,7 @@ const ExpensesPage = () => {
 
 
           {/* 🔷 TOTAL PAYROLL */}
-          <div className="bg-[var(--bg-card)] p-6 rounded-xl border border-[rgba(255,255,255,0.08)] shadow-sm hover:shadow-lg hover:shadow-[#42aeec]/10 transition-all duration-300">
+          <div className="bg-[var(--bg-card)] p-6 rounded-xl border border-[rgba(15,31,23,0.08)] shadow-sm hover:shadow-lg hover:shadow-[#10b981]/10 transition-all duration-300">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <p className="text-secondary text-sm mb-1">Total Payroll</p>
@@ -1132,7 +1132,7 @@ const ExpensesPage = () => {
                 </p>
               </div>
 
-              <div className="bg-[rgba(66,174,236,0.1)] p-2.5 rounded-full">
+              <div className="bg-[rgba(16,185,129,0.1)] p-2.5 rounded-full">
                 <Users className="text-[var(--accent-blue)]" size={20} />
               </div>
             </div>
@@ -1150,7 +1150,7 @@ const ExpensesPage = () => {
                   onClick={() => setSelectedCategoryTab('all')}
                   className={`px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 ${selectedCategoryTab === 'all'
                     ? 'bg-card text-blue-700 border-2 border-blue-400 shadow-sm'
-                    : 'bg-card text-secondary hover:bg-[rgba(255,255,255,0.03)] border-2 border-transparent hover:border-theme'
+                    : 'bg-card text-secondary hover:bg-[rgba(15,31,23,0.03)] border-2 border-transparent hover:border-theme'
                     }`}
                 >
                   All Expenses <span className="font-normal">({expenses.length})</span>
@@ -1189,7 +1189,7 @@ const ExpensesPage = () => {
                       onClick={() => setSelectedCategoryTab(category._id)}
                       className={`px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 ${selectedCategoryTab === category._id
                         ? 'bg-card text-blue-700 border-2 border-blue-400 shadow-sm'
-                        : 'bg-card text-secondary hover:bg-[rgba(255,255,255,0.03)] border-2 border-transparent hover:border-theme'
+                        : 'bg-card text-secondary hover:bg-[rgba(15,31,23,0.03)] border-2 border-transparent hover:border-theme'
                         }`}
                     >
                       {category.name} <span className="font-normal">({categoryExpenseCount})</span>
@@ -1203,7 +1203,7 @@ const ExpensesPage = () => {
             <div className="flex items-center gap-2 flex-shrink-0">
               <button
                 onClick={() => handleOpenTypeModal()}
-                className="px-4 py-2.5 text-sm font-medium text-primary bg-card border border-theme hover:bg-[rgba(255,255,255,0.03)] hover:border-gray-400 rounded-lg transition-all duration-200 flex items-center gap-2 shadow-sm"
+                className="px-4 py-2.5 text-sm font-medium text-primary bg-card border border-theme hover:bg-[rgba(15,31,23,0.03)] hover:border-gray-400 rounded-lg transition-all duration-200 flex items-center gap-2 shadow-sm"
                 title="Add Expense Type"
               >
                 <Plus size={16} />
@@ -1229,7 +1229,7 @@ const ExpensesPage = () => {
               <button
                 onClick={() => setActiveTab('list')}
                 className={`px-6 py-4 text-sm font-semibold transition-all duration-200 relative ${activeTab === 'list'
-                  ? 'text-[#00D1FF]'
+                  ? 'text-[#059669]'
                   : 'text-secondary hover:text-primary'
                   }`}
               >
@@ -1241,7 +1241,7 @@ const ExpensesPage = () => {
               <button
                 onClick={() => setActiveTab('create')}
                 className={`px-6 py-4 text-sm font-semibold transition-all duration-200 relative ${activeTab === 'create'
-                  ? 'text-[#00D1FF]'
+                  ? 'text-[#059669]'
                   : 'text-secondary hover:text-primary'
                   }`}
               >
@@ -1338,7 +1338,7 @@ const ExpensesPage = () => {
                           <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                             <button
                               onClick={() => handleView(expense)}
-                              className="p-2 text-secondary hover:text-[#00D1FF] hover:bg-blue-50 rounded-lg transition-colors"
+                              className="p-2 text-secondary hover:text-[#059669] hover:bg-blue-50 rounded-lg transition-colors"
                               title="View Details"
                             >
                               <Eye size={16} />
@@ -1364,7 +1364,7 @@ const ExpensesPage = () => {
 
                     {filteredExpenses.length === 0 && (
                       <div className="text-center py-8 text-secondary">
-                        <FileText size={48} className="mx-auto mb-4 text-gray-300" />
+                        <FileText size={48} className="mx-auto mb-4 text-gray-600" />
                         <p>No expenses found for the selected filter.</p>
                       </div>
                     )}
@@ -1567,7 +1567,7 @@ const ExpensesPage = () => {
                         id="receipt-upload"
                       />
                       <label htmlFor="receipt-upload" className="cursor-pointer">
-                        <span className="text-[#00D1FF] hover:text-blue-700">Click to upload</span>
+                        <span className="text-[#059669] hover:text-blue-700">Click to upload</span>
                         <span className="text-secondary"> or drag and drop</span>
                       </label>
                       <p className="text-xs text-secondary mt-1">PNG, JPG up to 10MB</p>
@@ -1613,7 +1613,7 @@ const ExpensesPage = () => {
                       type="button"
                       onClick={handleCancel}
                       disabled={loading}
-                      className="text-secondary hover:text-primary px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors disabled:cursor-not-allowed"
+                      className="text-secondary hover:text-primary px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors disabled:cursor-not-allowed"
                     >
                       Cancel
                     </button>
@@ -1774,7 +1774,7 @@ const ExpensesPage = () => {
                                 href={receiptSignedUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-[#00D1FF] hover:text-blue-800 underline text-sm"
+                                className="text-[#059669] hover:text-blue-800 underline text-sm"
                               >
                                 View Receipt
                               </a>
@@ -1883,7 +1883,7 @@ const ExpensesPage = () => {
                     setViewingExpense(null);
                     setReceiptSignedUrl(null);
                   }}
-                  className="text-secondary hover:text-primary px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                  className="text-secondary hover:text-primary px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                 >
                   Close
                 </button>
@@ -1937,7 +1937,7 @@ const ExpensesPage = () => {
                     setEditingCategory(null);
                     setCategoryFormData({ name: '', status: 'active' });
                   }}
-                  className="p-2 text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition-colors"
+                  className="p-2 text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors"
                 >
                   <X size={20} />
                 </button>
@@ -1989,7 +1989,7 @@ const ExpensesPage = () => {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleOpenCategoryModal(category)}
-                              className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition-colors"
+                              className="p-2 text-[#059669] hover:bg-blue-50 rounded-lg transition-colors"
                               title="Edit Category"
                             >
                               <Edit size={18} />
@@ -2024,7 +2024,7 @@ const ExpensesPage = () => {
                     setEditingCategory(null);
                     setCategoryFormData({ name: '', status: 'active' });
                   }}
-                  className="px-5 py-2.5 text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors font-medium"
+                  className="px-5 py-2.5 text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors font-medium"
                   disabled={savingCategory}
                 >
                   Cancel
@@ -2066,7 +2066,7 @@ const ExpensesPage = () => {
                     setEditingType(null);
                     setTypeFormData({ name: '', categoryId: '', status: 'active' });
                   }}
-                  className="p-2 text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition-colors"
+                  className="p-2 text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors"
                 >
                   <X size={20} />
                 </button>
@@ -2186,7 +2186,7 @@ const ExpensesPage = () => {
                               <div className="flex items-center gap-2">
                                 <button
                                   onClick={() => handleOpenTypeModal(type)}
-                                  className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition-colors"
+                                  className="p-2 text-[#059669] hover:bg-blue-50 rounded-lg transition-colors"
                                   title="Edit Type"
                                 >
                                   <Edit size={18} />
@@ -2226,7 +2226,7 @@ const ExpensesPage = () => {
                     setEditingType(null);
                     setTypeFormData({ name: '', categoryId: '', status: 'active' });
                   }}
-                  className="px-5 py-2.5 text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors font-medium"
+                  className="px-5 py-2.5 text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors font-medium"
                   disabled={savingType}
                 >
                   Cancel

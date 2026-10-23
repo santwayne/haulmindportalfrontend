@@ -141,7 +141,7 @@ const ToastNotification = ({ notification, onClose }: { notification: ToastNotif
     success: { bg: 'bg-green-50 border-green-200', border: '', icon: <FaCheckCircle className="text-green-600" size={20} /> },
     error: { bg: 'bg-card border-red-200', border: '', icon: <FaExclamationCircle className="text-[#A855F7]" size={20} /> },
     info: { bg: '', border: '', icon: <FaInfoCircle className="text-[var(--accent-color)]" size={20} /> },
-    warning: { bg: 'bg-card border-yellow-200', border: '', icon: <FaExclamationTriangle className="text-[#00FFA3]" size={20} /> }
+    warning: { bg: 'bg-card border-yellow-200', border: '', icon: <FaExclamationTriangle className="text-[#059669]" size={20} /> }
   };
 
   const infoStyle =
@@ -456,7 +456,7 @@ const CvsaInspection: React.FC = () => {
       case 'fail':
         return <FaTimesCircle className="text-[#A855F7]" size={20} />;
       case 'warning':
-        return <FaExclamationTriangle className="text-[#00FFA3]" size={20} />;
+        return <FaExclamationTriangle className="text-[#059669]" size={20} />;
       case 'out-of-service':
         return <FaBan className="text-red-800" size={20} />;
       default:
@@ -482,9 +482,9 @@ const CvsaInspection: React.FC = () => {
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'minor':
-        return 'text-[#00FFA3]';
+        return 'text-[#059669]';
       case 'major':
-        return 'text-[#F59E0B]';
+        return 'text-[#d97706]';
       case 'critical':
         return 'text-[#A855F7]';
       default:
@@ -860,7 +860,7 @@ const CvsaInspection: React.FC = () => {
               </div>
               <div className="flex items-center gap-3">
                 {/* Country Toggle */}
-                <div className="bg-card rounded-lg p-1 flex border border-white/20">
+                <div className="bg-card rounded-lg p-1 flex border border-black/20">
                   <button
                     onClick={() => setActiveTab('canada')}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all
@@ -1086,7 +1086,7 @@ const CvsaInspection: React.FC = () => {
             </div>
           ) : filteredInspections.length === 0 ? (
             <div className="text-center py-16">
-              <FaClipboardCheck size={64} className="mx-auto mb-4 text-gray-300" />
+              <FaClipboardCheck size={64} className="mx-auto mb-4 text-gray-600" />
               <p className="text-xl font-semibold text-secondary">No inspections found</p>
               <p className="text-secondary mt-2">Try adjusting your filters or search criteria</p>
             </div>
@@ -1182,11 +1182,11 @@ const CvsaInspection: React.FC = () => {
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-card divide-y divide-theme divide-white/5">
+                    <tbody className="bg-card divide-y divide-theme divide-black/5">
                       {filteredInspections.map((inspection) => (
                         <tr
                           key={inspection._id}
-                          className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer"
+                          className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer"
                           onClick={() => handleViewInspection(inspection)}
                         >
                           <td className="px-4 py-3 whitespace-nowrap sticky left-0 bg-card z-10">
@@ -1224,7 +1224,7 @@ const CvsaInspection: React.FC = () => {
                                 </span>
                               ) : (
                                 <span className="flex items-center gap-1">
-                                  <FaFlagUsa className="text-[#00D1FF]" size={14} />
+                                  <FaFlagUsa className="text-[#059669]" size={14} />
                                   USA
                                 </span>
                               )}
@@ -1366,7 +1366,7 @@ const CvsaInspection: React.FC = () => {
                       disabled={currentPage === 1}
                       className={`px-3 py-2 rounded-lg border ${currentPage === 1
                         ? 'bg-card text-secondary cursor-not-allowed border-theme'
-                        : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border-theme'
+                        : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border-theme'
                         }`}
                     >
                       <FaChevronLeft size={14} />
@@ -1391,7 +1391,7 @@ const CvsaInspection: React.FC = () => {
                             onClick={() => setCurrentPage(pageNum)}
                             className={`px-3 py-2 rounded-lg text-sm font-medium ${currentPage === pageNum
                               ? 'bg-[var(--accent-color)] text-white'
-                              : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border border-theme'
+                              : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border border-theme'
                               }`}
                           >
                             {pageNum}
@@ -1405,7 +1405,7 @@ const CvsaInspection: React.FC = () => {
                       disabled={currentPage === totalPages}
                       className={`px-3 py-2 rounded-lg border ${currentPage === totalPages
                         ? 'bg-card text-secondary cursor-not-allowed border-theme'
-                        : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border-theme'
+                        : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border-theme'
                         }`}
                     >
                       <FaChevronRight size={14} />
@@ -1429,7 +1429,7 @@ const CvsaInspection: React.FC = () => {
                   </h3>
                   <button
                     onClick={() => setShowViewModal(false)}
-                    className="p-1.5 hover:bg-[rgba(255,255,255,0.03)] rounded transition-colors"
+                    className="p-1.5 hover:bg-[rgba(15,31,23,0.03)] rounded transition-colors"
                   >
                     <FaTimesCircle className="text-secondary" size={18} />
                   </button>
@@ -1681,7 +1681,7 @@ const CvsaInspection: React.FC = () => {
               <div className="sticky bottom-0 bg-card px-3 py-2 flex justify-end gap-2 border-t">
                 <button
                   onClick={() => setShowViewModal(false)}
-                  className="px-4 py-1.5 text-xs bg-card border border-theme text-primary rounded hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors"
+                  className="px-4 py-1.5 text-xs bg-card border border-theme text-primary rounded hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors"
                 >
                   Close
                 </button>
@@ -1996,7 +1996,7 @@ const CvsaInspection: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex-shrink-0 bg-card px-6 py-4 flex justify-end gap-3 border-t">
-                  <button type="button" onClick={() => setShowAddModal(false)} className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors">Cancel</button>
+                  <button type="button" onClick={() => setShowAddModal(false)} className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors">Cancel</button>
                   <button type="button" onClick={saveNewInspection} className="px-6 py-2.5 bg-[var(--accent-navyblue)] !text-white rounded-lg hover:bg-[var(--accent-navyblue)]/80 font-medium transition-colors disabled:opacity-60" disabled={!validateForm() || loading}>
                     {loading ? 'Saving...' : 'Save Inspection'}
                   </button>
@@ -2275,7 +2275,7 @@ const CvsaInspection: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex-shrink-0 bg-card px-6 py-4 flex justify-end gap-3 border-t">
-                  <button onClick={() => setShowEditModal(false)} className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors">Cancel</button>
+                  <button onClick={() => setShowEditModal(false)} className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors">Cancel</button>
                   <button onClick={updateInspection} className="px-6 py-2.5 bg-[var(--accent-navyblue)] !text-white rounded-lg hover:bg-[var(--accent-navyblue)]/80 font-medium transition-colors disabled:opacity-60" disabled={!validateForm() || loading}>
                     {loading ? 'Updating...' : 'Update Inspection'}
                   </button>

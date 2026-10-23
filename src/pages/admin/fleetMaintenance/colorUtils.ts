@@ -1,15 +1,15 @@
 // Color utility constants for fleet maintenance
 export const FLEET_COLORS = {
-  primary: '#016ab2',
-  dark: '#063f6f',
-  light: '#398bc3',
-  gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)',
-  gradientVertical: 'linear-gradient(to bottom right, #016ab2, #063f6f)',
-  focusRing: 'rgba(66, 174, 236, 0.2)',
+  primary: '#047857',
+  dark: '#065f46',
+  light: '#059669',
+  gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)',
+  gradientVertical: 'linear-gradient(to bottom right, #047857, #065f46)',
+  focusRing: 'rgba(16,185,129, 0.2)',
   success: '#10b981',
   warning: '#f59e0b',
   danger: '#ef4444',
-  background: '#EDF8FF',
+  background: '#ecfdf5',
 };
 
 export const getFocusStyles = () => ({

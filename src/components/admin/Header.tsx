@@ -176,11 +176,11 @@ const Header: React.FC<HeaderProps> = ({ isSidebarCollapsed = false, onToggleSid
                 <div className="hidden sm:block absolute left-1/2 -translate-x-1/2">
                     <button
                         onClick={handleSearchClick}
-                        className="flex items-center gap-3 px-4 py-2 rounded-lg bg-[var(--bg-card)] border border-[rgba(255,255,255,0.08)] hover:border-[#42aeec]/40 text-secondary hover:text-primary transition-all w-64"
+                        className="flex items-center gap-3 px-4 py-2 rounded-lg bg-[var(--bg-card)] border border-[rgba(15,31,23,0.08)] hover:border-[#10b981]/40 text-secondary hover:text-primary transition-all w-64"
                     >
                         <Search size={16} className="flex-shrink-0" />
                         <span className="text-sm flex-1 text-left">Search anything...</span>
-                        <kbd className="text-xs bg-[rgba(255,255,255,0.06)] px-2 py-0.5 rounded text-secondary font-mono">Ctrl K</kbd>
+                        <kbd className="text-xs bg-[rgba(15,31,23,0.06)] px-2 py-0.5 rounded text-secondary font-mono">Ctrl K</kbd>
                     </button>
                 </div>
 
@@ -266,10 +266,10 @@ const Header: React.FC<HeaderProps> = ({ isSidebarCollapsed = false, onToggleSid
                                             <div className={`flex-shrink-0 ${index === selectedIndex ? 'scale-110' : ''}`}>
                                                 <div
                                                     className={`p-2 rounded-lg ${action.type === "create"
-                                                            ? "bg-[rgba(0,255,163,0.1)] text-[var(--accent-green)]"
+                                                            ? "bg-[rgba(5,150,105,0.1)] text-[var(--accent-green)]"
                                                             : action.type === "navigation"
-                                                                ? "bg-[rgba(0,209,255,0.1)] text-[var(--accent-blue)]"
-                                                                : "bg-[rgba(255,255,255,0.05)] text-secondary"
+                                                                ? "bg-[rgba(5,150,105,0.1)] text-[var(--accent-blue)]"
+                                                                : "bg-[rgba(15,31,23,0.05)] text-secondary"
                                                         }`}
                                                 >
                                                     {action.icon}
@@ -285,13 +285,13 @@ const Header: React.FC<HeaderProps> = ({ isSidebarCollapsed = false, onToggleSid
                                                     </span>
 
                                                     {action.type === "create" && (
-                                                        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-[rgba(0,255,163,0.1)] text-[var(--accent-green)]">
+                                                        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-[rgba(5,150,105,0.1)] text-[var(--accent-green)]">
                                                             New
                                                         </span>
                                                     )}
 
                                                     {action.type === "navigation" && (
-                                                        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-[rgba(0,209,255,0.1)] text-[var(--accent-blue)]">
+                                                        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-[rgba(5,150,105,0.1)] text-[var(--accent-blue)]">
                                                             Navigate
                                                         </span>
                                                     )}
@@ -348,7 +348,7 @@ const Header: React.FC<HeaderProps> = ({ isSidebarCollapsed = false, onToggleSid
             {/* Logout Confirmation Modal */}
             {showLogoutModal && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
-                    <div className="bg-[var(--bg-card)] border border-[rgba(255,255,255,0.08)] rounded-xl shadow-2xl w-full max-w-sm mx-4 p-6">
+                    <div className="bg-[var(--bg-card)] border border-[rgba(15,31,23,0.08)] rounded-xl shadow-2xl w-full max-w-sm mx-4 p-6">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="p-2 rounded-lg bg-red-500/10">
                                 <LogOut size={20} className="text-red-400" />
@@ -359,7 +359,7 @@ const Header: React.FC<HeaderProps> = ({ isSidebarCollapsed = false, onToggleSid
                         <div className="flex gap-3 justify-end">
                             <button
                                 onClick={cancelLogout}
-                                className="px-4 py-2 text-sm rounded-lg border border-[rgba(255,255,255,0.08)] text-secondary hover:text-primary hover:border-[rgba(255,255,255,0.2)] transition-all"
+                                className="px-4 py-2 text-sm rounded-lg border border-[rgba(15,31,23,0.08)] text-secondary hover:text-primary hover:border-[rgba(15,31,23,0.2)] transition-all"
                             >
                                 Cancel
                             </button>

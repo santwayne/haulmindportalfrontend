@@ -158,7 +158,7 @@ const Issues: React.FC = () => {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high': return 'text-[#A855F7] bg-red-100';
-      case 'medium': return 'text-[#00FFA3] bg-yellow-100';
+      case 'medium': return 'text-[#059669] bg-yellow-100';
       case 'low': return 'text-green-600 bg-green-100';
       default: return 'text-secondary bg-card';
     }
@@ -168,7 +168,7 @@ const Issues: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'open': return 'text-[#A855F7] bg-red-100';
-      case 'in-progress': return 'text-[#00D1FF] bg-blue-100';
+      case 'in-progress': return 'text-[#059669] bg-blue-100';
       case 'closed': return 'text-green-600 bg-green-100';
       default: return 'text-secondary bg-card';
     }
@@ -308,7 +308,7 @@ const Issues: React.FC = () => {
                   setSearchQuery('');
                   fetchIssues();
                 }}
-                className="flex items-center gap-2 bg-gray-600 !text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                className="flex items-center gap-2 bg-gray-200 text-primary px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 <FaFilter />
                 Clear
@@ -342,7 +342,7 @@ const Issues: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-secondary">In Progress</p>
-                  <p className="text-2xl font-bold text-[#00D1FF]">
+                  <p className="text-2xl font-bold text-[#059669]">
                     {issues.filter(i => i.status === 'in-progress').length}
                   </p>
                 </div>
@@ -405,7 +405,7 @@ const Issues: React.FC = () => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-card divide-y divide-theme divide-white/5">
+                <tbody className="bg-card divide-y divide-theme divide-black/5">
                   {loading ? (
                     <tr>
                       <td colSpan={5} className="px-6 py-4 text-center text-secondary">
@@ -422,7 +422,7 @@ const Issues: React.FC = () => {
                     issues.map((issue) => (
                       <tr
                         key={issue._id}
-                        className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                        className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                         onClick={() => {
                           setSelectedIssue(issue);
                           setShowIssueDetails(true);
@@ -468,7 +468,7 @@ const Issues: React.FC = () => {
                               ? 'bg-[rgba(168,85,247,0.15)] text-[#C084FC]'
                               : issue.status === 'in-progress'
                                 ? 'bg-[rgba(34,197,94,0.15)] text-[#4ADE80]'
-                                : 'bg-[rgba(255,255,255,0.08)] text-secondary'
+                                : 'bg-[rgba(15,31,23,0.08)] text-secondary'
                               }`}
                           >
                             {issue.status.replace('-', ' ').charAt(0).toUpperCase() +
@@ -499,7 +499,7 @@ const Issues: React.FC = () => {
                                 setEditingIssue(issue);
                                 setShowNewIssueSidebar(true);
                               }}
-                              className="p-2 text-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] rounded-lg transition-all duration-200"
+                              className="p-2 text-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] rounded-lg transition-all duration-200"
                               title="Edit Issue"
                             >
                               <MdEdit />
@@ -530,14 +530,14 @@ const Issues: React.FC = () => {
                   <button
                     onClick={() => fetchIssues(pagination.current - 1)}
                     disabled={pagination.current === 1}
-                    className="relative inline-flex items-center px-4 py-2 border border-theme text-sm font-medium rounded-md text-headings bg-card hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50"
+                    className="relative inline-flex items-center px-4 py-2 border border-theme text-sm font-medium rounded-md text-headings bg-card hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50"
                   >
                     Previous
                   </button>
                   <button
                     onClick={() => fetchIssues(pagination.current + 1)}
                     disabled={pagination.current === pagination.pages}
-                    className="ml-3 relative inline-flex items-center px-4 py-2 border border-theme text-sm font-medium rounded-md text-headings bg-card hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50"
+                    className="ml-3 relative inline-flex items-center px-4 py-2 border border-theme text-sm font-medium rounded-md text-headings bg-card hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50"
                   >
                     Next
                   </button>
@@ -561,7 +561,7 @@ const Issues: React.FC = () => {
                       <button
                         onClick={() => fetchIssues(pagination.current - 1)}
                         disabled={pagination.current === 1}
-                        className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-theme bg-card text-sm font-medium text-secondary hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50"
+                        className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-theme bg-card text-sm font-medium text-secondary hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50"
                       >
                         Previous
                       </button>
@@ -570,8 +570,8 @@ const Issues: React.FC = () => {
                           key={page}
                           onClick={() => fetchIssues(page)}
                           className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${page === pagination.current
-                            ? 'z-10 bg-card border-blue-500 text-[#00D1FF]'
-                            : 'bg-card border-theme text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                            ? 'z-10 bg-card border-blue-500 text-[#059669]'
+                            : 'bg-card border-theme text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                             }`}
                         >
                           {page}
@@ -580,7 +580,7 @@ const Issues: React.FC = () => {
                       <button
                         onClick={() => fetchIssues(pagination.current + 1)}
                         disabled={pagination.current === pagination.pages}
-                        className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-theme bg-card text-sm font-medium text-secondary hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50"
+                        className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-theme bg-card text-sm font-medium text-secondary hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50"
                       >
                         Next
                       </button>
@@ -646,7 +646,7 @@ const Issues: React.FC = () => {
                     setShowIssueDetails(false);
                     setTimeout(() => setSelectedIssue(null), 300);
                   }}
-                  className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] transition-all"
+                  className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] transition-all"
                 >
                   <MdClose size={24} />
                 </button>

@@ -710,7 +710,7 @@ const ProfessionalTripTracker: React.FC = () => {
           } overflow-hidden flex flex-col`}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-[rgba(0,209,255,0.2)] via-[rgba(0,209,255,0.15)] to-[rgba(168,85,247,0.2)] p-4 border border-theme rounded-lg">
+        <div className="bg-gradient-to-r from-[rgba(5,150,105,0.2)] via-[rgba(5,150,105,0.15)] to-[rgba(168,85,247,0.2)] p-4 border border-theme rounded-lg">
 
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold flex items-center gap-2 text-[var(--accent-navyblue)]">
@@ -720,7 +720,7 @@ const ProfessionalTripTracker: React.FC = () => {
 
             <button
               onClick={() => setSidebarCollapsed(true)}
-              className="p-1 hover:bg-[rgba(255,255,255,0.08)] rounded-lg transition-colors"
+              className="p-1 hover:bg-[rgba(15,31,23,0.08)] rounded-lg transition-colors"
             >
               <ChevronLeft className="w-5 h-5 text-secondary hover:text-primary" />
             </button>
@@ -829,7 +829,7 @@ const ProfessionalTripTracker: React.FC = () => {
       {sidebarCollapsed && (
         <button
           onClick={() => setSidebarCollapsed(false)}
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-[rgba(0,209,255,0.15)] text-white p-2 rounded-r-lg shadow-lg hover:bg-[rgba(0,209,255,0.15)]/90 transition-colors z-10"
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-[rgba(5,150,105,0.15)] text-white p-2 rounded-r-lg shadow-lg hover:bg-[rgba(5,150,105,0.15)]/90 transition-colors z-10"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
@@ -983,7 +983,7 @@ const ProfessionalTripTracker: React.FC = () => {
         {selectedOrderGroup && (
           <div className="absolute top-6 right-6 bg-card rounded-xl shadow-2xl w-80 overflow-hidden border border-theme max-h-[70vh] overflow-y-auto z-[1000]">
             {/* Header */}
-            <div className="p-3 text-white bg-[linear-gradient(90deg,var(--accent-blue)_0%,var(--accent-blue)_40%,rgba(0,209,255,0.15)_100%)]">
+            <div className="p-3 text-white bg-[linear-gradient(90deg,var(--accent-blue)_0%,var(--accent-blue)_40%,rgba(5,150,105,0.15)_100%)]">
               <div className="flex items-center justify-between mb-1">
                 <h3 className="text-base font-bold truncate">{selectedOrderGroup.driver.name}</h3>
                 <button

@@ -93,7 +93,7 @@ const RevenuePerMilePage = () => {
                 {/* Date Filter Toggle */}
                 <button
                   onClick={() => setShowDateFilter(!showDateFilter)}
-                  className="px-4 py-2 bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] flex items-center gap-2 transition-colors text-sm"
+                  className="px-4 py-2 bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] flex items-center gap-2 transition-colors text-sm"
                 >
                   <Calendar size={18} />
                   Date Filter
@@ -103,7 +103,7 @@ const RevenuePerMilePage = () => {
                 {(startDate || endDate || searchTerm) && (
                   <button
                     onClick={clearFilters}
-                    className="px-4 py-2 bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] flex items-center gap-2 transition-colors text-sm text-[#A855F7]"
+                    className="px-4 py-2 bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] flex items-center gap-2 transition-colors text-sm text-[#A855F7]"
                   >
                     <X size={18} />
                     Clear
@@ -204,7 +204,7 @@ const RevenuePerMilePage = () => {
                         <BarChart data={vehicleRevenueData} barCategoryGap="20%">
 
                           {/* GRID */}
-                          <CartesianGrid stroke="rgba(255,255,255,0.08)" />
+                          <CartesianGrid stroke="rgba(15,31,23,0.08)" />
 
                           {/* X AXIS */}
                           <XAxis
@@ -223,10 +223,10 @@ const RevenuePerMilePage = () => {
 
                           {/* 🔥 TOOLTIP (FIXED CURSOR ISSUE) */}
                           <Tooltip
-                            cursor={{ fill: "rgba(0,209,255,0.08)" }}   // ✅ NO MORE GREY BLOCK
+                            cursor={{ fill: "rgba(5,150,105,0.08)" }}   // ✅ NO MORE GREY BLOCK
                             contentStyle={{
-                              backgroundColor: "#121A2B",
-                              border: "1px solid rgba(255,255,255,0.1)",
+                              backgroundColor: "#ffffff",
+                              border: "1px solid rgba(15,31,23,0.1)",
                               borderRadius: "8px",
                               boxShadow: "0 4px 20px rgba(0,0,0,0.5)",
                               fontSize: "12px",
@@ -247,7 +247,7 @@ const RevenuePerMilePage = () => {
                               stroke: "var(--accent-blue)",
                               strokeWidth: 1,
                               style: {
-                                filter: "drop-shadow(0 0 8px rgba(0,209,255,0.5))",
+                                filter: "drop-shadow(0 0 8px rgba(5,150,105,0.5))",
                               },
                             }}
                           />
@@ -264,7 +264,7 @@ const RevenuePerMilePage = () => {
                             <linearGradient id="hoverGradient" x1="0" y1="0" x2="0" y2="1">
                               <stop offset="0%" stopColor="var(--accent-blue)" stopOpacity={1} />
                               <stop offset="50%" stopColor="var(--accent-purple)" stopOpacity={0.9} />
-                              <stop offset="100%" stopColor="#0B1220" stopOpacity={0.4} />
+                              <stop offset="100%" stopColor="#f2f7f4" stopOpacity={0.4} />
                             </linearGradient>
                           </defs>
 
@@ -285,7 +285,7 @@ const RevenuePerMilePage = () => {
                     <div style={{ width: '100%', height: 300 }}>
                       <ResponsiveContainer>
                         <LineChart data={monthlyTrendData}>
-                          <CartesianGrid stroke="rgba(255,255,255,0.08)" />
+                          <CartesianGrid stroke="rgba(15,31,23,0.08)" />
                           <XAxis
                             dataKey="month"
                             stroke="rgba(255,255,255,0.5)"
@@ -306,8 +306,8 @@ const RevenuePerMilePage = () => {
                           />
                           <Tooltip
                             contentStyle={{
-                              backgroundColor: '#121A2B',
-                              border: '1px solid rgba(255,255,255,0.1)',
+                              backgroundColor: '#ffffff',
+                              border: '1px solid rgba(15,31,23,0.1)',
                               borderRadius: '8px',
                               boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
                               fontSize: '12px',
@@ -397,7 +397,7 @@ const RevenuePerMilePage = () => {
                     </tr>
                   ) : (
                     filteredData.map((item) => (
-                      <tr key={item.vehicleId} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                      <tr key={item.vehicleId} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-primary">{item.unitNumber}</div>
                           {item.make && item.model && (

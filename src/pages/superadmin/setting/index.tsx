@@ -251,7 +251,7 @@ const SystemSettings = () => {
         <div className="bg-card rounded-xl shadow-sm border border-theme p-6">
           <div className="flex items-center mb-6">
             <div className="bg-blue-100 p-2 rounded-lg mr-3">
-              <MapPin className="w-5 h-5 text-[#00D1FF]" />
+              <MapPin className="w-5 h-5 text-[#059669]" />
             </div>
             <h2 className="text-lg font-semibold text-primary">Location Information</h2>
           </div>
@@ -342,7 +342,7 @@ const SystemSettings = () => {
         <div className="bg-card rounded-xl shadow-sm border border-theme p-6">
           <div className="flex items-center mb-6">
             <div className="bg-blue-100 p-2 rounded-lg mr-3">
-              <Clock className="w-5 h-5 text-[#00D1FF]" />
+              <Clock className="w-5 h-5 text-[#059669]" />
             </div>
             <h2 className="text-lg font-semibold text-primary">Trial Settings</h2>
           </div>
@@ -370,7 +370,7 @@ const SystemSettings = () => {
         <div className="bg-card rounded-xl shadow-sm border border-theme p-6">
           <div className="flex items-center mb-6">
             <div className="bg-orange-100 p-2 rounded-lg mr-3">
-              <Lock className="w-5 h-5 text-[#F59E0B]" />
+              <Lock className="w-5 h-5 text-[#d97706]" />
             </div>
             <h2 className="text-lg font-semibold text-primary">Change Password</h2>
           </div>

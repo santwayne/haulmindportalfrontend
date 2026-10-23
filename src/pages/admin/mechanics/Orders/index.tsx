@@ -457,7 +457,7 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
                   <React.Fragment key={order._id}>
                     <tr
                       onClick={() => setDetailsOrder(order)}
-                      className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer"
+                      className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer"
                     >
                       <td className="px-2 py-4" onClick={(e) => e.stopPropagation()}>
                         <button
@@ -515,7 +515,7 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
                       </td>
                     </tr>
                     {expandedId === order._id && (
-                      <tr className="bg-gradient-to-r from-[rgba(15,27,45,0.95)] to-[rgba(15,27,45,0.75)] border-t border-[rgba(0,209,255,0.12)]">
+                      <tr className="bg-gradient-to-r from-[rgba(5,150,105,0.05)] to-[rgba(5,150,105,0.02)] border-t border-[rgba(5,150,105,0.12)]">
                         <td colSpan={7} className="px-6 py-4">
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
                             {/* Vehicle details */}
@@ -609,7 +609,7 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={pagination.page <= 1 || loading}
-                className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-headings bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-headings bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft size={16} />
                 Previous
@@ -621,7 +621,7 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
                 type="button"
                 onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
                 disabled={pagination.page >= pagination.totalPages || loading}
-                className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-headings bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-headings bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
                 <ChevronRight size={16} />
@@ -649,7 +649,7 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
               <button
                 type="button"
                 onClick={closeCompleteModal}
-                className="p-2 text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition"
+                className="p-2 text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition"
               >
                 <X size={22} />
               </button>
@@ -719,14 +719,14 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
                   <button
                     type="button"
                     onClick={addPart}
-                    className="px-4 py-2 text-sm font-medium text-headings border border-theme hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition"
+                    className="px-4 py-2 text-sm font-medium text-headings border border-theme hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition"
                   >
                     Custom Part
                   </button>
                 </div>
                 {completeForm.parts.length === 0 ? (
                   <div className="rounded-lg border-2 border-dashed border-theme p-6 text-center">
-                    <Package className="mx-auto text-gray-300 mb-2" size={32} />
+                    <Package className="mx-auto text-gray-600 mb-2" size={32} />
                     <p className="text-sm text-secondary">No parts added</p>
                     <p className="text-xs text-secondary mt-1">Select from dropdown above or add a custom part</p>
                   </div>
@@ -859,7 +859,7 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
               <button
                 type="button"
                 onClick={closeCompleteModal}
-                className="px-5 py-2.5 text-sm font-medium text-white bg-card border border-theme hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition"
+                className="px-5 py-2.5 text-sm font-medium text-white bg-card border border-theme hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition"
               >
                 Cancel
               </button>
@@ -896,7 +896,7 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
               <button
                 type="button"
                 onClick={() => setDetailsOrder(null)}
-                className="p-2 text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition"
+                className="p-2 text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition"
               >
                 <X size={22} />
               </button>
@@ -1042,7 +1042,7 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
                 <button
                   type="button"
                   onClick={() => setDetailsOrder(null)}
-                  className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme hover:bg-[rgba(255,255,255,0.03)] rounded-lg"
+                  className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme hover:bg-[rgba(15,31,23,0.03)] rounded-lg"
                 >
                   Close
                 </button>

@@ -607,7 +607,7 @@ const FleetMaintenanceCustomers = () => {
                   <th className="px-6 py-4">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 divide-white/5">
+              <tbody className="divide-y divide-gray-100 divide-black/5">
                 {customersLoading ? (
                   <tr>
                     <td colSpan={10} className="px-6 py-8 text-center text-secondary">
@@ -630,7 +630,7 @@ const FleetMaintenanceCustomers = () => {
                   customers.map((row) => (
                     <tr
                       key={row.id}
-                      className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer"
+                      className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer"
                       onClick={() => openEdit(row.id)}
                     >
                       <td className="px-6 py-4 font-medium text-secondary">{row.name}</td>
@@ -647,7 +647,7 @@ const FleetMaintenanceCustomers = () => {
                           <button
                             type="button"
                             onClick={() => openDetail(row.id)}
-                            className="text-[#00D1FF] hover:text-blue-800 p-1"
+                            className="text-[#059669] hover:text-blue-800 p-1"
                             title="View"
                           >
                             <FaEye size={14} />
@@ -692,7 +692,7 @@ const FleetMaintenanceCustomers = () => {
                 <button
                   type="button"
                   onClick={handleCloseSidebar}
-                  className="p-2 text-secondary hover:text-headings hover:bg-[rgba(255,255,255,0.03)] rounded"
+                  className="p-2 text-secondary hover:text-headings hover:bg-[rgba(15,31,23,0.03)] rounded"
                   aria-label="Close"
                 >
                   <FaTimes size={20} />
@@ -753,7 +753,7 @@ const FleetMaintenanceCustomers = () => {
                 {/* 1. Addresses */}
                 <div className="bg-card rounded-lg border border-theme p-4">
                   <h3 className="text-base font-semibold text-headings mb-3 flex items-center gap-2">
-                    <FaMapMarkerAlt className="text-[#00D1FF]" />
+                    <FaMapMarkerAlt className="text-[#059669]" />
                     Addresses
                   </h3>
                   <p className="text-sm text-secondary mb-4">
@@ -798,7 +798,7 @@ const FleetMaintenanceCustomers = () => {
                           type="checkbox"
                           checked={sameAsBilling}
                           onChange={(e) => setSameAsBilling(e.target.checked)}
-                          className="rounded border-theme text-[#00D1FF] focus:ring-blue-500"
+                          className="rounded border-theme text-[#059669] focus:ring-blue-500"
                         />
                         <span className="text-sm font-medium text-headings">Same as billing address</span>
                       </label>
@@ -832,7 +832,7 @@ const FleetMaintenanceCustomers = () => {
                 {/* 2. Notes and Attachments */}
                 <div className="bg-card rounded-lg border border-theme p-4">
                   <h3 className="text-base font-semibold text-headings mb-3 flex items-center gap-2">
-                    <FaStickyNote className="text-[#00D1FF]" />
+                    <FaStickyNote className="text-[#059669]" />
                     Notes and Attachments
                   </h3>
                   <div className="space-y-4">
@@ -892,7 +892,7 @@ const FleetMaintenanceCustomers = () => {
                 {/* 3. Payments */}
                 <div className="bg-card rounded-lg border border-theme p-4">
                   <h3 className="text-base font-semibold text-headings mb-3 flex items-center gap-2">
-                    <FaCreditCard className="text-[#00D1FF]" />
+                    <FaCreditCard className="text-[#059669]" />
                     Payments
                   </h3>
                   <p className="text-sm text-secondary mb-3">
@@ -935,7 +935,7 @@ const FleetMaintenanceCustomers = () => {
                 {/* 4. Additional Info */}
                 <div className="bg-card rounded-lg border border-theme p-4">
                   <h3 className="text-base font-semibold text-headings mb-3 flex items-center gap-2">
-                    <FaInfoCircle className="text-[#00D1FF]" />
+                    <FaInfoCircle className="text-[#059669]" />
                     Additional Info
                   </h3>
                   <p className="text-sm text-secondary mb-3">Tax and accounting data.</p>
@@ -969,7 +969,7 @@ const FleetMaintenanceCustomers = () => {
                         type="checkbox"
                         checked={assignDefaultTaxCode}
                         onChange={(e) => setAssignDefaultTaxCode(e.target.checked)}
-                        className="rounded border-theme text-[#00D1FF] focus:ring-blue-500"
+                        className="rounded border-theme text-[#059669] focus:ring-blue-500"
                       />
                       <span className="text-sm font-medium text-headings">Assign default tax code</span>
                     </label>
@@ -1005,7 +1005,7 @@ const FleetMaintenanceCustomers = () => {
                 <button
                   type="button"
                   onClick={handleCloseSidebar}
-                  className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                  className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
                 >
                   Cancel
                 </button>
@@ -1036,7 +1036,7 @@ const FleetMaintenanceCustomers = () => {
                 <button
                   type="button"
                   onClick={() => { setDetailCustomerId(null); setDetailCustomer(null); }}
-                  className="p-2 text-secondary hover:text-headings hover:bg-[rgba(255,255,255,0.03)] rounded"
+                  className="p-2 text-secondary hover:text-headings hover:bg-[rgba(15,31,23,0.03)] rounded"
                   aria-label="Close"
                 >
                   <FaTimes size={20} />

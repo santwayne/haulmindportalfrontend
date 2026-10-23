@@ -282,7 +282,7 @@ const EmployeeDashboard = () => {
                 ))
               ) : (
                 <div className="text-center py-8 text-slate-500">
-                  <Users className="w-12 h-12 mx-auto mb-4 text-slate-300" />
+                  <Users className="w-12 h-12 mx-auto mb-4 text-slate-600" />
                   <p>No role data available</p>
                 </div>
               )}
@@ -352,7 +352,7 @@ const EmployeeDashboard = () => {
                 ))
               ) : (
                 <div className="text-center py-8 text-slate-500">
-                  <Clock className="w-12 h-12 mx-auto mb-4 text-slate-300" />
+                  <Clock className="w-12 h-12 mx-auto mb-4 text-slate-600" />
                   <p>No recent activity</p>
                 </div>
               )}

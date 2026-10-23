@@ -224,7 +224,7 @@ const MaintenanceSettings = () => {
           <div className="p-6 space-y-6">
             <div className="p-4 bg-card border border-blue-200 rounded-lg">
               <div className="flex items-start gap-3">
-                <Info className="text-[#00D1FF] flex-shrink-0 mt-0.5" size={20} />
+                <Info className="text-[#059669] flex-shrink-0 mt-0.5" size={20} />
                 <div className="text-sm text-blue-800">
                   <p className="font-semibold mb-1">Maintenance Policy Configuration</p>
                   <p>Add services with your own names (e.g., "Oil Change", "Full Inspection", "Preventive Maintenance"). Each service can be configured for trucks and trailers with intervals based on days, miles, or kilometers, and specific trailer types (reefer, dryvan, flatbed) can be excluded.</p>

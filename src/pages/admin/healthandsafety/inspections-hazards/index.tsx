@@ -145,12 +145,12 @@ const ToastNotificationComponent = ({ notification, onClose }: { notification: T
 };
 
 const CUSTOM_COLORS = {
-    background: '#EDF8FF',
-    primary: '#016ab2',
-    dark: '#063f6f',
-    light: '#398bc3',
-    gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)',
-    gradientVertical: 'linear-gradient(to bottom right, #016ab2, #063f6f)',
+    background: '#ecfdf5',
+    primary: '#047857',
+    dark: '#065f46',
+    light: '#059669',
+    gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)',
+    gradientVertical: 'linear-gradient(to bottom right, #047857, #065f46)',
 };
 
 const DEFAULT_HAZARD_TYPES = ['Unsafe Equipment', 'Weather Hazards', 'Fatigue Indicators', 'Load Securement Issues', 'Yard Hazards', 'Ergonomic Risks'];
@@ -605,7 +605,7 @@ const HazardControl = () => {
                             }).length}
                         </h3>
                     </div>
-                    <div className="bg-card p-2 rounded-lg text-[#00FFA3]">
+                    <div className="bg-card p-2 rounded-lg text-[#059669]">
                         <FaChartLine size={16} />
                     </div>
                 </div>
@@ -620,7 +620,7 @@ const HazardControl = () => {
                             }).length}
                         </h3>
                     </div>
-                    <div className="bg-card p-2 rounded-lg text-[#F59E0B]">
+                    <div className="bg-card p-2 rounded-lg text-[#d97706]">
                         <FaCogs size={16} />
                     </div>
                 </div>
@@ -750,7 +750,7 @@ const HazardControl = () => {
                                 filteredHazards.map((hazard) => (
                                     <tr key={hazard._id} onClick={() => setSelectedHazard(hazard)} className="hover:bg-[var(--accent-navyblue)]/20 transition-colors group cursor-pointer">
                                         <td className="px-4 py-3 whitespace-nowrap">
-                                            <div className="text-xs font-bold text-primary group-hover:text-[#00D1FF] transition-colors">{hazard.hazardId}</div>
+                                            <div className="text-xs font-bold text-primary group-hover:text-[#059669] transition-colors">{hazard.hazardId}</div>
                                             <div className="text-[10px] text-secondary">{hazard.dateReported ? new Date(hazard.dateReported).toLocaleDateString() : 'N/A'}</div>
                                         </td>
                                         <td className="px-4 py-3">
@@ -768,8 +768,8 @@ const HazardControl = () => {
                                                     <span className="text-xs font-bold text-primary leading-none">{hazard.riskScore}</span>
                                                 </div>
                                                 <span className={`px-2 py-0.5 text-[10px] font-bold border rounded ${hazard.riskLevel === 'Critical' ? 'bg-card text-[#A855F7] border-red-100' :
-                                                    hazard.riskLevel === 'High' ? 'bg-card text-[#F59E0B] border-orange-100' :
-                                                        hazard.riskLevel === 'Medium' ? 'bg-card text-[#00FFA3] border-yellow-100' :
+                                                    hazard.riskLevel === 'High' ? 'bg-card text-[#d97706] border-orange-100' :
+                                                        hazard.riskLevel === 'Medium' ? 'bg-card text-[#059669] border-yellow-100' :
                                                             'bg-green-50 text-green-600 border-green-100'
                                                     }`}>
                                                     {(hazard.riskLevel || '').toUpperCase()}
@@ -785,12 +785,12 @@ const HazardControl = () => {
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <span className="text-[10px] text-[#F59E0B] font-medium italic">Pending Assignment</span>
+                                                <span className="text-[10px] text-[#d97706] font-medium italic">Pending Assignment</span>
                                             )}
                                         </td>
                                         <td className="px-4 py-3 whitespace-nowrap">
                                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${hazard.status === 'resolved' ? 'bg-green-50 text-green-600 border-green-100' :
-                                                hazard.status.includes('progress') ? 'bg-card text-[#00D1FF] border-blue-100' :
+                                                hazard.status.includes('progress') ? 'bg-card text-[#059669] border-blue-100' :
                                                     'bg-card text-secondary border-theme'
                                                 }`}>
                                                 {hazard.status.replace('-', ' ').toUpperCase()}
@@ -810,7 +810,7 @@ const HazardControl = () => {
                                                     <FaEye size={12} />
                                                 </button>
                                                 <button
-                                                    className="p-1.5 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition border border-transparent "
+                                                    className="p-1.5 text-[#059669] hover:bg-blue-50 rounded-lg transition border border-transparent "
                                                     title="Edit"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
@@ -886,7 +886,7 @@ const HazardControl = () => {
                                 observations.map((observation) => (
                                     <tr key={observation._id} onClick={() => setSelectedHazard(observation as any)} className="hover:bg-[var(--accent-navyblue)]/20/30 transition-colors group cursor-pointer">
                                         <td className="px-4 py-3 whitespace-nowrap">
-                                            <div className="text-xs font-bold text-primary group-hover:text-[#00D1FF] transition-colors">{observation.observationId}</div>
+                                            <div className="text-xs font-bold text-primary group-hover:text-[#059669] transition-colors">{observation.observationId}</div>
                                             <div className="text-[10px] text-secondary">{new Date(observation.date).toLocaleDateString()}</div>
                                         </td>
                                         <td className="px-4 py-3 whitespace-nowrap text-xs text-primary">{observation.driver}</td>
@@ -988,7 +988,7 @@ const HazardControl = () => {
                                 filteredTruckingHazards.map((hazard) => (
                                     <tr key={hazard._id} onClick={() => setSelectedHazard(hazard as any)} className="hover:bg-[var(--accent-navyblue)]/20/30 transition-colors group cursor-pointer">
                                         <td className="px-4 py-3 whitespace-nowrap">
-                                            <div className="text-xs font-bold text-primary group-hover:text-[#00D1FF] transition-colors">{hazard.hazardId}</div>
+                                            <div className="text-xs font-bold text-primary group-hover:text-[#059669] transition-colors">{hazard.hazardId}</div>
                                             <div className="text-[10px] text-secondary">{new Date(hazard.dateReported).toLocaleDateString()}</div>
                                         </td>
                                         <td className="px-4 py-3 whitespace-nowrap text-xs font-semibold text-primary">{hazard.truckingType}</td>
@@ -996,8 +996,8 @@ const HazardControl = () => {
                                         <td className="px-4 py-3 whitespace-nowrap text-xs text-primary">{hazard.location}</td>
                                         <td className="px-4 py-3 whitespace-nowrap">
                                             <span className={`px-2 py-0.5 inline-flex text-[10px] font-bold rounded border ${hazard.severity === 'Critical' ? 'bg-card text-[#A855F7] border-red-100' :
-                                                hazard.severity === 'High' ? 'bg-card text-[#F59E0B] border-orange-100' :
-                                                    hazard.severity === 'Medium' ? 'bg-card text-[#00FFA3] border-yellow-100' :
+                                                hazard.severity === 'High' ? 'bg-card text-[#d97706] border-orange-100' :
+                                                    hazard.severity === 'Medium' ? 'bg-card text-[#059669] border-yellow-100' :
                                                         'bg-green-50 text-green-600 border-green-100'
                                                 }`}>
                                                 {hazard.severity.toUpperCase()}
@@ -1012,7 +1012,7 @@ const HazardControl = () => {
                                         <td className="px-4 py-3 whitespace-nowrap text-center">
                                             <div className="flex items-center justify-center gap-1">
                                                 <button
-                                                    className="p-1.5 text-[#00D1FF] hover:bg-[var(--accent-navyblue)]/20 rounded-lg transition border border-transparent hover:border-blue-100"
+                                                    className="p-1.5 text-[#059669] hover:bg-[var(--accent-navyblue)]/20 rounded-lg transition border border-transparent hover:border-blue-100"
                                                     title="Edit"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
@@ -1480,7 +1480,7 @@ const HazardControl = () => {
                                                 setShowSidebar(false);
                                                 setSidebarType(null);
                                             }}
-                                            className="px-4 py-3 bg-gray-500 !text-white rounded-lg hover:bg-gray-600 transition"
+                                            className="px-4 py-3 bg-gray-500 !text-white rounded-lg hover:bg-gray-200 transition"
                                         >
                                             Cancel
                                         </button>
@@ -1548,7 +1548,7 @@ const HazardControl = () => {
                                     <label className="block text-sm font-medium text-primary mb-2 mb-3">Safety Checklist</label>
                                     <div className="space-y-2">
                                         {Object.entries(newObservation.checklist).map(([key, value]) => (
-                                            <label key={key} className="flex items-center gap-3 p-3 bg-card rounded-lg cursor-pointer hover:bg-[rgba(255,255,255,0.03)]">
+                                            <label key={key} className="flex items-center gap-3 p-3 bg-card rounded-lg cursor-pointer hover:bg-[rgba(15,31,23,0.03)]">
                                                 <input
                                                     type="checkbox"
                                                     checked={value}
@@ -1556,7 +1556,7 @@ const HazardControl = () => {
                                                         ...newObservation,
                                                         checklist: { ...newObservation.checklist, [key]: e.target.checked }
                                                     })}
-                                                    className="w-5 h-5 text-[#00D1FF] rounded focus:ring-2 focus:ring-blue-500"
+                                                    className="w-5 h-5 text-[#059669] rounded focus:ring-2 focus:ring-blue-500"
                                                 />
                                                 <span className="text-sm font-medium text-primary capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
                                             </label>
@@ -1755,7 +1755,7 @@ const HazardControl = () => {
                                                 setShowSidebar(false);
                                                 setSidebarType(null);
                                             }}
-                                            className="px-4 py-3 bg-gray-500 !text-white rounded-lg hover:bg-gray-600 transition"
+                                            className="px-4 py-3 bg-gray-500 !text-white rounded-lg hover:bg-gray-200 transition"
                                         >
                                             Cancel
                                         </button>
@@ -1886,8 +1886,8 @@ const HazardControl = () => {
                             <button
                                 onClick={() => setHazardSubTab('reporting')}
                                 className={`flex-1 py-1.5 rounded-md text-xs font-bold transition-all text-center ${hazardSubTab === 'reporting'
-                                    ? 'bg-card text-[#00D1FF] shadow-sm'
-                                    : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                                    ? 'bg-card text-[#059669] shadow-sm'
+                                    : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                                     }`}
                             >
                                 Hazard Reporting
@@ -1895,8 +1895,8 @@ const HazardControl = () => {
                             <button
                                 onClick={() => setHazardSubTab('observations')}
                                 className={`flex-1 py-1.5 rounded-md text-xs font-bold transition-all text-center ${hazardSubTab === 'observations'
-                                    ? 'bg-card text-[#00D1FF] shadow-sm'
-                                    : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                                    ? 'bg-card text-[#059669] shadow-sm'
+                                    : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                                     }`}
                             >
                                 Driver Observations
@@ -1904,8 +1904,8 @@ const HazardControl = () => {
                             <button
                                 onClick={() => setHazardSubTab('trucking-specific')}
                                 className={`flex-1 py-1.5 rounded-md text-xs font-bold transition-all text-center ${hazardSubTab === 'trucking-specific'
-                                    ? 'bg-card text-[#00D1FF] shadow-sm'
-                                    : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                                    ? 'bg-card text-[#059669] shadow-sm'
+                                    : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                                     }`}
                             >
                                 Trucking-Specific Hazards

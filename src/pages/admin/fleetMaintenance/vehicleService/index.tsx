@@ -344,7 +344,7 @@ const VehicleServiceManagement = () => {
                 </thead>
                 <tbody className="bg-card divide-y divide-theme">
                   {filteredServices.map((service) => (
-                    <tr key={service._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                    <tr key={service._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
                           <div className="text-sm font-medium text-primary">
@@ -391,7 +391,7 @@ const VehicleServiceManagement = () => {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => openEditModal(service)}
-                            className="text-[#00D1FF] hover:text-blue-900"
+                            className="text-[#059669] hover:text-blue-900"
                           >
                             <Edit className="h-4 w-4" />
                           </button>
@@ -517,7 +517,7 @@ const VehicleServiceManagement = () => {
                 <div className="flex justify-end gap-3 pt-4">
                   <button
                     onClick={() => setShowCreateModal(false)}
-                    className="px-4 py-2 text-secondary border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-2 text-secondary border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)]"
                   >
                     Cancel
                   </button>
@@ -642,7 +642,7 @@ const VehicleServiceManagement = () => {
                 <div className="flex justify-end gap-3 pt-4">
                   <button
                     onClick={() => setShowEditModal(false)}
-                    className="px-4 py-2 text-secondary border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-2 text-secondary border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)]"
                   >
                     Cancel
                   </button>
@@ -677,7 +677,7 @@ const VehicleServiceManagement = () => {
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setShowDeleteModal(false)}
-                  className="px-4 py-2 text-secondary border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)]"
+                  className="px-4 py-2 text-secondary border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)]"
                 >
                   Cancel
                 </button>

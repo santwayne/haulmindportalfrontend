@@ -281,8 +281,8 @@ const DriverList = () => {
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'active': return 'text-[var(--accent-green)] bg-[var(--accent-green)]/10 border-theme';
-            case 'inactive': return 'text-secondary bg-[rgba(255,255,255,0.05)] border-theme';
-            default: return 'text-secondary bg-[rgba(255,255,255,0.05)] border-theme';
+            case 'inactive': return 'text-secondary bg-[rgba(15,31,23,0.05)] border-theme';
+            default: return 'text-secondary bg-[rgba(15,31,23,0.05)] border-theme';
         }
     };
 
@@ -552,7 +552,7 @@ const DriverList = () => {
                         <div className="text-sm font-medium text-secondary">
                             Inactive
                         </div>
-                        <div className="w-full bg-white/10 rounded-full h-1 mt-2">
+                        <div className="w-full bg-black/10 rounded-full h-1 mt-2">
                             <div
                                 className="bg-secondary h-1 rounded-full"
                                 style={{
@@ -635,9 +635,9 @@ const DriverList = () => {
                     {/* Table */}
                     <style>{`
                         .gps-top-scroll::-webkit-scrollbar { height: 6px; }
-                        .gps-top-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
-                        .gps-top-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
-                        .gps-top-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+                        .gps-top-scroll::-webkit-scrollbar-track { background: rgba(15,31,23,0.03); }
+                        .gps-top-scroll::-webkit-scrollbar-thumb { background: rgba(15,31,23,0.15); border-radius: 4px; }
+                        .gps-top-scroll::-webkit-scrollbar-thumb:hover { background: rgba(15,31,23,0.25); }
                         .gps-table-scroll { scrollbar-width: none; -ms-overflow-style: none; }
                         .gps-table-scroll::-webkit-scrollbar { display: none; }
                     `}</style>
@@ -646,7 +646,7 @@ const DriverList = () => {
                     <div
                         ref={topScrollRef}
                         className="overflow-x-auto overflow-y-hidden gps-top-scroll"
-                        style={{ maxHeight: '16px', marginBottom: '1px', scrollbarWidth: 'thin', scrollbarColor: '#224c75 #111c24' }}
+                        style={{ maxHeight: '16px', marginBottom: '1px', scrollbarWidth: 'thin', scrollbarColor: '#065f46 #e7f2ec' }}
                     >
                         <div className="top-scroll-content" style={{ height: '1px' }} />
                     </div>
@@ -688,7 +688,7 @@ const DriverList = () => {
                                     currentDrivers.map((driver) => (
                                         <tr
                                             key={driver._id}
-                                            className="hover:bg-[rgba(255,255,255,0.03)] transition-colors cursor-pointer"
+                                            className="hover:bg-[rgba(15,31,23,0.03)] transition-colors cursor-pointer"
                                             onClick={() => {
                                                 setSelectedDriver(driver);
                                                 setShowDetailsSidebar(true);
@@ -797,7 +797,7 @@ const DriverList = () => {
                                             <td className="px-4 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                                                 <button
                                                     onClick={() => handleViewDetails(driver)}
-                                                    className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--accent-blue)] hover:text-primary px-2.5 py-1.5 rounded-lg hover:bg-[rgba(255,255,255,0.05)] transition-colors"
+                                                    className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--accent-blue)] hover:text-primary px-2.5 py-1.5 rounded-lg hover:bg-[rgba(15,31,23,0.05)] transition-colors"
                                                 >
                                                     <Eye className="w-3.5 h-3.5" />
                                                     Details
@@ -820,7 +820,7 @@ const DriverList = () => {
                                 <button
                                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                                     disabled={currentPage === 1}
-                                    className="p-1.5 rounded-md border border-theme text-secondary hover:text-primary hover:bg-[rgba(255,255,255,0.05)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                                    className="p-1.5 rounded-md border border-theme text-secondary hover:text-primary hover:bg-[rgba(15,31,23,0.05)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                                 >
                                     <ChevronLeft className="w-4 h-4" />
                                 </button>
@@ -842,7 +842,7 @@ const DriverList = () => {
                                             onClick={() => setCurrentPage(page)}
                                             className={`min-w-[32px] h-8 px-2 text-xs font-medium rounded-md border transition-colors ${currentPage === page
                                                     ? 'bg-[var(--accent-blue)] border-[var(--accent-blue)] text-white'
-                                                    : 'border-theme text-secondary hover:text-primary hover:bg-[rgba(255,255,255,0.05)]'
+                                                    : 'border-theme text-secondary hover:text-primary hover:bg-[rgba(15,31,23,0.05)]'
                                                 }`}
                                         >
                                             {page}
@@ -852,7 +852,7 @@ const DriverList = () => {
                                 <button
                                     onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                                     disabled={currentPage === totalPages}
-                                    className="p-1.5 rounded-md border border-theme text-secondary hover:text-primary hover:bg-[rgba(255,255,255,0.05)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                                    className="p-1.5 rounded-md border border-theme text-secondary hover:text-primary hover:bg-[rgba(15,31,23,0.05)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                                 >
                                     <ChevronRight className="w-4 h-4" />
                                 </button>
@@ -1115,7 +1115,7 @@ const DriverList = () => {
                                             setShowDetailsSidebar(false);
                                             setTimeout(() => setSelectedDriver(null), 300);
                                         }}
-                                        className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] transition-all"
+                                        className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] transition-all"
                                     >
                                         <X size={24} />
                                     </button>
@@ -1123,7 +1123,7 @@ const DriverList = () => {
 
                                 <div className="space-y-6">
                                     {/* Driver Header */}
-                                    <div className="bg-gradient-to-r from-[rgba(0,209,255,0.3)] to-[rgba(168,85,247,0.3)] p-6 rounded-lg border border-theme">
+                                    <div className="bg-gradient-to-r from-[rgba(5,150,105,0.3)] to-[rgba(168,85,247,0.3)] p-6 rounded-lg border border-theme">
                                         <div className="flex items-center gap-4">
                                             <div className="h-20 w-20 flex-shrink-0">
                                                 {selectedDriver.avatar || selectedDriver.profileImageUrl ? (
@@ -1346,7 +1346,7 @@ const DriverList = () => {
                                                 setShowDetailsSidebar(false);
                                                 setTimeout(() => setSelectedDriver(null), 300);
                                             }}
-                                            className="px-6 py-2.5 bg-card border border-theme hover:bg-[rgba(255,255,255,0.05)] text-primary font-medium rounded-lg transition-all"
+                                            className="px-6 py-2.5 bg-card border border-theme hover:bg-[rgba(15,31,23,0.05)] text-primary font-medium rounded-lg transition-all"
                                         >
                                             Close
                                         </button>

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 const CUSTOM_COLORS = {
-  background: '#EDF8FF',
-  primary: '#016ab2',
-  dark: '#063f6f',
-  light: '#398bc3',
-  gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)',
-  gradientVertical: 'linear-gradient(to bottom right, #016ab2, #063f6f)',
+  background: '#ecfdf5',
+  primary: '#047857',
+  dark: '#065f46',
+  light: '#059669',
+  gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)',
+  gradientVertical: 'linear-gradient(to bottom right, #047857, #065f46)',
 };
 import {
   FaAmbulance,
@@ -277,11 +277,11 @@ const EmergencyProcedures: React.FC = () => {
       case 'medical':
         return <FaAmbulance className="text-[#A855F7]" size={24} />;
       case 'fire':
-        return <FaFire className="text-[#F59E0B]" size={24} />;
+        return <FaFire className="text-[#d97706]" size={24} />;
       case 'spill':
-        return <FaFlask className="text-[#00FFA3]" size={24} />;
+        return <FaFlask className="text-[#059669]" size={24} />;
       case 'collision':
-        return <FaCar className="text-[#00D1FF]" size={24} />;
+        return <FaCar className="text-[#059669]" size={24} />;
       case 'breakdown':
         return <FaCar className="text-secondary" size={24} />;
       case 'violence':
@@ -508,7 +508,7 @@ const EmergencyProcedures: React.FC = () => {
                       });
                       setShowContactForm(true);
                     }}
-                    className="p-2 text-[#00D1FF] hover:bg-[var(--accent-navyblue)]/20 rounded-lg transition"
+                    className="p-2 text-[#059669] hover:bg-[var(--accent-navyblue)]/20 rounded-lg transition"
                     title="Edit Contact"
                   >
                     <FaEdit size={14} />
@@ -529,8 +529,8 @@ const EmergencyProcedures: React.FC = () => {
               <p className="text-sm text-secondary mb-2">{contact.role}</p>
               <p className="text-sm text-secondary mb-2">{contact.department}</p>
               <div className="flex items-center gap-2 mb-1">
-                <FaPhone className="text-[#00D1FF]" size={14} />
-                <a href={`tel:${contact.phone}`} className="text-lg font-semibold text-[#00D1FF] hover:underline">
+                <FaPhone className="text-[#059669]" size={14} />
+                <a href={`tel:${contact.phone}`} className="text-lg font-semibold text-[#059669] hover:underline">
                   {contact.phone}
                 </a>
               </div>
@@ -571,7 +571,7 @@ const EmergencyProcedures: React.FC = () => {
       <div className="bg-card rounded-2xl p-8 shadow-lg">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-primary flex items-center gap-3">
-            <FaClipboardList className="text-[#F59E0B]" />
+            <FaClipboardList className="text-[#d97706]" />
             Emergency Response Procedures
           </h2>
           <button
@@ -626,7 +626,7 @@ const EmergencyProcedures: React.FC = () => {
                       });
                       setShowProcedureForm(true);
                     }}
-                    className="p-2 text-[#00D1FF] hover:bg-[var(--accent-navyblue)]/20 rounded-lg transition"
+                    className="p-2 text-[#059669] hover:bg-[var(--accent-navyblue)]/20 rounded-lg transition"
                     title="Edit Procedure"
                   >
                     <FaEdit size={14} />
@@ -886,7 +886,7 @@ const EmergencyProcedures: React.FC = () => {
                     setSelectedFirstAidLog(log);
                     setShowDetailModal(true);
                   }}
-                  className="hover:bg-[rgba(255,255,255,0.03)] transition cursor-pointer"
+                  className="hover:bg-[rgba(15,31,23,0.03)] transition cursor-pointer"
                 >
                   <td className="px-6 py-4 text-sm">
                     <div className="font-medium text-primary">{new Date(log.date).toLocaleDateString()}</div>
@@ -932,7 +932,7 @@ const EmergencyProcedures: React.FC = () => {
                           });
                           setShowFirstAidForm(true);
                         }}
-                        className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition" title="Edit"
+                        className="p-2 text-[#059669] hover:bg-blue-50 rounded-lg transition" title="Edit"
                       >
                         <FaEdit />
                       </button>
@@ -1191,7 +1191,7 @@ const EmergencyProcedures: React.FC = () => {
             <button
               onClick={() => setActiveTab('procedures')}
               className={`flex-1 px-6 py-4 font-semibold transition ${activeTab === 'procedures'
-                ? 'border-b-2 text-[#F59E0B]'
+                ? 'border-b-2 text-[#d97706]'
                 : 'text-secondary hover:text-primary'
                 }`}
               style={activeTab === 'procedures' ? { borderColor: CUSTOM_COLORS.primary } : {}}

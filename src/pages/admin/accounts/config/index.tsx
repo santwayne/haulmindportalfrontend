@@ -604,7 +604,7 @@ export default function AccountsSetup() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                  className="flex-1 px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                 >
                   Cancel
                 </button>
@@ -687,7 +687,7 @@ export default function AccountsSetup() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab.id
-                    ? 'border-[var(--accent-blue)] text-[#016ab2]'
+                    ? 'border-[var(--accent-blue)] text-[#047857]'
                     : 'border-transparent text-secondary hover:text-primary hover:border-theme'
                     }`}
                 >
@@ -714,12 +714,12 @@ export default function AccountsSetup() {
                   className="pl-10 pr-4 py-2 border border-theme rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-64"
                 />
               </div>
-              <button className="p-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+              <button className="p-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                 <Filter className="w-4 h-4 text-secondary" />
               </button>
             </div>
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <button onClick={handleExport} className="flex-1 sm:flex-none px-4 py-2 text-sm border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors flex items-center justify-center gap-2">
+              <button onClick={handleExport} className="flex-1 sm:flex-none px-4 py-2 text-sm border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors flex items-center justify-center gap-2">
                 <Download className="w-4 h-4" />
                 Export
               </button>
@@ -758,7 +758,7 @@ export default function AccountsSetup() {
                     (filteredData() as ChartOfAccount[]).map(account => (
                       <tr
                         key={account._id || account.id}
-                        className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                        className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                         onClick={() => {
                           setSelectedItem(account);
                           setSelectedItemType('chart-of-accounts');
@@ -780,7 +780,7 @@ export default function AccountsSetup() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">${account.balance.toLocaleString()}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center gap-2">
-                            <button onClick={() => handleEdit(account)} className="p-1 text-[#00D1FF] hover:bg-blue-50 rounded">
+                            <button onClick={() => handleEdit(account)} className="p-1 text-[#059669] hover:bg-blue-50 rounded">
                               <Edit className="w-4 h-4" />
                             </button>
                             <button onClick={() => handleDelete(account._id || account.id?.toString() || '')} className="p-1 text-[#A855F7] hover:bg-red-50 rounded">
@@ -822,7 +822,7 @@ export default function AccountsSetup() {
                     (filteredData() as AccountTaxCode[]).map(tax => (
                       <tr
                         key={tax._id || tax.id}
-                        className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                        className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                         onClick={() => {
                           setSelectedItem(tax);
                           setSelectedItemType('tax-codes');
@@ -840,7 +840,7 @@ export default function AccountsSetup() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center gap-2">
-                            <button onClick={() => handleEdit(tax)} className="p-1 text-[#00D1FF] hover:bg-blue-50 rounded">
+                            <button onClick={() => handleEdit(tax)} className="p-1 text-[#059669] hover:bg-blue-50 rounded">
                               <Edit className="w-4 h-4" />
                             </button>
                             <button onClick={() => handleDelete(tax._id || tax.id?.toString() || '')} className="p-1 text-[#A855F7] hover:bg-red-50 rounded">
@@ -881,7 +881,7 @@ export default function AccountsSetup() {
                     (filteredData() as PaymentMethod[]).map(method => (
                       <tr
                         key={method._id || method.id}
-                        className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                        className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                         onClick={() => {
                           setSelectedItem(method);
                           setSelectedItemType('payment-methods');
@@ -897,7 +897,7 @@ export default function AccountsSetup() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center gap-2">
-                            <button onClick={() => handleEdit(method)} className="p-1 text-[#00D1FF] hover:bg-blue-50 rounded">
+                            <button onClick={() => handleEdit(method)} className="p-1 text-[#059669] hover:bg-blue-50 rounded">
                               <Edit className="w-4 h-4" />
                             </button>
                             <button onClick={() => handleDelete(method._id || method.id?.toString() || '')} className="p-1 text-[#A855F7] hover:bg-red-50 rounded">

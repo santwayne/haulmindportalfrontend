@@ -408,7 +408,7 @@ const ComplianceInvoices = () => {
     <div className="min-h-screen pb-10" >
       <div className="relative w-full mx-auto p-2">
         {/* Header Section - Always visible */}
-        <div className="relative px-4 pt-3 pb-6" style={{ backgroundColor: '#EDF8FF', position: 'relative' }}>
+        <div className="relative px-4 pt-3 pb-6" style={{ backgroundColor: '#ecfdf5', position: 'relative' }}>
           <div className="mb-4 relative">
             <div className="flex items-center justify-between">
               <div>
@@ -420,7 +420,7 @@ const ComplianceInvoices = () => {
               <button
                 onClick={handleExport}
                 disabled={exporting}
-                className="flex items-center gap-2 px-4 py-2 bg-card text-[rgba(0,209,255,0.15)] rounded-lg hover:bg-card/90 shadow-sm transition-all font-bold text-sm"
+                className="flex items-center gap-2 px-4 py-2 bg-card text-[rgba(5,150,105,0.15)] rounded-lg hover:bg-card/90 shadow-sm transition-all font-bold text-sm"
               >
                 <Download className="w-4 h-4" />
                 {exporting ? "Exporting..." : "Export to Excel"}
@@ -429,16 +429,16 @@ const ComplianceInvoices = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 -mt-2 mb-4">
-            <StatCard title="Total Invoices" value={summary.total} subtitle="All time" icon={FaClipboardList} bgColor="bg-card" iconColor="text-[#00D1FF]" />
+            <StatCard title="Total Invoices" value={summary.total} subtitle="All time" icon={FaClipboardList} bgColor="bg-card" iconColor="text-[#059669]" />
             <StatCard title="Total Parts Spend" value={`$${summary.totalPartsSpend.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} subtitle="Parts & Materials" icon={FaFileInvoiceDollar} bgColor="bg-green-50" iconColor="text-green-600" />
             <StatCard title="Total Amount (with GST)" value={`$${summary.totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} subtitle="Including all taxes" icon={FaFileInvoiceDollar} bgColor="bg-card" iconColor="text-purple-600" />
-            <StatCard title="Follow-up Required" value={summary.followUps} subtitle="Pending inspections" icon={FaTools} bgColor="bg-card" iconColor="text-[#F59E0B]" />
+            <StatCard title="Follow-up Required" value={summary.followUps} subtitle="Pending inspections" icon={FaTools} bgColor="bg-card" iconColor="text-[#d97706]" />
           </div>
 
           {/* Filters */}
           <div className="bg-card rounded-xl shadow-lg border border-theme p-4 mb-4">
             <div className="flex items-center gap-2 text-primary font-semibold mb-3 text-sm">
-              <Filter className="w-4 h-4 text-[#00D1FF]" />
+              <Filter className="w-4 h-4 text-[#059669]" />
               Filter Invoices
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -508,7 +508,7 @@ const ComplianceInvoices = () => {
             <div className="flex flex-wrap gap-3 mt-3">
               <button
                 onClick={resetFilters}
-                className="rounded-lg border border-theme px-3 py-1.5 text-xs font-medium text-primary transition hover:bg-[rgba(255,255,255,0.03)]"
+                className="rounded-lg border border-theme px-3 py-1.5 text-xs font-medium text-primary transition hover:bg-[rgba(15,31,23,0.03)]"
               >
                 Reset Filters
               </button>
@@ -588,7 +588,7 @@ const ComplianceInvoices = () => {
                   {filteredInvoices.map((invoice) => (
                     <tr
                       key={invoice.id}
-                      className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                      className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                       onClick={() => {
                         setSelectedInvoice(invoice);
                         setShowInvoiceDetails(true);
@@ -752,7 +752,7 @@ const ComplianceInvoices = () => {
                         setShowInvoiceDetails(false);
                         setTimeout(() => setSelectedInvoice(null), 300);
                       }}
-                      className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] transition-all"
+                      className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] transition-all"
                     >
                       <X size={24} />
                     </button>
@@ -977,7 +977,7 @@ const ComplianceInvoices = () => {
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                   disabled={currentPage === 1 || loading}
-                  className="px-3 py-1.5 text-xs font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 text-xs font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Previous
                 </button>
@@ -987,7 +987,7 @@ const ComplianceInvoices = () => {
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages || loading}
-                  className="px-3 py-1.5 text-xs font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 text-xs font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                 </button>

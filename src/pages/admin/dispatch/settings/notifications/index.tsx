@@ -174,7 +174,7 @@ const NotificationConfig: React.FC = () => {
                 type="button"
                 onClick={handleReset}
                 disabled={!hasAnySelection}
-                className="rounded-lg px-4 py-2 text-sm font-semibold text-primary ring-1 ring-inset ring-gray-300 hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:hover:bg-card"
+                className="rounded-lg px-4 py-2 text-sm font-semibold text-primary ring-1 ring-inset ring-gray-300 hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:hover:bg-card"
               >
                 Reset
               </button>

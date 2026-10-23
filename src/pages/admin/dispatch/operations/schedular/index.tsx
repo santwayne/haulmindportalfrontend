@@ -263,7 +263,7 @@ const SchedulerPage = () => {
                         ${hasTrip && !isSelected ? "bg-green-100" : ""}
                         ${isToday && !isSelected ? "bg-yellow-100 text-yellow-800" : ""}
                         ${draggedTrip ? "bg-card border-2 border-dashed border-blue-300" : ""}
-                        hover:bg-[rgba(255,255,255,0.03)]
+                        hover:bg-[rgba(15,31,23,0.03)]
                     `}
                 >
                     <div className="flex flex-col items-center">
@@ -349,12 +349,12 @@ const SchedulerPage = () => {
                                 <div className="text-xs text-secondary">Scheduled Trips</div>
                             </div>
                             <div className="bg-card p-3 rounded-lg border">
-                                <div className="text-lg font-semibold text-[#F59E0B]">{unscheduledTrips.length}</div>
+                                <div className="text-lg font-semibold text-[#d97706]">{unscheduledTrips.length}</div>
                                 <div className="text-xs text-secondary">Pending Trips</div>
                             </div>
                         </div>
                         <div className="mt-3 bg-card p-3 rounded-lg border">
-                            <div className="text-lg font-semibold text-[#00D1FF]">{trips.length}</div>
+                            <div className="text-lg font-semibold text-[#059669]">{trips.length}</div>
                             <div className="text-xs text-secondary">Total Trips</div>
                         </div>
                     </div>
@@ -365,8 +365,8 @@ const SchedulerPage = () => {
                                 onClick={() => setActiveTab("unscheduled")}
                                 className={`flex-1 px-4 py-3 text-sm font-medium border-b-2 transition-colors
                                     ${activeTab === "unscheduled" 
-                                        ? "border-blue-500 text-[#00D1FF] bg-card" 
-                                        : "border-transparent text-secondary hover:text-primary hover:bg-[rgba(255,255,255,0.03)]"
+                                        ? "border-blue-500 text-[#059669] bg-card" 
+                                        : "border-transparent text-secondary hover:text-primary hover:bg-[rgba(15,31,23,0.03)]"
                                     }`}
                             >
                                 Unscheduled Trips
@@ -375,8 +375,8 @@ const SchedulerPage = () => {
                                 onClick={() => setActiveTab("scheduled")}
                                 className={`flex-1 px-4 py-3 text-sm font-medium border-b-2 transition-colors
                                     ${activeTab === "scheduled" 
-                                        ? "border-blue-500 text-[#00D1FF] bg-card" 
-                                        : "border-transparent text-secondary hover:text-primary hover:bg-[rgba(255,255,255,0.03)]"
+                                        ? "border-blue-500 text-[#059669] bg-card" 
+                                        : "border-transparent text-secondary hover:text-primary hover:bg-[rgba(15,31,23,0.03)]"
                                     }`}
                             >
                                 Scheduled Trips
@@ -462,7 +462,7 @@ const SchedulerPage = () => {
                                                             setSelectedTime(formatTimeFromDate(trip.scheduledDate));
                                                             setShowScheduleModal(true);
                                                         }}
-                                                        className="p-1 text-[#00D1FF] hover:bg-blue-100 rounded"
+                                                        className="p-1 text-[#059669] hover:bg-blue-100 rounded"
                                                         title="Schedule"
                                                     >
                                                         <Calendar className="w-3 h-3" />
@@ -474,7 +474,7 @@ const SchedulerPage = () => {
                                 ))
                             ) : (
                                 <div className="text-center py-8">
-                                    <Truck className="mx-auto mb-3 text-gray-300" size={32} />
+                                    <Truck className="mx-auto mb-3 text-gray-600" size={32} />
                                     <p className="text-secondary">No trips found</p>
                                     {emptyStateMessage && (
                                         <p className="text-xs text-secondary mt-1">{emptyStateMessage}</p>
@@ -489,7 +489,7 @@ const SchedulerPage = () => {
                     <div className="flex items-center justify-between mb-6">
                         <button
                             onClick={() => navigateMonth("prev")}
-                            className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                            className="p-2 rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                         >
                             <ChevronLeft className="w-5 h-5" />
                         </button>
@@ -511,7 +511,7 @@ const SchedulerPage = () => {
 
                         <button
                             onClick={() => navigateMonth("next")}
-                            className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                            className="p-2 rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                         >
                             <ChevronRight className="w-5 h-5" />
                         </button>
@@ -652,7 +652,7 @@ const SchedulerPage = () => {
                                     setSelectedTrip(null);
                                     setSelectedTime(DEFAULT_SCHEDULE_TIME);
                                 }}
-                                className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)] focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                                 Cancel
                             </button>

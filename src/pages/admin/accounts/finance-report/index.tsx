@@ -668,8 +668,8 @@ const FinanceReport = () => {
 
   const getStatusBadge = (status: string) => {
     const styles = {
-      completed:    'bg-[rgba(0,255,163,0.1)]  text-[var(--accent-green)] border-[rgba(0,255,163,0.2)]',
-      'in-progress':'bg-[rgba(0,209,255,0.1)]  text-[var(--accent-blue)]  border-[rgba(0,209,255,0.2)]',
+      completed:    'bg-[rgba(5,150,105,0.1)]  text-[var(--accent-green)] border-[rgba(5,150,105,0.2)]',
+      'in-progress':'bg-[rgba(5,150,105,0.1)]  text-[var(--accent-blue)]  border-[rgba(5,150,105,0.2)]',
       pending:      'bg-[rgba(251,191,36,0.1)] text-[var(--accent-amber)] border-[rgba(251,191,36,0.2)]'
     };
     return styles[status as keyof typeof styles] || 'bg-card text-secondary border-theme';
@@ -815,7 +815,7 @@ const FinanceReport = () => {
                     onClick={() => setActiveView(tab.id as ViewType)}
                     className={`flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${activeView === tab.id
                       ? 'bg-[var(--accent-navyblue)] !text-headings shadow-md'
-                      : 'text-headings hover:bg-[rgba(255,255,255,0.03)]'
+                      : 'text-headings hover:bg-[rgba(15,31,23,0.03)]'
                       }`}
                   >
                     <Icon size={16} />
@@ -982,7 +982,7 @@ const FinanceReport = () => {
                         <div>
                           <div className="flex justify-between items-center mb-1.5 border border-theme">
                             <div className="flex items-center gap-2">
-                              <div className="w-2.5 h-2.5 rounded-full bg-[rgba(0,255,163,0.06)]0"></div>
+                              <div className="w-2.5 h-2.5 rounded-full bg-[rgba(5,150,105,0.06)]0"></div>
                               <span className="text-xs font-medium text-secondary">Revenue (Baseline)</span>
                             </div>
                             <span className="text-xs font-bold text-[var(--accent-green)]">{formatCurrency(totalRevenue)}</span>
@@ -990,7 +990,7 @@ const FinanceReport = () => {
                           <div className="h-7 bg-[var(--accent-navyblue)]/20 rounded-lg overflow-hidden border border-theme">
                             <div className="h-full bg-gradient-to-r from-[var(--accent-green)] to-[var(--accent-green)] rounded-lg flex items-center px-3 transition-all"
                               style={{ width: `${revWidth}%`, minWidth: totalRevenue > 0 ? '30px' : '0' }}>
-                              <span className="text-xs font-bold text-headings drop-shadow">100%</span>
+                              <span className="text-xs font-bold text-white drop-shadow">100%</span>
                             </div>
                           </div>
                         </div>
@@ -1008,7 +1008,7 @@ const FinanceReport = () => {
                               <span className="text-xs font-bold text-[var(--text-primary)]">{formatCurrency(totalCosts)}</span>
                             </div>
                           </div>
-                          <div className="h-7 bg-[rgba(255,255,255,0.07)] rounded-lg overflow-hidden relative border border-theme">
+                          <div className="h-7 bg-[rgba(15,31,23,0.07)] rounded-lg overflow-hidden relative border border-theme">
                             {/* Revenue limit marker */}
                             {isOverBudget && totalRevenue > 0 && (
                               <div className="absolute inset-y-0 border-r-2 border-dashed border-[var(--accent-green)] z-10"
@@ -1018,12 +1018,12 @@ const FinanceReport = () => {
                             )}
                             <div className="h-full rounded-lg flex items-center px-3 transition-all bg-[var(--accent-red)]/80"
                             >
-                              <span className="text-xs font-bold text-headings drop-shadow">{costPct.toFixed(1)}%</span>
+                              <span className="text-xs font-bold text-white drop-shadow">{costPct.toFixed(1)}%</span>
                             </div>
                           </div>
                         </div>
                         {/* Net result */}
-                        <div className={`flex items-center justify-between p-3 rounded-lg border ${totalNetProfit >= 0 ? 'bg-[rgba(0,255,163,0.06)] border-[rgba(0,255,163,0.2)]' : 'bg-card border-[rgba(244,63,94,0.2)]'}`}>
+                        <div className={`flex items-center justify-between p-3 rounded-lg border ${totalNetProfit >= 0 ? 'bg-[rgba(5,150,105,0.06)] border-[rgba(5,150,105,0.2)]' : 'bg-card border-[rgba(244,63,94,0.2)]'}`}>
                           <div className="flex items-center gap-2">
                             {totalNetProfit >= 0
                               ? <TrendingUp size={16} className="text-[var(--accent-green)]" />
@@ -1147,7 +1147,7 @@ const FinanceReport = () => {
                           disabled={loading}
                           className={`px-3 py-1.5 rounded-lg font-medium text-xs transition-all ${timePeriod === period
                             ? 'bg-[var(--accent-navyblue)] text-[var(--text-primary)] shadow-md'
-                            : 'bg-card text-secondary hover:bg-[rgba(255,255,255,0.06)] hover:text-[var(--text-primary)]'
+                            : 'bg-card text-secondary hover:bg-[rgba(15,31,23,0.06)] hover:text-[var(--text-primary)]'
                             } ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                         >
                           {getPeriodLabel(period)}
@@ -1311,7 +1311,7 @@ const FinanceReport = () => {
                     <Truck size={18} className="text-[var(--accent-navyblue)]" />
                     Truck-wise Financial Performance
                   </h2>
-                  <button className="px-3 py-1.5 bg-card hover:bg-[rgba(255,255,255,0.06)] text-secondary rounded-lg text-xs font-medium transition-all flex items-center gap-2">
+                  <button className="px-3 py-1.5 bg-card hover:bg-[rgba(15,31,23,0.06)] text-secondary rounded-lg text-xs font-medium transition-all flex items-center gap-2">
                     <Filter size={13} />
                     Filter
                   </button>
@@ -1336,7 +1336,7 @@ const FinanceReport = () => {
                         <th className="px-4 py-3 text-right text-xs font-semibold text-secondary uppercase tracking-wider whitespace-nowrap">Fleet Invoice</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-theme divide-white/5">
+                    <tbody className="divide-theme divide-black/5">
                       {truckFinancialData.map((truck, idx) => {
                         const profitMargin = truck.revenue > 0 ? (truck.netProfit / truck.revenue) * 100 : 0;
                         const totalCost = truck.expenses + truck.payroll;
@@ -1349,7 +1349,7 @@ const FinanceReport = () => {
                         return (
                           <tr key={truck.id} className={`transition-colors ${idx % 2 === 0 ? 'bg-card' : 'bg-[var(--accent-navyblue)]/20'}`}>
                             <td className="px-4 py-3 whitespace-nowrap">
-                              <span className="text-xs font-mono bg-card text-[#00D1FF] border border-[rgba(0,209,255,0.2)] px-2 py-0.5 rounded">#{shortId}</span>
+                              <span className="text-xs font-mono bg-card text-[#059669] border border-[rgba(5,150,105,0.2)] px-2 py-0.5 rounded">#{shortId}</span>
                             </td>
                             <td className="px-4 py-3 text-sm font-bold text-[var(--text-primary)] whitespace-nowrap">{truck.truckNumber}</td>
                             <td className="px-4 py-3 text-sm text-right font-semibold text-[var(--accent-green)] whitespace-nowrap">{formatCurrency(truck.revenue)}</td>
@@ -1363,7 +1363,7 @@ const FinanceReport = () => {
                                 <span className={`text-xs font-bold ${profitMargin > 0 ? 'text-[var(--accent-green)]' : 'text-[var(--accent-red)]'}`}>
                                   {profitMargin.toFixed(1)}%
                                 </span>
-                                <div className="w-16 bg-[rgba(255,255,255,0.07)] rounded-full h-1.5 overflow-hidden">
+                                <div className="w-16 bg-[rgba(15,31,23,0.07)] rounded-full h-1.5 overflow-hidden">
                                   <div
                                     className={`h-1.5 rounded-full transition-all ${profitMargin > 0 ? 'bg-[var(--accent-green)]' : 'bg-[var(--accent-red)]'}`}
                                     style={{ width: `${Math.min(Math.max(profitMargin, 0), 100)}%` }}
@@ -1454,7 +1454,7 @@ const FinanceReport = () => {
                           disabled={loading}
                           className={`px-3 py-1.5 rounded-lg font-medium text-xs transition-all ${timePeriod === period
                             ? 'bg-[var(--accent-navyblue)] text-[var(--text-primary)] shadow-md'
-                            : 'bg-card text-secondary hover:bg-[rgba(255,255,255,0.06)] hover:text-[var(--text-primary)]'
+                            : 'bg-card text-secondary hover:bg-[rgba(15,31,23,0.06)] hover:text-[var(--text-primary)]'
                             } ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                         >
                           {getPeriodLabel(period)}
@@ -1603,7 +1603,7 @@ const FinanceReport = () => {
                     <MapPin size={18} className="text-[var(--accent-blue)]" />
                     Trip-wise Financial Details
                   </h2>
-                  <button className="px-3 py-1.5 bg-card hover:bg-[rgba(255,255,255,0.06)] text-secondary rounded-lg text-xs font-medium transition-all flex items-center gap-2">
+                  <button className="px-3 py-1.5 bg-card hover:bg-[rgba(15,31,23,0.06)] text-secondary rounded-lg text-xs font-medium transition-all flex items-center gap-2">
                     <Filter size={13} />
                     Filter
                   </button>
@@ -1627,7 +1627,7 @@ const FinanceReport = () => {
                 border-radius: 5px;
               }
               .top-scrollbar-container::-webkit-scrollbar-thumb:hover {
-                background: rgba(0,209,255,0.15);
+                background: rgba(5,150,105,0.15);
               }
               .table-container-with-scrollbar {
                 overflow-x: auto;
@@ -1645,7 +1645,7 @@ const FinanceReport = () => {
                 border-radius: 5px;
               }
               .table-container-with-scrollbar::-webkit-scrollbar-thumb:hover {
-                background: rgba(0,209,255,0.15);
+                background: rgba(5,150,105,0.15);
               }
             `}</style>
                   <div
@@ -1689,7 +1689,7 @@ const FinanceReport = () => {
                           <th className="px-4 py-3 text-center text-xs font-semibold text-secondary uppercase tracking-wider whitespace-nowrap">Status</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-theme divide-white/5">
+                      <tbody className="divide-theme divide-black/5">
                         {tripFinancialData.map((trip, idx) => {
                           const revenue = Number(trip.revenue) || 0;
                           const fuelCost = Number(trip.fuelCost) || 0;
@@ -1713,9 +1713,9 @@ const FinanceReport = () => {
                             ? `${trip.origin} → ${trip.destination}`
                             : trip.origin !== 'N/A' ? trip.origin : trip.destination !== 'N/A' ? trip.destination : '—';
                           return (
-                            <tr key={trip.id} className={`hover:bg-[rgba(255,255,255,0.03)] transition-colors ${idx % 2 === 0 ? 'bg-card' : 'bg-[var(--accent-navyblue)]/20'}`}>
+                            <tr key={trip.id} className={`hover:bg-[rgba(15,31,23,0.03)] transition-colors ${idx % 2 === 0 ? 'bg-card' : 'bg-[var(--accent-navyblue)]/20'}`}>
                               <td className="px-4 py-3 whitespace-nowrap">
-                                <span className="text-xs font-mono bg-card text-[var(--accent-blue)] border border-[rgba(0,209,255,0.2)] px-2 py-0.5 rounded">#{shortId}</span>
+                                <span className="text-xs font-mono bg-card text-[var(--accent-blue)] border border-[rgba(5,150,105,0.2)] px-2 py-0.5 rounded">#{shortId}</span>
                               </td>
                               <td className="px-4 py-3 text-sm font-bold text-secondary whitespace-nowrap">{trip.tripNumber || '—'}</td>
                               <td className="px-4 py-3 text-sm font-semibold text-secondary whitespace-nowrap">{trip.truckNumber || '—'}</td>
@@ -1756,7 +1756,7 @@ const FinanceReport = () => {
                                   <span className={`text-xs font-bold ${profitMargin > 0 ? 'text-[var(--accent-green)]' : 'text-[var(--accent-red)]'}`}>
                                     {isNaN(profitMargin) ? '0.0' : profitMargin.toFixed(1)}%
                                   </span>
-                                  <div className="w-14 bg-[rgba(255,255,255,0.07)] rounded-full h-1.5 overflow-hidden">
+                                  <div className="w-14 bg-[rgba(15,31,23,0.07)] rounded-full h-1.5 overflow-hidden">
                                     <div className={`h-1.5 rounded-full ${profitMargin > 0 ? 'bg-[var(--accent-green)]' : 'bg-[var(--accent-red)]'}`}
                                       style={{ width: `${Math.min(Math.max(profitMargin, 0), 100)}%` }} />
                                   </div>
@@ -1837,8 +1837,8 @@ const FinanceReport = () => {
                           }}
                           disabled={loading}
                           className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${timePeriod === period
-                            ? 'bg-gradient-to-r from-[var(--accent-blue)] to-[rgba(0,209,255,0.15)] text-[var(--text-primary)] shadow-md'
-                            : 'bg-card text-secondary hover:bg-[rgba(255,255,255,0.06)] hover:text-[var(--text-primary)]'
+                            ? 'bg-gradient-to-r from-[var(--accent-blue)] to-[rgba(5,150,105,0.15)] text-[var(--text-primary)] shadow-md'
+                            : 'bg-card text-secondary hover:bg-[rgba(15,31,23,0.06)] hover:text-[var(--text-primary)]'
                             } ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                         >
                           {getPeriodLabel(period)}
@@ -2060,7 +2060,7 @@ const FinanceReport = () => {
                     </div>
                     <div className="bg-card rounded-lg shadow-sm border border-theme p-4">
                       <div className="text-sm text-secondary mb-1">Profit Margin</div>
-                      <div className="text-2xl font-bold text-[#00D1FF]">
+                      <div className="text-2xl font-bold text-[#059669]">
                         {(() => {
                           const totalRevenue = getCurrentReports().reduce((sum, r) => sum + (Number(r.revenue) || 0), 0);
                           const totalProfit = getCurrentReports().reduce((sum, r) => sum + (Number(r.netProfit) || 0), 0);
@@ -2081,19 +2081,19 @@ const FinanceReport = () => {
             const PAYABLE_META: Record<Exclude<PayableSubCategory, 'all'>, { label: string; color: string; bg: string; textColor: string; icon: React.ReactNode }> = {
               expense: { label: 'Expense', color: '#ef4444', bg: 'bg-card', textColor: 'text-[var(--accent-red)]', icon: <Receipt size={13} /> },
               'employee-payroll': { label: 'Employee Payroll', color: '#3b82f6', bg: 'bg-card', textColor: 'text-[var(--accent-blue)]', icon: <Users size={13} /> },
-              'driver-payroll': { label: 'Driver Payroll', color: '#10b981', bg: 'bg-[rgba(0,255,163,0.08)]', textColor: 'text-[var(--accent-green)]', icon: <IdCard size={13} /> },
+              'driver-payroll': { label: 'Driver Payroll', color: '#10b981', bg: 'bg-[rgba(5,150,105,0.08)]', textColor: 'text-[var(--accent-green)]', icon: <IdCard size={13} /> },
               fuel: { label: 'Fuel Cost', color: '#f59e0b', bg: 'bg-[rgba(251,191,36,0.08)]', textColor: 'text-[var(--accent-amber)]', icon: <Fuel size={13} /> },
               'fleet-invoice': { label: 'Fleet Invoice', color: '#8b5cf6', bg: 'bg-[rgba(168,85,247,0.08)]', textColor: 'text-[var(--accent-purple)]', icon: <DollarSign size={13} /> },
             };
 
             const STATUS_META: Record<string, { bg: string; text: string; icon: React.ReactNode }> = {
-              paid: { bg: 'bg-[rgba(0,255,163,0.1)]', text: 'text-[var(--accent-green)]', icon: <CheckCircle2 size={11} /> },
+              paid: { bg: 'bg-[rgba(5,150,105,0.1)]', text: 'text-[var(--accent-green)]', icon: <CheckCircle2 size={11} /> },
               unpaid: { bg: 'bg-[rgba(244,63,94,0.1)]', text: 'text-[var(--accent-red)]', icon: <XCircle size={11} /> },
               pending: { bg: 'bg-[rgba(251,191,36,0.1)]', text: 'text-[var(--accent-amber)]', icon: <Clock size={11} /> },
               overdue: { bg: 'bg-[rgba(245,158,11,0.1)]', text: 'text-[var(--accent-orange)]', icon: <AlertCircle size={11} /> },
-              completed: { bg: 'bg-[rgba(0,255,163,0.1)]', text: 'text-[var(--accent-green)]', icon: <CheckCircle2 size={11} /> },
-              approved: { bg: 'bg-[rgba(0,255,163,0.1)]', text: 'text-[var(--accent-green)]', icon: <CheckCircle2 size={11} /> },
-              active: { bg: 'bg-[rgba(0,209,255,0.1)]', text: 'text-[var(--accent-blue)]', icon: <Clock size={11} /> },
+              completed: { bg: 'bg-[rgba(5,150,105,0.1)]', text: 'text-[var(--accent-green)]', icon: <CheckCircle2 size={11} /> },
+              approved: { bg: 'bg-[rgba(5,150,105,0.1)]', text: 'text-[var(--accent-green)]', icon: <CheckCircle2 size={11} /> },
+              active: { bg: 'bg-[rgba(5,150,105,0.1)]', text: 'text-[var(--accent-blue)]', icon: <Clock size={11} /> },
             };
 
             const fmtCur = (n: number) =>
@@ -2154,7 +2154,7 @@ const FinanceReport = () => {
                 <div className="flex justify-end">
                   <button
                     onClick={() => { setPayableLoaded(false); fetchPayableData(); }}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-secondary border border-theme bg-card rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-secondary border border-theme bg-card rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition"
                   >
                     <RefreshCw size={13} className={payableLoading ? 'animate-spin text-[var(--accent-blue)]' : ''} />
                     Refresh
@@ -2322,7 +2322,7 @@ const FinanceReport = () => {
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="divide-theme divide-white/5">
+                        <tbody className="divide-theme divide-black/5">
                           {pageRows.length === 0 ? (
                             <tr>
                               <td colSpan={6} className="text-center py-14 text-secondary text-sm">
@@ -2333,7 +2333,7 @@ const FinanceReport = () => {
                             const catMeta = PAYABLE_META[row.subCategory];
                             const stMeta = STATUS_META[row.status] ?? { bg: 'bg-card', text: 'text-secondary', icon: null };
                             return (
-                              <tr key={`${row.subCategory}-${row.id}`} className="hover:bg-[rgba(255,255,255,0.03)] transition">
+                              <tr key={`${row.subCategory}-${row.id}`} className="hover:bg-[rgba(15,31,23,0.03)] transition">
                                 <td className="px-4 py-2.5">
                                   <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${catMeta.bg} ${catMeta.textColor}`}>
                                     {catMeta.icon}
@@ -2387,20 +2387,20 @@ const FinanceReport = () => {
                       <span className="text-xs text-secondary">Page {payablePage} of {totalPgPages}</span>
                       <div className="flex items-center gap-1">
                         <button onClick={() => setPayablePage(p => Math.max(1, p - 1))} disabled={payablePage === 1}
-                          className="px-2.5 py-1 text-xs border border-theme rounded hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-40 disabled:cursor-not-allowed">
+                          className="px-2.5 py-1 text-xs border border-theme rounded hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-40 disabled:cursor-not-allowed">
                           Prev
                         </button>
                         {Array.from({ length: Math.min(5, totalPgPages) }, (_, i) => {
                           const p = totalPgPages <= 5 ? i + 1 : Math.max(1, Math.min(payablePage - 2, totalPgPages - 4)) + i;
                           return (
                             <button key={p} onClick={() => setPayablePage(p)}
-                              className={`w-7 h-7 text-xs rounded transition ${p === payablePage ? 'bg-[var(--accent-blue)] text-headings font-semibold' : 'border border-theme text-secondary hover:bg-[rgba(255,255,255,0.03)]'}`}>
+                              className={`w-7 h-7 text-xs rounded transition ${p === payablePage ? 'bg-[var(--accent-blue)] text-headings font-semibold' : 'border border-theme text-secondary hover:bg-[rgba(15,31,23,0.03)]'}`}>
                               {p}
                             </button>
                           );
                         })}
                         <button onClick={() => setPayablePage(p => Math.min(totalPgPages, p + 1))} disabled={payablePage === totalPgPages}
-                          className="px-2.5 py-1 text-xs border border-theme rounded hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-40 disabled:cursor-not-allowed">
+                          className="px-2.5 py-1 text-xs border border-theme rounded hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-40 disabled:cursor-not-allowed">
                           Next
                         </button>
                       </div>

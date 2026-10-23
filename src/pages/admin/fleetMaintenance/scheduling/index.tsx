@@ -833,7 +833,7 @@ const MaintenanceSchedule = () => {
                                 alert.type === 'warning' ? 'bg-yellow-100' : 'bg-blue-100'
                                 }`}>
                                 <AlertTriangle className={`${alert.type === 'critical' ? 'text-[#A855F7]' :
-                                    alert.type === 'warning' ? 'text-[#00FFA3]' : 'text-[#00D1FF]'
+                                    alert.type === 'warning' ? 'text-[#059669]' : 'text-[#059669]'
                                     }`} size={24} />
                             </div>
                             <div>
@@ -841,7 +841,7 @@ const MaintenanceSchedule = () => {
                                 <p className="text-sm text-secondary capitalize">{alert.type} Priority</p>
                             </div>
                         </div>
-                        <button onClick={onClose} className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition-colors">
+                        <button onClick={onClose} className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors">
                             <X size={20} />
                         </button>
                     </div>
@@ -934,11 +934,11 @@ const MaintenanceSchedule = () => {
                         <div className="bg-card rounded-lg p-4 shadow-sm">
                             <div className="flex items-center gap-3">
                                 <div className="bg-yellow-100 p-2 rounded-lg">
-                                    <Clock className="text-[#00FFA3]" size={20} />
+                                    <Clock className="text-[#059669]" size={20} />
                                 </div>
                                 <div>
                                     <p className="text-sm text-secondary">Due This Week</p>
-                                    <p className="text-2xl font-bold text-[#00FFA3]">{stats.dueThisWeek}</p>
+                                    <p className="text-2xl font-bold text-[#059669]">{stats.dueThisWeek}</p>
                                 </div>
                             </div>
                         </div>
@@ -946,11 +946,11 @@ const MaintenanceSchedule = () => {
                         <div className="bg-card rounded-lg p-4 shadow-sm">
                             <div className="flex items-center gap-3">
                                 <div className="bg-blue-100 p-2 rounded-lg">
-                                    <Wrench className="text-[#00D1FF]" size={20} />
+                                    <Wrench className="text-[#059669]" size={20} />
                                 </div>
                                 <div>
                                     <p className="text-sm text-secondary">In Progress</p>
-                                    <p className="text-2xl font-bold text-[#00D1FF]">{stats.inProgress}</p>
+                                    <p className="text-2xl font-bold text-[#059669]">{stats.inProgress}</p>
                                 </div>
                             </div>
                         </div>
@@ -992,7 +992,7 @@ const MaintenanceSchedule = () => {
                                             </div>
                                             <button
                                                 onClick={() => setShowAlertDetails(alert)}
-                                                className="text-sm text-[#00D1FF] hover:text-blue-800 font-medium flex items-center gap-1"
+                                                className="text-sm text-[#059669] hover:text-blue-800 font-medium flex items-center gap-1"
                                             >
                                                 <FileText size={14} />
                                                 View Details
@@ -1022,7 +1022,7 @@ const MaintenanceSchedule = () => {
                                                 <p className="font-medium text-primary">{item.plateNumber}</p>
                                                 <p className="text-sm text-secondary">Month: {item.month}/{item.year}</p>
                                             </div>
-                                            <span className="text-lg font-bold text-[#00D1FF]">${item.totalCost.toFixed(2)}</span>
+                                            <span className="text-lg font-bold text-[#059669]">${item.totalCost.toFixed(2)}</span>
                                         </div>
                                         <div className="mt-2 text-sm text-secondary">
                                             <p>Work Orders: {item.workOrders}</p>
@@ -1043,7 +1043,7 @@ const MaintenanceSchedule = () => {
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-xl font-semibold text-primary">Schedule New Service</h2>
-                                <button onClick={() => setShowScheduleForm(false)} className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition-colors">
+                                <button onClick={() => setShowScheduleForm(false)} className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors">
                                     <X size={20} />
                                 </button>
                             </div>
@@ -1440,7 +1440,7 @@ const MaintenanceSchedule = () => {
                             <button
                                 onClick={fetchVehicleServices}
                                 disabled={servicesLoading}
-                                className="bg-gray-600 hover:bg-gray-700 !text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
+                                className="bg-gray-200 hover:bg-gray-100 text-primary px-4 py-2 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
                             >
                                 <Search size={16} />
                                 Refresh
@@ -1539,7 +1539,7 @@ const MaintenanceSchedule = () => {
                         <div className="flex items-end">
                             <button
                                 onClick={() => setServiceFilters({})}
-                                className="w-full px-4 py-2 bg-gray-500 hover:bg-gray-600 !text-white rounded-lg transition-colors"
+                                className="w-full px-4 py-2 bg-gray-500 hover:bg-gray-200 !text-white rounded-lg transition-colors"
                             >
                                 Clear Filters
                             </button>
@@ -1601,7 +1601,7 @@ const MaintenanceSchedule = () => {
                                     };
 
                                     return (
-                                        <tr key={service._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                                        <tr key={service._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                                             <td className="px-4 py-4 whitespace-nowrap">
                                                 <div>
                                                     <div className="text-sm font-medium text-primary">
@@ -1689,7 +1689,7 @@ const MaintenanceSchedule = () => {
                                                 <div className="flex items-center gap-2">
                                                     <button
                                                         onClick={() => handleEditService(service)}
-                                                        className="text-[#00D1FF] hover:text-blue-900"
+                                                        className="text-[#059669] hover:text-blue-900"
                                                         title="Edit Service"
                                                     >
                                                         <Edit size={16} />

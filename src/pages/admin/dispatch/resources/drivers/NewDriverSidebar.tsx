@@ -424,7 +424,7 @@ const NewDriverSidebar: FC<NewDriverSidebarProps> = ({ isOpen, onClose }) => {
 
                                 {coordinatesType === 'auto' && (
                                     <div>
-                                        <button className="w-full px-3 py-2 border border-theme rounded-md text-sm bg-card hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                                        <button className="w-full px-3 py-2 border border-theme rounded-md text-sm bg-card hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                                             Get Current Location
                                         </button>
                                     </div>
@@ -451,7 +451,7 @@ const NewDriverSidebar: FC<NewDriverSidebarProps> = ({ isOpen, onClose }) => {
                                     <User className="w-8 h-8 text-secondary" />
                                 </div>
                                 <p className="text-xs text-secondary mb-2">Select an image</p>
-                                <button className="text-xs text-[#00D1FF] hover:text-blue-800">
+                                <button className="text-xs text-[#059669] hover:text-blue-800">
                                     Upload Image
                                 </button>
                             </div>
@@ -494,7 +494,7 @@ const NewDriverSidebar: FC<NewDriverSidebarProps> = ({ isOpen, onClose }) => {
                                         <div className="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-3 flex items-center justify-center">
                                             <User className="w-12 h-12 text-secondary" />
                                         </div>
-                                        <button className="flex items-center space-x-2 px-3 py-1 text-sm text-[#00D1FF] border border-blue-600 rounded-md hover:bg-blue-50 mx-auto">
+                                        <button className="flex items-center space-x-2 px-3 py-1 text-sm text-[#059669] border border-blue-600 rounded-md hover:bg-blue-50 mx-auto">
                                             <Upload className="w-4 h-4" />
                                             <span>Upload new</span>
                                         </button>
@@ -580,7 +580,7 @@ const NewDriverSidebar: FC<NewDriverSidebarProps> = ({ isOpen, onClose }) => {
                   <div className="flex space-x-2">
                     <button
                       onClick={selectAllPermissions}
-                      className="text-xs text-[#00D1FF] hover:text-blue-800"
+                      className="text-xs text-[#059669] hover:text-blue-800"
                     >
                       Select All
                     </button>
@@ -619,7 +619,7 @@ const NewDriverSidebar: FC<NewDriverSidebarProps> = ({ isOpen, onClose }) => {
                           id={permission.id}
                           checked={selectedPermissions.includes(permission.id)}
                           onChange={() => togglePermission(permission.id)}
-                          className="w-4 h-4 text-[#00D1FF] border-theme rounded focus:ring-blue-500"
+                          className="w-4 h-4 text-[#059669] border-theme rounded focus:ring-blue-500"
                         />
                       </div>
                       <span></span>
@@ -633,7 +633,7 @@ const NewDriverSidebar: FC<NewDriverSidebarProps> = ({ isOpen, onClose }) => {
                         <div className="flex justify-end space-x-3 px-6 py-4 border-t border-theme bg-card">
                             <button
                                 onClick={() => setIsModalOpen(false)}
-                                className="px-4 py-2 text-sm font-medium !mr-2 text-primary bg-card border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)]"
+                                className="px-4 py-2 text-sm font-medium !mr-2 text-primary bg-card border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)]"
                             >
                                 Cancel
                             </button>

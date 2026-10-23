@@ -27,9 +27,9 @@ const StatCard = ({
   <div
     onClick={onClick}
     style={bgStyle}
-    className={`rounded-xl p-5 shadow-sm border border-white/10 flex items-start gap-4 ${onClick ? "cursor-pointer hover:shadow-lg hover:brightness-110 transition-all group" : ""}`}
+    className={`rounded-xl p-5 shadow-sm border border-black/10 flex items-start gap-4 ${onClick ? "cursor-pointer hover:shadow-lg hover:brightness-110 transition-all group" : ""}`}
   >
-    <div className="rounded-xl p-3 flex-shrink-0 bg-white/10">
+    <div className="rounded-xl p-3 flex-shrink-0 bg-black/10">
       <span className={color}>{icon}</span>
     </div>
     <div className="flex-1 min-w-0">
@@ -119,7 +119,7 @@ const Dashboard = () => {
           label="Trucks"
           value={stats.totalTrucks}
           sub="In fleet"
-          color="text-[#4eecd8]"
+          color="text-[#0d9488]"
           bgStyle={{ background: "linear-gradient(135deg, #0d3d3a 0%, #0a4f4a 60%, #0d5e58 100%)" }}
           onClick={() => navigate("/admin/manifest/trucks")}
         />
@@ -128,7 +128,7 @@ const Dashboard = () => {
           label="Trailers"
           value={stats.totalTrailers}
           sub="In fleet"
-          color="text-[#42aeec]"
+          color="text-[#10b981]"
           bgStyle={{ background: "linear-gradient(135deg, #0a2a4a 0%, #0d3d6e 60%, #0f4d87 100%)" }}
           onClick={() => navigate("/admin/manifest/trailers")}
         />

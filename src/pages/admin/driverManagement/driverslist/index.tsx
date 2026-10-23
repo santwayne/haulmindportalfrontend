@@ -1787,7 +1787,7 @@ const DriverManagement = () => {
       case 'NON-COMPLIANT':
         return 'bg-[#ef4444] text-white';
       default:
-        return 'bg-[rgba(255,255,255,0.1)] text-secondary';
+        return 'bg-[rgba(15,31,23,0.1)] text-secondary';
     }
   };
 
@@ -3634,9 +3634,9 @@ const DriverManagement = () => {
     body { background: #ffffff !important; }
     .print-hide { display: none !important; }
     table { border-collapse: collapse !important; width: 100% !important; font-size: 11px !important; }
-    thead tr { background: #1183e0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    thead th { color: #ffffff !important; padding: 8px 12px !important; border: 1px solid #0d6bc7 !important; font-weight: 600 !important; text-transform: uppercase !important; font-size: 10px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    tbody tr:nth-child(even) { background: #f0f6ff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    thead tr { background: #059669 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    thead th { color: #ffffff !important; padding: 8px 12px !important; border: 1px solid #047857 !important; font-weight: 600 !important; text-transform: uppercase !important; font-size: 10px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    tbody tr:nth-child(even) { background: #f0fdf4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     tbody td { padding: 7px 12px !important; border: 1px solid #dde6f0 !important; color: #1a1a2e !important; }
     .bg-main, .bg-card { background: #ffffff !important; }
   }
@@ -3752,11 +3752,11 @@ const DriverManagement = () => {
               <select
                 value={filterBy}
                 onChange={(e) => setFilterBy(e.target.value)}
-                className="px-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200 text-sm"
+                className="px-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 text-sm"
               >
-                <option className="bg-[#0f1b2d] text-white">Active</option>
-                <option className="bg-[#0f1b2d] text-white">Inactive</option>
-                <option className="bg-[#0f1b2d] text-white">All</option>
+                <option className="bg-[#ffffff] text-white">Active</option>
+                <option className="bg-[#ffffff] text-white">Inactive</option>
+                <option className="bg-[#ffffff] text-white">All</option>
               </select>
             </div>
 
@@ -3766,12 +3766,12 @@ const DriverManagement = () => {
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="px-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200 text-sm min-w-[120px]"
+                className="px-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 text-sm min-w-[120px]"
               >
-                <option className="bg-[#0f1b2d] text-white" value="">
+                <option className="bg-[#ffffff] text-white" value="">
                   Select...
                 </option>
-                <option className="bg-[#0f1b2d] text-white">StandBy</option>
+                <option className="bg-[#ffffff] text-white">StandBy</option>
               </select>
             </div>
 
@@ -3781,12 +3781,12 @@ const DriverManagement = () => {
               <select
                 value={complianceStatus}
                 onChange={(e) => setComplianceStatus(e.target.value)}
-                className="px-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200 text-sm min-w-[120px]"
+                className="px-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 text-sm min-w-[120px]"
               >
-                <option className="bg-[#0f1b2d] text-white">All</option>
-                <option className="bg-[#0f1b2d] text-white">Compliant</option>
-                <option className="bg-[#0f1b2d] text-white">Expiring Soon</option>
-                <option className="bg-[#0f1b2d] text-white">Non-Compliant</option>
+                <option className="bg-[#ffffff] text-white">All</option>
+                <option className="bg-[#ffffff] text-white">Compliant</option>
+                <option className="bg-[#ffffff] text-white">Expiring Soon</option>
+                <option className="bg-[#ffffff] text-white">Non-Compliant</option>
               </select>
             </div>
 
@@ -3796,15 +3796,15 @@ const DriverManagement = () => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200 text-sm min-w-[120px]"
+                className="px-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 text-sm min-w-[120px]"
               >
-                <option className="bg-[#0f1b2d] text-white" value="">
+                <option className="bg-[#ffffff] text-white" value="">
                   Select...
                 </option>
-                <option className="bg-[#0f1b2d] text-white">Driver ID</option>
-                <option className="bg-[#0f1b2d] text-white">First Name</option>
-                <option className="bg-[#0f1b2d] text-white">Last Name</option>
-                <option className="bg-[#0f1b2d] text-white">Status</option>
+                <option className="bg-[#ffffff] text-white">Driver ID</option>
+                <option className="bg-[#ffffff] text-white">First Name</option>
+                <option className="bg-[#ffffff] text-white">Last Name</option>
+                <option className="bg-[#ffffff] text-white">Status</option>
               </select>
             </div>
 
@@ -3995,7 +3995,7 @@ const DriverManagement = () => {
                 {filteredDrivers.map((driver) => (
                   <tr
                     key={driver._id || driver.driverId}
-                    className="hover:bg-[rgba(255,255,255,0.03)] transition-colors cursor-pointer"
+                    className="hover:bg-[rgba(15,31,23,0.03)] transition-colors cursor-pointer"
                     onClick={(e) => {
                       // Prevent triggering if clicking on interactive elements (buttons, links, inputs, selects)
                       const target = e.target as HTMLElement;
@@ -4065,7 +4065,7 @@ const DriverManagement = () => {
                           />
                         ) : null}
                         <div
-                          className={`w-10 h-10 rounded-full bg-[rgba(255,255,255,0.08)] flex items-center justify-center border-2 border-theme ${driver.profileImageUrl ? 'hidden' : ''}`}
+                          className={`w-10 h-10 rounded-full bg-[rgba(15,31,23,0.08)] flex items-center justify-center border-2 border-theme ${driver.profileImageUrl ? 'hidden' : ''}`}
                         >
                           <User className="w-6 h-6 text-secondary" />
                         </div>
@@ -4257,7 +4257,7 @@ const DriverManagement = () => {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full bg-[rgba(255,255,255,0.08)] !text-white py-1.5 text-xs font-medium hover:bg-[rgba(255,255,255,0.12)] transition-colors"
+                  className="w-full bg-[rgba(15,31,23,0.08)] !text-white py-1.5 text-xs font-medium hover:bg-[rgba(15,31,23,0.12)] transition-colors"
                 >
                   {formData.profileImage ? 'CHANGE IMAGE' : 'UPLOAD'}
                 </button>
@@ -4295,7 +4295,7 @@ const DriverManagement = () => {
                         }}
                         className={`w-full flex items-center gap-1.5 px-2 py-1.5 transition-colors text-left ${isActive
                           ? 'bg-[var(--accent-navyblue)]/15 !text-white shadow-md'
-                          : 'bg-[rgba(255,255,255,0.08)] text-secondary hover:bg-[rgba(255,255,255,0.12)]'
+                          : 'bg-[rgba(15,31,23,0.08)] text-secondary hover:bg-[rgba(15,31,23,0.12)]'
                           }`}
                       >
                         <Icon className="w-3.5 h-3.5" />
@@ -4318,7 +4318,7 @@ const DriverManagement = () => {
                   <button
                     onClick={editingId ? handleUpdateDriver : handleSaveDriver}
                     disabled={isSubmitting}
-                    className="px-3 py-1 text-xs bg-[rgba(255,255,255,0.08)] !text-white border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.12)] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+                    className="px-3 py-1 text-xs bg-[rgba(15,31,23,0.08)] !text-white border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.12)] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
                   >
                     {isSubmitting && (
                       <RefreshCw className="w-3 h-3 animate-spin" />
@@ -4469,7 +4469,7 @@ const DriverManagement = () => {
                                 });
                               }
                             }}
-                            className={`w-full pl-7 pr-2 py-2 text-sm bg-[rgba(255,255,255,0.05)] text-primary border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200 cursor-pointer ${validationErrors.dateOfBirth
+                            className={`w-full pl-7 pr-2 py-2 text-sm bg-[rgba(15,31,23,0.05)] text-primary border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 cursor-pointer ${validationErrors.dateOfBirth
                               ? "border-[var(--accent-red)]"
                               : "border-theme"
                               }`}
@@ -4489,7 +4489,7 @@ const DriverManagement = () => {
                           <button
                             type="button"
                             onClick={() => setFormData({ ...formData, mobileApp: !formData.mobileApp })}
-                            className={`relative w-9 h-5 rounded-full transition-colors ${formData.mobileApp ? 'bg-[var(--accent-navyblue)]' : 'bg-[rgba(255,255,255,0.15)]'
+                            className={`relative w-9 h-5 rounded-full transition-colors ${formData.mobileApp ? 'bg-[var(--accent-navyblue)]' : 'bg-[rgba(15,31,23,0.15)]'
                               }`}
                           >
                             <span
@@ -4611,7 +4611,7 @@ const DriverManagement = () => {
                                           // Don't auto-fill dial code - keep the input field clean
                                           // User will enter only their phone number
                                         }}
-                                        className={`w-full flex items-center gap-2 px-3 py-2 text-xs text-left hover:bg-[rgba(255,255,255,0.03)] transition-colors ${primaryPhoneCountry === country.code ? 'bg-card' : ''
+                                        className={`w-full flex items-center gap-2 px-3 py-2 text-xs text-left hover:bg-[rgba(15,31,23,0.03)] transition-colors ${primaryPhoneCountry === country.code ? 'bg-card' : ''
                                           }`}
                                       >
                                         <span className="text-base" style={{ fontSize: '18px' }}>{country.flag}</span>
@@ -4635,7 +4635,7 @@ const DriverManagement = () => {
                               </div>
                             )}
                           </div>
-                          <div className="h-5 w-px bg-[rgba(255,255,255,0.15)]"></div>
+                          <div className="h-5 w-px bg-[rgba(15,31,23,0.15)]"></div>
                           <input
                             type="tel"
                             placeholder=""
@@ -4706,7 +4706,7 @@ const DriverManagement = () => {
                                           // Don't auto-fill dial code - keep the input field clean
                                           // User will enter only their phone number
                                         }}
-                                        className={`w-full flex items-center gap-2 px-3 py-2 text-xs text-left hover:bg-[rgba(255,255,255,0.03)] transition-colors ${secondaryPhoneCountry === country.code ? 'bg-card' : ''
+                                        className={`w-full flex items-center gap-2 px-3 py-2 text-xs text-left hover:bg-[rgba(15,31,23,0.03)] transition-colors ${secondaryPhoneCountry === country.code ? 'bg-card' : ''
                                           }`}
                                       >
                                         <span className="text-base" style={{ fontSize: '18px' }}>{country.flag}</span>
@@ -4730,7 +4730,7 @@ const DriverManagement = () => {
                               </div>
                             )}
                           </div>
-                          <div className="h-5 w-px bg-[rgba(255,255,255,0.15)]"></div>
+                          <div className="h-5 w-px bg-[rgba(15,31,23,0.15)]"></div>
                           <input
                             type="tel"
                             placeholder=""
@@ -5055,19 +5055,19 @@ const DriverManagement = () => {
                               setValidationErrors({ ...validationErrors, stateProvince: '' });
                             }
                           }}
-                          className={`w-full px-2 py-1 text-xs bg-[rgba(255,255,255,0.05)] text-primary border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200 ${validationErrors.country
+                          className={`w-full px-2 py-1 text-xs bg-[rgba(15,31,23,0.05)] text-primary border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 ${validationErrors.country
                             ? 'border-[var(--accent-red)]'
                             : 'border-theme'
                             }`}
                         >
-                          <option className="bg-[#0f1b2d] text-white" value="">
+                          <option className="bg-[#ffffff] text-white" value="">
                             Select Country
                           </option>
                           {countries.map((country) => (
                             <option
                               key={country.code}
                               value={country.code}
-                              className="bg-[#0f1b2d] text-white"
+                              className="bg-[#ffffff] text-white"
                             >
                               {country.flag} {country.name}
                             </option>
@@ -5101,7 +5101,7 @@ const DriverManagement = () => {
                           }}
                           disabled={!formData.country}
                           placeholder={formData.country ? "Enter Province/State" : "Select country first"}
-                          className={`w-full px-2 py-1 text-xs bg-[rgba(255,255,255,0.05)] text-primary placeholder:text-secondary border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200 disabled:bg-[rgba(255,255,255,0.02)] disabled:text-secondary disabled:cursor-not-allowed ${validationErrors.stateProvince
+                          className={`w-full px-2 py-1 text-xs bg-[rgba(15,31,23,0.05)] text-primary placeholder:text-secondary border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 disabled:bg-[rgba(15,31,23,0.02)] disabled:text-secondary disabled:cursor-not-allowed ${validationErrors.stateProvince
                             ? 'border-[var(--accent-red)]'
                             : 'border-theme'
                             }`}
@@ -5155,7 +5155,7 @@ const DriverManagement = () => {
                             onChange={(e) =>
                               setPersonalData({ ...personalData, hireDate: e.target.value })
                             }
-                            className="w-full pl-10 pr-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200 cursor-pointer"
+                            className="w-full pl-10 pr-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 cursor-pointer"
                             placeholder="Select"
                           />
                         </div>
@@ -5186,7 +5186,7 @@ const DriverManagement = () => {
                                 terminationDate: e.target.value,
                               })
                             }
-                            className="w-full pl-10 pr-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200 cursor-pointer"
+                            className="w-full pl-10 pr-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 cursor-pointer"
                             placeholder="Select"
                           />
                         </div>
@@ -5204,21 +5204,21 @@ const DriverManagement = () => {
                               setValidationErrors({ ...validationErrors, status: '' });
                             }
                           }}
-                          className={`w-full px-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200 ${validationErrors.status
+                          className={`w-full px-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 ${validationErrors.status
                             ? 'border-[var(--accent-red)]'
                             : 'border-theme'
                             }`}
                         >
-                          <option className="bg-[#0f1b2d] text-white" value="">
+                          <option className="bg-[#ffffff] text-white" value="">
                             Select Status
                           </option>
-                          <option className="bg-[#0f1b2d] text-white" value="Active">
+                          <option className="bg-[#ffffff] text-white" value="Active">
                             Active
                           </option>
-                          <option className="bg-[#0f1b2d] text-white" value="Inactive">
+                          <option className="bg-[#ffffff] text-white" value="Inactive">
                             Inactive
                           </option>
-                          <option className="bg-[#0f1b2d] text-white" value="Terminated">
+                          <option className="bg-[#ffffff] text-white" value="Terminated">
                             Terminated
                           </option>
                         </select>
@@ -5469,16 +5469,16 @@ const DriverManagement = () => {
                                 paymentStateProvince: "",
                               });
                             }}
-                            className="w-full px-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200"
+                            className="w-full px-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200"
                           >
-                            <option className="bg-[#0f1b2d] text-white" value="">
+                            <option className="bg-[#ffffff] text-white" value="">
                               Select Country
                             </option>
                             {countries.map((country) => (
                               <option
                                 key={country.code}
                                 value={country.code}
-                                className="bg-[#0f1b2d] text-white"
+                                className="bg-[#ffffff] text-white"
                               >
                                 {country.flag} {country.name}
                               </option>
@@ -5507,7 +5507,7 @@ const DriverManagement = () => {
                                 ? "Enter Province/State"
                                 : "Select country first"
                             }
-                            className="w-full px-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary placeholder:text-secondary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200 disabled:bg-[rgba(255,255,255,0.02)] disabled:text-secondary disabled:cursor-not-allowed"
+                            className="w-full px-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary placeholder:text-secondary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 disabled:bg-[rgba(15,31,23,0.02)] disabled:text-secondary disabled:cursor-not-allowed"
                           />
                         </div>
                       </div>
@@ -5525,7 +5525,7 @@ const DriverManagement = () => {
                             onClick={() => setPersonalData({ ...personalData, driverType: 'COMPANY DRIVER' })}
                             className={`px-4 py-1.5 text-xs font-medium transition-colors rounded-l ${personalData.driverType === 'COMPANY DRIVER'
                               ? 'bg-[var(--accent-navyblue)] !text-white'
-                              : 'bg-[rgba(255,255,255,0.08)] text-secondary hover:bg-[rgba(255,255,255,0.12)]'
+                              : 'bg-[rgba(15,31,23,0.08)] text-secondary hover:bg-[rgba(15,31,23,0.12)]'
                               }`}
                           >
                             COMPANY DRIVER
@@ -5535,7 +5535,7 @@ const DriverManagement = () => {
                             onClick={() => setPersonalData({ ...personalData, driverType: 'OWNER OPERATOR' })}
                             className={`px-4 py-1.5 text-xs font-medium transition-colors rounded-r ${personalData.driverType === 'OWNER OPERATOR'
                               ? 'bg-[var(--accent-navyblue)] !text-white'
-                              : 'bg-[rgba(255,255,255,0.08)] text-secondary hover:bg-[rgba(255,255,255,0.12)]'
+                              : 'bg-[rgba(15,31,23,0.08)] text-secondary hover:bg-[rgba(15,31,23,0.12)]'
                               }`}
                           >
                             OWNER OPERATOR
@@ -5567,7 +5567,7 @@ const DriverManagement = () => {
                               onClick={() => setPersonalData({ ...personalData, paymentMethod: method as any })}
                               className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${personalData.paymentMethod === method
                                 ? 'bg-[var(--accent-navyblue)] !text-white'
-                                : 'bg-[rgba(255,255,255,0.08)] text-secondary hover:bg-[rgba(255,255,255,0.12)]'
+                                : 'bg-[rgba(15,31,23,0.08)] text-secondary hover:bg-[rgba(15,31,23,0.12)]'
                                 }`}
                             >
                               {method}
@@ -5735,7 +5735,7 @@ const DriverManagement = () => {
                           onClick={() => setPersonalData({ ...personalData, driverTypeSolo: true })}
                           className={`px-6 py-2 rounded-sm font-medium transition-colors ${personalData.driverTypeSolo
                             ? 'bg-[var(--accent-navyblue)] !text-white'
-                            : 'bg-[rgba(255,255,255,0.08)] text-secondary hover:bg-[rgba(255,255,255,0.12)]'
+                            : 'bg-[rgba(15,31,23,0.08)] text-secondary hover:bg-[rgba(15,31,23,0.12)]'
                             }`}
                         >
                           SOLO
@@ -5745,7 +5745,7 @@ const DriverManagement = () => {
                           onClick={() => setPersonalData({ ...personalData, driverTypeSolo: false })}
                           className={`px-6 py-2 rounded-sm font-medium transition-colors ${!personalData.driverTypeSolo
                             ? 'bg-[var(--accent-navyblue)] !text-white'
-                            : 'bg-[rgba(255,255,255,0.08)] text-secondary hover:bg-[rgba(255,255,255,0.12)]'
+                            : 'bg-[rgba(15,31,23,0.08)] text-secondary hover:bg-[rgba(15,31,23,0.12)]'
                             }`}
                         >
                           TEAM
@@ -5817,21 +5817,21 @@ const DriverManagement = () => {
                           onChange={(e) =>
                             setPersonalData({ ...personalData, gender: e.target.value })
                           }
-                          className="w-full px-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200"
+                          className="w-full px-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200"
                         >
-                          <option className="bg-[#0f1b2d] text-white" value="">
+                          <option className="bg-[#ffffff] text-white" value="">
                             Select Gender
                           </option>
-                          <option className="bg-[#0f1b2d] text-white" value="Male">
+                          <option className="bg-[#ffffff] text-white" value="Male">
                             Male
                           </option>
-                          <option className="bg-[#0f1b2d] text-white" value="Female">
+                          <option className="bg-[#ffffff] text-white" value="Female">
                             Female
                           </option>
-                          <option className="bg-[#0f1b2d] text-white" value="Other">
+                          <option className="bg-[#ffffff] text-white" value="Other">
                             Other
                           </option>
-                          <option className="bg-[#0f1b2d] text-white" value="Prefer not to say">
+                          <option className="bg-[#ffffff] text-white" value="Prefer not to say">
                             Prefer not to say
                           </option>
                         </select>
@@ -5851,16 +5851,16 @@ const DriverManagement = () => {
                               citizenship: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200"
+                          className="w-full px-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200"
                         >
-                          <option className="bg-[#0f1b2d] text-white" value="">
+                          <option className="bg-[#ffffff] text-white" value="">
                             Select Citizenship
                           </option>
                           {countries.map((country) => (
                             <option
                               key={country.code}
                               value={country.name}
-                              className="bg-[#0f1b2d] text-white"
+                              className="bg-[#ffffff] text-white"
                             >
                               {country.name}
                             </option>
@@ -5934,7 +5934,7 @@ const DriverManagement = () => {
                                   });
                                 }
                               }}
-                              className={`w-full pl-10 pr-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200 cursor-pointer ${validationErrors.driversLicenseExpiry
+                              className={`w-full pl-10 pr-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 cursor-pointer ${validationErrors.driversLicenseExpiry
                                 ? "border-[var(--accent-red)]"
                                 : "border-theme"
                                 }`}
@@ -5999,9 +5999,9 @@ const DriverManagement = () => {
                                 passportCountry: e.target.value,
                               })
                             }
-                            className="w-full px-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200"
+                            className="w-full px-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200"
                           >
-                            <option className="bg-[#0f1b2d] text-white" value="">
+                            <option className="bg-[#ffffff] text-white" value="">
                               Select Passport Country
                             </option>
 
@@ -6009,7 +6009,7 @@ const DriverManagement = () => {
                               <option
                                 key={country.code}
                                 value={country.name}
-                                className="bg-[#0f1b2d] text-white"
+                                className="bg-[#ffffff] text-white"
                               >
                                 {country.name}
                               </option>
@@ -6049,7 +6049,7 @@ const DriverManagement = () => {
                                   });
                                 }
                               }}
-                              className={`w-full pl-10 pr-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200 cursor-pointer ${validationErrors.passportExpiry
+                              className={`w-full pl-10 pr-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 cursor-pointer ${validationErrors.passportExpiry
                                 ? "border-[var(--accent-red)]"
                                 : "border-theme"
                                 }`}
@@ -6115,7 +6115,7 @@ const DriverManagement = () => {
                           onClick={() => setTravelData({ ...travelData, canadianWorkerStatus: 'CANADIAN CITIZEN' })}
                           className={`px-6 py-2 rounded-sm font-medium transition-colors ${travelData.canadianWorkerStatus === 'CANADIAN CITIZEN'
                             ? 'bg-[var(--accent-navyblue)] !text-white'
-                            : 'bg-[rgba(255,255,255,0.08)] text-secondary hover:bg-[rgba(255,255,255,0.12)]'
+                            : 'bg-[rgba(15,31,23,0.08)] text-secondary hover:bg-[rgba(15,31,23,0.12)]'
                             }`}
                         >
                           CANADIAN CITIZEN
@@ -6125,7 +6125,7 @@ const DriverManagement = () => {
                           onClick={() => setTravelData({ ...travelData, canadianWorkerStatus: 'PERMANENT RESIDENT' })}
                           className={`px-6 py-2 rounded-sm font-medium transition-colors ${travelData.canadianWorkerStatus === 'PERMANENT RESIDENT'
                             ? 'bg-[var(--accent-navyblue)] !text-white'
-                            : 'bg-[rgba(255,255,255,0.08)] text-secondary hover:bg-[rgba(255,255,255,0.12)]'
+                            : 'bg-[rgba(15,31,23,0.08)] text-secondary hover:bg-[rgba(15,31,23,0.12)]'
                             }`}
                         >
                           PERMANENT RESIDENT
@@ -6135,7 +6135,7 @@ const DriverManagement = () => {
                           onClick={() => setTravelData({ ...travelData, canadianWorkerStatus: 'WORK PERMIT' })}
                           className={`px-6 py-2 rounded-sm font-medium transition-colors ${travelData.canadianWorkerStatus === 'WORK PERMIT'
                             ? 'bg-[var(--accent-navyblue)] !text-white'
-                            : 'bg-[rgba(255,255,255,0.08)] text-secondary hover:bg-[rgba(255,255,255,0.12)]'
+                            : 'bg-[rgba(15,31,23,0.08)] text-secondary hover:bg-[rgba(15,31,23,0.12)]'
                             }`}
                         >
                           WORK PERMIT
@@ -6343,7 +6343,7 @@ const DriverManagement = () => {
                                     </button>
                                   </div>
                                 ) : (
-                                  <label className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg bg-card hover:bg-[rgba(255,255,255,0.03)] cursor-pointer">
+                                  <label className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg bg-card hover:bg-[rgba(15,31,23,0.03)] cursor-pointer">
                                     <Upload className="w-4 h-4 text-secondary" />
                                     <span className="text-sm text-primary">Select File</span>
                                     <input
@@ -6423,7 +6423,7 @@ const DriverManagement = () => {
                                       setDocumentFile(null);
                                     }
                                   }}
-                                  className="w-10 h-10 bg-[rgba(255,255,255,0.08)] border border-theme !text-white rounded-lg flex items-center justify-center hover:bg-[rgba(255,255,255,0.12)] transition-colors"
+                                  className="w-10 h-10 bg-[rgba(15,31,23,0.08)] border border-theme !text-white rounded-lg flex items-center justify-center hover:bg-[rgba(15,31,23,0.12)] transition-colors"
                                 >
                                   {editingDocumentId ? <Save className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                                 </button>
@@ -6455,7 +6455,7 @@ const DriverManagement = () => {
                             </tr>
                           ) : (
                             documents.map((doc) => (
-                              <tr key={doc.id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                              <tr key={doc.id} className="hover:bg-[rgba(15,31,23,0.03)]">
                                 <td className="px-4 py-3 text-sm text-primary">
                                   {doc.expiryDate ? (() => {
                                     try {
@@ -6676,7 +6676,7 @@ const DriverManagement = () => {
                                     </button>
                                   </div>
                                 ) : (
-                                  <label className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg bg-card hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors">
+                                  <label className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg bg-card hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors">
                                     <Upload className="w-4 h-4 text-secondary" />
                                     <span className="text-sm text-primary">Select File</span>
                                     <input
@@ -6728,7 +6728,7 @@ const DriverManagement = () => {
                                       setCertificationFile(null);
                                     }
                                   }}
-                                  className="w-10 h-10 bg-[rgba(255,255,255,0.08)] border border-theme !text-white rounded-lg flex items-center justify-center hover:bg-[rgba(255,255,255,0.12)] transition-colors"
+                                  className="w-10 h-10 bg-[rgba(15,31,23,0.08)] border border-theme !text-white rounded-lg flex items-center justify-center hover:bg-[rgba(15,31,23,0.12)] transition-colors"
                                 >
                                   {editingCertificationId ? <Save className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                                 </button>
@@ -6762,7 +6762,7 @@ const DriverManagement = () => {
                             certifications.map((cert) => (
                               <tr
                                 key={cert.id}
-                                className={`hover:bg-[rgba(255,255,255,0.03)] ${selectedCertificate?.id === cert.id ? 'bg-card' : ''}`}
+                                className={`hover:bg-[rgba(15,31,23,0.03)] ${selectedCertificate?.id === cert.id ? 'bg-card' : ''}`}
                               >
                                 <td className="px-4 py-3 text-sm text-primary">{cert.expiryDate || '-'}</td>
                                 <td className="px-4 py-3 text-sm text-primary">{cert.description || '-'}</td>
@@ -6924,7 +6924,7 @@ const DriverManagement = () => {
                           </tr>
                         </thead>
                         <tbody className="bg-card">
-                          <tr className="bg-card hover:bg-[rgba(0,209,255,0.05)] transition-all">
+                          <tr className="bg-card hover:bg-[rgba(5,150,105,0.05)] transition-all">
                             <td colSpan={7} className="p-3">
 
                               {/* Row 1 */}
@@ -6960,7 +6960,7 @@ const DriverManagement = () => {
                                         amount: e.target.value,
                                       }))
                                     }
-                                    className="flex-1 min-w-[60px] px-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)]"
+                                    className="flex-1 min-w-[60px] px-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)]"
                                   />
 
                                   <select
@@ -6971,7 +6971,7 @@ const DriverManagement = () => {
                                         currency: e.target.value,
                                       }))
                                     }
-                                    className="w-14 px-2 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg"
+                                    className="w-14 px-2 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg"
                                   >
                                     <option className="form-option">CAD</option>
                                     <option className="form-option">USD</option>
@@ -7061,7 +7061,7 @@ const DriverManagement = () => {
                             tickets.map((ticket) => (
                               <tr
                                 key={ticket.id}
-                                className={`hover:bg-[rgba(255,255,255,0.03)] cursor-pointer ${selectedTicket?.id === ticket.id ? 'bg-card' : ''}`}
+                                className={`hover:bg-[rgba(15,31,23,0.03)] cursor-pointer ${selectedTicket?.id === ticket.id ? 'bg-card' : ''}`}
                                 onClick={() => setSelectedTicket(selectedTicket?.id === ticket.id ? null : {
                                   id: ticket.id,
                                   date: ticket.date,
@@ -7283,7 +7283,7 @@ const DriverManagement = () => {
                             <div className="flex items-center justify-end gap-3">
                               <button
                                 onClick={() => setConfirmDeleteTicket({ open: false, ticket: null })}
-                                className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors font-medium"
+                                className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors font-medium"
                               >
                                 Cancel
                               </button>
@@ -7443,7 +7443,7 @@ const DriverManagement = () => {
                               </button>
                             </div>
                           ) : (
-                            <label className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg bg-card hover:bg-[rgba(255,255,255,0.03)] cursor-pointer">
+                            <label className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg bg-card hover:bg-[rgba(15,31,23,0.03)] cursor-pointer">
                               <Upload className="w-4 h-4 text-secondary" />
                               <span className="text-sm text-primary">Select File</span>
                               <input
@@ -7539,7 +7539,7 @@ const DriverManagement = () => {
                               });
                               setViolationFile(null);
                             }}
-                            className="px-4 py-2 bg-[rgba(255,255,255,0.08)] border border-theme !text-white rounded-lg flex items-center justify-center gap-2 hover:bg-[rgba(255,255,255,0.12)] transition-colors font-medium"
+                            className="px-4 py-2 bg-[rgba(15,31,23,0.08)] border border-theme !text-white rounded-lg flex items-center justify-center gap-2 hover:bg-[rgba(15,31,23,0.12)] transition-colors font-medium"
                           >
                             <Plus className="w-4 h-4" />
                             {editingViolationId ? 'Update' : 'Add'} Violation
@@ -7571,7 +7571,7 @@ const DriverManagement = () => {
                             </tr>
                           ) : (
                             violations.map((violation) => (
-                              <tr key={violation.id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                              <tr key={violation.id} className="hover:bg-[rgba(15,31,23,0.03)]">
                                 <td className="px-4 py-3 text-sm text-primary">
                                   {violation.dateOfIncident ? new Date(violation.dateOfIncident).toLocaleDateString() : '-'}
                                 </td>
@@ -7771,7 +7771,7 @@ const DriverManagement = () => {
                               });
                             }
                           }}
-                          className="w-10 h-10 bg-[rgba(255,255,255,0.08)] border border-theme !text-white rounded-lg flex items-center justify-center hover:bg-[rgba(255,255,255,0.12)] transition-colors"
+                          className="w-10 h-10 bg-[rgba(15,31,23,0.08)] border border-theme !text-white rounded-lg flex items-center justify-center hover:bg-[rgba(15,31,23,0.12)] transition-colors"
                         >
                           {editingNoteId ? <Save className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                         </button>
@@ -7787,7 +7787,7 @@ const DriverManagement = () => {
                       ) : (
                         <div className="divide-y divide-theme">
                           {notes.map((note) => (
-                            <div key={note.id} className="px-4 py-3 hover:bg-[rgba(255,255,255,0.03)]">
+                            <div key={note.id} className="px-4 py-3 hover:bg-[rgba(15,31,23,0.03)]">
                               <div className="flex items-center justify-between">
                                 <div>
                                   <p className="text-sm text-primary">{note.note}</p>
@@ -7941,7 +7941,7 @@ const DriverManagement = () => {
                               });
                             }
                           }}
-                          className="w-10 h-10 bg-[rgba(255,255,255,0.08)] border border-theme !text-white rounded-lg flex items-center justify-center hover:bg-[rgba(255,255,255,0.12)] transition-colors"
+                          className="w-10 h-10 bg-[rgba(15,31,23,0.08)] border border-theme !text-white rounded-lg flex items-center justify-center hover:bg-[rgba(15,31,23,0.12)] transition-colors"
                         >
                           {editingDeductionId ? <Save className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                         </button>
@@ -7969,7 +7969,7 @@ const DriverManagement = () => {
                             </tr>
                           ) : (
                             deductions.map((deduction) => (
-                              <tr key={deduction.id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                              <tr key={deduction.id} className="hover:bg-[rgba(15,31,23,0.03)]">
                                 <td className="px-4 py-3 text-sm text-primary">{deduction.startDate || '-'}</td>
                                 <td className="px-4 py-3 text-sm text-primary">{deduction.description || '-'}</td>
                                 <td className="px-4 py-3 text-sm text-primary">{deduction.amount || '0'} {deduction.currency}</td>
@@ -8147,7 +8147,7 @@ const DriverManagement = () => {
                               });
                             }
                           }}
-                          className="w-10 h-10 bg-[rgba(255,255,255,0.08)] border border-theme !text-white rounded-lg flex items-center justify-center hover:bg-[rgba(255,255,255,0.12)] transition-colors"
+                          className="w-10 h-10 bg-[rgba(15,31,23,0.08)] border border-theme !text-white rounded-lg flex items-center justify-center hover:bg-[rgba(15,31,23,0.12)] transition-colors"
                         >
                           {editingAdditionId ? <Save className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                         </button>
@@ -8175,7 +8175,7 @@ const DriverManagement = () => {
                             </tr>
                           ) : (
                             additions.map((addition) => (
-                              <tr key={addition.id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                              <tr key={addition.id} className="hover:bg-[rgba(15,31,23,0.03)]">
                                 <td className="px-4 py-3 text-sm text-primary">{addition.startDate || '-'}</td>
                                 <td className="px-4 py-3 text-sm text-primary">{addition.description || '-'}</td>
                                 <td className="px-4 py-3 text-sm text-primary">{addition.amount || '0'} {addition.currency}</td>
@@ -8320,7 +8320,7 @@ const DriverManagement = () => {
                       {!areBaseTestsCompleted() && (
                         <div className="bg-card border border-[var(--accent-orange)]/30 rounded-lg p-3 mb-3">
                           <div className="flex items-start gap-2">
-                            <AlertTriangle className="w-4 h-4 text-[#00FFA3] mt-0.5 flex-shrink-0" />
+                            <AlertTriangle className="w-4 h-4 text-[#059669] mt-0.5 flex-shrink-0" />
                             <div className="flex-1">
                               <p className="text-xs font-medium text-[var(--accent-orange)] mb-1">
                                 Complete Required Tests First
@@ -8336,7 +8336,7 @@ const DriverManagement = () => {
                       <div className="space-y-3">
                         <div className={`flex items-start gap-3 p-3 rounded-lg border transition-colors ${!areBaseTestsCompleted() && !handlesHazardousLoads
                           ? 'bg-card border-theme opacity-60'
-                          : 'bg-card border-theme hover:bg-[rgba(255,255,255,0.03)]'
+                          : 'bg-card border-theme hover:bg-[rgba(15,31,23,0.03)]'
                           }`}>
                           <input
                             type="checkbox"
@@ -8375,7 +8375,7 @@ const DriverManagement = () => {
 
                         <div className={`flex items-start gap-3 p-3 rounded-lg border transition-colors ${!areBaseTestsCompleted() && !winterTestRequired
                           ? 'bg-card border-theme opacity-60'
-                          : 'bg-card border-theme hover:bg-[rgba(255,255,255,0.03)]'
+                          : 'bg-card border-theme hover:bg-[rgba(15,31,23,0.03)]'
                           }`}>
                           <input
                             type="checkbox"
@@ -8533,7 +8533,7 @@ const DriverManagement = () => {
                           <tbody className="divide-y divide-theme">
                             {driverTests.length > 0 ? (
                               driverTests.map((test) => (
-                                <tr key={test.id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                                <tr key={test.id} className="hover:bg-[rgba(15,31,23,0.03)]">
                                   <td className="px-4 py-2 text-xs text-primary font-medium">{test.testType}</td>
                                   <td className="px-4 py-2 text-xs text-primary">{test.score}%</td>
                                   <td className="px-4 py-2">
@@ -8701,7 +8701,7 @@ const DriverManagement = () => {
                                     </button>
                                   </div>
                                 ) : (
-                                  <label className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg bg-card hover:bg-[rgba(255,255,255,0.03)] cursor-pointer">
+                                  <label className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg bg-card hover:bg-[rgba(15,31,23,0.03)] cursor-pointer">
                                     <Upload className="w-4 h-4 text-secondary" />
                                     <span className="text-sm text-primary">Select File</span>
                                     <input
@@ -8763,7 +8763,7 @@ const DriverManagement = () => {
                                       setDrugTestFile(null);
                                     }
                                   }}
-                                  className="w-10 h-10 bg-[rgba(255,255,255,0.08)] border border-theme !text-white rounded-lg flex items-center justify-center hover:bg-[rgba(255,255,255,0.12)] transition-colors"
+                                  className="w-10 h-10 bg-[rgba(15,31,23,0.08)] border border-theme !text-white rounded-lg flex items-center justify-center hover:bg-[rgba(15,31,23,0.12)] transition-colors"
                                 >
                                   {editingDrugTestId ? <Save className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                                 </button>
@@ -8795,7 +8795,7 @@ const DriverManagement = () => {
                             </tr>
                           ) : (
                             drugTests.map((dt) => (
-                              <tr key={dt.id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                              <tr key={dt.id} className="hover:bg-[rgba(15,31,23,0.03)]">
                                 <td className="px-4 py-3 text-sm text-primary">
                                   {dt.date ? (() => {
                                     try {
@@ -8975,7 +8975,7 @@ const DriverManagement = () => {
                       <button
                         type="button"
                         onClick={() => setActiveFormTab(prevTab.id as any)}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary bg-card border border-theme rounded-lg shadow-sm hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary bg-card border border-theme rounded-lg shadow-sm hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                       >
                         <span aria-hidden>←</span> {prevTab.label}
                       </button>
@@ -8984,7 +8984,7 @@ const DriverManagement = () => {
                       <button
                         type="button"
                         onClick={() => setActiveFormTab(nextTab.id as any)}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary bg-card border border-theme rounded-lg shadow-sm hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary bg-card border border-theme rounded-lg shadow-sm hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                       >
                         {nextTab.label} <span aria-hidden>→</span>
                       </button>
@@ -9043,13 +9043,13 @@ const DriverManagement = () => {
               <div className="flex gap-3">
                 <button
                   onClick={handleCancelFlagUpdate}
-                  className="flex-1 px-4 py-2 bg-[rgba(255,255,255,0.08)] text-primary rounded-lg hover:bg-[rgba(255,255,255,0.12)] transition-colors font-medium"
+                  className="flex-1 px-4 py-2 bg-[rgba(15,31,23,0.08)] text-primary rounded-lg hover:bg-[rgba(15,31,23,0.12)] transition-colors font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleConfirmFlagUpdate}
-                  className="flex-1 px-4 py-2 bg-[var(--accent-navyblue)]/15 !text-white rounded-lg hover:bg-[#0d8fc7] transition-colors font-medium"
+                  className="flex-1 px-4 py-2 bg-[var(--accent-navyblue)]/15 !text-white rounded-lg hover:bg-[#059669] transition-colors font-medium"
                 >
                   {selectedFlag.newValue ? 'Enable' : 'Disable'}
                 </button>
@@ -9120,14 +9120,14 @@ const DriverManagement = () => {
                     }
                   }}
                   disabled={verifyingPassword}
-                  className="flex-1 px-4 py-2 bg-[rgba(255,255,255,0.08)] text-primary rounded-lg hover:bg-[rgba(255,255,255,0.12)] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-[rgba(15,31,23,0.08)] text-primary rounded-lg hover:bg-[rgba(15,31,23,0.12)] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDrugTestPasswordVerify}
                   disabled={verifyingPassword || !drugTestPassword.trim()}
-                  className="flex-1 px-4 py-2 bg-[var(--accent-navyblue)]/15 !text-white rounded-lg hover:bg-[#0d8fc7] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 bg-[var(--accent-navyblue)]/15 !text-white rounded-lg hover:bg-[#059669] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {verifyingPassword ? (
                     <>
@@ -9189,7 +9189,7 @@ const DriverManagement = () => {
               <div className="flex items-center gap-3 justify-end">
                 <button
                   onClick={closeApprovalModal}
-                  className="px-4 py-2 text-sm font-medium text-primary bg-card rounded-lg hover:bg-[rgba(255,255,255,0.08)] transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-primary bg-card rounded-lg hover:bg-[rgba(15,31,23,0.08)] transition-colors"
                 >
                   Cancel
                 </button>
@@ -9228,7 +9228,7 @@ const DriverManagement = () => {
               <div className="flex items-center justify-end gap-3">
                 <button
                   onClick={() => setDeleteConfirm({ show: false, driverId: null })}
-                  className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                  className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                 >
                   Cancel
                 </button>
@@ -9264,7 +9264,7 @@ const DriverManagement = () => {
               <div className="flex items-center justify-end gap-3">
                 <button
                   onClick={() => setConfirmDeleteCertification({ open: false, cert: null })}
-                  className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors font-medium"
+                  className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors font-medium"
                 >
                   Cancel
                 </button>

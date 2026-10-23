@@ -255,11 +255,11 @@ const UnitMasterList: React.FC = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl shadow-lg" style={{ background: 'linear-gradient(to bottom right, #016ab2, #063f6f)' }}>
+              <div className="p-3 rounded-2xl shadow-lg" style={{ background: 'linear-gradient(to bottom right, #047857, #065f46)' }}>
                 <Truck className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(to right, #016ab2, #063f6f)' }}>
+                <h1 className="text-4xl font-bold bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(to right, #047857, #065f46)' }}>
                   Unit Master List
                 </h1>
                 <p className="text-secondary mt-1 flex items-center gap-2">
@@ -272,7 +272,7 @@ const UnitMasterList: React.FC = () => {
               <button
                 onClick={handleAddUnit}
                 className="flex items-center gap-2 px-6 py-3 text-white rounded-lg shadow-lg transition-all duration-200 font-medium hover:opacity-90"
-                style={{ background: 'linear-gradient(to right, #016ab2, #063f6f)' }}
+                style={{ background: 'linear-gradient(to right, #047857, #065f46)' }}
               >
                 <Plus className="w-5 h-5" />
                 Add Unit
@@ -288,9 +288,9 @@ const UnitMasterList: React.FC = () => {
               onClick={() => setActiveTab('active')}
               className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${activeTab === 'active'
                   ? 'text-white border-b-2'
-                  : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                  : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                 }`}
-              style={activeTab === 'active' ? { background: 'linear-gradient(to right, #016ab2, #063f6f)', borderColor: '#016ab2' } : {}}
+              style={activeTab === 'active' ? { background: 'linear-gradient(to right, #047857, #065f46)', borderColor: '#047857' } : {}}
             >
               Active Units ({units.filter(u => u.status === 'Active').length})
             </button>
@@ -298,9 +298,9 @@ const UnitMasterList: React.FC = () => {
               onClick={() => setActiveTab('inactive')}
               className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${activeTab === 'inactive'
                   ? 'text-white border-b-2'
-                  : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                  : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                 }`}
-              style={activeTab === 'inactive' ? { background: 'linear-gradient(to right, #016ab2, #063f6f)', borderColor: '#016ab2' } : {}}
+              style={activeTab === 'inactive' ? { background: 'linear-gradient(to right, #047857, #065f46)', borderColor: '#047857' } : {}}
             >
               Inactive Units ({units.filter(u => u.status === 'Inactive').length})
             </button>
@@ -316,8 +316,8 @@ const UnitMasterList: React.FC = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 w-full border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                 onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
               />
             </div>
@@ -326,7 +326,7 @@ const UnitMasterList: React.FC = () => {
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="text-white" style={{ background: 'linear-gradient(to right, #016ab2, #063f6f)' }}>
+              <thead className="text-white" style={{ background: 'linear-gradient(to right, #047857, #065f46)' }}>
                 <tr>
                   <th className="px-6 py-4 text-left text-sm font-semibold">Unit No.</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold">Unit Type</th>
@@ -353,7 +353,7 @@ const UnitMasterList: React.FC = () => {
                   </tr>
                 ) : (
                   filteredUnits.map((unit) => (
-                    <tr key={unit._id} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                    <tr key={unit._id} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                       <td className="px-6 py-4 font-medium text-primary">{unit.unitNo}</td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${unit.unitType === 'Truck' ? 'bg-blue-100 text-blue-800' :
@@ -393,7 +393,7 @@ const UnitMasterList: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleEditUnit(unit)}
-                            className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition-colors"
+                            className="p-2 text-[#059669] hover:bg-blue-50 rounded-lg transition-colors"
                             title="Edit"
                           >
                             <Edit className="w-4 h-4" />
@@ -425,7 +425,7 @@ const UnitMasterList: React.FC = () => {
             }} />
             <div className="fixed top-0 right-0 h-full w-full sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] bg-card shadow-2xl transform transition-transform duration-500 ease-out z-[101] border-l border-theme">
               <div className="h-full flex flex-col">
-                <div className="flex-shrink-0 px-6 py-4 flex items-center justify-between text-white" style={{ background: 'linear-gradient(to right, #016ab2, #063f6f)' }}>
+                <div className="flex-shrink-0 px-6 py-4 flex items-center justify-between text-white" style={{ background: 'linear-gradient(to right, #047857, #065f46)' }}>
                   <h2 className="text-2xl font-bold">{showAddModal ? 'Add New Unit' : 'Edit Unit'}</h2>
                   <button
                     onClick={() => {
@@ -447,8 +447,8 @@ const UnitMasterList: React.FC = () => {
                         value={formData.unitNo}
                         onChange={(e) => setFormData({ ...formData, unitNo: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="e.g., 1001, BRV001"
                       />
@@ -459,8 +459,8 @@ const UnitMasterList: React.FC = () => {
                         value={formData.unitType}
                         onChange={(e) => setFormData({ ...formData, unitType: e.target.value as UnitType })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                       >
                         <option value="Truck">Truck</option>
@@ -477,8 +477,8 @@ const UnitMasterList: React.FC = () => {
                         value={formData.makeModel}
                         onChange={(e) => setFormData({ ...formData, makeModel: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="e.g., Kenworth T680"
                       />
@@ -490,8 +490,8 @@ const UnitMasterList: React.FC = () => {
                         value={formData.vinNo}
                         onChange={(e) => setFormData({ ...formData, vinNo: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent font-mono"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="17-character VIN"
                       />
@@ -503,8 +503,8 @@ const UnitMasterList: React.FC = () => {
                         value={formData.licensePlate}
                         onChange={(e) => setFormData({ ...formData, licensePlate: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="e.g., BRV-1001"
                       />
@@ -516,8 +516,8 @@ const UnitMasterList: React.FC = () => {
                         value={formData.initialOdometer}
                         onChange={(e) => setFormData({ ...formData, initialOdometer: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="0"
                       />
@@ -531,8 +531,8 @@ const UnitMasterList: React.FC = () => {
                             value={formData.lastDate}
                             onChange={(e) => setFormData({ ...formData, lastDate: e.target.value })}
                             className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                            style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                            onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                            style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                            onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                             onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                           />
                         </div>
@@ -543,8 +543,8 @@ const UnitMasterList: React.FC = () => {
                             value={formData.reason}
                             onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                             className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                            style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                            onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                            style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                            onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                             onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                             placeholder="SOLD, Rental returned, Scrapped, etc."
                           />
@@ -559,14 +559,14 @@ const UnitMasterList: React.FC = () => {
                         setShowEditModal(false);
                         setSelectedUnit(null);
                       }}
-                      className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                      className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleSaveUnit}
                       className="px-6 py-2 text-white rounded-lg transition-colors hover:opacity-90"
-                      style={{ background: 'linear-gradient(to right, #016ab2, #063f6f)' }}
+                      style={{ background: 'linear-gradient(to right, #047857, #065f46)' }}
                     >
                       {showAddModal ? 'Add Unit' : 'Save Changes'}
                     </button>
@@ -598,7 +598,7 @@ const UnitMasterList: React.FC = () => {
                 <div className="flex justify-end gap-3">
                   <button
                     onClick={() => setShowDeleteModal(false)}
-                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                   >
                     Cancel
                   </button>

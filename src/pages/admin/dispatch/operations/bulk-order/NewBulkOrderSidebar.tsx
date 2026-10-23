@@ -370,7 +370,7 @@ const NewBulkOrderSidebar = ({ order, onClose, onSave }: any) => {
                 </h2>
                 <button
                     onClick={onClose}
-                    className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition-colors"
+                    className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors"
                 >
                     <X className="w-5 h-5 text-secondary" />
                 </button>
@@ -410,7 +410,7 @@ const NewBulkOrderSidebar = ({ order, onClose, onSave }: any) => {
                                                 setSelectedCustomer(null);
                                                 setCustomerSearch("");
                                             }}
-                                            className="p-1 hover:bg-[rgba(255,255,255,0.03)] rounded flex-shrink-0"
+                                            className="p-1 hover:bg-[rgba(15,31,23,0.03)] rounded flex-shrink-0"
                                         >
                                             <X className="w-4 h-4 text-secondary" />
                                         </button>
@@ -444,7 +444,7 @@ const NewBulkOrderSidebar = ({ order, onClose, onSave }: any) => {
                                                         className={`px-3 py-2 cursor-pointer hover:bg-blue-50 text-sm ${selectedCustomer?._id === customer._id ? 'bg-card' : ''
                                                             }`}
                                                     >
-                                                        <div className="font-medium text-[#00D1FF]">{customer.name || 'Unnamed Customer'}</div>
+                                                        <div className="font-medium text-[#059669]">{customer.name || 'Unnamed Customer'}</div>
                                                         <div className="text-xs text-secondary">{customer.address || customer.email || customer.phone || ''}</div>
                                                     </div>
                                                 ))
@@ -528,7 +528,7 @@ const NewBulkOrderSidebar = ({ order, onClose, onSave }: any) => {
                                                 setSelectedPickupPlace(null);
                                                 setPickupSearch("");
                                             }}
-                                            className="p-1 hover:bg-[rgba(255,255,255,0.03)] rounded flex-shrink-0"
+                                            className="p-1 hover:bg-[rgba(15,31,23,0.03)] rounded flex-shrink-0"
                                         >
                                             <X className="w-4 h-4 text-secondary" />
                                         </button>
@@ -562,7 +562,7 @@ const NewBulkOrderSidebar = ({ order, onClose, onSave }: any) => {
                                                         className={`px-3 py-2 cursor-pointer hover:bg-blue-50 text-sm ${selectedPickupPlace?._id === place._id ? 'bg-card' : ''
                                                             }`}
                                                     >
-                                                        <div className="font-medium text-[#00D1FF]">{place.name || 'Unnamed Place'}</div>
+                                                        <div className="font-medium text-[#059669]">{place.name || 'Unnamed Place'}</div>
                                                         <div className="text-xs text-secondary">{place.currentLocation?.address || `${place.city || ''}, ${place.state || ''}`}</div>
                                                     </div>
                                                 ))
@@ -631,7 +631,7 @@ const NewBulkOrderSidebar = ({ order, onClose, onSave }: any) => {
                                                 setSelectedDeliveryPlace(null);
                                                 setDeliverySearch("");
                                             }}
-                                            className="p-1 hover:bg-[rgba(255,255,255,0.03)] rounded flex-shrink-0"
+                                            className="p-1 hover:bg-[rgba(15,31,23,0.03)] rounded flex-shrink-0"
                                         >
                                             <X className="w-4 h-4 text-secondary" />
                                         </button>
@@ -665,7 +665,7 @@ const NewBulkOrderSidebar = ({ order, onClose, onSave }: any) => {
                                                         className={`px-3 py-2 cursor-pointer hover:bg-blue-50 text-sm ${selectedDeliveryPlace?._id === place._id ? 'bg-card' : ''
                                                             }`}
                                                     >
-                                                        <div className="font-medium text-[#00D1FF]">{place.name || 'Unnamed Place'}</div>
+                                                        <div className="font-medium text-[#059669]">{place.name || 'Unnamed Place'}</div>
                                                         <div className="text-xs text-secondary">{place.currentLocation?.address || `${place.city || ''}, ${place.state || ''}`}</div>
                                                     </div>
                                                 ))
@@ -806,12 +806,12 @@ const NewBulkOrderSidebar = ({ order, onClose, onSave }: any) => {
                                 Tax 1
                             </label>
                             <div className="flex items-center gap-2">
-                                <label className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg cursor-pointer hover:bg-[rgba(255,255,255,0.03)] bg-card min-w-fit">
+                                <label className="flex items-center gap-2 px-3 py-2 border border-theme rounded-lg cursor-pointer hover:bg-[rgba(15,31,23,0.03)] bg-card min-w-fit">
                                     <input
                                         type="checkbox"
                                         checked={tax1}
                                         onChange={(e) => setTax1(e.target.checked)}
-                                        className="w-4 h-4 text-[#00D1FF] rounded focus:ring-blue-500"
+                                        className="w-4 h-4 text-[#059669] rounded focus:ring-blue-500"
                                     />
                                     <span className="text-sm whitespace-nowrap">Tax 1</span>
                                 </label>
@@ -879,7 +879,7 @@ const NewBulkOrderSidebar = ({ order, onClose, onSave }: any) => {
             <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-theme bg-card">
                 <button
                     onClick={handleReset}
-                    className="px-6 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="px-6 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                 >
                     Reset
                 </button>

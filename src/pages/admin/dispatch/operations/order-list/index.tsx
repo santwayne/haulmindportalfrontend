@@ -121,7 +121,7 @@ const ToastNotification = ({ notification, onClose, onChatClick, onDocumentClick
                 e.stopPropagation();
                 onClose(notification.id);
               }}
-              className="flex-shrink-0 w-8 h-8 rounded-full hover:hover:bg-[rgba(255,255,255,0.05)] flex items-center justify-center text-secondary hover:text-secondary transition-all"
+              className="flex-shrink-0 w-8 h-8 rounded-full hover:hover:bg-[rgba(15,31,23,0.05)] flex items-center justify-center text-secondary hover:text-secondary transition-all"
             >
               <X size={18} />
             </button>
@@ -161,7 +161,7 @@ const ToastNotification = ({ notification, onClose, onChatClick, onDocumentClick
                 {notification.message}
               </p>
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 text-[#00D1FF] text-xs font-semibold">
+                <div className="flex items-center gap-2 text-[#059669] text-xs font-semibold">
                   <MessageCircle className="w-4 h-4" />
                   <span>Click to reply</span>
                 </div>
@@ -174,7 +174,7 @@ const ToastNotification = ({ notification, onClose, onChatClick, onDocumentClick
                 e.stopPropagation();
                 onClose(notification.id);
               }}
-              className="flex-shrink-0 w-8 h-8 rounded-full hover:hover:bg-[rgba(255,255,255,0.05)] flex items-center justify-center text-secondary hover:text-secondary transition-all"
+              className="flex-shrink-0 w-8 h-8 rounded-full hover:hover:bg-[rgba(15,31,23,0.05)] flex items-center justify-center text-secondary hover:text-secondary transition-all"
             >
               <X size={18} />
             </button>
@@ -1036,9 +1036,9 @@ const OrderList = () => {
       case "verification_pending":
         return "bg-[var(--accent-orange)]/10 text-[var(--accent-orange)]";
       case "completed":
-        return "bg-white/5 text-primary";
+        return "bg-black/5 text-primary";
       default:
-        return "bg-white/5 text-primary";
+        return "bg-black/5 text-primary";
     }
   };
 
@@ -1311,7 +1311,7 @@ const OrderList = () => {
             background: var(--bg-card);
           }
           .top-scrollbar-container::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.1);
+            background: rgba(15,31,23,0.1);
             border-radius: 4px;
           }
           .top-scrollbar-container::-webkit-scrollbar-thumb:hover {
@@ -1332,7 +1332,7 @@ const OrderList = () => {
             maxHeight: '20px',
             marginBottom: '2px',
             scrollbarWidth: 'thin',
-            scrollbarColor: '#224c75 #111c24' /* Firefox */
+            scrollbarColor: '#065f46 #e7f2ec' /* Firefox */
           }}
         >
           <div className="top-scroll-content" style={{ height: '1px' }}></div>
@@ -1530,7 +1530,7 @@ const OrderList = () => {
                   return (
                     <tr
                       key={order.id}
-                      className={`hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors ${selectedOrderIds.has(order.id) ? 'bg-blue-50/20' : ''}`}
+                      className={`hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors ${selectedOrderIds.has(order.id) ? 'bg-blue-50/20' : ''}`}
                       onClick={async () => {
                         // Open sidebar in edit mode
                         try {
@@ -1776,7 +1776,7 @@ const OrderList = () => {
                               className="flex items-center justify-center gap-2 px-3 py-2 bg-card hover:bg-blue-50 border border-theme rounded transition-colors cursor-pointer"
                               title={`Click to view ${attachmentCount} document${attachmentCount !== 1 ? 's' : ''}`}
                             >
-                              <File className={attachmentCount > 0 ? "text-[#00D1FF]" : "text-secondary"} size={16} />
+                              <File className={attachmentCount > 0 ? "text-[#059669]" : "text-secondary"} size={16} />
                               <span className={`text-sm font-semibold ${attachmentCount > 0 ? 'text-blue-800' : 'text-secondary'}`}>
                                 {attachmentCount}
                               </span>
@@ -1801,7 +1801,7 @@ const OrderList = () => {
             <button
               onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1 border border-theme rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[rgba(255,255,255,0.03)]"
+              className="px-3 py-1 border border-theme rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[rgba(15,31,23,0.03)]"
             >
               Previous
             </button>
@@ -1809,7 +1809,7 @@ const OrderList = () => {
             <button
               onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
-              className="px-3 py-1 border border-theme rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[rgba(255,255,255,0.03)]"
+              className="px-3 py-1 border border-theme rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[rgba(15,31,23,0.03)]"
             >
               Next
             </button>
@@ -1844,7 +1844,7 @@ const OrderList = () => {
                   setShowDocumentsModal(false);
                   setSelectedOrderForDocuments(null);
                 }}
-                className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition-colors"
+                className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors"
               >
                 <X className="w-5 h-5 text-secondary" />
               </button>
@@ -1965,7 +1965,7 @@ const OrderList = () => {
                                       alert('Document URL not available');
                                     }
                                   }}
-                                  className="px-3 py-1.5 text-xs font-medium text-[#00D1FF] hover:text-blue-700 hover:bg-blue-50 rounded border border-blue-200 transition-colors flex items-center gap-1 flex-shrink-0"
+                                  className="px-3 py-1.5 text-xs font-medium text-[#059669] hover:text-blue-700 hover:bg-blue-50 rounded border border-blue-200 transition-colors flex items-center gap-1 flex-shrink-0"
                                   title="View Document in New Tab"
                                 >
                                   <Download className="w-3 h-3" />
@@ -2125,7 +2125,7 @@ const OrderList = () => {
                     setShowOrderDetails(false);
                     setTimeout(() => setSelectedOrder(null), 300);
                   }}
-                  className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] transition-all"
+                  className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] transition-all"
                 >
                   <X size={24} />
                 </button>
@@ -2162,7 +2162,7 @@ const OrderList = () => {
                 {/* Order Information */}
                 <div className="bg-card p-6 rounded-lg border border-theme">
                   <h4 className="font-semibold text-primary mb-4 text-lg flex items-center gap-2">
-                    <Package size={20} className="text-[#00D1FF]" />
+                    <Package size={20} className="text-[#059669]" />
                     Order Information
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2213,7 +2213,7 @@ const OrderList = () => {
                 {selectedOrder.totalAmount && (
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200">
                     <h4 className="font-semibold text-primary mb-4 text-lg flex items-center gap-2">
-                      <DollarSign size={20} className="text-[#00D1FF]" />
+                      <DollarSign size={20} className="text-[#059669]" />
                       Financial Details
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2231,7 +2231,7 @@ const OrderList = () => {
                 {(selectedOrder.pickupDate || selectedOrder.pickupLocation || selectedOrder.pickupRefNo) && (
                   <div className="bg-card p-6 rounded-lg border border-theme">
                     <h4 className="font-semibold text-primary mb-4 text-lg flex items-center gap-2">
-                      <Route size={20} className="text-[#00D1FF]" />
+                      <Route size={20} className="text-[#059669]" />
                       Pickup Information
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2244,7 +2244,7 @@ const OrderList = () => {
                       {selectedOrder.pickupLocation && (
                         <div className="md:col-span-2">
                           <p className="text-sm text-secondary mb-1 flex items-center gap-1">
-                            <Route size={14} className="text-[#00D1FF]" />
+                            <Route size={14} className="text-[#059669]" />
                             Pickup Location
                           </p>
                           <p className="font-medium text-primary">{selectedOrder.pickupLocation}</p>
@@ -2297,7 +2297,7 @@ const OrderList = () => {
                 {(selectedOrder.driver || selectedOrder.truckNo || selectedOrder.trailerNo) && (
                   <div className="bg-card p-6 rounded-lg border border-theme">
                     <h4 className="font-semibold text-primary mb-4 text-lg flex items-center gap-2">
-                      <Truck size={20} className="text-[#00D1FF]" />
+                      <Truck size={20} className="text-[#059669]" />
                       Driver & Vehicle Information
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

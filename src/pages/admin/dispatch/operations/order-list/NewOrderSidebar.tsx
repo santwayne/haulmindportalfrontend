@@ -10,9 +10,9 @@ import { getUserInfo } from "../../../../../utils/auth";
 import AddressSearch from "../../../../../components/common/AddressSearch";
 
 // Color constants
-const PRIMARY_GRADIENT = 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)';
-const PRIMARY_COLOR = '#016ab2';
-const PRIMARY_LIGHT_BG = 'rgba(66, 174, 236, 0.1)';
+const PRIMARY_GRADIENT = 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)';
+const PRIMARY_COLOR = '#047857';
+const PRIMARY_LIGHT_BG = 'rgba(16,185,129, 0.1)';
 
 type NotificationType = 'success' | 'error' | 'warning';
 
@@ -2650,7 +2650,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
     return (
         <div className="h-full flex flex-col bg-card">
             {/* Fixed Header */}
-            <div className="flex items-center justify-between p-5 border-b-2 border-theme bg-gradient-to-r from-[#0B1A2A] to-[#0F2A44] flex-shrink-0 shadow-sm">
+            <div className="flex items-center justify-between p-5 border-b-2 border-theme bg-gradient-to-r from-[#022c22] to-[#065f46] flex-shrink-0 shadow-sm">
                 <div className="flex-1">
                     <div className="flex items-center justify-between mb-3">
                         <h2 className="text-xl font-bold text-primary">{order ? 'Edit Order' : 'Create New Order'}</h2>
@@ -2677,7 +2677,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                 </div>
                 <button
                     onClick={onClose}
-                    className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors ml-4"
+                    className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors ml-4"
                 >
                     <X className="w-5 h-5 text-secondary" />
                 </button>
@@ -2738,7 +2738,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                 setSelectedCustomer(null);
                                                                 setCustomerSearch("");
                                                             }}
-                                                            className="p-1 hover:bg-[rgba(255,255,255,0.03)] rounded flex-shrink-0"
+                                                            className="p-1 hover:bg-[rgba(15,31,23,0.03)] rounded flex-shrink-0"
                                                         >
                                                             <X className="w-4 h-4 text-secondary" />
                                                         </button>
@@ -2773,7 +2773,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                             <div
                                                                                 key={`customer-${customer._id || customer.id}`}
                                                                                 onClick={() => handleCustomerSelect(customer)}
-                                                                                className={`px-3 py-2 cursor-pointer text-sm hover:bg-[rgba(255,255,255,0.03)] ${(selectedCustomer?._id || selectedCustomer?.id) === (customer._id || customer.id) ? 'bg-card' : ''
+                                                                                className={`px-3 py-2 cursor-pointer text-sm hover:bg-[rgba(15,31,23,0.03)] ${(selectedCustomer?._id || selectedCustomer?.id) === (customer._id || customer.id) ? 'bg-card' : ''
                                                                                     }`}
                                                                             >
                                                                                 <div className="font-medium !text-white">{customer.name || 'Unnamed Customer'}</div>
@@ -2947,7 +2947,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                     className="flex-1 p-2 border border-theme rounded focus:outline-none focus:ring-2 text-sm"
                                                     placeholder="Enter customs broker"
                                                 />
-                                                <button className="p-2 border border-theme rounded hover:bg-[rgba(255,255,255,0.03)]">
+                                                <button className="p-2 border border-theme rounded hover:bg-[rgba(15,31,23,0.03)]">
                                                     <Search className="w-4 h-4 text-secondary" />
                                                 </button>
                                             </div>
@@ -2987,7 +2987,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                     className="flex-1 p-2 border border-theme rounded focus:outline-none focus:ring-2 text-sm"
                                                     placeholder="Enter PARS number"
                                                 />
-                                                <button className="p-2 border border-theme rounded hover:bg-[rgba(255,255,255,0.03)]">
+                                                <button className="p-2 border border-theme rounded hover:bg-[rgba(15,31,23,0.03)]">
                                                     <Search className="w-4 h-4 text-secondary" />
                                                 </button>
                                             </div>
@@ -3002,7 +3002,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                     className="flex-1 p-2 border border-theme rounded focus:outline-none focus:ring-2 text-sm"
                                                     placeholder="Enter PAPS number"
                                                 />
-                                                <button className="p-2 border border-theme rounded hover:bg-[rgba(255,255,255,0.03)]">
+                                                <button className="p-2 border border-theme rounded hover:bg-[rgba(15,31,23,0.03)]">
                                                     <Search className="w-4 h-4 text-secondary" />
                                                 </button>
                                             </div>
@@ -3165,13 +3165,13 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                     <div className="flex border border-theme rounded overflow-hidden">
                                                         <button
                                                             onClick={() => setRateCurrency("CAD")}
-                                                            className={`px-3 py-2 text-sm ${rateCurrency === "CAD" ? "bg-gray-800 !text-white" : "bg-card text-primary"}`}
+                                                            className={`px-3 py-2 text-sm ${rateCurrency === "CAD" ? "bg-gray-100 text-primary" : "bg-card text-primary"}`}
                                                         >
                                                             CAD
                                                         </button>
                                                         <button
                                                             onClick={() => setRateCurrency("USD")}
-                                                            className={`px-3 py-2 text-sm ${rateCurrency === "USD" ? "bg-gray-800 !text-white" : "bg-card text-primary"}`}
+                                                            className={`px-3 py-2 text-sm ${rateCurrency === "USD" ? "bg-gray-100 text-primary" : "bg-card text-primary"}`}
                                                         >
                                                             USD
                                                         </button>
@@ -3356,38 +3356,38 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                     value={newChargeCategory}
                                                     onChange={(e) => setNewChargeCategory(e.target.value)}
                                                     style={{
-                                                        backgroundColor: "#0F1F2E",
+                                                        backgroundColor: "#f7fbf8",
                                                         color: "#fff"
                                                     }}
                                                     className="
     w-full p-2 rounded text-xs
-    bg-[#0F1F2E] text-white
-    border border-white/10
-    focus:outline-none focus:ring-2 focus:ring-[#00D1FF]
+    bg-[#f7fbf8] text-white
+    border border-black/10
+    focus:outline-none focus:ring-2 focus:ring-[#059669]
     appearance-none cursor-pointer
   "
                                                 >
-                                                    <option value="" className="bg-[#0F1F2E] text-white">
+                                                    <option value="" className="bg-[#f7fbf8] text-white">
                                                         Select Category
                                                     </option>
 
-                                                    <option className="bg-[#0F1F2E] text-white" value="Fuel Surcharge - % Of Base Rate">
+                                                    <option className="bg-[#f7fbf8] text-white" value="Fuel Surcharge - % Of Base Rate">
                                                         Fuel Surcharge - % Of Base Rate
                                                     </option>
 
-                                                    <option className="bg-[#0F1F2E] text-white" value="Bond Charges - $ Per Bond">
+                                                    <option className="bg-[#f7fbf8] text-white" value="Bond Charges - $ Per Bond">
                                                         Bond Charges - $ Per Bond
                                                     </option>
 
-                                                    <option className="bg-[#0F1F2E] text-white" value="Dangerous Goods - $ Per DG">
+                                                    <option className="bg-[#f7fbf8] text-white" value="Dangerous Goods - $ Per DG">
                                                         Dangerous Goods - $ Per DG
                                                     </option>
 
-                                                    <option className="bg-[#0F1F2E] text-white" value="Reefer Surcharge - $">
+                                                    <option className="bg-[#f7fbf8] text-white" value="Reefer Surcharge - $">
                                                         Reefer Surcharge - $
                                                     </option>
 
-                                                    <option className="bg-[#0F1F2E] text-white" value="Scheduled Truck Cancellation Charge - $">
+                                                    <option className="bg-[#f7fbf8] text-white" value="Scheduled Truck Cancellation Charge - $">
                                                         Scheduled Truck Cancellation Charge - $
                                                     </option>
                                                 </select>
@@ -3430,7 +3430,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                             <div className="col-span-1">
                                                 <button
                                                     onClick={addOtherCharge}
-                                                    className="w-full p-2 bg-black !text-white rounded text-md font-bold hover:bg-gray-800 flex items-center justify-center"
+                                                    className="w-full p-2 bg-black !text-white rounded text-md font-bold hover:bg-gray-100 flex items-center justify-center"
                                                 >
                                                     +
                                                 </button>
@@ -3449,7 +3449,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                             {otherCharges.length > 0 ? (
                                                 <div className="max-h-40 overflow-y-auto space-y-1">
                                                     {otherCharges.map((charge, index) => (
-                                                        <div key={index} className="grid grid-cols-12 gap-2 text-xs items-center py-1 hover:bg-[rgba(255,255,255,0.03)] border-b border-theme">
+                                                        <div key={index} className="grid grid-cols-12 gap-2 text-xs items-center py-1 hover:bg-[rgba(15,31,23,0.03)] border-b border-theme">
                                                             <div className="col-span-2">{charge.chargePercent || '-'}</div>
                                                             <div className="col-span-2">{charge.chargeAmount || '-'}</div>
                                                             <div className="col-span-6">{charge.category || charge.description || '-'}</div>
@@ -3530,7 +3530,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                 <tbody>
                                                     {stops.length > 0 ? (
                                                         stops.map((stop, index) => (
-                                                            <tr key={index} className="border-b border-theme hover:bg-[rgba(255,255,255,0.03)]">
+                                                            <tr key={index} className="border-b border-theme hover:bg-[rgba(15,31,23,0.03)]">
                                                                 <td className="p-2 border-r border-theme">{stop.stop}</td>
                                                                 <td className="p-2 border-r border-theme">{stop.shipper || '-'}</td>
                                                                 <td className="p-2 border-r border-theme">{stop.date || '-'}</td>
@@ -3620,7 +3620,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                         setShipperAddress("");
                                                                         setPickupLocationAddress('');
                                                                     }}
-                                                                    className="p-1 hover:bg-[rgba(255,255,255,0.03)] rounded flex-shrink-0"
+                                                                    className="p-1 hover:bg-[rgba(15,31,23,0.03)] rounded flex-shrink-0"
                                                                 >
                                                                     <X className="w-4 h-4 text-secondary" />
                                                                 </button>
@@ -3655,7 +3655,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                                     <div
                                                                                         key={`customer-${customer._id || customer.id}`}
                                                                                         onClick={() => handleShipperSelect(customer)}
-                                                                                        className={`px-3 py-2 cursor-pointer text-sm hover:bg-[rgba(255,255,255,0.03)] ${(selectedShipperCustomer?._id || selectedShipperCustomer?.id) === (customer._id || customer.id) ? 'bg-card' : ''
+                                                                                        className={`px-3 py-2 cursor-pointer text-sm hover:bg-[rgba(15,31,23,0.03)] ${(selectedShipperCustomer?._id || selectedShipperCustomer?.id) === (customer._id || customer.id) ? 'bg-card' : ''
                                                                                             }`}
                                                                                     >
                                                                                         <div className="font-medium !text-white">{customer.name || 'Unnamed Customer'}</div>
@@ -3776,7 +3776,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                 onChange={(e) => setShipperPostalCode(e.target.value)}
                                                                 className="flex-1 p-2 border border-theme rounded focus:outline-none focus:ring-2 text-sm"
                                                             />
-                                                            <button className="p-2 border border-theme rounded hover:bg-[rgba(255,255,255,0.03)] text-green-600">
+                                                            <button className="p-2 border border-theme rounded hover:bg-[rgba(15,31,23,0.03)] text-green-600">
                                                                 ✓
                                                             </button>
                                                         </div>
@@ -3994,7 +3994,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                     {pickupTime && (
                                                                         <button
                                                                             onClick={() => setPickupTime("")}
-                                                                            className="absolute right-2 p-1 hover:bg-[rgba(255,255,255,0.03)] rounded transition-colors"
+                                                                            className="absolute right-2 p-1 hover:bg-[rgba(15,31,23,0.03)] rounded transition-colors"
                                                                             title="Clear"
                                                                             type="button"
                                                                         >
@@ -4032,7 +4032,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                         {pickupStartTime && (
                                                                             <button
                                                                                 onClick={() => setPickupStartTime("")}
-                                                                                className="absolute right-2 p-1 hover:bg-[rgba(255,255,255,0.03)] rounded transition-colors"
+                                                                                className="absolute right-2 p-1 hover:bg-[rgba(15,31,23,0.03)] rounded transition-colors"
                                                                                 title="Clear"
                                                                                 type="button"
                                                                             >
@@ -4068,7 +4068,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                         {pickupEndTime && (
                                                                             <button
                                                                                 onClick={() => setPickupEndTime("")}
-                                                                                className="absolute right-2 p-1 hover:bg-[rgba(255,255,255,0.03)] rounded transition-colors"
+                                                                                className="absolute right-2 p-1 hover:bg-[rgba(15,31,23,0.03)] rounded transition-colors"
                                                                                 title="Clear"
                                                                                 type="button"
                                                                             >
@@ -4151,7 +4151,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                 <tbody>
                                                     {receiverStops.length > 0 ? (
                                                         receiverStops.map((stop, index) => (
-                                                            <tr key={index} className="border-b border-theme hover:bg-[rgba(255,255,255,0.03)]">
+                                                            <tr key={index} className="border-b border-theme hover:bg-[rgba(15,31,23,0.03)]">
                                                                 <td className="p-2 border-r border-theme">{stop.stop}</td>
                                                                 <td className="p-2 border-r border-theme">{stop.receiver || '-'}</td>
                                                                 <td className="p-2 border-r border-theme">{stop.date || '-'}</td>
@@ -4240,7 +4240,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                     setReceiverAddress("");
                                                                     setDeliveryLocationAddress('');
                                                                 }}
-                                                                className="p-1 hover:bg-[rgba(255,255,255,0.03)] rounded flex-shrink-0"
+                                                                className="p-1 hover:bg-[rgba(15,31,23,0.03)] rounded flex-shrink-0"
                                                             >
                                                                 <X className="w-4 h-4 text-secondary" />
                                                             </button>
@@ -4275,7 +4275,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                                 <div
                                                                                     key={`customer-${customer._id || customer.id}`}
                                                                                     onClick={() => handleReceiverSelect(customer)}
-                                                                                    className={`px-3 py-2 cursor-pointer text-sm hover:bg-[rgba(255,255,255,0.03)] ${(selectedReceiverCustomer?._id || selectedReceiverCustomer?.id) === (customer._id || customer.id) ? 'bg-card' : ''
+                                                                                    className={`px-3 py-2 cursor-pointer text-sm hover:bg-[rgba(15,31,23,0.03)] ${(selectedReceiverCustomer?._id || selectedReceiverCustomer?.id) === (customer._id || customer.id) ? 'bg-card' : ''
                                                                                         }`}
                                                                                 >
                                                                                     <div className="font-medium !text-white">{customer.name || 'Unnamed Customer'}</div>
@@ -4710,7 +4710,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                             <tr
                                                                 key={index}
                                                                 onClick={() => setSelectedStopIndex(index)}
-                                                                className={`border-b border-theme hover:bg-[rgba(255,255,255,0.03)] cursor-pointer ${selectedStopIndex === index ? 'bg-card' : ''
+                                                                className={`border-b border-theme hover:bg-[rgba(15,31,23,0.03)] cursor-pointer ${selectedStopIndex === index ? 'bg-card' : ''
                                                                     }`}
                                                             >
                                                                 <td className="px-3 py-2 border-r border-theme">{stop.job}</td>
@@ -4823,7 +4823,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                     )}
                                                                 </td>
                                                                 <td className="px-3 py-2">
-                                                                    <span className={stop.status === 'PENDING' ? "text-[#F59E0B]" : ""}>
+                                                                    <span className={stop.status === 'PENDING' ? "text-[#d97706]" : ""}>
                                                                         {stop.status || ''}
                                                                     </span>
                                                                 </td>
@@ -4850,7 +4850,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                     onClick={() => {
                                                         // Add stop logic
                                                     }}
-                                                    className="w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(255,255,255,0.03)] text-sm"
+                                                    className="w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(15,31,23,0.03)] text-sm"
                                                 >
                                                     +
                                                 </button>
@@ -4862,7 +4862,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                             setSelectedStopIndex(null);
                                                         }
                                                     }}
-                                                    className="w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(255,255,255,0.03)] text-sm"
+                                                    className="w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(15,31,23,0.03)] text-sm"
                                                 >
                                                     -
                                                 </button>
@@ -4948,7 +4948,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                     setSelectedStopIndex(insertIndex);
                                                     addNotification('success', 'TAKE TO YARD - Drop Off job added');
                                                 }}
-                                                className="px-3 py-1.5 bg-card hover:bg-[rgba(255,255,255,0.03)] border border-theme rounded text-xs font-medium text-primary"
+                                                className="px-3 py-1.5 bg-card hover:bg-[rgba(15,31,23,0.03)] border border-theme rounded text-xs font-medium text-primary"
                                             >
                                                 TAKE TO YARD
                                             </button>
@@ -4980,7 +4980,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                     setSelectedStopIndex(insertIndex);
                                                     addNotification('success', 'TRACTOR SWAP - Drop Off job added');
                                                 }}
-                                                className="px-3 py-1.5 bg-card hover:bg-[rgba(255,255,255,0.03)] border border-theme rounded text-xs font-medium text-primary"
+                                                className="px-3 py-1.5 bg-card hover:bg-[rgba(15,31,23,0.03)] border border-theme rounded text-xs font-medium text-primary"
                                             >
                                                 TRACTOR SWAP
                                             </button>
@@ -5050,7 +5050,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                             onClick={() => {
                                                                 // Add assignment logic
                                                             }}
-                                                            className="w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(255,255,255,0.03)] text-sm"
+                                                            className="w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(15,31,23,0.03)] text-sm"
                                                         >
                                                             +
                                                         </button>
@@ -5058,7 +5058,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                             onClick={() => {
                                                                 // Remove assignment logic
                                                             }}
-                                                            className="w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(255,255,255,0.03)] text-sm"
+                                                            className="w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(15,31,23,0.03)] text-sm"
                                                         >
                                                             -
                                                         </button>
@@ -5070,8 +5070,8 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                     <button
                                                         onClick={() => setAssignmentType("DRIVER")}
                                                         className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${assignmentType === "DRIVER"
-                                                            ? "bg-gray-800 !text-white"
-                                                            : "bg-card text-primary border border-theme hover:bg-[rgba(255,255,255,0.03)]"
+                                                            ? "bg-gray-100 text-primary"
+                                                            : "bg-card text-primary border border-theme hover:bg-[rgba(15,31,23,0.03)]"
                                                             }`}
                                                     >
                                                         DRIVER
@@ -5079,8 +5079,8 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                     <button
                                                         onClick={() => setAssignmentType("CARRIER")}
                                                         className={`px-3 py-1.5 rounded text-xs font-medium transition-colors flex items-center gap-1 ${assignmentType === "CARRIER"
-                                                            ? "bg-gray-800 !text-white"
-                                                            : "bg-card text-primary border border-theme hover:bg-[rgba(255,255,255,0.03)]"
+                                                            ? "bg-gray-100 text-primary"
+                                                            : "bg-card text-primary border border-theme hover:bg-[rgba(15,31,23,0.03)]"
                                                             }`}
                                                     >
                                                         CARRIER
@@ -5141,7 +5141,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                                                 addAuditTrailEntry(`Receiver - Carrier Added`);
                                                                                             }
                                                                                         }}
-                                                                                        className="p-2 hover:bg-[rgba(255,255,255,0.03)] cursor-pointer text-sm"
+                                                                                        className="p-2 hover:bg-[rgba(15,31,23,0.03)] cursor-pointer text-sm"
                                                                                     >
                                                                                         {carrier.name || carrier.companyName || 'N/A'}
                                                                                     </div>
@@ -5226,7 +5226,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                                                     addAuditTrailEntry(`Receiver - Truck Added`);
                                                                                                 }
                                                                                             }}
-                                                                                            className="p-2 hover:bg-[rgba(255,255,255,0.03)] cursor-pointer text-sm border-b border-theme last:border-b-0"
+                                                                                            className="p-2 hover:bg-[rgba(15,31,23,0.03)] cursor-pointer text-sm border-b border-theme last:border-b-0"
                                                                                         >
                                                                                             <div className="font-medium text-primary">
                                                                                                 {truck.plateNumber || truck.vehicleNumber || truck.unitNumber || truck.name || 'N/A'}
@@ -5334,7 +5334,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                                                     addAuditTrailEntry(`Receiver - Trailer Added`);
                                                                                                 }
                                                                                             }}
-                                                                                            className="p-2 hover:bg-[rgba(255,255,255,0.03)] cursor-pointer text-sm border-b border-theme last:border-b-0"
+                                                                                            className="p-2 hover:bg-[rgba(15,31,23,0.03)] cursor-pointer text-sm border-b border-theme last:border-b-0"
                                                                                         >
                                                                                             <div className="font-medium text-primary">
                                                                                                 {trailer.trailer || trailer.plateNumber || trailer.unitNumber || trailer.name || 'N/A'}
@@ -5437,7 +5437,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                                                     addAuditTrailEntry(`Receiver - Driver Added`);
                                                                                                 }
                                                                                             }}
-                                                                                            className="p-3 hover:bg-[rgba(255,255,255,0.03)] cursor-pointer text-sm border-b border-theme last:border-b-0"
+                                                                                            className="p-3 hover:bg-[rgba(15,31,23,0.03)] cursor-pointer text-sm border-b border-theme last:border-b-0"
                                                                                         >
                                                                                             <div className="font-medium text-primary flex items-center justify-between mb-1">
                                                                                                 <span>{driver.name || driver.internalId || 'N/A'}</span>
@@ -5571,7 +5571,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                                             <span className="w-24 flex-shrink-0">HR Approval:</span>
                                                                                             <span className={
                                                                                                 selectedDriver.hrApprovalStatus === 'APPROVED' ? 'text-green-600 font-medium' :
-                                                                                                    selectedDriver.hrApprovalStatus === 'IN_REVIEW' ? 'text-[#00FFA3] font-medium' :
+                                                                                                    selectedDriver.hrApprovalStatus === 'IN_REVIEW' ? 'text-[#059669] font-medium' :
                                                                                                         'text-secondary'
                                                                                             }>
                                                                                                 {selectedDriver.hrApprovalStatus === 'APPROVED' ? '✓ Approved' :
@@ -5586,7 +5586,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                                                 <div className="flex items-center mt-1">
                                                                                                     <span className="w-24 flex-shrink-0">Drug Test:</span>
                                                                                                     <span className={`font-medium ${drugTestStatus === 'completed' ? 'text-green-600' :
-                                                                                                        drugTestStatus === 'pending' ? 'text-[#00FFA3]' :
+                                                                                                        drugTestStatus === 'pending' ? 'text-[#059669]' :
                                                                                                             'text-[#A855F7]'
                                                                                                         }`}>
                                                                                                         {drugTestStatus === 'completed' ? '✓ Completed' :
@@ -5657,7 +5657,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                                                     addAuditTrailEntry(`Receiver - Codriver Added`);
                                                                                                 }
                                                                                             }}
-                                                                                            className="p-3 hover:bg-[rgba(255,255,255,0.03)] cursor-pointer text-sm border-b border-theme last:border-b-0"
+                                                                                            className="p-3 hover:bg-[rgba(15,31,23,0.03)] cursor-pointer text-sm border-b border-theme last:border-b-0"
                                                                                         >
                                                                                             <div className="font-medium text-primary flex items-center justify-between mb-1">
                                                                                                 <span>{driver.name || driver.internalId || 'N/A'}</span>
@@ -5694,7 +5694,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                                                                     <div className="mt-1 pt-1 border-t border-theme">
                                                                                                                         <div className="font-medium text-primary mb-0.5">Drug Test:</div>
                                                                                                                         <div className={`${drugTestStatus === 'completed' ? 'text-green-600 font-medium' :
-                                                                                                                            drugTestStatus === 'pending' ? 'text-[#00FFA3] font-medium' :
+                                                                                                                            drugTestStatus === 'pending' ? 'text-[#059669] font-medium' :
                                                                                                                                 'text-[#A855F7] font-medium'
                                                                                                                             }`}>
                                                                                                                             {drugTestStatus === 'completed' ? '✓ Completed' :
@@ -5808,7 +5808,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                                             <span className="w-24 flex-shrink-0">HR Approval:</span>
                                                                                             <span className={
                                                                                                 selectedCoDriver.hrApprovalStatus === 'APPROVED' ? 'text-green-600 font-medium' :
-                                                                                                    selectedCoDriver.hrApprovalStatus === 'IN_REVIEW' ? 'text-[#00FFA3] font-medium' :
+                                                                                                    selectedCoDriver.hrApprovalStatus === 'IN_REVIEW' ? 'text-[#059669] font-medium' :
                                                                                                         'text-secondary'
                                                                                             }>
                                                                                                 {selectedCoDriver.hrApprovalStatus === 'APPROVED' ? '✓ Approved' :
@@ -5823,7 +5823,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                                                 <div className="flex items-center mt-1">
                                                                                                     <span className="w-24 flex-shrink-0">Drug Test:</span>
                                                                                                     <span className={`font-medium ${drugTestStatus === 'completed' ? 'text-green-600' :
-                                                                                                        drugTestStatus === 'pending' ? 'text-[#00FFA3]' :
+                                                                                                        drugTestStatus === 'pending' ? 'text-[#059669]' :
                                                                                                             'text-[#A855F7]'
                                                                                                         }`}>
                                                                                                         {drugTestStatus === 'completed' ? '✓ Completed' :
@@ -5851,8 +5851,8 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                 <div className="flex items-center gap-2">
                                                     <button
                                                         onClick={() => setPayType("ADD")}
-                                                        className={`w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(255,255,255,0.03)] text-sm transition-colors ${payType === "ADD"
-                                                            ? "bg-gray-800 !text-white border-gray-800"
+                                                        className={`w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(15,31,23,0.03)] text-sm transition-colors ${payType === "ADD"
+                                                            ? "bg-gray-100 text-primary border-gray-200"
                                                             : "bg-card"
                                                             }`}
                                                     >
@@ -5860,8 +5860,8 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                     </button>
                                                     <button
                                                         onClick={() => setPayType("SUBTRACT")}
-                                                        className={`w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(255,255,255,0.03)] text-sm transition-colors ${payType === "SUBTRACT"
-                                                            ? "bg-gray-800 !text-white border-gray-800"
+                                                        className={`w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(15,31,23,0.03)] text-sm transition-colors ${payType === "SUBTRACT"
+                                                            ? "bg-gray-100 text-primary border-gray-200"
                                                             : "bg-card"
                                                             }`}
                                                     >
@@ -5879,12 +5879,12 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                             const driver = drivers.find(d => d._id === e.target.value);
                                                             setSelectedPayDriver(driver || null);
                                                         }}
-                                                        className="w-full p-2 rounded border border-white/10 
-bg-[#0F1F2E] text-white 
-focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
-                                                        style={{ backgroundColor: "#0F1F2E", color: "#fff" }}
+                                                        className="w-full p-2 rounded border border-black/10 
+bg-[#f7fbf8] text-white 
+focus:outline-none focus:ring-2 focus:ring-[#059669]"
+                                                        style={{ backgroundColor: "#f7fbf8", color: "#fff" }}
                                                     >
-                                                        <option value="" className="bg-[#0F1F2E] text-white">Select Driver</option>
+                                                        <option value="" className="bg-[#f7fbf8] text-white">Select Driver</option>
                                                         {drivers.map((driver) => (
                                                             <option key={driver._id} value={driver._id}>
                                                                 {driver.name || driver.internalId}
@@ -5905,8 +5905,8 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                     <button
                                                         onClick={() => setPayType("TOTAL")}
                                                         className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${payType === "TOTAL"
-                                                            ? "!bg-gradient-to-r from-[#00D1FF] to-[#0066FF] text-white shadow-[0_0_10px_rgba(0,209,255,0.4)]"
-                                                            : "!bg-[#0F1F2E] text-white/80 border border-white/10 hover:bg-[#162A3F]"
+                                                            ? "!bg-gradient-to-r from-[#059669] to-[#059669] text-white shadow-[0_0_10px_rgba(5,150,105,0.4)]"
+                                                            : "!bg-[#f7fbf8] text-white/80 border border-black/10 hover:bg-[#e7f2ec]"
                                                             }`}
                                                     >
                                                         TOTAL
@@ -5915,26 +5915,26 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                         <button
                                                             onClick={() => setPayType("BASE")}
                                                             className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${payType === "BASE"
-                                                                ? "bg-gradient-to-r from-[#00D1FF] to-[#0066FF] text-white shadow-[0_0_10px_rgba(0,209,255,0.4)]"
-                                                                : "bg-[#0F1F2E] text-white/80 border border-white/10 hover:bg-[#162A3F]"
+                                                                ? "bg-gradient-to-r from-[#059669] to-[#059669] text-white shadow-[0_0_10px_rgba(5,150,105,0.4)]"
+                                                                : "bg-[#f7fbf8] text-white/80 border border-black/10 hover:bg-[#e7f2ec]"
                                                                 }`}
                                                         >
                                                             BASE
                                                         </button>
                                                         <button
                                                             onClick={() => setPayType("ADD")}
-                                                            className={`w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(255,255,255,0.03)] text-sm transition-colors ${payType === "ADD"
-                                                                ? "bg-gradient-to-r from-[#00FFA3] to-[#00C853] text-black"
-                                                                : "bg-[#0F1F2E] border border-white/10 text-white hover:bg-[#162A3F]"
+                                                            className={`w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(15,31,23,0.03)] text-sm transition-colors ${payType === "ADD"
+                                                                ? "bg-gradient-to-r from-[#059669] to-[#00C853] text-black"
+                                                                : "bg-[#f7fbf8] border border-black/10 text-white hover:bg-[#e7f2ec]"
                                                                 }`}
                                                         >
                                                             +
                                                         </button>
                                                         <button
                                                             onClick={() => setPayType("SUBTRACT")}
-                                                            className={`w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(255,255,255,0.03)] text-sm transition-colors ${payType === "SUBTRACT"
+                                                            className={`w-6 h-6 flex items-center justify-center border border-theme rounded hover:bg-[rgba(15,31,23,0.03)] text-sm transition-colors ${payType === "SUBTRACT"
                                                                 ? "bg-gradient-to-r from-[#EF4444] to-[#DC2626] text-white"
-                                                                : "bg-[#0F1F2E] border border-white/10 text-white hover:bg-[#162A3F]"
+                                                                : "bg-[#f7fbf8] border border-black/10 text-white hover:bg-[#e7f2ec]"
                                                                 }`}
                                                         >
                                                             -
@@ -5952,8 +5952,8 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                             <button
                                                                 onClick={() => setPayCurrency("CAD")}
                                                                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${payCurrency === "CAD"
-                                                                    ? "bg-gradient-to-r from-[#00D1FF] to-[#0066FF] text-white"
-                                                                    : "bg-[#0F1F2E] text-white/80 border border-white/10 hover:bg-[#162A3F]"
+                                                                    ? "bg-gradient-to-r from-[#059669] to-[#059669] text-white"
+                                                                    : "bg-[#f7fbf8] text-white/80 border border-black/10 hover:bg-[#e7f2ec]"
                                                                     }`}
                                                             >
                                                                 CAD
@@ -5961,8 +5961,8 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                             <button
                                                                 onClick={() => setPayCurrency("USD")}
                                                                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${payCurrency === "USD"
-                                                                    ? "bg-gray-800 !text-white"
-                                                                    : "bg-card text-primary border border-theme hover:bg-[rgba(255,255,255,0.03)]"
+                                                                    ? "bg-gray-100 text-primary"
+                                                                    : "bg-card text-primary border border-theme hover:bg-[rgba(15,31,23,0.03)]"
                                                                     }`}
                                                             >
                                                                 USD
@@ -5975,7 +5975,7 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                                 onClick={() => setPayRateUnit("/MILE")}
                                                                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${payRateUnit === "/MILE"
                                                                     ? "bg-gradient-to-r from-[#A855F7] to-[#6D28D9] text-white"
-                                                                    : "bg-[#0F1F2E] text-white/80 border border-white/10 hover:bg-[#162A3F]"
+                                                                    : "bg-[#f7fbf8] text-white/80 border border-black/10 hover:bg-[#e7f2ec]"
                                                                     }`}
                                                             >
                                                                 /MILE
@@ -5983,8 +5983,8 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                             <button
                                                                 onClick={() => setPayRateUnit("/TRIP")}
                                                                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${payRateUnit === "/TRIP"
-                                                                    ? "bg-gray-800 !text-white"
-                                                                    : "bg-card text-primary border border-theme hover:bg-[rgba(255,255,255,0.03)]"
+                                                                    ? "bg-gray-100 text-primary"
+                                                                    : "bg-card text-primary border border-theme hover:bg-[rgba(15,31,23,0.03)]"
                                                                     }`}
                                                             >
                                                                 /TRIP
@@ -5992,8 +5992,8 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                             <button
                                                                 onClick={() => setPayRateUnit("/HR")}
                                                                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${payRateUnit === "/HR"
-                                                                    ? "bg-gray-800 !text-white"
-                                                                    : "bg-card text-primary border border-theme hover:bg-[rgba(255,255,255,0.03)]"
+                                                                    ? "bg-gray-100 text-primary"
+                                                                    : "bg-card text-primary border border-theme hover:bg-[rgba(15,31,23,0.03)]"
                                                                     }`}
                                                             >
                                                                 /HR
@@ -6001,8 +6001,8 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                             <button
                                                                 onClick={() => setPayRateUnit("/%")}
                                                                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${payRateUnit === "/%"
-                                                                    ? "bg-gray-800 !text-white"
-                                                                    : "bg-card text-primary border border-theme hover:bg-[rgba(255,255,255,0.03)]"
+                                                                    ? "bg-gray-100 text-primary"
+                                                                    : "bg-card text-primary border border-theme hover:bg-[rgba(15,31,23,0.03)]"
                                                                     }`}
                                                             >
                                                                 /%
@@ -6010,8 +6010,8 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                             <button
                                                                 onClick={() => setPayRateUnit("/LOAD")}
                                                                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${payRateUnit === "/LOAD"
-                                                                    ? "bg-gray-800 !text-white"
-                                                                    : "bg-card text-primary border border-theme hover:bg-[rgba(255,255,255,0.03)]"
+                                                                    ? "bg-gray-100 text-primary"
+                                                                    : "bg-card text-primary border border-theme hover:bg-[rgba(15,31,23,0.03)]"
                                                                     }`}
                                                             >
                                                                 /LOAD
@@ -6019,8 +6019,8 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                             <button
                                                                 onClick={() => setPayRateUnit("/DAY")}
                                                                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${payRateUnit === "/DAY"
-                                                                    ? "bg-gray-800 !text-white"
-                                                                    : "bg-card text-primary border border-theme hover:bg-[rgba(255,255,255,0.03)]"
+                                                                    ? "bg-gray-100 text-primary"
+                                                                    : "bg-card text-primary border border-theme hover:bg-[rgba(15,31,23,0.03)]"
                                                                     }`}
                                                             >
                                                                 /DAY
@@ -6139,7 +6139,7 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                                         setPayGst(false);
                                                                     }
                                                                 }}
-                                                                className="w-8 h-8 flex items-center justify-center bg-gray-800 !text-white rounded hover:bg-gray-700 text-sm font-medium"
+                                                                className="w-8 h-8 flex items-center justify-center bg-gray-100 text-primary rounded hover:bg-gray-100 text-sm font-medium"
                                                             >
                                                                 +
                                                             </button>
@@ -6290,7 +6290,7 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                                         setDeductionGst(false);
                                                                     }
                                                                 }}
-                                                                className="w-8 h-8 flex items-center justify-center bg-gray-800 !text-white rounded hover:bg-gray-700 text-sm font-medium"
+                                                                className="w-8 h-8 flex items-center justify-center bg-gray-100 text-primary rounded hover:bg-gray-100 text-sm font-medium"
                                                             >
                                                                 +
                                                             </button>
@@ -6366,7 +6366,7 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                                                     </svg>
                                                                 </button>
-                                                                <button className="w-5 h-5 flex items-center justify-center border border-theme rounded hover:bg-[rgba(255,255,255,0.03)] text-xs">
+                                                                <button className="w-5 h-5 flex items-center justify-center border border-theme rounded hover:bg-[rgba(15,31,23,0.03)] text-xs">
                                                                     +
                                                                 </button>
                                                             </div>
@@ -6473,7 +6473,7 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                             addNotification('success', 'Note added successfully');
                                                         }
                                                     }}
-                                                    className="px-4 py-2 bg-gray-800 !text-white rounded text-sm font-medium hover:bg-gray-700 transition-colors"
+                                                    className="px-4 py-2 bg-gray-100 text-primary rounded text-sm font-medium hover:bg-gray-100 transition-colors"
                                                 >
                                                     Add
                                                 </button>
@@ -6528,7 +6528,7 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                                 </tr>
                                                             ) : auditTrail.length > 0 ? (
                                                                 auditTrail.map((audit) => (
-                                                                    <tr key={audit.id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                                                                    <tr key={audit.id} className="hover:bg-[rgba(15,31,23,0.03)]">
                                                                         <td className="px-3 py-2 text-primary">{audit.user}</td>
                                                                         <td className="px-3 py-2 text-secondary">{audit.action}</td>
                                                                         <td className="px-3 py-2 text-secondary text-xs">{audit.date}</td>
@@ -6566,7 +6566,7 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                                     window.open(url, '_blank');
                                                                 }
                                                             }}
-                                                            className="flex-1 text-sm text-[#00D1FF] hover:text-blue-800 hover:underline text-left"
+                                                            className="flex-1 text-sm text-[#059669] hover:text-blue-800 hover:underline text-left"
                                                         >
                                                             {attachment.name}
                                                         </button>
@@ -6602,7 +6602,7 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                             onClick={() => {
                                                                 // Edit functionality
                                                             }}
-                                                            className="p-1 text-[#00D1FF] hover:text-blue-800"
+                                                            className="p-1 text-[#059669] hover:text-blue-800"
                                                         >
                                                             <Edit className="w-4 h-4" />
                                                         </button>
@@ -6646,7 +6646,7 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                                 });
                                                 addNotification('success', `${files.length} file(s) added`);
                                             }}
-                                            className={`w-full px-4 py-3  text-white rounded text-sm font-medium text-center cursor-pointer hover:bg-gray-700 transition-colors ${isDragging ? 'bg-gray-700 border-2 border-dashed border-white' : ''}`}
+                                            className={`w-full px-4 py-3  text-white rounded text-sm font-medium text-center cursor-pointer hover:bg-gray-100 transition-colors ${isDragging ? 'bg-gray-100 border-2 border-dashed border-white' : ''}`}
                                         >
                                             <label className="block w-full cursor-pointer">
                                                 <input
@@ -6699,15 +6699,15 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                                 className="
     px-6 py-2.5 rounded-lg flex items-center gap-2
     text-white/80 font-medium
-    bg-[#0F1F2E]
-    border border-white/10
+    bg-[#f7fbf8]
+    border border-black/10
     shadow-sm
     transition-all duration-300
 
     hover:text-white
-    hover:bg-[#162A3F]
-    hover:border-[#00D1FF]/40
-    hover:shadow-[0_0_12px_rgba(0,209,255,0.3)]
+    hover:bg-[#e7f2ec]
+    hover:border-[#059669]/40
+    hover:shadow-[0_0_12px_rgba(5,150,105,0.3)]
 
     active:scale-[0.97]
   "
@@ -6723,15 +6723,15 @@ focus:outline-none focus:ring-2 focus:ring-[#00D1FF]"
                             className="
     px-6 py-2.5 rounded-lg flex items-center gap-2
     text-white/80 font-medium
-    bg-[#0F1F2E]
-    border border-white/10
+    bg-[#f7fbf8]
+    border border-black/10
     shadow-sm
     transition-all duration-300
 
     hover:text-white
-    hover:bg-[#162A3F]
-    hover:border-[#00D1FF]/40
-    hover:shadow-[0_0_12px_rgba(0,209,255,0.3)]
+    hover:bg-[#e7f2ec]
+    hover:border-[#059669]/40
+    hover:shadow-[0_0_12px_rgba(5,150,105,0.3)]
 
     active:scale-[0.97]
   "

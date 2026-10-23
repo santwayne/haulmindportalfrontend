@@ -297,7 +297,7 @@ const DriverViolationsPage: React.FC = () => {
 
             <button
               onClick={handleApplyFilters}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-primary rounded-lg hover:bg-gray-900 transition"
             >
               <FaFilter />
               Apply
@@ -418,7 +418,7 @@ const DriverViolationsPage: React.FC = () => {
                 </thead>
                 <tbody className="bg-card divide-y divide-theme">
                   {violations.map((violation) => (
-                    <tr key={violation._id} className="hover:bg-[rgba(255,255,255,0.03)] transition">
+                    <tr key={violation._id} className="hover:bg-[rgba(15,31,23,0.03)] transition">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary">
                         {violation.violationId}
                       </td>
@@ -457,7 +457,7 @@ const DriverViolationsPage: React.FC = () => {
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleViewDetails(violation)}
-                            className="text-[#00D1FF] hover:text-blue-800 p-1"
+                            className="text-[#059669] hover:text-blue-800 p-1"
                             title="View Details"
                           >
                             <FaEye />
@@ -491,14 +491,14 @@ const DriverViolationsPage: React.FC = () => {
                   <button
                     onClick={() => fetchViolations(pagination.page - 1)}
                     disabled={pagination.page === 1}
-                    className="px-4 py-2 border border-theme rounded-lg text-sm font-medium text-primary bg-card hover:bg-[rgba(255,255,255,0.03)] disabled:bg-card disabled:text-secondary disabled:cursor-not-allowed"
+                    className="px-4 py-2 border border-theme rounded-lg text-sm font-medium text-primary bg-card hover:bg-[rgba(15,31,23,0.03)] disabled:bg-card disabled:text-secondary disabled:cursor-not-allowed"
                   >
                     Previous
                   </button>
                   <button
                     onClick={() => fetchViolations(pagination.page + 1)}
                     disabled={pagination.page === pagination.totalPages}
-                    className="px-4 py-2 border border-theme rounded-lg text-sm font-medium text-primary bg-card hover:bg-[rgba(255,255,255,0.03)] disabled:bg-card disabled:text-secondary disabled:cursor-not-allowed"
+                    className="px-4 py-2 border border-theme rounded-lg text-sm font-medium text-primary bg-card hover:bg-[rgba(15,31,23,0.03)] disabled:bg-card disabled:text-secondary disabled:cursor-not-allowed"
                   >
                     Next
                   </button>

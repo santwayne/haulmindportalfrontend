@@ -886,7 +886,7 @@ const DriverChat: React.FC<DriverChatProps> = ({ onClose }) => {
                   <button
                     key={driver._id}
                     onClick={() => setSelectedDriver(driver)}
-                    className={`w-full px-3 py-2.5 text-left transition-colors border-b border-gray-50 ${isSelected ? 'bg-card border-l-2 border-l-[var(--accent-navyblue)]' : 'hover:bg-[rgba(255,255,255,0.03)]'
+                    className={`w-full px-3 py-2.5 text-left transition-colors border-b border-gray-50 ${isSelected ? 'bg-card border-l-2 border-l-[var(--accent-navyblue)]' : 'hover:bg-[rgba(15,31,23,0.03)]'
                       }`}
                   >
                     <div className="flex items-center gap-2.5">
@@ -970,7 +970,7 @@ const DriverChat: React.FC<DriverChatProps> = ({ onClose }) => {
                   <button
                     onClick={handleStartCall}
                     disabled={callState !== "idle"}
-                    className="p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors disabled:opacity-50"
+                    className="p-2 bg-black/20 hover:bg-white/30 rounded-full transition-colors disabled:opacity-50"
                     title="Call driver"
                   >
                     <Phone className="w-4 h-4 text-white" />
@@ -1579,7 +1579,7 @@ const DriverChat: React.FC<DriverChatProps> = ({ onClose }) => {
                 {callState === "connected" ? (
                   <button
                     onClick={() => setIsMinimized(true)}
-                    className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                    className="w-9 h-9 rounded-full bg-black/10 hover:bg-black/20 flex items-center justify-center transition-colors"
                     title="Minimize"
                   >
                     <Minimize2 className="w-4 h-4 text-white/70" />
@@ -1590,7 +1590,7 @@ const DriverChat: React.FC<DriverChatProps> = ({ onClose }) => {
               {/* Center — avatar, name, timer/status */}
               <div className="flex-1 flex flex-col items-center justify-center">
                 <div
-                  className={`w-24 h-24 rounded-full bg-blue-600 flex items-center justify-center mb-5 text-white text-4xl font-bold border-4 border-white/10 shadow-[0_0_40px_rgba(25,118,210,0.4)] ${callState === "incoming" ? "animate-pulse" : ""}`}
+                  className={`w-24 h-24 rounded-full bg-blue-600 flex items-center justify-center mb-5 text-white text-4xl font-bold border-4 border-black/10 shadow-[0_0_40px_rgba(5,150,105,0.4)] ${callState === "incoming" ? "animate-pulse" : ""}`}
                 >
                   {selectedDriver?.name?.charAt(0).toUpperCase() || "D"}
                 </div>
@@ -1608,14 +1608,14 @@ const DriverChat: React.FC<DriverChatProps> = ({ onClose }) => {
                     <div className="flex flex-col items-center gap-2">
                       <button
                         onClick={toggleMute}
-                        className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors border ${isMuted ? "bg-white/25 border-white/35" : "bg-white/10 border-white/15 hover:bg-white/20"}`}
+                        className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors border ${isMuted ? "bg-white/25 border-white/35" : "bg-black/10 border-black/15 hover:bg-black/20"}`}
                       >
                         {isMuted ? <MicOff className="w-5 h-5 text-white" /> : <Mic className="w-5 h-5 text-white" />}
                       </button>
                       <span className="text-white/55 text-xs">{isMuted ? "Unmute" : "Mute"}</span>
                     </div>
                     <div className="flex flex-col items-center gap-2">
-                      <div className="w-12 h-12 rounded-full bg-white/10 border border-white/15 flex items-center justify-center opacity-40 cursor-not-allowed">
+                      <div className="w-12 h-12 rounded-full bg-black/10 border border-black/15 flex items-center justify-center opacity-40 cursor-not-allowed">
                         <Volume2 className="w-5 h-5 text-white" />
                       </div>
                       <span className="text-white/35 text-xs">Speaker</span>

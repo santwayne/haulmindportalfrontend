@@ -177,14 +177,14 @@ const AccountsSection = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-secondary text-sm mb-1">Total Revenue</p>
-              <p className="text-3xl font-bold text-[#00D1FF]">
+              <p className="text-3xl font-bold text-[#059669]">
                 {formatCurrency(totalDue + totalPaid)}
               </p>
               <p className="text-xs text-secondary mt-1">
                 {loads.length} total loads
               </p>
             </div>
-            <FaDollarSign className="text-[#00D1FF]" size={32} />
+            <FaDollarSign className="text-[#059669]" size={32} />
           </div>
         </div>
       </div>
@@ -225,14 +225,14 @@ const AccountsSection = () => {
               {filteredLoads.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-6 py-12 text-center text-secondary">
-                    <FaTruck className="mx-auto mb-3 text-gray-300" size={48} />
+                    <FaTruck className="mx-auto mb-3 text-gray-600" size={48} />
                     <p>No payments to track</p>
                   </td>
                 </tr>
               ) : (
                 filteredLoads.map((load) => (
                   <tr key={load._id} className="hover:bg-blue-50">
-                    <td className="px-6 py-4 whitespace-nowrap font-semibold text-[#00D1FF]">
+                    <td className="px-6 py-4 whitespace-nowrap font-semibold text-[#059669]">
                       {load.loadNumber || load._id}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">

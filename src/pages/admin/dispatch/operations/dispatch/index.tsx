@@ -344,7 +344,7 @@ const Index = () => {
               {loads.length === 0 ? (
                 <tr>
                   <td colSpan={11} className="px-6 py-12 text-center text-secondary">
-                    <FaTruck className="mx-auto mb-3 text-gray-300" size={48} />
+                    <FaTruck className="mx-auto mb-3 text-gray-600" size={48} />
                     <p className="text-lg font-medium">No loads available</p>
                     <p className="text-sm">{emptyStateMessage || 'Create a new load to get started'}</p>
                   </td>
@@ -358,8 +358,8 @@ const Index = () => {
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
-                        <FaTruck className="text-[#00D1FF]" size={16} />
-                        <span className="font-semibold text-[#00D1FF]">{load.loadNumber || load._id}</span>
+                        <FaTruck className="text-[#059669]" size={16} />
+                        <span className="font-semibold text-[#059669]">{load.loadNumber || load._id}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
@@ -499,7 +499,7 @@ const Index = () => {
                   setShowDetailsModal(false);
                   setSelectedLoad(null);
                 }}
-                className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-lg"
+                className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-lg"
               >
                 <span className="text-secondary">✕</span>
               </button>
@@ -678,7 +678,7 @@ const Index = () => {
                     )}
                     {selectedLoad.route?.selectReturn && (
                       <div className="flex items-center gap-3 p-3 bg-card rounded-lg border border-yellow-200 mt-2">
-                        <FaMapMarkerAlt className="text-[#00FFA3]" size={16} />
+                        <FaMapMarkerAlt className="text-[#059669]" size={16} />
                         <div>
                           <span className="text-xs font-medium text-yellow-700">RETURN</span>
                           <p className="text-sm font-medium text-primary">{selectedLoad.route.selectReturn}</p>
@@ -709,7 +709,7 @@ const Index = () => {
                     )}
                     {selectedLoad.route?.selectReturn && (
                       <div className="flex items-center gap-3 p-3 bg-card rounded-lg border border-yellow-200">
-                        <FaMapMarkerAlt className="text-[#00FFA3]" size={16} />
+                        <FaMapMarkerAlt className="text-[#059669]" size={16} />
                         <div>
                           <span className="text-xs font-medium text-yellow-700">RETURN</span>
                           <p className="text-sm font-medium text-primary">{selectedLoad.route.selectReturn}</p>
@@ -730,7 +730,7 @@ const Index = () => {
                   setShowDetailsModal(false);
                   setSelectedLoad(null);
                 }}
-                className="px-6 py-2 bg-gray-600 !text-white rounded-lg hover:bg-gray-700 font-medium"
+                className="px-6 py-2 bg-gray-200 text-primary rounded-lg hover:bg-gray-100 font-medium"
               >
                 Close
               </button>

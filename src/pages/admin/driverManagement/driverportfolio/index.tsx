@@ -81,7 +81,7 @@ const DrugTestUploadModal: React.FC<{
                     </h2>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition-colors"
+                        className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -160,7 +160,7 @@ focus:border-[var(--accent-purple)]"
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 text-primary bg-card rounded-lg hover:hover:bg-[rgba(255,255,255,0.05)] transition-colors"
+                            className="px-4 py-2 text-primary bg-card rounded-lg hover:hover:bg-[rgba(15,31,23,0.05)] transition-colors"
                         >
                             Cancel
                         </button>
@@ -861,7 +861,7 @@ const DriverPortfolio: React.FC = () => {
                                     <button
                                         key={period}
                                         onClick={() => setTimePeriod(period)}
-                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${timePeriod === period ? '!text-white shadow-md' : 'bg-card text-primary hover:hover:bg-[rgba(255,255,255,0.05)]'
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${timePeriod === period ? '!text-white shadow-md' : 'bg-card text-primary hover:hover:bg-[rgba(15,31,23,0.05)]'
                                             }`}
                                         style={timePeriod === period ? { background: "var(--accent-navyblue)" } : undefined}
                                     >
@@ -916,7 +916,7 @@ const DriverPortfolio: React.FC = () => {
                                     <th className="px-6 py-4 text-left text-sm font-semibold">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-theme divide-white/5">
+                            <tbody className="divide-y divide-theme divide-black/5">
                                 {loading ? (
                                     <tr>
                                         <td colSpan={11} className="px-6 py-12 text-center text-secondary">
@@ -933,7 +933,7 @@ const DriverPortfolio: React.FC = () => {
                                     filteredProfiles.map((profile) => (
                                         <tr
                                             key={profile._id}
-                                            className="hover:bg-[rgba(255,255,255,0.03)] transition-colors cursor-pointer"
+                                            className="hover:bg-[rgba(15,31,23,0.03)] transition-colors cursor-pointer"
                                             onClick={() => {
                                                 setSelectedProfile(profile);
                                                 setShowProfileSidebar(true);
@@ -1042,8 +1042,8 @@ const DriverPortfolio: React.FC = () => {
                                                     <div className="text-xs text-secondary mt-1 flex gap-2">
                                                         <span className="text-green-600">✓ {profile.presentDays}</span>
                                                         {profile.absentDays > 0 && <span className="text-[#A855F7]">✗ {profile.absentDays}</span>}
-                                                        {profile.lateDays > 0 && <span className="text-[#00FFA3]">⚠ {profile.lateDays}</span>}
-                                                        {profile.leaveDays > 0 && <span className="text-[#00D1FF]">L {profile.leaveDays}</span>}
+                                                        {profile.lateDays > 0 && <span className="text-[#059669]">⚠ {profile.lateDays}</span>}
+                                                        {profile.leaveDays > 0 && <span className="text-[#059669]">L {profile.leaveDays}</span>}
                                                     </div>
                                                 </div>
                                             </td>
@@ -1105,7 +1105,7 @@ const DriverPortfolio: React.FC = () => {
                                                         setShowProfileSidebar(true);
                                                     }}
                                                     className="p-2 rounded-lg transition-colors text-[var(--accent-color)] hover:text-[var(--accent-dark)]"
-                                                    style={{ backgroundColor: 'rgba(1, 106, 178, 0.08)' }}
+                                                    style={{ backgroundColor: 'rgba(4,120,87, 0.08)' }}
                                                     title="View Profile"
                                                 >
                                                     <Eye className="w-5 h-5" />
@@ -1132,7 +1132,7 @@ const DriverPortfolio: React.FC = () => {
                     {/* Sidebar */}
                     <div className="fixed top-0 right-0 h-full w-full max-w-4xl bg-card shadow-2xl z-[9999] transform transition-transform duration-300 ease-out overflow-y-auto">
                         {/* Header */}
-                        <div className="sticky top-0 p-6 z-20 bg-card border-b border-white/10 backdrop-blur-md">
+                        <div className="sticky top-0 p-6 z-20 bg-card border-b border-black/10 backdrop-blur-md">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-4">
                                     <div className="w-16 h-16 rounded-full bg-[var(--accent-navyblue)] flex items-center justify-center text-white text-2xl font-bold">
@@ -1146,7 +1146,7 @@ const DriverPortfolio: React.FC = () => {
                                         </p>
                                         {/* Current Order Status */}
                                         {loadingOrder ? (
-                                            <div className="mt-3 bg-card/10 rounded-xl p-3 backdrop-blur-sm border border-white/20">
+                                            <div className="mt-3 bg-card/10 rounded-xl p-3 backdrop-blur-sm border border-black/20">
                                                 <div className="flex items-center gap-2 text-white/90">
                                                     <Clock className="w-4 h-4 animate-spin" />
                                                     <span className="text-sm font-medium">Loading order status...</span>
@@ -1268,7 +1268,7 @@ const DriverPortfolio: React.FC = () => {
                                                 })()
                                             )
                                                 : (
-                                                    <div className="mt-3 bg-card/10 rounded-xl p-3 backdrop-blur-sm border border-white/20">
+                                                    <div className="mt-3 bg-card/10 rounded-xl p-3 backdrop-blur-sm border border-black/20">
                                                         <div className="flex items-center gap-2 text-white/80">
                                                             <Package className="w-4 h-4" />
                                                             <span className="text-sm font-medium">No active order</span>
@@ -1450,7 +1450,7 @@ const DriverPortfolio: React.FC = () => {
                             {/* Driver Performance */}
                             <div className="bg-card border border-theme rounded-xl p-6">
                                 <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
-                                    <MapPin className="w-5 h-5 text-[#F59E0B]" />
+                                    <MapPin className="w-5 h-5 text-[#d97706]" />
                                     Driver Performance - {profileTimePeriod === '1week' ? '1 Week' : profileTimePeriod === '2weeks' ? '2 Weeks' : profileTimePeriod === '1month' ? '1 Month' : profileTimePeriod === '6months' ? '6 Months' : profileTimePeriod === '1year' ? '1 Year' : '2 Years'}
                                 </h3>
                                 {(() => {
@@ -1489,7 +1489,7 @@ const DriverPortfolio: React.FC = () => {
                             {/* Attendance Details */}
                             <div className="bg-card border border-theme rounded-xl p-6">
                                 <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
-                                    <Clock className="w-5 h-5 text-[#00D1FF]" />
+                                    <Clock className="w-5 h-5 text-[#059669]" />
                                     Attendance & Working Hours - {profileTimePeriod === '1week' ? '1 Week' : profileTimePeriod === '2weeks' ? '2 Weeks' : profileTimePeriod === '1month' ? '1 Month' : profileTimePeriod === '6months' ? '6 Months' : profileTimePeriod === '1year' ? '1 Year' : '2 Years'}
                                 </h3>
                                 {(() => {
@@ -1515,8 +1515,8 @@ const DriverPortfolio: React.FC = () => {
 
                                                 {/* Working Days */}
                                                 <div className="bg-[var(--accent-blue)]/10 rounded-lg p-4 border border-[var(--accent-blue)]/30">
-                                                    <p className="text-sm text-[#00D1FF] mb-1">Working Days</p>
-                                                    <p className="text-2xl font-bold text-[#00D1FF]">{periodDaysWorked}</p>
+                                                    <p className="text-sm text-[#059669] mb-1">Working Days</p>
+                                                    <p className="text-2xl font-bold text-[#059669]">{periodDaysWorked}</p>
                                                 </div>
 
                                                 {/* Present Days */}

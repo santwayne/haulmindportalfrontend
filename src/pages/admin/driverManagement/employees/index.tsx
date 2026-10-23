@@ -1201,13 +1201,13 @@ const EmployeesPage = () => {
           body { background: #ffffff !important; }
           .print-hide { display: none !important; }
           table { border-collapse: collapse !important; width: 100% !important; font-size: 11px !important; }
-          thead tr { background: #1183e0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          thead th { color: #ffffff !important; padding: 8px 12px !important; border: 1px solid #0d6bc7 !important; font-weight: 600 !important; text-transform: uppercase !important; font-size: 10px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          tbody tr:nth-child(even) { background: #f0f6ff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          thead tr { background: #059669 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          thead th { color: #ffffff !important; padding: 8px 12px !important; border: 1px solid #047857 !important; font-weight: 600 !important; text-transform: uppercase !important; font-size: 10px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          tbody tr:nth-child(even) { background: #f0fdf4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           tbody td { padding: 7px 12px !important; border: 1px solid #dde6f0 !important; color: #1a1a2e !important; }
           .bg-main, .bg-card { background: #ffffff !important; }
           .border-theme { border-color: #dde6f0 !important; }
-          h1 { color: #1183e0 !important; font-size: 20px !important; }
+          h1 { color: #059669 !important; font-size: 20px !important; }
         }
       `}</style>
       {/* Toast Notifications */}
@@ -1344,15 +1344,15 @@ const EmployeesPage = () => {
               <select
                 value={filterBy}
                 onChange={(e) => setFilterBy(e.target.value)}
-                className="px-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200"
+                className="px-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200"
               >
-                <option className="bg-[#0f1b2d] text-white" value="All">
+                <option className="bg-[#ffffff] text-white" value="All">
                   All
                 </option>
-                <option className="bg-[#0f1b2d] text-white" value="Active">
+                <option className="bg-[#ffffff] text-white" value="Active">
                   Active
                 </option>
-                <option className="bg-[#0f1b2d] text-white" value="Inactive">
+                <option className="bg-[#ffffff] text-white" value="Inactive">
                   Inactive
                 </option>
               </select>
@@ -1371,24 +1371,24 @@ const EmployeesPage = () => {
                     handleSort(e.target.value as keyof Employee);
                   }
                 }}
-                className="px-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200"
+                className="px-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200"
               >
-                <option className="bg-[#0f1b2d] text-white" value="">
+                <option className="bg-[#ffffff] text-white" value="">
                   Select
                 </option>
-                <option className="bg-[#0f1b2d] text-white" value="firstName">
+                <option className="bg-[#ffffff] text-white" value="firstName">
                   First Name
                 </option>
-                <option className="bg-[#0f1b2d] text-white" value="lastName">
+                <option className="bg-[#ffffff] text-white" value="lastName">
                   Last Name
                 </option>
-                <option className="bg-[#0f1b2d] text-white" value="email">
+                <option className="bg-[#ffffff] text-white" value="email">
                   Email
                 </option>
-                <option className="bg-[#0f1b2d] text-white" value="role">
+                <option className="bg-[#ffffff] text-white" value="role">
                   Role
                 </option>
-                <option className="bg-[#0f1b2d] text-white" value="status">
+                <option className="bg-[#ffffff] text-white" value="status">
                   Status
                 </option>
               </select>
@@ -1407,7 +1407,7 @@ const EmployeesPage = () => {
                     Image
                   </th>
                   <th
-                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(15,31,23,0.03)]"
                     onClick={() => handleSort('firstName')}
                   >
                     <div className="flex items-center gap-2">
@@ -1416,7 +1416,7 @@ const EmployeesPage = () => {
                     </div>
                   </th>
                   <th
-                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(15,31,23,0.03)]"
                     onClick={() => handleSort('lastName')}
                   >
                     <div className="flex items-center gap-2">
@@ -1425,7 +1425,7 @@ const EmployeesPage = () => {
                     </div>
                   </th>
                   <th
-                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(15,31,23,0.03)]"
                     onClick={() => handleSort('email')}
                   >
                     <div className="flex items-center gap-2">
@@ -1434,7 +1434,7 @@ const EmployeesPage = () => {
                     </div>
                   </th>
                   <th
-                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(15,31,23,0.03)]"
                     onClick={() => handleSort('role')}
                   >
                     <div className="flex items-center gap-2">
@@ -1443,7 +1443,7 @@ const EmployeesPage = () => {
                     </div>
                   </th>
                   <th
-                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(15,31,23,0.03)]"
                     onClick={() => handleSort('status')}
                   >
                     <div className="flex items-center gap-2">
@@ -1462,7 +1462,7 @@ const EmployeesPage = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-card divide-y divide-theme divide-white/5">
+              <tbody className="bg-card divide-y divide-theme divide-black/5">
                 {loading ? (
                   <tr>
                     <td colSpan={9} className="px-4 py-8 text-center text-secondary">
@@ -1479,7 +1479,7 @@ const EmployeesPage = () => {
                   filteredEmployees.map((employee, index) => (
                     <tr
                       key={employee._id || index}
-                      className="hover:bg-[rgba(255,255,255,0.03)] transition-colors cursor-pointer"
+                      className="hover:bg-[rgba(15,31,23,0.03)] transition-colors cursor-pointer"
                       onClick={() => {
                         if (employee._id) {
                           setEditingId(employee._id);
@@ -1541,7 +1541,7 @@ const EmployeesPage = () => {
                                 setShowNewEmployeeModal(true);
                               }
                             }}
-                            className="p-2 text-accent hover:bg-[rgba(255,255,255,0.05)] rounded-lg transition-colors"
+                            className="p-2 text-accent hover:bg-[rgba(15,31,23,0.05)] rounded-lg transition-colors"
                             title="Edit Employee"
                           >
                             <Edit className="w-4 h-4" />
@@ -1596,7 +1596,7 @@ const EmployeesPage = () => {
             <div className="p-6 border-t border-theme flex items-center justify-end gap-3">
               <button
                 onClick={() => setDeleteConfirmation({ show: false, employeeId: null, employeeName: '' })}
-                className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors font-medium"
+                className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors font-medium"
               >
                 Cancel
               </button>
@@ -1697,7 +1697,7 @@ const EmployeesPage = () => {
                         onClick={() => setActiveFormTab(tab.id as any)}
                         className={`w-full flex items-center gap-2 px-3 py-2 transition-colors text-left ${isActive
                           ? 'bg-[var(--accent-navyblue)]/10 text-[var(--accent-navyblue)] shadow-md'
-                          : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.05)]'
+                          : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.05)]'
                           }`}
                       >
                         <Icon className="w-4 h-4" />
@@ -2036,7 +2036,7 @@ const EmployeesPage = () => {
                                           // Don't auto-fill dial code - let user type the number without country code
                                           // The dial code will be prepended when saving
                                         }}
-                                        className={`w-full flex items-center gap-2 px-3 py-2 text-xs text-left hover:bg-[rgba(255,255,255,0.03)] transition-colors ${phoneCountry === country.code ? 'bg-card' : ''
+                                        className={`w-full flex items-center gap-2 px-3 py-2 text-xs text-left hover:bg-[rgba(15,31,23,0.03)] transition-colors ${phoneCountry === country.code ? 'bg-card' : ''
                                           }`}
                                       >
                                         <span className="text-base" style={{ fontSize: '18px' }}>{country.flag}</span>
@@ -2060,7 +2060,7 @@ const EmployeesPage = () => {
                               </div>
                             )}
                           </div>
-                          <div className="h-6 w-px bg-[rgba(255,255,255,0.15)]"></div>
+                          <div className="h-6 w-px bg-[rgba(15,31,23,0.15)]"></div>
                           <input
                             type="tel"
                             placeholder=""
@@ -2264,7 +2264,7 @@ const EmployeesPage = () => {
                                     };
                                     input.click();
                                   }}
-                                  className="w-full px-3 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors flex items-center justify-center gap-2 text-sm"
+                                  className="w-full px-3 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors flex items-center justify-center gap-2 text-sm"
                                 >
                                   <Upload className="w-4 h-4" />
                                   Select File
@@ -2307,7 +2307,7 @@ const EmployeesPage = () => {
                                     });
                                   }
                                 }}
-                                className="w-10 h-10 bg-card border border-theme text-primary rounded-lg flex items-center justify-center hover:bg-[rgba(255,255,255,0.05)] transition-colors"
+                                className="w-10 h-10 bg-card border border-theme text-primary rounded-lg flex items-center justify-center hover:bg-[rgba(15,31,23,0.05)] transition-colors"
                               >
                                 <Plus className="w-5 h-5" />
                               </button>
@@ -2332,7 +2332,7 @@ const EmployeesPage = () => {
                           </thead>
                           <tbody className="bg-card divide-y divide-theme">
                             {documents.map((doc) => (
-                              <tr key={doc.id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                              <tr key={doc.id} className="hover:bg-[rgba(15,31,23,0.03)]">
                                 <td className="px-4 py-3">
                                   {editingDocumentId === doc.id && editingDocument ? (
                                     <input
@@ -2382,7 +2382,7 @@ const EmployeesPage = () => {
                                           };
                                           input.click();
                                         }}
-                                        className="px-2 py-1 text-xs border border-theme rounded hover:bg-[rgba(255,255,255,0.03)] transition-colors flex items-center gap-1 w-fit"
+                                        className="px-2 py-1 text-xs border border-theme rounded hover:bg-[rgba(15,31,23,0.03)] transition-colors flex items-center gap-1 w-fit"
                                       >
                                         <Upload className="w-3 h-3" />
                                         {editingDocument.file ? editingDocument.file.name : 'Change File'}
@@ -2477,7 +2477,7 @@ const EmployeesPage = () => {
                                           setEditingDocumentId(null);
                                           setEditingDocument(null);
                                         }}
-                                        className="p-1.5 text-secondary hover:bg-[rgba(255,255,255,0.03)] rounded transition-colors"
+                                        className="p-1.5 text-secondary hover:bg-[rgba(15,31,23,0.03)] rounded transition-colors"
                                         title="Cancel"
                                       >
                                         <X className="w-4 h-4" />
@@ -2497,7 +2497,7 @@ const EmployeesPage = () => {
                                               file: null
                                             });
                                           }}
-                                          className="p-1.5 text-accent hover:bg-[rgba(255,255,255,0.05)] rounded transition-colors"
+                                          className="p-1.5 text-accent hover:bg-[rgba(15,31,23,0.05)] rounded transition-colors"
                                           title="Edit Document"
                                         >
                                           <Edit className="w-4 h-4" />
@@ -2701,7 +2701,7 @@ const EmployeesPage = () => {
                             </tr>
                           ) : (
                             deductions.map((deduction) => (
-                              <tr key={deduction.id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                              <tr key={deduction.id} className="hover:bg-[rgba(15,31,23,0.03)]">
                                 <td className="px-4 py-3 text-sm text-primary">{deduction.startDate || '-'}</td>
                                 <td className="px-4 py-3 text-sm text-primary">{deduction.description || '-'}</td>
                                 <td className="px-4 py-3 text-sm text-primary">{deduction.amount || '0'} {deduction.currency}</td>
@@ -2720,7 +2720,7 @@ const EmployeesPage = () => {
                                         });
                                         setEditingDeductionId(deduction.id);
                                       }}
-                                      className="p-1.5 text-accent hover:bg-[rgba(255,255,255,0.05)] rounded transition-colors"
+                                      className="p-1.5 text-accent hover:bg-[rgba(15,31,23,0.05)] rounded transition-colors"
                                       title="Edit deduction"
                                     >
                                       <Edit className="w-4 h-4" />
@@ -2903,7 +2903,7 @@ const EmployeesPage = () => {
                             </tr>
                           ) : (
                             additions.map((addition) => (
-                              <tr key={addition.id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                              <tr key={addition.id} className="hover:bg-[rgba(15,31,23,0.03)]">
                                 <td className="px-4 py-3 text-sm text-primary">{addition.startDate || '-'}</td>
                                 <td className="px-4 py-3 text-sm text-primary">{addition.description || '-'}</td>
                                 <td className="px-4 py-3 text-sm text-primary">{addition.amount || '0'} {addition.currency}</td>
@@ -2922,7 +2922,7 @@ const EmployeesPage = () => {
                                         });
                                         setEditingAdditionId(addition.id);
                                       }}
-                                      className="p-1.5 text-accent hover:bg-[rgba(255,255,255,0.05)] rounded transition-colors"
+                                      className="p-1.5 text-accent hover:bg-[rgba(15,31,23,0.05)] rounded transition-colors"
                                       title="Edit addition"
                                     >
                                       <Edit className="w-4 h-4" />
@@ -3001,7 +3001,7 @@ const EmployeesPage = () => {
                       <button
                         type="button"
                         onClick={() => setActiveFormTab(prevTab.id as any)}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary bg-card border border-theme rounded-lg shadow-sm hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary bg-card border border-theme rounded-lg shadow-sm hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                       >
                         <span aria-hidden>←</span> {prevTab.label}
                       </button>
@@ -3010,7 +3010,7 @@ const EmployeesPage = () => {
                       <button
                         type="button"
                         onClick={() => setActiveFormTab(nextTab.id as any)}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary bg-card border border-theme rounded-lg shadow-sm hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary bg-card border border-theme rounded-lg shadow-sm hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                       >
                         {nextTab.label} <span aria-hidden>→</span>
                       </button>

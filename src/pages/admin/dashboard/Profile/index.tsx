@@ -50,14 +50,14 @@ const ToastNotificationComponent = ({ notifications, removeNotification }: { not
   const icons = {
     success: <CheckCircle className="text-green-500" size={24} />,
     error: <XCircle className="text-red-500" size={24} />,
-    info: <User className="text-[#1183e0]" size={24} />,
+    info: <User className="text-[#059669]" size={24} />,
     warning: <XCircle className="text-yellow-500" size={24} />
   };
 
   const bgColors = {
-    success: 'bg-[#00FFA3]/10 border-[#00FFA3]/30',
+    success: 'bg-[#059669]/10 border-[#059669]/30',
     error: 'bg-card border-red-500/30',
-    info: 'bg-[rgba(17,131,224,0.08)] border-[rgba(17,131,224,0.25)]',
+    info: 'bg-[rgba(5,150,105,0.08)] border-[rgba(5,150,105,0.25)]',
     warning: 'bg-card border-yellow-500/30'
   };
 
@@ -119,17 +119,17 @@ const ProfilePage = () => {
   const focusHandlers = getFocusStyles();
   const sharedInputProps = {
     ...focusHandlers,
-    style: { border: `1px solid rgba(17, 131, 224, 0.2)`, background: '#0B1220', color: '#E6EDF3' }
+    style: { border: `1px solid rgba(5,150,105, 0.2)`, background: '#f2f7f4', color: '#0f1f17' }
   };
   const cardStyle: React.CSSProperties = {
-    border: '1px solid rgba(17, 131, 224, 0.2)',
-    boxShadow: `0 4px 20px rgba(17, 131, 224, 0.08)`,
+    border: '1px solid rgba(5,150,105, 0.2)',
+    boxShadow: `0 4px 20px rgba(5,150,105, 0.08)`,
     borderRadius: "20px",
   };
   const primaryButtonStyle: React.CSSProperties = {
-    background: 'linear-gradient(90deg, #1a8ee8 0%, #1183e0 40%, #0d6bc7 100%)',
+    background: 'linear-gradient(90deg, #1a8ee8 0%, #059669 40%, #047857 100%)',
     color: "#fff",
-    boxShadow: `0 8px 20px rgba(17, 131, 224, 0.25)`,
+    boxShadow: `0 8px 20px rgba(5,150,105, 0.25)`,
   };
 
   // Fetch user profile on mount
@@ -267,7 +267,7 @@ const ProfilePage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-main">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: '#1183e0' }}></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: '#059669' }}></div>
           <p className="text-primary">Loading profile...</p>
         </div>
       </div>
@@ -281,7 +281,7 @@ const ProfilePage = () => {
         <div className="bg-card p-4 mb-4" style={cardStyle}>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold mb-1" style={{ color: '#1183e0' }}>My Profile</h1>
+              <h1 className="text-2xl font-bold mb-1" style={{ color: '#059669' }}>My Profile</h1>
               <p className="text-sm text-secondary">Manage your account information and preferences</p>
             </div>
             {!isEditing && (
@@ -302,10 +302,10 @@ const ProfilePage = () => {
           <div className="space-y-4">
             {/* Profile Information */}
             <div className="bg-card" style={cardStyle}>
-              <div className="p-4 border-b border-[rgba(17,131,224,0.15)]">
+              <div className="p-4 border-b border-[rgba(5,150,105,0.15)]">
                 <div className="flex items-center gap-2">
-                  <User style={{ color: '#1183e0' }} size={20} />
-                  <h2 className="text-lg font-bold" style={{ color: '#1183e0' }}>Personal Information</h2>
+                  <User style={{ color: '#059669' }} size={20} />
+                  <h2 className="text-lg font-bold" style={{ color: '#059669' }}>Personal Information</h2>
                 </div>
               </div>
 
@@ -374,7 +374,7 @@ const ProfilePage = () => {
                 <div>
                   <label className="block text-xs font-semibold text-primary mb-1">Role</label>
                   <div className="px-3 py-2 bg-card rounded-lg">
-                    <span className="px-3 py-0.5 bg-[rgba(17,131,224,0.15)] text-[#1183e0] rounded-full text-xs font-medium capitalize border border-[rgba(17,131,224,0.25)]">
+                    <span className="px-3 py-0.5 bg-[rgba(5,150,105,0.15)] text-[#059669] rounded-full text-xs font-medium capitalize border border-[rgba(5,150,105,0.25)]">
                       {profile.role || 'Not set'}
                     </span>
                   </div>
@@ -386,10 +386,10 @@ const ProfilePage = () => {
             {/* Company Information */}
             {profile.company && (
               <div className="bg-card" style={cardStyle}>
-                <div className="p-4 border-b border-[rgba(17,131,224,0.15)]">
+                <div className="p-4 border-b border-[rgba(5,150,105,0.15)]">
                   <div className="flex items-center gap-2">
-                    <Building style={{ color: '#1183e0' }} size={20} />
-                    <h2 className="text-lg font-bold" style={{ color: '#1183e0' }}>Company Information</h2>
+                    <Building style={{ color: '#059669' }} size={20} />
+                    <h2 className="text-lg font-bold" style={{ color: '#059669' }}>Company Information</h2>
                   </div>
                 </div>
                 <div className="p-4">
@@ -407,10 +407,10 @@ const ProfilePage = () => {
           <div className="space-y-4">
             {/* Location Information */}
             <div className="bg-card" style={cardStyle}>
-              <div className="p-4 border-b border-[rgba(17,131,224,0.15)]">
+              <div className="p-4 border-b border-[rgba(5,150,105,0.15)]">
                 <div className="flex items-center gap-2">
-                  <MapPin style={{ color: '#1183e0' }} size={20} />
-                  <h2 className="text-lg font-bold" style={{ color: '#1183e0' }}>Location Information</h2>
+                  <MapPin style={{ color: '#059669' }} size={20} />
+                  <h2 className="text-lg font-bold" style={{ color: '#059669' }}>Location Information</h2>
                 </div>
               </div>
 
@@ -499,17 +499,17 @@ const ProfilePage = () => {
 
             {/* Password Section */}
             <div className="bg-card" style={cardStyle}>
-              <div className="p-4 border-b border-[rgba(17,131,224,0.15)]">
+              <div className="p-4 border-b border-[rgba(5,150,105,0.15)]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Key style={{ color: '#1183e0' }} size={20} />
-                    <h2 className="text-lg font-bold" style={{ color: '#1183e0' }}>Password</h2>
+                    <Key style={{ color: '#059669' }} size={20} />
+                    <h2 className="text-lg font-bold" style={{ color: '#059669' }}>Password</h2>
                   </div>
                   {!showPasswordSection && (
                     <button
                       onClick={() => setShowPasswordSection(true)}
                       className="px-3 py-1.5 rounded-lg transition-colors font-medium flex items-center gap-2 text-sm"
-                      style={{ border: `1px solid rgba(17, 131, 224, 0.35)`, color: '#1183e0' }}
+                      style={{ border: `1px solid rgba(5,150,105, 0.35)`, color: '#059669' }}
                     >
                       <Key size={14} />
                       Change Password
@@ -581,7 +581,7 @@ const ProfilePage = () => {
                     <button
                       onClick={handleCancelPassword}
                       disabled={loading}
-                      className="px-3 py-1.5 text-secondary bg-[rgba(255,255,255,0.06)] hover:bg-[rgba(255,255,255,0.1)] rounded-lg transition-colors font-medium flex items-center gap-2 text-sm disabled:opacity-50"
+                      className="px-3 py-1.5 text-secondary bg-[rgba(15,31,23,0.06)] hover:bg-[rgba(15,31,23,0.1)] rounded-lg transition-colors font-medium flex items-center gap-2 text-sm disabled:opacity-50"
                     >
                       <X size={14} />
                       Cancel
@@ -618,7 +618,7 @@ const ProfilePage = () => {
               <button
                 onClick={handleCancelEdit}
                 disabled={loading}
-                className="px-3 py-1.5 text-secondary bg-[rgba(255,255,255,0.06)] hover:bg-[rgba(255,255,255,0.1)] rounded-lg transition-colors font-medium flex items-center gap-2 text-sm disabled:opacity-50"
+                className="px-3 py-1.5 text-secondary bg-[rgba(15,31,23,0.06)] hover:bg-[rgba(15,31,23,0.1)] rounded-lg transition-colors font-medium flex items-center gap-2 text-sm disabled:opacity-50"
               >
                 <X size={14} />
                 Cancel

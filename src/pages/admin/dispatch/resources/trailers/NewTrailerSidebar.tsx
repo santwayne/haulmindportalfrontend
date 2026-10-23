@@ -149,7 +149,7 @@ const NewTrailerSidebar: React.FC<NewTrailerSidebarProps> = ({
                     <div className="flex items-center justify-between border-b border-theme px-6 py-4">
                         <div className="flex items-center space-x-3">
                             <div className="flex-shrink-0">
-                                <Truck className="h-6 w-6 text-[#00D1FF]" />
+                                <Truck className="h-6 w-6 text-[#059669]" />
                             </div>
                             <h2 className="text-lg font-semibold text-primary">
                               {mode === 'edit' ? 'Update Trailer' : 'Add New Trailer'}
@@ -416,7 +416,7 @@ const NewTrailerSidebar: React.FC<NewTrailerSidebarProps> = ({
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="px-4 py-2 text-sm !mr-4 font-medium text-primary bg-card border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="px-4 py-2 text-sm !mr-4 font-medium text-primary bg-card border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)] focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                                 Cancel
                             </button>

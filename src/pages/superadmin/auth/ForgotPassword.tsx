@@ -36,9 +36,9 @@ export default function SuperAdminForgotPassword() {
             {/* Background blobs */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full blur-3xl animate-pulse"
-                    style={{ background: 'linear-gradient(135deg, rgba(17,131,224,0.06), rgba(17,131,224,0.03))' }} />
+                    style={{ background: 'linear-gradient(135deg, rgba(5,150,105,0.06), rgba(5,150,105,0.03))' }} />
                 <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-3xl animate-pulse delay-1000"
-                    style={{ background: 'linear-gradient(135deg, rgba(17,131,224,0.04), rgba(17,131,224,0.08))' }} />
+                    style={{ background: 'linear-gradient(135deg, rgba(5,150,105,0.04), rgba(5,150,105,0.08))' }} />
             </div>
 
             <div className="w-full max-w-md relative">
@@ -58,13 +58,13 @@ export default function SuperAdminForgotPassword() {
                 </a>
 
                 <div className="rounded-2xl shadow-2xl overflow-hidden card-premium"
-                    style={{ border: '1px solid rgba(17,131,224,0.25)' }}>
+                    style={{ border: '1px solid rgba(5,150,105,0.25)' }}>
 
                     {sent ? (
                         /* ── Success state ── */
                         <div className="p-10 text-center">
                             <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
-                                style={{ backgroundColor: "rgba(17,131,224,0.12)", border: "1px solid rgba(17,131,224,0.3)" }}>
+                                style={{ backgroundColor: "rgba(5,150,105,0.12)", border: "1px solid rgba(5,150,105,0.3)" }}>
                                 <CheckCircle className="w-8 h-8" style={{ color: "var(--accent-navyblue)" }} />
                             </div>
                             <h2 className="text-xl font-bold text-primary mb-2" style={{ fontFamily: "var(--font-futura)" }}>
@@ -92,8 +92,8 @@ export default function SuperAdminForgotPassword() {
                             {/* Header */}
                             <div className="relative p-8 text-center border-b"
                                 style={{
-                                    background: 'linear-gradient(135deg, #091527 0%, #0d1e3a 50%, #091527 100%)',
-                                    borderColor: 'rgba(17,131,224,0.2)',
+                                    background: 'linear-gradient(135deg, #022c22 0%, #065f46 50%, #022c22 100%)',
+                                    borderColor: 'rgba(5,150,105,0.2)',
                                 }}>
                                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5">
                                     <Shield className="w-48 h-48 text-white" />
@@ -103,7 +103,7 @@ export default function SuperAdminForgotPassword() {
                                         style={{
                                             width: '64px', height: '64px',
                                             backgroundColor: 'var(--accent-navyblue)',
-                                            boxShadow: '0 8px 24px rgba(17,131,224,0.4)',
+                                            boxShadow: '0 8px 24px rgba(5,150,105,0.4)',
                                         }}>
                                         <Mail className="w-7 h-7 text-white" />
                                     </div>
@@ -131,8 +131,8 @@ export default function SuperAdminForgotPassword() {
                                             className={`block w-full rounded-lg border pl-11 pr-4 py-3 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent disabled:opacity-50 ${
                                                 error ? 'border-red-400' : 'border-theme'
                                             }`}
-                                            style={{ '--tw-ring-color': 'rgba(17,131,224,0.25)' } as React.CSSProperties}
-                                            onFocus={(e) => { e.target.style.borderColor = 'var(--accent-navyblue)'; e.target.style.boxShadow = '0 0 0 2px rgba(17,131,224,0.2)'; }}
+                                            style={{ '--tw-ring-color': 'rgba(5,150,105,0.25)' } as React.CSSProperties}
+                                            onFocus={(e) => { e.target.style.borderColor = 'var(--accent-navyblue)'; e.target.style.boxShadow = '0 0 0 2px rgba(5,150,105,0.2)'; }}
                                             onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                                         />
                                     </div>
@@ -151,7 +151,7 @@ export default function SuperAdminForgotPassword() {
                                         loading ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-xl hover:-translate-y-0.5 transform'
                                     }`}
                                     style={{ backgroundColor: "var(--accent-navyblue)" }}
-                                    onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = "#0d6fc7"; }}
+                                    onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = "#047857"; }}
                                     onMouseLeave={(e) => { if (!loading) e.currentTarget.style.backgroundColor = "var(--accent-navyblue)"; }}
                                 >
                                     {loading ? (
@@ -164,7 +164,7 @@ export default function SuperAdminForgotPassword() {
                                     )}
                                 </button>
 
-                                <div className="text-center pt-2 border-t" style={{ borderColor: "rgba(17,131,224,0.12)" }}>
+                                <div className="text-center pt-2 border-t" style={{ borderColor: "rgba(5,150,105,0.12)" }}>
                                     <p className="text-sm text-secondary">
                                         Remembered your password?{" "}
                                         <a

@@ -85,21 +85,21 @@ const VehicleEldMonitor = () => {
                 <div className="px-8 flex gap-6">
                     <button
                         onClick={() => setActiveTab('overview')}
-                        className={`pb-3 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'overview' ? 'border-blue-500 text-[#00D1FF]' : 'border-transparent text-secondary hover:text-primary'
+                        className={`pb-3 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'overview' ? 'border-blue-500 text-[#059669]' : 'border-transparent text-secondary hover:text-primary'
                             }`}
                     >
                         Operational Overview
                     </button>
                     <button
                         onClick={() => setActiveTab('gps')}
-                        className={`pb-3 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'gps' ? 'border-blue-500 text-[#00D1FF]' : 'border-transparent text-secondary hover:text-primary'
+                        className={`pb-3 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'gps' ? 'border-blue-500 text-[#059669]' : 'border-transparent text-secondary hover:text-primary'
                             }`}
                     >
                         Live GPS Map
                     </button>
                     <button
                         onClick={() => setActiveTab('maintenance')}
-                        className={`pb-3 px-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'maintenance' ? 'border-blue-500 text-[#00D1FF]' : 'border-transparent text-secondary hover:text-primary'
+                        className={`pb-3 px-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'maintenance' ? 'border-blue-500 text-[#059669]' : 'border-transparent text-secondary hover:text-primary'
                             }`}
                     >
                         Engine & Maintenance
@@ -125,7 +125,7 @@ const VehicleEldMonitor = () => {
                                         <p className="text-xs text-secondary uppercase tracking-wide font-medium">Total Vehicles</p>
                                         <h3 className="text-2xl font-bold text-primary mt-1">{VEHICLES.length}</h3>
                                     </div>
-                                    <div className="p-2 bg-card text-[#00D1FF] rounded-lg">
+                                    <div className="p-2 bg-card text-[#059669] rounded-lg">
                                         <Truck size={20} />
                                     </div>
                                 </div>
@@ -197,7 +197,7 @@ const VehicleEldMonitor = () => {
                                             className="pl-9 pr-4 py-2 border border-theme rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
-                                    <button className="p-2 text-secondary hover:bg-[rgba(255,255,255,0.03)] rounded-lg">
+                                    <button className="p-2 text-secondary hover:bg-[rgba(15,31,23,0.03)] rounded-lg">
                                         <RefreshCw size={18} />
                                     </button>
                                 </div>
@@ -222,7 +222,7 @@ const VehicleEldMonitor = () => {
                                                 <Truck size={16} className="text-secondary group-hover:text-blue-500" />
                                                 {v.id}
                                             </td>
-                                            <td className="px-6 py-4 text-secondary group-hover:text-[#00D1FF] transition-colors">
+                                            <td className="px-6 py-4 text-secondary group-hover:text-[#059669] transition-colors">
                                                 {v.driver === 'Unassigned' ? <span className="text-secondary italic">Unassigned</span> : v.driver}
                                             </td>
                                             <td className="px-6 py-4">
@@ -278,7 +278,7 @@ const VehicleEldMonitor = () => {
                                 >
                                     <div className="relative">
                                         <div className="absolute -inset-4 bg-blue-500/20 rounded-full animate-ping opacity-75"></div>
-                                        <div className="w-8 h-8 bg-card border-2 border-blue-600 rounded-full flex items-center justify-center text-[#00D1FF] shadow-md z-20 hover:scale-110 transition-transform">
+                                        <div className="w-8 h-8 bg-card border-2 border-blue-600 rounded-full flex items-center justify-center text-[#059669] shadow-md z-20 hover:scale-110 transition-transform">
                                             <Truck size={14} />
                                         </div>
 
@@ -290,7 +290,7 @@ const VehicleEldMonitor = () => {
                                             </h4>
                                             <p className="text-xs text-secondary mt-1">{v.driver}</p>
                                             <p className="text-xs text-secondary mt-0.5">{v.location}</p>
-                                            <p className="text-[10px] text-gray-300 mt-1 text-right">Updated: {v.lastPing}</p>
+                                            <p className="text-[10px] text-gray-600 mt-1 text-right">Updated: {v.lastPing}</p>
                                         </div>
                                     </div>
                                 </div>

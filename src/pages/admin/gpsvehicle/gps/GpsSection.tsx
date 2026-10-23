@@ -370,7 +370,7 @@ const GpsSection = () => {
                 <div className="px-8 py-5 flex justify-between items-center">
                     <div>
                         <h1 className="text-2xl font-bold text-primary flex items-center gap-3">
-                            <Navigation size={28} className="text-[#00D1FF]" />
+                            <Navigation size={28} className="text-[#059669]" />
                             GPS Tracking & Monitoring
                         </h1>
                         <p className="text-sm text-secondary mt-1 ml-10">Real-time vehicle location and operational data</p>
@@ -383,7 +383,7 @@ const GpsSection = () => {
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab as any)}
-                            className={`pb-3 px-2 text-sm font-bold capitalize transition-colors border-b-2 ${activeTab === tab ? 'border-blue-500 text-[#00D1FF]' : 'border-transparent text-secondary'
+                            className={`pb-3 px-2 text-sm font-bold capitalize transition-colors border-b-2 ${activeTab === tab ? 'border-blue-500 text-[#059669]' : 'border-transparent text-secondary'
                                 }`}
                         >
                             {tab === 'overview' ? 'Overview' : tab === 'gps' ? 'GPS Map' : 'Maintenance'}
@@ -404,7 +404,7 @@ const GpsSection = () => {
                                         <p className="text-xs text-secondary uppercase tracking-wide font-medium">Total Vehicles</p>
                                         <h3 className="text-2xl font-bold text-primary mt-1">{summary.totalVehicles || vehicles.length}</h3>
                                     </div>
-                                    <div className="p-2 bg-card text-[#00D1FF] rounded-lg">
+                                    <div className="p-2 bg-card text-[#059669] rounded-lg">
                                         <Truck size={20} />
                                     </div>
                                 </div>
@@ -488,7 +488,7 @@ const GpsSection = () => {
                                             className="pl-9 pr-4 py-2 border border-theme rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
-                                    <button className="p-2 text-secondary hover:bg-[rgba(255,255,255,0.03)] rounded-lg">
+                                    <button className="p-2 text-secondary hover:bg-[rgba(15,31,23,0.03)] rounded-lg">
                                         <RefreshCw size={18} />
                                     </button>
                                 </div>
@@ -518,10 +518,10 @@ const GpsSection = () => {
                                                     <span className="text-secondary italic">Unassigned</span>
                                                 ) : (
                                                     <div className="flex flex-col">
-                                                        <span className="text-primary font-medium group-hover:text-[#00D1FF] transition-colors">
+                                                        <span className="text-primary font-medium group-hover:text-[#059669] transition-colors">
                                                             {v.driver}
                                                             {v.isCoDriver && (
-                                                                <span className="ml-2 text-xs text-[#00D1FF] bg-card px-1.5 py-0.5 rounded">Co-Driver</span>
+                                                                <span className="ml-2 text-xs text-[#059669] bg-card px-1.5 py-0.5 rounded">Co-Driver</span>
                                                             )}
                                                         </span>
                                                         {v.driverEmail && (
@@ -574,7 +574,7 @@ const GpsSection = () => {
                             {vehicleLocations.length === 0 && vehicles.length === 0 ? (
                                 <div className="absolute inset-0 flex items-center justify-center bg-card z-10">
                                     <div className="text-center p-8">
-                                        <Navigation className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                                        <Navigation className="w-16 h-16 text-gray-600 mx-auto mb-4" />
                                         <h3 className="text-lg font-semibold text-primary mb-2">No Vehicles Available</h3>
                                         <p className="text-sm text-secondary max-w-md">
                                             No vehicles are currently available for tracking. This may be because no company is assigned to your account.
@@ -624,7 +624,7 @@ const GpsSection = () => {
                                                             )}
                                                         </p>
                                                         {vehicle.driver && (
-                                                            <p className="text-xs text-[#00D1FF] mt-1">Driver: {vehicle.driver}</p>
+                                                            <p className="text-xs text-[#059669] mt-1">Driver: {vehicle.driver}</p>
                                                         )}
                                                         {(vehicle.orderNumber || vehicle.tripNumber) && (
                                                             <p className="text-xs text-purple-600 mt-1">
@@ -661,7 +661,7 @@ const GpsSection = () => {
                                     <h4 className="text-sm font-bold text-primary mb-3">Active Vehicles</h4>
                                     <div className="space-y-2">
                                         {vehicleLocations.map((vehicle) => (
-                                            <div key={vehicle._id} className="flex items-center gap-2 p-2 hover:bg-[rgba(255,255,255,0.03)] rounded cursor-pointer">
+                                            <div key={vehicle._id} className="flex items-center gap-2 p-2 hover:bg-[rgba(15,31,23,0.03)] rounded cursor-pointer">
                                                 <div
                                                     className="w-3 h-3 rounded-full"
                                                     style={{
@@ -686,7 +686,7 @@ const GpsSection = () => {
                                                         );
                                                     })()}
                                                     {vehicle.driver && (
-                                                        <p className="text-xs text-[#00D1FF] truncate">Driver: {vehicle.driver}</p>
+                                                        <p className="text-xs text-[#059669] truncate">Driver: {vehicle.driver}</p>
                                                     )}
                                                     {(vehicle.orderNumber || vehicle.tripNumber) && (
                                                         <p className="text-xs text-purple-600 truncate">
@@ -760,7 +760,7 @@ const GpsSection = () => {
                                 ) : (
                                     <div className="h-64 flex items-center justify-center">
                                         <div className="text-center">
-                                            <Wrench className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                                            <Wrench className="w-12 h-12 text-gray-600 mx-auto mb-2" />
                                             <p className="text-secondary text-sm">No engine hours data available</p>
                                             <p className="text-secondary text-xs mt-1">Engine hours will appear here once vehicles are tracked</p>
                                         </div>
@@ -809,7 +809,7 @@ const GpsSection = () => {
                                 ) : (
                                     <div className="h-64 flex items-center justify-center">
                                         <div className="text-center">
-                                            <Activity className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                                            <Activity className="w-12 h-12 text-gray-600 mx-auto mb-2" />
                                             <p className="text-secondary text-sm">No vehicle data available</p>
                                             <p className="text-secondary text-xs mt-1">Vehicle status will appear here once vehicles are tracked</p>
                                         </div>

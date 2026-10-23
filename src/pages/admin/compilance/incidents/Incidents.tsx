@@ -491,7 +491,7 @@ const Incidents: React.FC = () => {
       case 'open':
         return <FaExclamationCircle className="text-[#A855F7]" size={20} />;
       case 'under-review':
-        return <FaInfoCircle className="text-[#F59E0B]" size={20} />;
+        return <FaInfoCircle className="text-[#d97706]" size={20} />;
       case 'closed':
         return <FaCheckCircle className="text-green-600" size={20} />;
       default:
@@ -946,7 +946,7 @@ const Incidents: React.FC = () => {
               </div>
               <button
                 onClick={handleAddIncident}
-                className="flex items-center gap-2 px-4 py-2 text-[rgba(0,209,255,0.15)] rounded-lg hover:bg-card/90 shadow-sm transition-all font-bold text-sm bg-[var(--accent-navyblue)]"
+                className="flex items-center gap-2 px-4 py-2 text-[rgba(5,150,105,0.15)] rounded-lg hover:bg-card/90 shadow-sm transition-all font-bold text-sm bg-[var(--accent-navyblue)]"
               >
                 <FaPlus /> Report Incident
               </button>
@@ -998,8 +998,8 @@ const Incidents: React.FC = () => {
             <button
               onClick={() => setCountryFilter('all')}
               className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${countryFilter === 'all'
-                ? 'bg-[var(--accent-navyblue)] text-[#0284C7]'
-                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                ? 'bg-[var(--accent-navyblue)] text-white'
+                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                 }`}
             >
               All ({incidents.length})
@@ -1007,8 +1007,8 @@ const Incidents: React.FC = () => {
             <button
               onClick={() => setCountryFilter('canada')}
               className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors flex items-center gap-2 ${countryFilter === 'canada'
-                ? 'bg-[var(--accent-navyblue)] text-[#0284C7]'
-                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                ? 'bg-[var(--accent-navyblue)] text-white'
+                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                 }`}
             >
               <FaFlag className="text-[#A855F7]" size={14} />
@@ -1017,11 +1017,11 @@ const Incidents: React.FC = () => {
             <button
               onClick={() => setCountryFilter('usa')}
               className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors flex items-center gap-2 ${countryFilter === 'usa'
-                ? 'bg-[var(--accent-navyblue)] text-[#0284C7]'
-                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                ? 'bg-[var(--accent-navyblue)] text-white'
+                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                 }`}
             >
-              <FaFlagUsa className="text-[#00D1FF]" size={14} />
+              <FaFlagUsa className="text-[#059669]" size={14} />
               USA ({incidents.filter(i => i.location?.country === 'usa').length})
             </button>
           </div>
@@ -1278,7 +1278,7 @@ const Incidents: React.FC = () => {
                     incidents.map((incident) => (
                       <tr
                         key={incident._id}
-                        className="hover:bg-[rgba(255,255,255,0.03)] transition-colors cursor-pointer"
+                        className="hover:bg-[rgba(15,31,23,0.03)] transition-colors cursor-pointer"
                         onClick={() => handleViewIncident(incident)}
                       >
                         <td className="px-4 py-3 whitespace-nowrap text-sm font-medium sticky left-0 bg-card z-10">
@@ -1375,7 +1375,7 @@ const Incidents: React.FC = () => {
                     disabled={currentPage === 1}
                     className={`px-3 py-2 rounded-lg border ${currentPage === 1
                       ? 'bg-card text-secondary cursor-not-allowed border-theme'
-                      : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border-theme'
+                      : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border-theme'
                       }`}
                   >
                     <FaChevronLeft size={14} />
@@ -1398,7 +1398,7 @@ const Incidents: React.FC = () => {
                           onClick={() => setCurrentPage(pageNum)}
                           className={`px-3 py-2 rounded-lg border ${currentPage === pageNum
                             ? 'bg-[var(--accent-color)] text-white border-[var(--accent-color)]'
-                            : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border-theme'
+                            : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border-theme'
                             }`}
                         >
                           {pageNum}
@@ -1411,7 +1411,7 @@ const Incidents: React.FC = () => {
                     disabled={currentPage === totalPages}
                     className={`px-3 py-2 rounded-lg border ${currentPage === totalPages
                       ? 'bg-card text-secondary cursor-not-allowed border-theme'
-                      : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border-theme'
+                      : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border-theme'
                       }`}
                   >
                     <FaChevronRight size={14} />
@@ -1441,7 +1441,7 @@ const Incidents: React.FC = () => {
               <div className="sticky top-0 bg-card border-b px-6 py-4 rounded-t-2xl z-10">
                 <div className="flex justify-between items-center">
                   <h3 className="text-xl font-bold text-primary">Add New Incident</h3>
-                  <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors">
+                  <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors">
                     <FaTimesCircle className="text-secondary" size={20} />
                   </button>
                 </div>
@@ -1948,7 +1948,7 @@ const Incidents: React.FC = () => {
               </div>
 
               <div className="sticky bottom-0 bg-card px-6 py-4 flex justify-end gap-3 border-t rounded-b-2xl">
-                <button onClick={() => setShowAddModal(false)} className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors" disabled={loading}>
+                <button onClick={() => setShowAddModal(false)} className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors" disabled={loading}>
                   Cancel
                 </button>
                 <button onClick={saveNewIncident} className="px-6 py-2.5 bg-[var(--accent-navyblue)] !text-white rounded-lg hover:bg-[var(--accent-navyblue)]/80 font-medium transition-colors disabled:opacity-60" disabled={!validateForm() || loading}>
@@ -1966,7 +1966,7 @@ const Incidents: React.FC = () => {
               <div className="sticky top-0 bg-card border-b px-6 py-4 rounded-t-2xl z-10">
                 <div className="flex justify-between items-center">
                   <h3 className="text-xl font-bold text-headings">Edit Incident: {selectedIncident.incidentNumber}</h3>
-                  <button onClick={() => { setShowEditModal(false); setSelectedIncident(null); resetForm(); }} className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors">
+                  <button onClick={() => { setShowEditModal(false); setSelectedIncident(null); resetForm(); }} className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors">
                     <FaTimesCircle className="text-secondary" size={20} />
                   </button>
                 </div>
@@ -2034,7 +2034,7 @@ const Incidents: React.FC = () => {
               </div>
 
               <div className="sticky bottom-0 bg-card px-6 py-4 flex justify-end gap-3 border-t rounded-b-2xl">
-                <button onClick={() => { setShowEditModal(false); setSelectedIncident(null); resetForm(); }} className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors" disabled={loading}>
+                <button onClick={() => { setShowEditModal(false); setSelectedIncident(null); resetForm(); }} className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors" disabled={loading}>
                   Cancel
                 </button>
                 <button onClick={saveEditedIncident} className="px-6 py-2.5 bg-[var(--accent-navyblue)] !text-white rounded-lg hover:bg-[var(--accent-navyblue)]/80 font-medium transition-colors disabled:opacity-60" disabled={!validateForm() || loading}>
@@ -2056,7 +2056,7 @@ const Incidents: React.FC = () => {
                     <h3 className="text-lg font-bold text-primary">{selectedIncident.incidentNumber || 'N/A'}</h3>
                     <p className="text-xs text-secondary mt-1">{selectedIncident.incidentType || 'N/A'}</p>
                   </div>
-                  <button onClick={() => setShowViewModal(false)} className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors">
+                  <button onClick={() => setShowViewModal(false)} className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors">
                     <FaTimesCircle className="text-secondary" size={20} />
                   </button>
                 </div>
@@ -2289,7 +2289,7 @@ const Incidents: React.FC = () => {
                               href={video.signedUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2 text-[#00D1FF] hover:text-blue-800 hover:underline cursor-pointer"
+                              className="flex items-center gap-2 text-[#059669] hover:text-blue-800 hover:underline cursor-pointer"
                             >
                               <FaVideo className="text-red-500" size={14} />
                               <span className="text-sm">{video.fileName}</span>
@@ -2420,7 +2420,7 @@ const Incidents: React.FC = () => {
                 >
                   Edit
                 </button>
-                <button onClick={() => setShowViewModal(false)} className="px-4 py-2 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors text-sm">
+                <button onClick={() => setShowViewModal(false)} className="px-4 py-2 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors text-sm">
                   Close
                 </button>
               </div>
@@ -2448,7 +2448,7 @@ const Incidents: React.FC = () => {
                 <div className="flex justify-end gap-3">
                   <button
                     onClick={() => { setShowDeleteModal(false); setIncidentToDelete(null); }}
-                    className="px-4 py-2 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors"
+                    className="px-4 py-2 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors"
                     disabled={loading}
                   >
                     Cancel

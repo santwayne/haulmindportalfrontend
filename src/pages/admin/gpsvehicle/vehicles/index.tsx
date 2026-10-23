@@ -521,7 +521,7 @@ const VehicleList = () => {
         className = "",
     }) => (
         <th
-            className={`px-6 py-4 text-left text-xs font-semibold text-[var(--accent-blue)] uppercase tracking-wider cursor-pointer hover:bg-[rgba(255,255,255,0.03)] transition-colors duration-150 ${className}`}
+            className={`px-6 py-4 text-left text-xs font-semibold text-[var(--accent-blue)] uppercase tracking-wider cursor-pointer hover:bg-[rgba(15,31,23,0.03)] transition-colors duration-150 ${className}`}
             onClick={() => handleSort(field)}
         >
             <div className="flex items-center gap-1">
@@ -798,11 +798,11 @@ const VehicleList = () => {
                             background: transparent;
                         }
                         .top-scrollbar-container::-webkit-scrollbar-thumb {
-                            background: rgba(0,209,255,0.25);
+                            background: rgba(5,150,105,0.25);
                             border-radius: 4px;
                         }
                         .top-scrollbar-container::-webkit-scrollbar-thumb:hover {
-                            background: rgba(0,209,255,0.45);
+                            background: rgba(5,150,105,0.45);
                         }
                         .table-container-hidden-scrollbar {
                             scrollbar-width: none; /* Firefox */
@@ -819,7 +819,7 @@ const VehicleList = () => {
                             maxHeight: '20px',
                             marginBottom: '2px',
                             scrollbarWidth: 'thin',
-                            scrollbarColor: '#224c75 #111c24'  /* Firefox */
+                            scrollbarColor: '#065f46 #e7f2ec'  /* Firefox */
                         }}
                     >
                         <div className="top-scroll-content" style={{ height: '1px' }}></div>
@@ -865,7 +865,7 @@ const VehicleList = () => {
                                         return (
                                             <tr
                                                 key={vehicle._id}
-                                                className="hover:bg-[rgba(255,255,255,0.03)] transition-colors duration-150 cursor-pointer"
+                                                className="hover:bg-[rgba(15,31,23,0.03)] transition-colors duration-150 cursor-pointer"
                                                 onClick={() => {
                                                     setSelectedVehicle(vehicle);
                                                     setShowDetailsSidebar(true);
@@ -942,7 +942,7 @@ const VehicleList = () => {
                                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium" onClick={(e) => e.stopPropagation()}>
                                                     <button
                                                         onClick={() => handleViewDetails(vehicle)}
-                                                        className="inline-flex items-center space-x-1 text-accent hover:text-[var(--accent-blue)] px-3 py-2 rounded-lg hover:bg-[rgba(255,255,255,0.05)] transition-colors duration-150 text-sm font-medium"
+                                                        className="inline-flex items-center space-x-1 text-accent hover:text-[var(--accent-blue)] px-3 py-2 rounded-lg hover:bg-[rgba(15,31,23,0.05)] transition-colors duration-150 text-sm font-medium"
                                                     >
                                                         <Eye className="w-4 h-4" />
                                                         <span>Details</span>
@@ -963,14 +963,14 @@ const VehicleList = () => {
                                 <button
                                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                                     disabled={currentPage === 1}
-                                    className="relative inline-flex items-center px-4 py-2 border border-theme text-secondary text-sm font-medium rounded-lg bg-card hover:bg-[rgba(255,255,255,0.05)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-150"
+                                    className="relative inline-flex items-center px-4 py-2 border border-theme text-secondary text-sm font-medium rounded-lg bg-card hover:bg-[rgba(15,31,23,0.05)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-150"
                                 >
                                     Previous
                                 </button>
                                 <button
                                     onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                                     disabled={currentPage === totalPages}
-                                    className="ml-3 relative inline-flex items-center px-4 py-2 border border-theme text-secondary text-sm font-medium rounded-lg bg-card hover:bg-[rgba(255,255,255,0.05)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-150"
+                                    className="ml-3 relative inline-flex items-center px-4 py-2 border border-theme text-secondary text-sm font-medium rounded-lg bg-card hover:bg-[rgba(15,31,23,0.05)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-150"
                                 >
                                     Next
                                 </button>
@@ -988,7 +988,7 @@ const VehicleList = () => {
                                         <button
                                             onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                                             disabled={currentPage === 1}
-                                            className="relative inline-flex items-center px-3 py-2 rounded-l-lg border border-theme text-secondary bg-card text-sm font-medium hover:bg-[rgba(255,255,255,0.05)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-150"
+                                            className="relative inline-flex items-center px-3 py-2 rounded-l-lg border border-theme text-secondary bg-card text-sm font-medium hover:bg-[rgba(15,31,23,0.05)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-150"
                                         >
                                             <ChevronLeft className="h-4 w-4" />
                                         </button>
@@ -1001,7 +1001,7 @@ const VehicleList = () => {
                                                     onClick={() => setCurrentPage(page)}
                                                     className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium transition-colors duration-150 ${currentPage === page
                                                         ? 'z-10 bg-[var(--accent-blue)] border-[var(--accent-blue)] text-white font-semibold'
-                                                        : 'bg-card border-theme text-secondary hover:bg-[rgba(255,255,255,0.05)]'
+                                                        : 'bg-card border-theme text-secondary hover:bg-[rgba(15,31,23,0.05)]'
                                                         }`}
                                                 >
                                                     {page}
@@ -1012,7 +1012,7 @@ const VehicleList = () => {
                                         <button
                                             onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                                             disabled={currentPage === totalPages}
-                                            className="relative inline-flex items-center px-3 py-2 rounded-r-lg border border-theme text-secondary bg-card text-sm font-medium hover:bg-[rgba(255,255,255,0.05)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-150"
+                                            className="relative inline-flex items-center px-3 py-2 rounded-r-lg border border-theme text-secondary bg-card text-sm font-medium hover:bg-[rgba(15,31,23,0.05)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-150"
                                         >
                                             <ChevronRight className="h-4 w-4" />
                                         </button>
@@ -1036,7 +1036,7 @@ const VehicleList = () => {
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center space-x-3">
 
-                                                <div className="w-12 h-12 rounded-lg bg-[rgba(255,255,255,0.08)] flex items-center justify-center border border-theme">
+                                                <div className="w-12 h-12 rounded-lg bg-[rgba(15,31,23,0.08)] flex items-center justify-center border border-theme">
                                                     <Truck className="w-6 h-6 text-[var(--accent-blue)]" />
                                                 </div>
 
@@ -1049,7 +1049,7 @@ const VehicleList = () => {
                                             </div>
                                             <button
                                                 onClick={() => setShowDetails(false)}
-                                                className="p-2 hover:bg-[rgba(255,255,255,0.08)] rounded-lg transition-colors duration-150"
+                                                className="p-2 hover:bg-[rgba(15,31,23,0.08)] rounded-lg transition-colors duration-150"
                                             >
                                                 <X className="w-5 h-5 text-secondary" />
                                             </button>
@@ -1248,7 +1248,7 @@ const VehicleList = () => {
                                                     Driver Behaviour Metrics
                                                 </h3>
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                    <div className="text-center p-4 bg-[rgba(255,255,255,0.03)] rounded-lg border border-theme">
+                                                    <div className="text-center p-4 bg-[rgba(15,31,23,0.03)] rounded-lg border border-theme">
                                                         <div className="text-2xl font-bold text-[var(--accent-purple)]">{selectedVehicle.driverBehaviour.harshBraking}</div>
                                                         <div className="text-sm text-secondary">Harsh Braking Events</div>
                                                     </div>
@@ -1256,7 +1256,7 @@ const VehicleList = () => {
                                                         <div className="text-2xl font-bold text-[var(--accent-orange)]">{selectedVehicle.driverBehaviour.speedingEvents}</div>
                                                         <div className="text-sm text-secondary">Speeding Events</div>
                                                     </div>
-                                                    <div className="text-center p-4 bg-[rgba(255,255,255,0.03)] rounded-lg border border-theme">
+                                                    <div className="text-center p-4 bg-[rgba(15,31,23,0.03)] rounded-lg border border-theme">
                                                         <div className="text-2xl font-bold text-accent">{selectedVehicle.driverBehaviour.idlingDuration}</div>
                                                         <div className="text-sm text-secondary">Idling Duration (min)</div>
                                                     </div>
@@ -1416,7 +1416,7 @@ const VehicleList = () => {
                                             setShowDetailsSidebar(false);
                                             setTimeout(() => setSelectedVehicle(null), 300);
                                         }}
-                                        className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] transition-all"
+                                        className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] transition-all"
                                     >
                                         <X size={24} />
                                     </button>
@@ -1424,10 +1424,10 @@ const VehicleList = () => {
 
                                 <div className="space-y-6">
                                     {/* Vehicle Header */}
-                                    <div className="bg-gradient-to-r from-[var(--accent-blue)]/20 to-[var(--accent-purple)]/20 border border-white/10 p-6 rounded-lg">
+                                    <div className="bg-gradient-to-r from-[var(--accent-blue)]/20 to-[var(--accent-purple)]/20 border border-black/10 p-6 rounded-lg">
                                         <div className="flex items-center gap-4">
                                             <div className="h-16 w-16 flex-shrink-0">
-                                                <div className="h-16 w-16 rounded-full flex items-center justify-center text-white text-2xl border-2 border-white/20 bg-[rgba(255,255,255,0.1)]">
+                                                <div className="h-16 w-16 rounded-full flex items-center justify-center text-white text-2xl border-2 border-black/20 bg-[rgba(15,31,23,0.1)]">
                                                     <Truck size={28} />
                                                 </div>
                                             </div>
@@ -1444,7 +1444,7 @@ const VehicleList = () => {
                                                             ? "bg-[var(--accent-orange)]/20 text-[var(--accent-orange)] border border-[var(--accent-orange)]/30"
                                                             : selectedVehicle.status === "maintenance"
                                                                 ? "bg-[var(--accent-red)]/20 text-[var(--accent-red)] border border-[var(--accent-red)]/30"
-                                                                : "bg-[rgba(255,255,255,0.08)] text-secondary border border-theme"
+                                                                : "bg-[rgba(15,31,23,0.08)] text-secondary border border-theme"
                                                         }`}
                                                 >
                                                     {selectedVehicle.status === "moving" ? (
@@ -1603,7 +1603,7 @@ const VehicleList = () => {
                                                 setShowDetailsSidebar(false);
                                                 setTimeout(() => setSelectedVehicle(null), 300);
                                             }}
-                                            className="px-6 py-2.5 bg-[rgba(255,255,255,0.08)] text-secondary font-medium rounded-lg hover:bg-[rgba(255,255,255,0.12)] border border-theme transition-all"
+                                            className="px-6 py-2.5 bg-[rgba(15,31,23,0.08)] text-secondary font-medium rounded-lg hover:bg-[rgba(15,31,23,0.12)] border border-theme transition-all"
                                         >
                                             Close
                                         </button>

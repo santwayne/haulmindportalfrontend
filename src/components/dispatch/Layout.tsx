@@ -51,7 +51,7 @@ const ChatMessagePopup = ({ navigate }: { navigate: (path: string) => void }) =>
                         <MessageCircle size={16} className="text-white" />
                         <span className="text-white text-xs font-semibold tracking-wide">New Message</span>
                     </div>
-                    <button onClick={handleDismiss} className="text-white/80 hover:text-white transition-colors">
+                    <button onClick={handleDismiss} className="text-white/80 hover:text-[var(--accent-navyblue)] transition-colors">
                         <X size={14} />
                     </button>
                 </div>

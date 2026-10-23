@@ -307,7 +307,7 @@ const UtilizationPage = () => {
                       </tr>
                     ) : (
                       filteredTrucks.map((truck) => (
-                        <tr key={truck.id} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                        <tr key={truck.id} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                           <td className="px-6 py-4">
                             <div className="text-sm font-medium text-primary">{truck.plateNumber || 'N/A'}</div>
                             <div className="text-xs text-secondary">
@@ -379,7 +379,7 @@ const UtilizationPage = () => {
                       </tr>
                     ) : (
                       filteredTrailers.map((trailer) => (
-                        <tr key={trailer.id} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                        <tr key={trailer.id} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                           <td className="px-6 py-4">
                             <div className="text-sm font-medium text-primary">{trailer.plateNumber || 'N/A'}</div>
                             <div className="text-xs text-secondary">

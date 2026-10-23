@@ -118,15 +118,15 @@ const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ className = '' }) => 
           }}
           className="mb-4 mr-4 p-4 rounded-full transition-all duration-300 hover:scale-110 flex items-center justify-center relative"
           style={{
-            background: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+            background: 'linear-gradient(135deg, #10B981 0%, #047857 100%)',
             color: '#ffffff',
-            boxShadow: '0 0 24px rgba(59, 130, 246, 0.7), 0 0 48px rgba(29, 78, 216, 0.35)',
+            boxShadow: '0 0 24px rgba(16, 185, 129, 0.7), 0 0 48px rgba(4, 120, 87, 0.35)',
           }}
           title="Open AI Assistant"
         >
           <span
             className="absolute inset-0 rounded-full animate-ping"
-            style={{ background: 'rgba(59, 130, 246, 0.4)' }}
+            style={{ background: 'rgba(16, 185, 129, 0.4)' }}
           />
           <Bot className="w-6 h-6 relative z-10" />
         </button>
@@ -145,26 +145,26 @@ const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ className = '' }) => 
             marginRight: '0',
             background: 'var(--bg-card)',
             borderRadius: '14px 14px 0 0',
-            border: '1px solid rgba(59, 130, 246, 0.35)',
-            boxShadow: '0 0 32px rgba(59, 130, 246, 0.2), 0 20px 60px rgba(0, 0, 0, 0.6)',
+            border: '1px solid rgba(16, 185, 129, 0.35)',
+            boxShadow: '0 0 32px rgba(16, 185, 129, 0.2), 0 20px 60px rgba(0, 0, 0, 0.6)',
           }}
         >
           {/* Header */}
           <div
             className="flex-shrink-0 p-4 flex items-center justify-between"
             style={{
-              background: 'linear-gradient(135deg, #1e3a8a 0%, #1D4ED8 60%, #2563EB 100%)',
+              background: 'linear-gradient(135deg, #1e3a8a 0%, #047857 60%, #2563EB 100%)',
               borderRadius: '14px 14px 0 0',
-              boxShadow: '0 4px 20px rgba(29, 78, 216, 0.4)',
+              boxShadow: '0 4px 20px rgba(4, 120, 87, 0.4)',
             }}
           >
             <div className="flex items-center gap-3">
               <div
                 className="p-2 rounded-lg"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  border: '1px solid rgba(255, 255, 255, 0.25)',
-                  boxShadow: '0 0 12px rgba(255, 255, 255, 0.1)',
+                  background: 'rgba(15,31,23, 0.15)',
+                  border: '1px solid rgba(15,31,23, 0.25)',
+                  boxShadow: '0 0 12px rgba(15,31,23, 0.1)',
                 }}
               >
                 <Bot className="w-5 h-5 text-white" />
@@ -193,7 +193,7 @@ const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ className = '' }) => 
                 className="p-1.5 rounded-lg transition-all duration-200"
                 style={{ color: 'rgba(255,255,255,0.7)' }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.15)';
+                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(15,31,23,0.15)';
                   (e.currentTarget as HTMLButtonElement).style.color = '#ffffff';
                 }}
                 onMouseLeave={(e) => {
@@ -239,8 +239,8 @@ const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ className = '' }) => 
                       <div
                         className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mr-2 mt-0.5"
                         style={{
-                          background: 'linear-gradient(135deg, #2563EB, #1D4ED8)',
-                          boxShadow: '0 0 8px rgba(59, 130, 246, 0.4)',
+                          background: 'linear-gradient(135deg, #2563EB, #047857)',
+                          boxShadow: '0 0 8px rgba(16, 185, 129, 0.4)',
                         }}
                       >
                         <Bot className="w-3.5 h-3.5 text-white" />
@@ -251,14 +251,14 @@ const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ className = '' }) => 
                       style={
                         message.role === 'user'
                           ? {
-                              background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+                              background: 'linear-gradient(135deg, #2563EB 0%, #047857 100%)',
                               color: '#ffffff',
                               borderRadius: '18px 4px 18px 18px',
                               boxShadow: '0 4px 14px rgba(37, 99, 235, 0.45)',
                             }
                           : {
                               background: 'var(--bg-card)',
-                              border: '1px solid rgba(59, 130, 246, 0.2)',
+                              border: '1px solid rgba(16, 185, 129, 0.2)',
                               color: 'var(--text-primary)',
                               borderRadius: '4px 18px 18px 18px',
                             }
@@ -287,8 +287,8 @@ const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ className = '' }) => 
                     <div
                       className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
                       style={{
-                        background: 'linear-gradient(135deg, #2563EB, #1D4ED8)',
-                        boxShadow: '0 0 8px rgba(59, 130, 246, 0.4)',
+                        background: 'linear-gradient(135deg, #2563EB, #047857)',
+                        boxShadow: '0 0 8px rgba(16, 185, 129, 0.4)',
                       }}
                     >
                       <Bot className="w-3.5 h-3.5 text-white" />
@@ -297,12 +297,12 @@ const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ className = '' }) => 
                       className="px-4 py-2.5"
                       style={{
                         background: 'var(--bg-card)',
-                        border: '1px solid rgba(59, 130, 246, 0.2)',
+                        border: '1px solid rgba(16, 185, 129, 0.2)',
                         borderRadius: '4px 18px 18px 18px',
                       }}
                     >
                       <div className="flex items-center gap-2">
-                        <Loader2 className="w-4 h-4 animate-spin" style={{ color: '#3B82F6' }} />
+                        <Loader2 className="w-4 h-4 animate-spin" style={{ color: '#10B981' }} />
                         <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                           Thinking...
                         </span>
@@ -319,7 +319,7 @@ const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ className = '' }) => 
                 className="flex-shrink-0 p-4"
                 style={{
                   background: 'var(--bg-card)',
-                  borderTop: '1px solid rgba(59, 130, 246, 0.2)',
+                  borderTop: '1px solid rgba(16, 185, 129, 0.2)',
                 }}
               >
                 <div className="flex items-end gap-2">
@@ -332,17 +332,17 @@ const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ className = '' }) => 
                     className="flex-1 px-4 py-2.5 rounded-xl resize-none text-sm transition-all duration-200"
                     style={{
                       background: 'var(--bg-main)',
-                      border: '1px solid rgba(59, 130, 246, 0.25)',
+                      border: '1px solid rgba(16, 185, 129, 0.25)',
                       color: 'var(--text-primary)',
                       outline: 'none',
                       maxHeight: '120px',
                     }}
                     onFocus={(e) => {
-                      e.currentTarget.style.border = '1px solid rgba(59, 130, 246, 0.7)';
-                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.15)';
+                      e.currentTarget.style.border = '1px solid rgba(16, 185, 129, 0.7)';
+                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.15)';
                     }}
                     onBlur={(e) => {
-                      e.currentTarget.style.border = '1px solid rgba(59, 130, 246, 0.25)';
+                      e.currentTarget.style.border = '1px solid rgba(16, 185, 129, 0.25)';
                       e.currentTarget.style.boxShadow = 'none';
                     }}
                     rows={1}
@@ -353,20 +353,20 @@ const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ className = '' }) => 
                     disabled={!inputMessage.trim() || isLoading}
                     className="p-2.5 rounded-xl transition-all duration-200 flex-shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{
-                      background: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+                      background: 'linear-gradient(135deg, #10B981 0%, #047857 100%)',
                       color: '#ffffff',
-                      boxShadow: inputMessage.trim() ? '0 0 14px rgba(59, 130, 246, 0.55)' : 'none',
+                      boxShadow: inputMessage.trim() ? '0 0 14px rgba(16, 185, 129, 0.55)' : 'none',
                     }}
                     onMouseEnter={(e) => {
                       if (inputMessage.trim()) {
                         (e.currentTarget as HTMLButtonElement).style.boxShadow =
-                          '0 0 22px rgba(59, 130, 246, 0.8)';
+                          '0 0 22px rgba(16, 185, 129, 0.8)';
                         (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.05)';
                       }
                     }}
                     onMouseLeave={(e) => {
                       (e.currentTarget as HTMLButtonElement).style.boxShadow = inputMessage.trim()
-                        ? '0 0 14px rgba(59, 130, 246, 0.55)'
+                        ? '0 0 14px rgba(16, 185, 129, 0.55)'
                         : 'none';
                       (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
                     }}
@@ -384,8 +384,8 @@ const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ className = '' }) => 
                   <kbd
                     className="px-1 py-0.5 rounded text-xs"
                     style={{
-                      background: 'rgba(59, 130, 246, 0.12)',
-                      border: '1px solid rgba(59, 130, 246, 0.3)',
+                      background: 'rgba(16, 185, 129, 0.12)',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
                       color: '#60A5FA',
                     }}
                   >
@@ -395,8 +395,8 @@ const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ className = '' }) => 
                   <kbd
                     className="px-1 py-0.5 rounded text-xs"
                     style={{
-                      background: 'rgba(59, 130, 246, 0.12)',
-                      border: '1px solid rgba(59, 130, 246, 0.3)',
+                      background: 'rgba(16, 185, 129, 0.12)',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
                       color: '#60A5FA',
                     }}
                   >

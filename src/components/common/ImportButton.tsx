@@ -202,7 +202,7 @@ export default function ImportButton({
         <button
           onClick={() => setShowTemplate(true)}
           title="View importable fields"
-          className="w-10 h-10 border border-theme rounded-lg flex items-center justify-center text-secondary hover:text-primary hover:bg-[rgba(255,255,255,0.05)] transition-colors"
+          className="w-10 h-10 border border-theme rounded-lg flex items-center justify-center text-secondary hover:text-primary hover:bg-[rgba(15,31,23,0.05)] transition-colors"
         >
           <Download className="w-4 h-4" />
         </button>
@@ -210,7 +210,7 @@ export default function ImportButton({
           onClick={() => fileInputRef.current?.click()}
           disabled={loading || step !== 'idle'}
           title={`${label} from CSV or Excel`}
-          className="w-10 h-10 border border-theme rounded-lg flex items-center justify-center text-secondary hover:text-primary hover:bg-[rgba(255,255,255,0.05)] transition-colors disabled:opacity-50"
+          className="w-10 h-10 border border-theme rounded-lg flex items-center justify-center text-secondary hover:text-primary hover:bg-[rgba(15,31,23,0.05)] transition-colors disabled:opacity-50"
         >
           <Upload className="w-4 h-4" />
         </button>
@@ -246,7 +246,7 @@ export default function ImportButton({
               </p>
               <div className="overflow-x-auto rounded-lg border border-theme">
                 <table className="w-full text-xs">
-                  <thead className="bg-[rgba(255,255,255,0.04)]">
+                  <thead className="bg-[rgba(15,31,23,0.04)]">
                     <tr>
                       <th className="text-left px-3 py-2 text-secondary font-medium">Field</th>
                       <th className="text-left px-3 py-2 text-secondary font-medium">Example</th>
@@ -337,7 +337,7 @@ export default function ImportButton({
                     </div>
                     <div className="overflow-x-auto rounded-lg border border-theme">
                       <table className="w-full text-sm">
-                        <thead className="bg-[rgba(255,255,255,0.04)]">
+                        <thead className="bg-[rgba(15,31,23,0.04)]">
                           <tr>
                             <th className="text-left px-3 py-2 text-secondary font-medium text-xs w-1/3">Your Column</th>
                             <th className="text-left px-3 py-2 text-secondary font-medium text-xs w-1/4">Sample Value</th>

@@ -776,7 +776,7 @@ focus:ring-[var(--accent-blue)]/30"
                   filteredRecords.map((record, idx) => (
                     <tr
                       key={record._id || idx}
-                      className="hover:bg-[rgba(255,255,255,0.03)] transition-colors cursor-pointer"
+                      className="hover:bg-[rgba(15,31,23,0.03)] transition-colors cursor-pointer"
                       onClick={() => {
                         setSelectedRecord(record);
                         setShowDetailsSidebar(true);
@@ -846,7 +846,7 @@ focus:ring-[var(--accent-blue)]/30"
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleEdit(record)}
-                              className="text-[var(--accent-blue)] hover:bg-[var(--accent-amber)]/10 p-1 rounded hover:bg-[rgba(0,209,255,0.1)]"
+                              className="text-[var(--accent-blue)] hover:bg-[var(--accent-amber)]/10 p-1 rounded hover:bg-[rgba(5,150,105,0.1)]"
                             >
                               <Edit size={16} />
                             </button>
@@ -1035,7 +1035,7 @@ focus:ring-[var(--accent-blue)]/30 resize-none"
                       notes: ''
                     });
                   }}
-                  className="flex-1 px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors font-medium"
+                  className="flex-1 px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors font-medium"
                 >
                   Cancel
                 </button>
@@ -1071,7 +1071,7 @@ focus:ring-[var(--accent-blue)]/30 resize-none"
             <div className="border-b border-theme px-6 py-4 flex-shrink-0">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-amber)]/10">
-                  <XCircle className="h-6 w-6 text-[#00FFA3]" />
+                  <XCircle className="h-6 w-6 text-[#059669]" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-primary">Attendance Record Already Exists</h3>
@@ -1082,7 +1082,7 @@ focus:ring-[var(--accent-blue)]/30 resize-none"
                     setShowDuplicateModal(false);
                     setDuplicateRecord(null);
                   }}
-                  className="p-1 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                  className="p-1 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -1160,7 +1160,7 @@ focus:ring-[var(--accent-blue)]/30 resize-none"
                   setShowDuplicateModal(false);
                   setDuplicateRecord(null);
                 }}
-                className="flex-1 rounded-lg border border-theme px-4 py-2 font-medium text-primary transition-colors hover:bg-[rgba(255,255,255,0.03)]"
+                className="flex-1 rounded-lg border border-theme px-4 py-2 font-medium text-primary transition-colors hover:bg-[rgba(15,31,23,0.03)]"
               >
                 Cancel
               </button>
@@ -1236,7 +1236,7 @@ focus:ring-[var(--accent-blue)]/30 resize-none"
                     setShowDetailsSidebar(false);
                     setTimeout(() => setSelectedRecord(null), 300);
                   }}
-                  className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] transition-all"
+                  className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] transition-all"
                 >
                   <X size={24} />
                 </button>
@@ -1394,7 +1394,7 @@ const ConfirmationModal = ({
         <div className="flex gap-3 border-t border-theme px-6 py-4">
           <button
             onClick={onClose}
-            className="flex-1 rounded-lg border border-theme px-4 py-2 font-medium text-primary transition-colors hover:bg-[rgba(255,255,255,0.03)]"
+            className="flex-1 rounded-lg border border-theme px-4 py-2 font-medium text-primary transition-colors hover:bg-[rgba(15,31,23,0.03)]"
           >
             {cancelText}
           </button>

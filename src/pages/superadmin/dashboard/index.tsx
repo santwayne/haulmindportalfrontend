@@ -232,7 +232,7 @@ const SuperAdminOverview = () => {
               <div className="overflow-hidden">
                 {recentCustomers.length > 0 ? (
                   recentCustomers.map((customer: any) => (
-                    <div key={customer.id} className="px-6 py-4 border-b border-theme last:border-b-0 hover:bg-[rgba(255,255,255,0.03)]">
+                    <div key={customer.id} className="px-6 py-4 border-b border-theme last:border-b-0 hover:bg-[rgba(15,31,23,0.03)]">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                           <div className="bg-purple-100 p-2 rounded-lg">
@@ -246,7 +246,7 @@ const SuperAdminOverview = () => {
                                 {customer.companyName ? (
                                   <span className="text-primary">{customer.companyName}</span>
                                 ) : (
-                                  <span className="text-[#F59E0B] italic">Company not created</span>
+                                  <span className="text-[#d97706] italic">Company not created</span>
                                 )}
                               </p>
                               <p className="text-xs text-secondary">Joined {customer.joined}</p>
@@ -266,7 +266,7 @@ const SuperAdminOverview = () => {
                               {customer.status}
                             </span>
                           </div>
-                          <button className="p-1 hover:bg-[rgba(255,255,255,0.03)] rounded">
+                          <button className="p-1 hover:bg-[rgba(15,31,23,0.03)] rounded">
                             <MoreHorizontal className="w-4 h-4 text-secondary" />
                           </button>
                         </div>
@@ -298,7 +298,7 @@ const SuperAdminOverview = () => {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-secondary">Pending</span>
-                      <span className="font-semibold text-[#00FFA3]">{dashboardData.subscriptionStats.pending || 0}</span>
+                      <span className="font-semibold text-[#059669]">{dashboardData.subscriptionStats.pending || 0}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-secondary">Cancelled</span>

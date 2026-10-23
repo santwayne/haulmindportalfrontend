@@ -2014,7 +2014,7 @@ const PayrollManagement = () => {
                                     border-radius: 5px;
                                 }
                                 .top-scrollbar-container::-webkit-scrollbar-thumb:hover {
-                                    background: rgba(0,209,255,0.15);
+                                    background: rgba(5,150,105,0.15);
                                 }
                                 .table-container-with-scrollbar {
                                     overflow-x: auto;
@@ -2032,7 +2032,7 @@ const PayrollManagement = () => {
                                     border-radius: 5px;
                                 }
                                 .table-container-with-scrollbar::-webkit-scrollbar-thumb:hover {
-                                    background: rgba(0,209,255,0.15);
+                                    background: rgba(5,150,105,0.15);
                                 }
                             `}
                             </style>
@@ -2082,12 +2082,12 @@ const PayrollManagement = () => {
                                             </th>
                                         </tr>
                                     </thead>
-                                    <tbody className="bg-card divide-y divide-theme divide-white/5 ">
+                                    <tbody className="bg-card divide-y divide-theme divide-black/5 ">
                                         {filteredPayrolls.map((payroll) => {
                                             return (
                                                 <tr
                                                     key={payroll._id}
-                                                    className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                                                    className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                                                     onClick={() => openViewModal(payroll)}
                                                 >
                                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -2146,7 +2146,7 @@ const PayrollManagement = () => {
                                                             </button>
                                                             <button
                                                                 onClick={() => openEditModal(payroll)}
-                                                                className="text-[#00D1FF] hover:text-blue-900 p-2 hover:bg-[var(--accent-blue)]/10 rounded-lg transition-colors"
+                                                                className="text-[#059669] hover:text-blue-900 p-2 hover:bg-[var(--accent-blue)]/10 rounded-lg transition-colors"
                                                                 title="Edit Payroll"
                                                             >
                                                                 <Edit2 size={18} className='text-[var(--accent-navyblue)]' />
@@ -2177,7 +2177,7 @@ const PayrollManagement = () => {
                                 <div className="p-6 border-b border-theme sticky top-0 bg-card z-10 flex justify-between items-center">
                                     <div className="flex items-center gap-3">
                                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${showCreateModal ? '' : ''}`}>
-                                            {showCreateModal ? <Plus className="text-[#00D1FF]" size={20} /> : <Edit2 className="text-[var(--accent-navyblue)]" size={20} />}
+                                            {showCreateModal ? <Plus className="text-[#059669]" size={20} /> : <Edit2 className="text-[var(--accent-navyblue)]" size={20} />}
                                         </div>
                                         <div>
                                             <h4 className="text-xl font-bold text-headings">
@@ -2195,7 +2195,7 @@ const PayrollManagement = () => {
                                             resetForm();
                                             setSelectedPayroll(null);
                                         }}
-                                        className="text-secondary hover:text-secondary p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition-colors"
+                                        className="text-secondary hover:text-secondary p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors"
                                     >
                                         <X size={24} />
                                     </button>
@@ -2298,7 +2298,7 @@ const PayrollManagement = () => {
 
                                                     <div className="bg-card p-4 rounded-lg border border-theme">
                                                         <div className="flex items-center gap-2 mb-3">
-                                                            <Clock className="text-[#00D1FF]" size={18} />
+                                                            <Clock className="text-[#059669]" size={18} />
                                                             <h6 className="font-semibold text-headings">Hours Breakdown</h6>
                                                         </div>
                                                         <div className="grid grid-cols-2 gap-4">
@@ -2308,7 +2308,7 @@ const PayrollManagement = () => {
                                                             </div>
                                                             <div>
                                                                 <p className="text-xs text-secondary mb-1">Regular Hours</p>
-                                                                <p className="text-lg font-bold text-[#00D1FF]">{attendanceSummary.regularHours.toFixed(2)}</p>
+                                                                <p className="text-lg font-bold text-[#059669]">{attendanceSummary.regularHours.toFixed(2)}</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -3055,7 +3055,7 @@ const PayrollManagement = () => {
                                     </div>
                                     <button
                                         onClick={() => setShowViewModal(false)}
-                                        className="text-secondary hover:text-secondary p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition-colors"
+                                        className="text-secondary hover:text-secondary p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors"
                                     >
                                         <X size={24} />
                                     </button>
@@ -3065,7 +3065,7 @@ const PayrollManagement = () => {
                                     {/* Employee Info */}
                                     <div className="bg-card p-6 rounded-xl border border-theme">
                                         <h5 className="text-lg font-bold text-headings mb-4 flex items-center gap-2">
-                                            <Users size={20} className="text-[#00D1FF]" />
+                                            <Users size={20} className="text-[#059669]" />
                                             Employee Information
                                         </h5>
                                         <div className="grid grid-cols-2 gap-4">
@@ -3093,7 +3093,7 @@ const PayrollManagement = () => {
                                     {/* Payroll Summary */}
                                     <div className="bg-card p-6 rounded-xl border border-blue-200">
                                         <h5 className="text-lg font-bold text-headings mb-4 flex items-center gap-2">
-                                            <DollarSign size={20} className="text-[#00D1FF]" />
+                                            <DollarSign size={20} className="text-[#059669]" />
                                             Payroll Summary
                                         </h5>
                                         <div className="grid grid-cols-2 gap-4">
@@ -3131,7 +3131,7 @@ const PayrollManagement = () => {
                                     {/* Pay Period */}
                                     <div className="bg-card p-6 rounded-xl border border-theme">
                                         <h5 className="text-lg font-bold text-headings mb-4 flex items-center gap-2">
-                                            <Calendar size={20} className="text-[#F59E0B]" />
+                                            <Calendar size={20} className="text-[#d97706]" />
                                             Pay Period
                                         </h5>
                                         <div className="grid grid-cols-3 gap-4">
@@ -3186,7 +3186,7 @@ const PayrollManagement = () => {
                                                 setShowPaystubModal(false);
                                                 setSelectedPaystub(null);
                                             }}
-                                            className="text-secondary hover:text-secondary p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition-colors"
+                                            className="text-secondary hover:text-secondary p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors"
                                         >
                                             <X size={24} />
                                         </button>
@@ -4052,7 +4052,7 @@ const PayrollManagement = () => {
                                                 payDate: new Date().toISOString().split('T')[0]
                                             });
                                         }}
-                                        className="text-secondary hover:text-secondary p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition-colors"
+                                        className="text-secondary hover:text-secondary p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors"
                                     >
                                         <X size={24} />
                                     </button>
@@ -4162,7 +4162,7 @@ const PayrollManagement = () => {
                                                         </thead>
                                                         <tbody className="divide-theme">
                                                             {bulkAIPayrolls.map((payroll, index) => (
-                                                                <tr key={index} className="hover:bg-[rgba(255,255,255,0.03)]">
+                                                                <tr key={index} className="hover:bg-[rgba(15,31,23,0.03)]">
                                                                     <td className="px-4 py-3">
                                                                         <div className="font-medium text-headings">
                                                                             {payroll.employee?.name || 'Unknown'}
@@ -4282,7 +4282,7 @@ const PayrollManagement = () => {
                                                                                             // Use openEditModal to properly set up the form
                                                                                             openEditModal(payrollForEdit as any);
                                                                                         }}
-                                                                                        className="text-[#00D1FF] hover:text-blue-800 text-xs underline cursor-pointer"
+                                                                                        className="text-[#059669] hover:text-blue-800 text-xs underline cursor-pointer"
                                                                                     >
                                                                                         Edit
                                                                                     </button>

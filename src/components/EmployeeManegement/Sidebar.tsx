@@ -85,7 +85,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
           </div>
           <button
             onClick={onToggle}
-            className="text-secondary hover:text-primary cursor-pointer transition-colors p-1 rounded-md hover:bg-[rgba(255,255,255,0.03)]"
+            className="text-secondary hover:text-primary cursor-pointer transition-colors p-1 rounded-md hover:bg-[rgba(15,31,23,0.03)]"
           >
             {isCollapsed ? <FaBars size={16} /> : <FaTimes size={16} />}
           </button>
@@ -141,7 +141,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
                                   transition-all duration-200 ease-in-out group
                                   ${activeState
                                       ? "bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 border-l-4 border-purple-500"
-                                      : "text-secondary hover:bg-[rgba(255,255,255,0.03)] hover:text-primary"
+                                      : "text-secondary hover:bg-[rgba(15,31,23,0.03)] hover:text-primary"
                                     }`;
                                 }}
                               >

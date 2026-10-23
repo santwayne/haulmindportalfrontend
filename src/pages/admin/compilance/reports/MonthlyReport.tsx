@@ -1106,7 +1106,7 @@ const MonthlyReport: React.FC = () => {
                 )}
                 <div className="bg-card border-2 border-yellow-300 rounded-lg p-4">
                   <p className="text-sm text-yellow-900 font-semibold flex items-start gap-2">
-                    <FaExclamationCircle className="text-[#00FFA3] mt-0.5 flex-shrink-0" size={16} />
+                    <FaExclamationCircle className="text-[#059669] mt-0.5 flex-shrink-0" size={16} />
                     <span>This action cannot be undone. All selected records will be permanently removed from the database.</span>
                   </p>
                 </div>
@@ -1221,7 +1221,7 @@ const MonthlyReport: React.FC = () => {
             {duplicateWarnings && duplicateWarnings.length > 0 && (
               <div className="px-6 py-3 bg-card border-b border-yellow-200">
                 <div className="flex items-start gap-3">
-                  <FaExclamationTriangle className="text-[#00FFA3] flex-shrink-0 mt-0.5" size={20} />
+                  <FaExclamationTriangle className="text-[#059669] flex-shrink-0 mt-0.5" size={20} />
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-yellow-900 mb-1">
                       Duplicate Warnings ({duplicateWarnings.length})
@@ -1231,7 +1231,7 @@ const MonthlyReport: React.FC = () => {
                         <li key={index}>• {warning}</li>
                       ))}
                       {duplicateWarnings.length > 5 && (
-                        <li className="text-[#00FFA3] italic">... and {duplicateWarnings.length - 5} more</li>
+                        <li className="text-[#059669] italic">... and {duplicateWarnings.length - 5} more</li>
                       )}
                     </ul>
                     <p className="text-xs text-yellow-700 mt-2 font-medium">
@@ -1356,23 +1356,23 @@ const MonthlyReport: React.FC = () => {
                         </div>
                         <div className="bg-card rounded p-3 border border-theme">
                           <p className="text-sm text-secondary mb-1">Out of Service</p>
-                          <p className="text-2xl font-bold text-[#F59E0B]">{extractedData.summary.totalOutOfService || 0}</p>
+                          <p className="text-2xl font-bold text-[#d97706]">{extractedData.summary.totalOutOfService || 0}</p>
                         </div>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                         {extractedData.summary.totalWarning !== undefined && extractedData.summary.totalWarning > 0 && (
                           <div className="bg-card rounded p-3 border border-theme">
                             <p className="text-sm text-secondary mb-1">Warning</p>
-                            <p className="text-xl font-bold text-[#00FFA3]">{extractedData.summary.totalWarning || 0}</p>
+                            <p className="text-xl font-bold text-[#059669]">{extractedData.summary.totalWarning || 0}</p>
                           </div>
                         )}
                         <div className="bg-card rounded p-3 border border-theme">
                           <p className="text-sm text-secondary mb-1 flex items-center gap-2">
                             <FaFlag /> Canada Inspections
                           </p>
-                          <p className="text-xl font-bold text-[#00D1FF]">{canadaCount}</p>
+                          <p className="text-xl font-bold text-[#059669]">{canadaCount}</p>
                           {canadaCount === 0 && usaCount === 0 && (!extractedData.inspections || extractedData.inspections.length === 0) && (
-                            <p className="text-xs text-[#F59E0B] mt-1 italic">⚠️ Individual inspections not extracted - cannot calculate country breakdown</p>
+                            <p className="text-xs text-[#d97706] mt-1 italic">⚠️ Individual inspections not extracted - cannot calculate country breakdown</p>
                           )}
                           {canadaCount === 0 && usaCount === 0 && extractedData.inspections && extractedData.inspections.length > 0 && (
                             <p className="text-xs text-secondary mt-1 italic">Country not specified in document</p>
@@ -1382,9 +1382,9 @@ const MonthlyReport: React.FC = () => {
                           <p className="text-sm text-secondary mb-1 flex items-center gap-2">
                             <FaFlagUsa /> USA Inspections
                           </p>
-                          <p className="text-xl font-bold text-[#00D1FF]">{usaCount}</p>
+                          <p className="text-xl font-bold text-[#059669]">{usaCount}</p>
                           {canadaCount === 0 && usaCount === 0 && (!extractedData.inspections || extractedData.inspections.length === 0) && (
-                            <p className="text-xs text-[#F59E0B] mt-1 italic">⚠️ Individual inspections not extracted - cannot calculate country breakdown</p>
+                            <p className="text-xs text-[#d97706] mt-1 italic">⚠️ Individual inspections not extracted - cannot calculate country breakdown</p>
                           )}
                           {canadaCount === 0 && usaCount === 0 && extractedData.inspections && extractedData.inspections.length > 0 && (
                             <p className="text-xs text-secondary mt-1 italic">Country not specified in document</p>
@@ -1477,7 +1477,7 @@ const MonthlyReport: React.FC = () => {
                                 {inspection.violations.slice(0, 3).map((violation: any, vIndex: number) => (
                                   <p key={vIndex} className="text-xs text-secondary">
                                     • {violation.code || 'N/A'}: {violation.description || 'No description'}
-                                    {violation.severity && <span className="ml-2 text-[#F59E0B]">({violation.severity})</span>}
+                                    {violation.severity && <span className="ml-2 text-[#d97706]">({violation.severity})</span>}
                                   </p>
                                 ))}
                                 {inspection.violations.length > 3 && (
@@ -1601,7 +1601,7 @@ const MonthlyReport: React.FC = () => {
                   onClick={() => setSelectedCountry('all')}
                   className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${selectedCountry === 'all'
                     ? 'bg-[var(--accent-navyblue)] text-white'
-                    : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                    : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                     }`}
                 >
                   All
@@ -1610,7 +1610,7 @@ const MonthlyReport: React.FC = () => {
                   onClick={() => setSelectedCountry('canada')}
                   className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors flex items-center gap-2 ${selectedCountry === 'canada'
                     ? 'bg-[var(--accent-navyblue)] text-white'
-                    : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                    : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                     }`}
                 >
                   <FaFlag className="text-primary" size={14} />
@@ -1620,7 +1620,7 @@ const MonthlyReport: React.FC = () => {
                   onClick={() => setSelectedCountry('usa')}
                   className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors flex items-center gap-2 ${selectedCountry === 'usa'
                     ? 'bg-[var(--accent-navyblue)] text-white'
-                    : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                    : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                     }`}
                 >
                   <FaFlagUsa className="text-primary" size={14} />
@@ -1786,10 +1786,10 @@ const MonthlyReport: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className={`text-4xl font-bold ${complianceScore.score >= 80 ? 'text-green-600' : 'text-[#00FFA3]'}`}>
+                    <div className={`text-4xl font-bold ${complianceScore.score >= 80 ? 'text-green-600' : 'text-[#059669]'}`}>
                       {complianceScore.score}%
                     </div>
-                    <div className={`text-sm font-semibold ${complianceScore.eligibleForAudit ? 'text-green-600' : 'text-[#00FFA3]'}`}>
+                    <div className={`text-sm font-semibold ${complianceScore.eligibleForAudit ? 'text-green-600' : 'text-[#059669]'}`}>
                       {complianceScore.eligibleForAudit ? '✓ Eligible for Detailed Audits' : '⚠ Not Eligible'}
                     </div>
                   </div>
@@ -1933,7 +1933,7 @@ const MonthlyReport: React.FC = () => {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-secondary">Warnings:</span>
-                        <span className="font-semibold text-[#00FFA3]">{twoYearData.year1.warningCount}</span>
+                        <span className="font-semibold text-[#059669]">{twoYearData.year1.warningCount}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-secondary">Out of Service:</span>
@@ -1964,7 +1964,7 @@ const MonthlyReport: React.FC = () => {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-secondary">Warnings:</span>
-                        <span className="font-semibold text-[#00FFA3]">{twoYearData.year2.warningCount}</span>
+                        <span className="font-semibold text-[#059669]">{twoYearData.year2.warningCount}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-secondary">Out of Service:</span>
@@ -2015,7 +2015,7 @@ const MonthlyReport: React.FC = () => {
                         </div>
                         <div className="space-y-2">
                           {Object.entries(violationStats.byType || {}).map(([type, count]) => (
-                            <div key={type} className="flex justify-between p-3 bg-card rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition">
+                            <div key={type} className="flex justify-between p-3 bg-card rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition">
                               <span className="font-medium text-[var(--accent-purple)] capitalize">{type.replace(/-/g, ' ')}</span>
                               <span className="font-bold text-[var(--accent-purple)]">{count as number}</span>
                             </div>
@@ -2065,7 +2065,7 @@ const MonthlyReport: React.FC = () => {
                             </thead>
                             <tbody className="bg-card divide-y divide-theme">
                               {violationStats.topViolators.slice(0, 5).map((violator: any, index: number) => (
-                                <tr key={index} className="hover:bg-[rgba(255,255,255,0.03)]">
+                                <tr key={index} className="hover:bg-[rgba(15,31,23,0.03)]">
                                   <td className="px-4 py-3 text-sm">
                                     <div>
                                       <div className="font-medium text-primary">{violator.driver?.name}</div>
@@ -2105,7 +2105,7 @@ const MonthlyReport: React.FC = () => {
                       </span>
                     </div>
                     <p className="text-sm text-secondary mb-6 bg-card p-4 rounded-lg border border-blue-200">
-                      <FaInfoCircle className="inline mr-2 text-[#00D1FF]" />
+                      <FaInfoCircle className="inline mr-2 text-[#059669]" />
                       No real violation data available. Please sync with Geotab or add violations manually to see actual data.
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -2123,7 +2123,7 @@ const MonthlyReport: React.FC = () => {
                       {/* Estimated Tickets */}
                       <div>
                         <div className="flex items-center gap-3 mb-4">
-                          <FaExclamationCircle className="text-[#F59E0B]" size={20} />
+                          <FaExclamationCircle className="text-[#d97706]" size={20} />
                           <h4 className="text-lg font-semibold text-primary">Estimated Tickets</h4>
                         </div>
                         <div className="flex justify-between p-3 bg-card rounded-lg">
@@ -2348,15 +2348,15 @@ const MonthlyReport: React.FC = () => {
                   </h2>
                   <div className="flex flex-wrap items-center gap-4 text-sm text-secondary">
                     <div className="flex items-center gap-2">
-                      <FaCalendarAlt className="text-[#00D1FF]" />
+                      <FaCalendarAlt className="text-[#059669]" />
                       <span><strong>Cutoff Date:</strong> {new Date(oldData.cutoffDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <FaDatabase className="text-[#F59E0B]" />
+                      <FaDatabase className="text-[#d97706]" />
                       <span><strong>Total Records:</strong> {oldData.inspections.total + oldData.tickets.total}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <FaInfoCircle className="text-[#00D1FF]" />
+                      <FaInfoCircle className="text-[#059669]" />
                       <span>All data before the cutoff date will be permanently deleted</span>
                     </div>
                   </div>
@@ -2421,10 +2421,10 @@ const MonthlyReport: React.FC = () => {
                 <div className="bg-card border border-orange-200 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-lg font-bold text-primary flex items-center gap-2">
-                      <FaExclamationCircle className="text-[#F59E0B]" size={18} />
+                      <FaExclamationCircle className="text-[#d97706]" size={18} />
                       Traffic Tickets
                     </h3>
-                    <span className="text-3xl font-bold text-[#F59E0B]">{oldData.tickets.total}</span>
+                    <span className="text-3xl font-bold text-[#d97706]">{oldData.tickets.total}</span>
                   </div>
                   <div className="mb-3">
                     <div className="text-xs text-secondary mb-2">Status Breakdown:</div>
@@ -2503,7 +2503,7 @@ const MonthlyReport: React.FC = () => {
                         </thead>
                         <tbody className="bg-card divide-y divide-theme">
                           {oldData.inspections.preview.map((inspection) => (
-                            <tr key={inspection._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                            <tr key={inspection._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                               <td className="px-4 py-2 text-primary">{inspection.inspectionId}</td>
                               <td className="px-4 py-2 text-secondary">{new Date(inspection.date).toLocaleDateString()}</td>
                               <td className="px-4 py-2">
@@ -2550,7 +2550,7 @@ const MonthlyReport: React.FC = () => {
                         </thead>
                         <tbody className="bg-card divide-y divide-theme">
                           {oldData.tickets.preview.map((ticket) => (
-                            <tr key={ticket._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                            <tr key={ticket._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                               <td className="px-4 py-2 text-primary">{ticket.ticketNumber}</td>
                               <td className="px-4 py-2 text-secondary">{new Date(ticket.dateIssued).toLocaleDateString()}</td>
                               <td className="px-4 py-2 text-secondary">{ticket.violationType}</td>

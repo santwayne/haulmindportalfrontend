@@ -384,7 +384,7 @@ const TrailersTable = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="bg-card rounded-lg shadow p-4">
                 <div className="flex items-center">
-                  <Truck className="w-8 h-8 text-[#00D1FF]" />
+                  <Truck className="w-8 h-8 text-[#059669]" />
                   <div className="ml-3">
                     <p className="text-sm font-medium text-secondary">Total Trailers</p>
                     <p className="text-2xl font-semibold text-primary">{stats.total || 0}</p>
@@ -465,19 +465,19 @@ const TrailersTable = () => {
                       <tr>
                         <td colSpan={6} className="px-6 py-12 text-center text-secondary">
                           <div className="flex flex-col items-center space-y-2">
-                            <div className="text-5xl text-gray-300">🚛</div>
+                            <div className="text-5xl text-gray-600">🚛</div>
                             <p>No trailers found.</p>
                           </div>
                         </td>
                       </tr>
                     ) : (
                       trailers.map((trailer) => (
-                        <tr key={trailer._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                        <tr key={trailer._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="flex-shrink-0 h-10 w-10">
                                 <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                                  <Truck className="h-5 w-5 text-[#00D1FF]" />
+                                  <Truck className="h-5 w-5 text-[#059669]" />
                                 </div>
                               </div>
                               <div className="ml-4">
@@ -515,7 +515,7 @@ const TrailersTable = () => {
                             <div className="flex items-center gap-2">
                               <button
                                 onClick={() => handleEditTrailer(trailer)}
-                                className="flex items-center gap-1 px-3 py-1.5 rounded-md border border-blue-200 text-[#00D1FF] hover:bg-blue-50 transition-colors"
+                                className="flex items-center gap-1 px-3 py-1.5 rounded-md border border-blue-200 text-[#059669] hover:bg-blue-50 transition-colors"
                               >
                                 <Pencil className="w-4 h-4" /> Update
                               </button>
@@ -577,7 +577,7 @@ const TrailersTable = () => {
               <button
                 onClick={closeDeleteModal}
                 disabled={deleteLoading}
-                className="px-5 py-2.5 text-primary bg-card border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                className="px-5 py-2.5 text-primary bg-card border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>

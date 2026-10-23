@@ -15,15 +15,15 @@ import { FLEET_COLORS } from "../colorUtils";
 
 const ACCENT_PRIMARY = FLEET_COLORS.primary;
 const ACCENT_GRADIENT = FLEET_COLORS.gradient;
-const CUSTOM_GRADIENT = 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)';
-const CUSTOM_BLUE = 'rgba(0,209,255,0.15)';
+const CUSTOM_GRADIENT = 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)';
+const CUSTOM_BLUE = 'rgba(5,150,105,0.15)';
 
 const focusRingStyle = {
   "--tw-ring-color": ACCENT_PRIMARY
 } as CSSProperties & { "--tw-ring-color": string };
 const notificationInfoStyle: CSSProperties = {
-  backgroundColor: "rgba(1, 106, 178, 0.08)",
-  borderColor: "rgba(1, 106, 178, 0.3)"
+  backgroundColor: "rgba(4,120,87, 0.08)",
+  borderColor: "rgba(4,120,87, 0.3)"
 };
 
 // Types
@@ -974,14 +974,14 @@ function VehicleDocument() {
         name: "Vehicle",
         icon: <FaCar size={20} style={{ color: ACCENT_PRIMARY }} />,
         textStyle: { color: ACCENT_PRIMARY },
-        bgStyle: { backgroundColor: "rgba(1, 106, 178, 0.08)", borderColor: "rgba(1, 106, 178, 0.3)" },
+        bgStyle: { backgroundColor: "rgba(4,120,87, 0.08)", borderColor: "rgba(4,120,87, 0.3)" },
         description: "Company vehicle / truck asset",
       },
       trailer: {
         name: "Trailer",
         icon: <FaTrailer color={CUSTOM_BLUE} size={20} />,
         textStyle: { color: CUSTOM_BLUE },
-        bgStyle: { backgroundColor: "rgba(14, 163, 216, 0.12)", borderColor: "rgba(14, 163, 216, 0.35)" },
+        bgStyle: { backgroundColor: "rgba(5,150,105, 0.12)", borderColor: "rgba(5,150,105, 0.35)" },
         description: "Company trailer asset",
       },
     };
@@ -1135,7 +1135,7 @@ function VehicleDocument() {
             </div>
             <button
               onClick={() => setShowDocModal(false)}
-              className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors flex-shrink-0"
+              className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors flex-shrink-0"
               disabled={submitting}
             >
               <FaTimes className="text-secondary" size={20} />
@@ -1170,7 +1170,7 @@ function VehicleDocument() {
                         }}
                         className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${isActive
                           ? "shadow-sm"
-                          : "bg-card border-theme text-secondary hover:border-[#016ab2]/40"
+                          : "bg-card border-theme text-secondary hover:border-[#047857]/40"
                           }`}
                         style={isActive ? { ...info.bgStyle, color: info.textStyle.color } : undefined}
                       >
@@ -1205,7 +1205,7 @@ function VehicleDocument() {
               <label className="block text-sm font-semibold text-primary mb-2">
                 Select {currentAssetType === "trailer" ? "Trailer" : "Vehicle"} <span className="text-red-500">*</span>
                 {currentAssetType === "trailer" && (
-                  <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: 'rgba(14, 163, 216, 0.1)', color: CUSTOM_BLUE }}>
+                  <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: 'rgba(5,150,105, 0.1)', color: CUSTOM_BLUE }}>
                     Trailers Only
                   </span>
                 )}
@@ -1426,7 +1426,7 @@ function VehicleDocument() {
               <div className="relative">
                 <input
                   type="file"
-                  className="w-full border border-theme rounded-lg p-3 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#016ab2]/10 file:text-[#016ab2] hover:file:bg-[#016ab2]/20 transition-all"
+                  className="w-full border border-theme rounded-lg p-3 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#047857]/10 file:text-[#047857] hover:file:bg-[#047857]/20 transition-all"
                   style={focusRingStyle}
                   onChange={handleFileChange}
                   onFocus={(e) => e.stopPropagation()}
@@ -1445,7 +1445,7 @@ function VehicleDocument() {
           <div className="sticky bottom-0 bg-card px-6 py-4 flex justify-end gap-3 border-t rounded-b-2xl flex-shrink-0">
             <button
               type="button"
-              className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors"
+              className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors"
               onClick={() => setShowDocModal(false)}
               disabled={submitting}
             >
@@ -1480,7 +1480,7 @@ function VehicleDocument() {
               setViewingFile(null);
               setSignedFileUrl(null);
             }}
-            className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors"
+            className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors"
           >
             <FaTimes className="text-secondary" size={20} />
           </button>
@@ -1529,7 +1529,7 @@ function VehicleDocument() {
                     <div key={file._id || file.fileUrl} className="border border-theme rounded-xl p-4 hover:shadow-lg transition-all bg-card">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-lg" style={{ backgroundColor: "rgba(1, 106, 178, 0.1)" }}>
+                          <div className="p-2 rounded-lg" style={{ backgroundColor: "rgba(4,120,87, 0.1)" }}>
                             <FaFileAlt size={18} style={{ color: ACCENT_PRIMARY }} />
                           </div>
                           <div>
@@ -1545,7 +1545,7 @@ function VehicleDocument() {
                         <div className="flex gap-2">
                           <button
                             className="p-2.5 rounded-lg transition-all border"
-                            style={{ color: ACCENT_PRIMARY, borderColor: "rgba(1, 106, 178, 0.3)" }}
+                            style={{ color: ACCENT_PRIMARY, borderColor: "rgba(4,120,87, 0.3)" }}
                             onClick={async () => {
                               try {
                                 if (!viewingDoc?._id) return;
@@ -1726,7 +1726,7 @@ function VehicleDocument() {
                     <div className="flex flex-col items-center justify-center h-[60vh] bg-card rounded-lg">
                       <div
                         className="animate-spin rounded-full h-12 w-12 border-b-4 mb-4"
-                        style={{ borderColor: "rgba(1, 106, 178, 0.2)", borderBottomColor: ACCENT_PRIMARY }}
+                        style={{ borderColor: "rgba(4,120,87, 0.2)", borderBottomColor: ACCENT_PRIMARY }}
                       ></div>
                       <p className="text-secondary">Loading file...</p>
                     </div>
@@ -1913,7 +1913,7 @@ function VehicleDocument() {
         <div className="sticky bottom-0 bg-card px-6 py-4 flex justify-end gap-3 border-t rounded-b-2xl flex-shrink-0">
           <button
             type="button"
-            className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors"
+            className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors"
             onClick={() => {
               setShowViewModal(false);
               setViewingFile(null);
@@ -1949,7 +1949,7 @@ function VehicleDocument() {
         <div className="bg-card px-6 py-4 flex justify-end gap-3 border-t rounded-b-2xl">
           <button
             type="button"
-            className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors"
+            className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors"
             onClick={cancelDelete}
           >
             Cancel
@@ -2012,7 +2012,7 @@ function VehicleDocument() {
           <div className="flex items-center gap-3">
             <div
               className="p-2 rounded-lg"
-              style={{ backgroundColor: 'rgba(14, 163, 216, 0.1)' }}
+              style={{ backgroundColor: 'rgba(5,150,105, 0.1)' }}
             >
               <FaTrailer color={CUSTOM_BLUE} size={18} />
             </div>
@@ -2036,11 +2036,11 @@ function VehicleDocument() {
             onClick={() => setActiveTab('all')}
             className={`flex-1 px-6 py-4 text-sm font-semibold transition-all ${activeTab === 'all'
               ? 'border-b-2 md:border-b-0 md:border-r-2'
-              : 'text-secondary hover:text-primary hover:bg-[rgba(255,255,255,0.03)]'
+              : 'text-secondary hover:text-primary hover:bg-[rgba(15,31,23,0.03)]'
               }`}
             style={
               activeTab === 'all'
-                ? { color: ACCENT_PRIMARY, borderColor: ACCENT_PRIMARY, backgroundColor: "rgba(1, 106, 178, 0.05)" }
+                ? { color: ACCENT_PRIMARY, borderColor: ACCENT_PRIMARY, backgroundColor: "rgba(4,120,87, 0.05)" }
                 : undefined
             }
           >
@@ -2056,18 +2056,18 @@ function VehicleDocument() {
             onClick={() => setActiveTab('vehicles')}
             className={`flex-1 px-6 py-4 text-sm font-semibold transition-all ${activeTab === 'vehicles'
               ? 'border-b-2 md:border-b-0 md:border-r-2'
-              : 'text-secondary hover:text-primary hover:bg-[rgba(255,255,255,0.03)]'
+              : 'text-secondary hover:text-primary hover:bg-[rgba(15,31,23,0.03)]'
               }`}
             style={
               activeTab === 'vehicles'
-                ? { color: ACCENT_PRIMARY, borderColor: ACCENT_PRIMARY, backgroundColor: "rgba(1, 106, 178, 0.05)" }
+                ? { color: ACCENT_PRIMARY, borderColor: ACCENT_PRIMARY, backgroundColor: "rgba(4,120,87, 0.05)" }
                 : undefined
             }
           >
             <div className="flex items-center justify-center gap-2">
               <FaCar className="text-blue-500" size={16} />
               Trucks
-              <span className="bg-blue-100 text-[#00D1FF] px-2 py-1 rounded-full text-xs font-medium">
+              <span className="bg-blue-100 text-[#059669] px-2 py-1 rounded-full text-xs font-medium">
                 {tabStats.vehicles}
               </span>
             </div>
@@ -2076,18 +2076,18 @@ function VehicleDocument() {
             onClick={() => setActiveTab('trailers')}
             className={`flex-1 px-6 py-4 text-sm font-semibold transition-all ${activeTab === 'trailers'
               ? 'border-b-2'
-              : 'text-secondary hover:text-primary hover:bg-[rgba(255,255,255,0.03)]'
+              : 'text-secondary hover:text-primary hover:bg-[rgba(15,31,23,0.03)]'
               }`}
             style={activeTab === 'trailers' ? {
               color: CUSTOM_BLUE,
               borderColor: CUSTOM_BLUE,
-              backgroundColor: 'rgba(14, 163, 216, 0.05)'
+              backgroundColor: 'rgba(5,150,105, 0.05)'
             } : undefined}
           >
             <div className="flex items-center justify-center gap-2">
               <FaTrailer color={activeTab === 'trailers' ? CUSTOM_BLUE : "#6b7280"} size={16} />
               Trailers
-              <span className="px-2 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: 'rgba(14, 163, 216, 0.1)', color: CUSTOM_BLUE }}>
+              <span className="px-2 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: 'rgba(5,150,105, 0.1)', color: CUSTOM_BLUE }}>
                 {tabStats.trailers}
               </span>
             </div>
@@ -2099,7 +2099,7 @@ function VehicleDocument() {
         <div className="text-center py-16">
           <div
             className="animate-spin rounded-full h-16 w-16 border-b-4 mx-auto mb-4"
-            style={{ borderColor: "rgba(1, 106, 178, 0.2)", borderBottomColor: ACCENT_PRIMARY }}
+            style={{ borderColor: "rgba(4,120,87, 0.2)", borderBottomColor: ACCENT_PRIMARY }}
           ></div>
           <p className="text-secondary text-lg">Loading vehicles and documents...</p>
         </div>
@@ -2107,7 +2107,7 @@ function VehicleDocument() {
         <div className="bg-card shadow-lg rounded-2xl p-16 text-center text-secondary">
           {activeTab === 'all' ? (
             <>
-              <FaCar size={64} className="mx-auto mb-4 text-gray-300" />
+              <FaCar size={64} className="mx-auto mb-4 text-gray-600" />
               <p className="text-xl font-semibold">No vehicles with documents found</p>
             </>
           ) : (
@@ -2191,7 +2191,7 @@ function VehicleDocument() {
                             <div className="flex items-center gap-2">
                               <div
                                 className="p-1.5 rounded-md"
-                                style={{ backgroundColor: "rgba(1, 106, 178, 0.1)" }}
+                                style={{ backgroundColor: "rgba(4,120,87, 0.1)" }}
                               >
                                 <FaFileAlt size={14} style={{ color: ACCENT_PRIMARY }} />
                               </div>
@@ -2215,7 +2215,7 @@ function VehicleDocument() {
 
                             <div className="flex gap-1.5">
                               <button
-                                className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-md transition-all border border-blue-200"
+                                className="p-2 text-[#059669] hover:bg-blue-50 rounded-md transition-all border border-blue-200"
                                 onClick={() => handleViewDocument(doc)}
                                 title="View Document"
                               >
@@ -2226,7 +2226,7 @@ function VehicleDocument() {
                                 className="p-2 rounded-md transition-all border"
                                 style={{
                                   color: ACCENT_PRIMARY,
-                                  borderColor: "rgba(1, 106, 178, 0.3)",
+                                  borderColor: "rgba(4,120,87, 0.3)",
                                 }}
                                 onClick={() => handleEditDocument(doc, item)}
                                 title="Edit Document"

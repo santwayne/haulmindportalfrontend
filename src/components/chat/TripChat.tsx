@@ -299,7 +299,7 @@ const TripChat: React.FC<TripChatProps> = ({ tripId, tripNumber, onClose }) => {
           <div className="flex items-center justify-center h-full min-h-[200px]">
             <div className="text-center">
               <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
-                <MessageCircle className="w-8 h-8 text-[#00D1FF]" />
+                <MessageCircle className="w-8 h-8 text-[#059669]" />
               </div>
               <p className="text-primary font-semibold text-lg mb-1">No messages yet</p>
               <p className="text-sm text-secondary">Start the conversation with the driver!</p>
@@ -378,7 +378,7 @@ const TripChat: React.FC<TripChatProps> = ({ tripId, tripNumber, onClose }) => {
                               }}
                               className={`flex items-center gap-2 p-2 rounded-lg transition-all hover:opacity-80 ${isRightSide
                                   ? "bg-card/20 hover:bg-card/30 text-white"
-                                  : "bg-card hover:bg-gray-200 text-[#00D1FF]"
+                                  : "bg-card hover:bg-gray-200 text-[#059669]"
                                 }`}
                             >
                               {message.fileType === "image" ? (
@@ -451,7 +451,7 @@ const TripChat: React.FC<TripChatProps> = ({ tripId, tripNumber, onClose }) => {
         <div className="flex-shrink-0 px-4 py-3 bg-card border-t border-theme flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="p-2 bg-blue-100 rounded-lg">
-              <File className="w-4 h-4 text-[#00D1FF]" />
+              <File className="w-4 h-4 text-[#059669]" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-primary truncate">{selectedFile.name}</p>
@@ -479,7 +479,7 @@ const TripChat: React.FC<TripChatProps> = ({ tripId, tripNumber, onClose }) => {
         <div className="flex items-end gap-2">
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="p-2.5 text-secondary hover:text-[#00D1FF] hover:bg-blue-50 rounded-lg transition-all duration-200 flex-shrink-0"
+            className="p-2.5 text-secondary hover:text-[#059669] hover:bg-blue-50 rounded-lg transition-all duration-200 flex-shrink-0"
             title="Attach file"
           >
             <Paperclip className="w-5 h-5" />

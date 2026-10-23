@@ -411,7 +411,7 @@ const NewIssueSidebar: React.FC<NewIssueSidebarProps> = ({ issue, onClose, onSav
                   <button
                     type="button"
                     onClick={() => handleRemoveTag(tag)}
-                    className="text-[#00D1FF] hover:text-blue-800"
+                    className="text-[#059669] hover:text-blue-800"
                   >
                     ×
                   </button>
@@ -443,7 +443,7 @@ const NewIssueSidebar: React.FC<NewIssueSidebarProps> = ({ issue, onClose, onSav
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-primary bg-gray-700 rounded-lg  hover:bg-gray-600 transition-colors"
+              className="px-4 py-2 text-primary bg-gray-100 rounded-lg  hover:bg-gray-200 transition-colors"
             >
               Cancel
             </button>

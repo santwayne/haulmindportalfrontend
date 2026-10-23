@@ -611,10 +611,10 @@ const InvoicesPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-secondary mb-1">Pending Invoices</p>
-                <p className="text-2xl font-bold text-[#00FFA3]">{stats.pending}</p>
+                <p className="text-2xl font-bold text-[#059669]">{stats.pending}</p>
               </div>
               <div className="bg-yellow-100 p-3 rounded-lg">
-                <Clock className="w-6 h-6 text-[#00FFA3]" />
+                <Clock className="w-6 h-6 text-[#059669]" />
               </div>
             </div>
           </div>
@@ -631,7 +631,7 @@ const InvoicesPage = () => {
                 </p>
               </div>
               <div className="bg-blue-100 p-3 rounded-lg">
-                <DollarSign className="w-6 h-6 text-[#00D1FF]" />
+                <DollarSign className="w-6 h-6 text-[#059669]" />
               </div>
             </div>
           </div>
@@ -639,9 +639,9 @@ const InvoicesPage = () => {
 
         {/* Filters */}
         <div style={{
-          backgroundColor: 'rgba(255,255,255,0.04)',
+          backgroundColor: 'rgba(15,31,23,0.04)',
           borderRadius: '12px',
-          border: '1px solid rgba(255,255,255,0.12)',
+          border: '1px solid rgba(15,31,23,0.12)',
           padding: '16px',
           marginBottom: '24px'
         }}>
@@ -670,7 +670,7 @@ const InvoicesPage = () => {
                     left: '40px',
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    color: 'rgba(226, 232, 240, 0.6)',
+                    color: 'rgba(90, 112, 102, 0.8)',
                     pointerEvents: 'none',
                     fontSize: '14px',
                     zIndex: 1
@@ -686,10 +686,10 @@ const InvoicesPage = () => {
                 size="large"
                 style={{
                   paddingLeft: '40px',
-                  backgroundColor: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.12)',
+                  backgroundColor: 'rgba(15,31,23,0.04)',
+                  border: '1px solid rgba(15,31,23,0.12)',
                   borderRadius: '10px',
-                  color: '#e2e8f0',
+                  color: '#5a7066',
                   width: '100%',
                 }}
               />
@@ -698,31 +698,31 @@ const InvoicesPage = () => {
             {/* Payment Status */}
             <div
               style={{
-                backgroundColor: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.12)',
+                backgroundColor: 'rgba(15,31,23,0.06)',
+                border: '1px solid rgba(15,31,23,0.12)',
                 borderRadius: '10px',
                 overflow: 'hidden',
                 transition: 'border-color 0.2s ease',
               }}
               onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(139,92,246,0.6)')}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(15,31,23,0.12)')}
             >
               <Select
                 value={paymentStatusFilter}
                 onChange={setPaymentStatusFilter}
                 size="large"
                 variant="borderless"
-                style={{ width: '192px', color: '#e2e8f0' }}
+                style={{ width: '192px', color: '#5a7066' }}
                 dropdownStyle={{
-                  backgroundColor: '#1a1f2e',
-                  border: '1px solid rgba(255,255,255,0.12)',
+                  backgroundColor: '#f7fbf8',
+                  border: '1px solid rgba(15,31,23,0.12)',
                   borderRadius: '10px',
                   padding: '6px'
                 }}
                 optionLabelProp="label"
               >
-                <Select.Option value="all" label={<span style={{ color: '#e2e8f0' }}>All Payments</span>}>
-                  <span style={{ color: '#e2e8f0' }}>All Payments</span>
+                <Select.Option value="all" label={<span style={{ color: '#5a7066' }}>All Payments</span>}>
+                  <span style={{ color: '#5a7066' }}>All Payments</span>
                 </Select.Option>
 
                 <Select.Option value="paid" label={<span style={{ color: '#22c55e' }}>Paid</span>}>
@@ -746,31 +746,31 @@ const InvoicesPage = () => {
             {/* Invoice Status */}
             <div
               style={{
-                backgroundColor: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.12)',
+                backgroundColor: 'rgba(15,31,23,0.06)',
+                border: '1px solid rgba(15,31,23,0.12)',
                 borderRadius: '10px',
                 overflow: 'hidden',
                 transition: 'border-color 0.2s ease',
               }}
               onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(139,92,246,0.6)')}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(15,31,23,0.12)')}
             >
               <Select
                 value={invoiceStatusFilter}
                 onChange={setInvoiceStatusFilter}
                 size="large"
                 variant="borderless"
-                style={{ width: '192px', color: '#e2e8f0' }}
+                style={{ width: '192px', color: '#5a7066' }}
                 dropdownStyle={{
-                  backgroundColor: '#1a1f2e',
-                  border: '1px solid rgba(255,255,255,0.12)',
+                  backgroundColor: '#f7fbf8',
+                  border: '1px solid rgba(15,31,23,0.12)',
                   borderRadius: '10px',
                   padding: '6px'
                 }}
                 optionLabelProp="label"
               >
-                <Select.Option value="all" label={<span style={{ color: '#e2e8f0' }}>All Invoices</span>}>
-                  <span style={{ color: '#e2e8f0' }}>All Invoices</span>
+                <Select.Option value="all" label={<span style={{ color: '#5a7066' }}>All Invoices</span>}>
+                  <span style={{ color: '#5a7066' }}>All Invoices</span>
                 </Select.Option>
 
                 <Select.Option value="generated" label={<span style={{ color: '#22c55e' }}>Generated</span>}>
@@ -833,7 +833,7 @@ const InvoicesPage = () => {
                   </tr>
                 ) : (
                   filteredInvoices.map((invoice) => (
-                    <tr key={invoice._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                    <tr key={invoice._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="bg-purple-100 p-2 rounded-lg mr-3">
@@ -853,7 +853,7 @@ const InvoicesPage = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center">
                           <div className="bg-blue-100 p-2 rounded-lg mr-3">
-                            <Building2 className="w-5 h-5 text-[#00D1FF]" />
+                            <Building2 className="w-5 h-5 text-[#059669]" />
                           </div>
                           <div>
                             <div className="text-sm font-medium text-primary">
@@ -962,7 +962,7 @@ const InvoicesPage = () => {
                                       handleCopyInvoiceNumber(invoice.invoiceNumber);
                                       setActiveDropdown(null);
                                     }}
-                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(255,255,255,0.03)] flex items-center space-x-2 transition-colors"
+                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] flex items-center space-x-2 transition-colors"
                                   >
                                     <Copy className="w-4 h-4" />
                                     <span>Copy Invoice #</span>
@@ -973,7 +973,7 @@ const InvoicesPage = () => {
                                       handleCopyId(invoice._id);
                                       setActiveDropdown(null);
                                     }}
-                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(255,255,255,0.03)] flex items-center space-x-2 transition-colors"
+                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] flex items-center space-x-2 transition-colors"
                                   >
                                     <Copy className="w-4 h-4" />
                                     <span>Copy Invoice ID</span>
@@ -984,7 +984,7 @@ const InvoicesPage = () => {
                                       handleExport(invoice);
                                       setActiveDropdown(null);
                                     }}
-                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(255,255,255,0.03)] flex items-center space-x-2 transition-colors"
+                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] flex items-center space-x-2 transition-colors"
                                   >
                                     <Download className="w-4 h-4" />
                                     <span>Export Invoice</span>
@@ -1004,7 +1004,7 @@ const InvoicesPage = () => {
                                             });
                                           }, 300);
                                         }}
-                                        className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(255,255,255,0.03)] flex items-center space-x-2 transition-colors"
+                                        className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] flex items-center space-x-2 transition-colors"
                                       >
                                         <ExternalLink className="w-4 h-4" />
                                         <span>View Admin Profile</span>
@@ -1039,7 +1039,7 @@ const InvoicesPage = () => {
         title={
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Receipt style={{ width: '20px', height: '20px', color: '#8b5cf6' }} />
-            <span style={{ color: '#e2e8f0', fontWeight: 600 }}>Invoice Details</span>
+            <span style={{ color: '#5a7066', fontWeight: 600 }}>Invoice Details</span>
           </div>
         }
         open={showViewModal}
@@ -1055,9 +1055,9 @@ const InvoicesPage = () => {
               setSelectedInvoice(null);
             }}
             style={{
-              backgroundColor: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.12)',
-              color: '#e2e8f0',
+              backgroundColor: 'rgba(15,31,23,0.06)',
+              border: '1px solid rgba(15,31,23,0.12)',
+              color: '#5a7066',
               borderRadius: '8px',
             }}
           >
@@ -1083,20 +1083,20 @@ const InvoicesPage = () => {
         width={800}
         styles={{
           content: {
-            backgroundColor: '#0f1623',
-            border: '1px solid rgba(255,255,255,0.1)',
+            backgroundColor: '#ffffff',
+            border: '1px solid rgba(15,31,23,0.1)',
             borderRadius: '14px',
             padding: '24px',
           },
           header: {
-            backgroundColor: '#0f1623',
-            borderBottom: '1px solid rgba(255,255,255,0.08)',
+            backgroundColor: '#ffffff',
+            borderBottom: '1px solid rgba(15,31,23,0.08)',
             paddingBottom: '12px',
             marginBottom: '4px',
           },
           footer: {
-            backgroundColor: '#0f1623',
-            borderTop: '1px solid rgba(255,255,255,0.08)',
+            backgroundColor: '#ffffff',
+            borderTop: '1px solid rgba(15,31,23,0.08)',
             paddingTop: '12px',
           },
           mask: {
@@ -1116,7 +1116,7 @@ const InvoicesPage = () => {
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <div>
-                  <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#e2e8f0', margin: 0 }}>
+                  <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#5a7066', margin: 0 }}>
                     {selectedInvoice.invoiceNumber}
                   </h3>
                   <p style={{ fontSize: '12px', color: '#94a3b8', margin: '4px 0 0' }}>
@@ -1136,35 +1136,35 @@ const InvoicesPage = () => {
 
             {/* Customer Information */}
             <div style={{
-              backgroundColor: 'rgba(255,255,255,0.03)',
+              backgroundColor: 'rgba(15,31,23,0.03)',
               borderRadius: '10px',
               padding: '16px',
-              border: '1px solid rgba(255,255,255,0.08)',
+              border: '1px solid rgba(15,31,23,0.08)',
             }}>
-              <h3 style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 style={{ fontSize: '13px', fontWeight: 600, color: '#5a7066', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Building2 style={{ width: '16px', height: '16px', color: '#8b5cf6' }} />
                 Customer Information
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
                   <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Admin Name</p>
-                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0', margin: 0 }}>{selectedInvoice.admin?.name || 'N/A'}</p>
+                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066', margin: 0 }}>{selectedInvoice.admin?.name || 'N/A'}</p>
                 </div>
                 <div>
                   <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Admin Email</p>
-                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0', margin: 0 }}>{selectedInvoice.admin?.email || 'N/A'}</p>
+                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066', margin: 0 }}>{selectedInvoice.admin?.email || 'N/A'}</p>
                 </div>
                 {selectedInvoice.company?.companyName && (
                   <div style={{ gridColumn: 'span 2' }}>
                     <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Company Name</p>
-                    <p style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0', margin: 0 }}>{selectedInvoice.company.companyName}</p>
+                    <p style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066', margin: 0 }}>{selectedInvoice.company.companyName}</p>
                   </div>
                 )}
                 {selectedInvoice.admin?.internalId && (
                   <div>
                     <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Admin ID</p>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <p style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0', margin: 0 }}>{selectedInvoice.admin.internalId}</p>
+                      <p style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066', margin: 0 }}>{selectedInvoice.admin.internalId}</p>
                       <button
                         onClick={() => handleCopyId(selectedInvoice.admin!._id)}
                         title="Copy ID"
@@ -1180,33 +1180,33 @@ const InvoicesPage = () => {
 
             {/* Plan Information */}
             <div style={{
-              backgroundColor: 'rgba(255,255,255,0.03)',
+              backgroundColor: 'rgba(15,31,23,0.03)',
               borderRadius: '10px',
               padding: '16px',
-              border: '1px solid rgba(255,255,255,0.08)',
+              border: '1px solid rgba(15,31,23,0.08)',
             }}>
-              <h3 style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 style={{ fontSize: '13px', fontWeight: 600, color: '#5a7066', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <CreditCard style={{ width: '16px', height: '16px', color: '#8b5cf6' }} />
                 Plan Information
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
                   <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Plan Name</p>
-                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0', margin: 0 }}>{selectedInvoice.planName}</p>
+                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066', margin: 0 }}>{selectedInvoice.planName}</p>
                 </div>
                 <div>
                   <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Billing Cycle</p>
-                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0', margin: 0, textTransform: 'capitalize' }}>{selectedInvoice.billingCycle}</p>
+                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066', margin: 0, textTransform: 'capitalize' }}>{selectedInvoice.billingCycle}</p>
                 </div>
                 <div>
                   <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Subscription Start</p>
-                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0', margin: 0 }}>
+                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066', margin: 0 }}>
                     {new Date(selectedInvoice.subscriptionStartDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </p>
                 </div>
                 <div>
                   <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Subscription End</p>
-                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0', margin: 0 }}>
+                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066', margin: 0 }}>
                     {new Date(selectedInvoice.subscriptionEndDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </p>
                 </div>
@@ -1220,21 +1220,21 @@ const InvoicesPage = () => {
               padding: '16px',
               border: '1px solid rgba(16,185,129,0.2)',
             }}>
-              <h3 style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 style={{ fontSize: '13px', fontWeight: 600, color: '#5a7066', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <DollarSign style={{ width: '16px', height: '16px', color: '#10b981' }} />
                 Payment Information
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '13px', color: '#94a3b8' }}>Subtotal</span>
-                  <span style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066' }}>
                     {formatCurrency(selectedInvoice.amount, selectedInvoice.currency)}
                   </span>
                 </div>
                 {selectedInvoice.taxAmount > 0 && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: '13px', color: '#94a3b8' }}>Tax</span>
-                    <span style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066' }}>
                       {formatCurrency(selectedInvoice.taxAmount, selectedInvoice.currency)}
                     </span>
                   </div>
@@ -1254,22 +1254,22 @@ const InvoicesPage = () => {
                   justifyContent: 'space-between',
                   alignItems: 'center'
                 }}>
-                  <span style={{ fontSize: '14px', fontWeight: 600, color: '#e2e8f0' }}>Total Amount</span>
-                  <span style={{ fontSize: '20px', fontWeight: 700, color: '#e2e8f0' }}>
+                  <span style={{ fontSize: '14px', fontWeight: 600, color: '#5a7066' }}>Total Amount</span>
+                  <span style={{ fontSize: '20px', fontWeight: 700, color: '#5a7066' }}>
                     {formatCurrency(selectedInvoice.totalAmount, selectedInvoice.currency)}
                   </span>
                 </div>
                 {selectedInvoice.paymentMethod && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: '13px', color: '#94a3b8' }}>Payment Method</span>
-                    <span style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0' }}>{selectedInvoice.paymentMethod}</span>
+                    <span style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066' }}>{selectedInvoice.paymentMethod}</span>
                   </div>
                 )}
                 {selectedInvoice.transactionId && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: '13px', color: '#94a3b8' }}>Transaction ID</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0', fontFamily: 'monospace' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066', fontFamily: 'monospace' }}>
                         {selectedInvoice.transactionId}
                       </span>
                       <button
@@ -1287,26 +1287,26 @@ const InvoicesPage = () => {
 
             {/* Additional Information */}
             <div style={{
-              backgroundColor: 'rgba(255,255,255,0.03)',
+              backgroundColor: 'rgba(15,31,23,0.03)',
               borderRadius: '10px',
               padding: '16px',
-              border: '1px solid rgba(255,255,255,0.08)',
+              border: '1px solid rgba(15,31,23,0.08)',
             }}>
-              <h3 style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 style={{ fontSize: '13px', fontWeight: 600, color: '#5a7066', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Calendar style={{ width: '16px', height: '16px', color: '#8b5cf6' }} />
                 Additional Information
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
                   <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Created At</p>
-                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0', margin: 0 }}>
+                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066', margin: 0 }}>
                     {new Date(selectedInvoice.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}{' '}
                     {new Date(selectedInvoice.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                   </p>
                 </div>
                 <div>
                   <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Last Updated</p>
-                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0', margin: 0 }}>
+                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066', margin: 0 }}>
                     {new Date(selectedInvoice.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}{' '}
                     {new Date(selectedInvoice.updatedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                   </p>
@@ -1316,11 +1316,11 @@ const InvoicesPage = () => {
                     <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Notes</p>
                     <p style={{
                       fontSize: '13px',
-                      color: '#e2e8f0',
-                      backgroundColor: 'rgba(255,255,255,0.04)',
+                      color: '#5a7066',
+                      backgroundColor: 'rgba(15,31,23,0.04)',
                       padding: '8px',
                       borderRadius: '6px',
-                      border: '1px solid rgba(255,255,255,0.08)',
+                      border: '1px solid rgba(15,31,23,0.08)',
                       margin: 0,
                     }}>
                       {selectedInvoice.notes}

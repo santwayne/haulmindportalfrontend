@@ -347,7 +347,7 @@ const AllDispatch = () => {
               {filteredLoads.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="px-6 py-12 text-center text-secondary">
-                    <FaTruck className="mx-auto mb-3 text-gray-300" size={48} />
+                    <FaTruck className="mx-auto mb-3 text-gray-600" size={48} />
                     <p className="text-lg font-medium">No loads available</p>
                     <p className="text-sm">{emptyStateMessage || 'Create or import loads to see them listed here.'}</p>
                   </td>
@@ -360,8 +360,8 @@ const AllDispatch = () => {
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
-                        <FaTruck className="text-[#00D1FF]" size={16} />
-                        <span className="font-semibold text-[#00D1FF]">{load.loadNumber || load._id}</span>
+                        <FaTruck className="text-[#059669]" size={16} />
+                        <span className="font-semibold text-[#059669]">{load.loadNumber || load._id}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
@@ -441,7 +441,7 @@ const AllDispatch = () => {
                       ) : (
                         <button
                           onClick={() => handleLoadClick(load)}
-                          className="px-3 py-1.5 bg-gray-600 !text-white text-sm rounded-lg hover:bg-gray-700 flex items-center gap-1 transition-colors"
+                          className="px-3 py-1.5 bg-gray-200 text-primary text-sm rounded-lg hover:bg-gray-100 flex items-center gap-1 transition-colors"
                         >
                           <FaEye size={12} /> View Details
                         </button>

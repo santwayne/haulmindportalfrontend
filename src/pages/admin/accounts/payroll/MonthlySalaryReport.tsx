@@ -126,7 +126,7 @@ const MonthlySalaryReport = () => {
                     <div className="flex items-center justify-between mb-4">
                         <div>
                             <h1 className="text-3xl font-bold text-primary mb-2 flex items-center gap-2">
-                                <Sparkles className="text-[#00D1FF]" size={32} />
+                                <Sparkles className="text-[#059669]" size={32} />
                                 Monthly Salary Report
                             </h1>
                             <p className="text-secondary">AI-powered salary calculation with attendance details</p>
@@ -167,7 +167,7 @@ const MonthlySalaryReport = () => {
                         <button
                             onClick={fetchReport}
                             disabled={loading}
-                            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all font-medium disabled:opacity-50"
+                            className="px-4 py-2 bg-gray-200 hover:bg-gray-100 text-primary rounded-lg transition-all font-medium disabled:opacity-50"
                         >
                             {loading ? 'Loading...' : 'Refresh'}
                         </button>
@@ -199,7 +199,7 @@ const MonthlySalaryReport = () => {
                                         <p className="text-3xl font-bold text-primary">{report.summary.totalEmployees}</p>
                                     </div>
                                     <div className="p-3 bg-blue-100 rounded-full">
-                                        <Users className="text-[#00D1FF]" size={24} />
+                                        <Users className="text-[#059669]" size={24} />
                                     </div>
                                 </div>
                             </div>
@@ -222,12 +222,12 @@ const MonthlySalaryReport = () => {
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="text-sm text-secondary mb-1">Avg Attendance</p>
-                                        <p className="text-3xl font-bold text-[#00D1FF]">
+                                        <p className="text-3xl font-bold text-[#059669]">
                                             {report.summary.averageAttendance.toFixed(1)}%
                                         </p>
                                     </div>
                                     <div className="p-3 bg-blue-100 rounded-full">
-                                        <TrendingUp className="text-[#00D1FF]" size={24} />
+                                        <TrendingUp className="text-[#059669]" size={24} />
                                     </div>
                                 </div>
                             </div>
@@ -249,7 +249,7 @@ const MonthlySalaryReport = () => {
                         {report.aiInsights && (
                             <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl shadow-sm border border-blue-200 p-6">
                                 <h2 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
-                                    <Sparkles className="text-[#00D1FF]" size={24} />
+                                    <Sparkles className="text-[#059669]" size={24} />
                                     AI Insights & Recommendations
                                 </h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -258,7 +258,7 @@ const MonthlySalaryReport = () => {
                                         <ul className="space-y-2">
                                             {report.aiInsights.insights.map((insight, idx) => (
                                                 <li key={idx} className="text-sm text-primary flex items-start gap-2">
-                                                    <CheckCircle className="text-[#00D1FF] mt-0.5 flex-shrink-0" size={16} />
+                                                    <CheckCircle className="text-[#059669] mt-0.5 flex-shrink-0" size={16} />
                                                     {insight}
                                                 </li>
                                             ))}
@@ -300,7 +300,7 @@ const MonthlySalaryReport = () => {
                                     <tbody className="divide-y divide-theme">
                                         {report.employees.map((employee) => (
                                             <React.Fragment key={employee.employeeId}>
-                                                <tr className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                                                <tr className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div>
                                                             <div className="font-medium text-primary">{employee.name}</div>
@@ -329,7 +329,7 @@ const MonthlySalaryReport = () => {
                                                             onClick={() => setExpandedEmployee(
                                                                 expandedEmployee === employee.employeeId ? null : employee.employeeId
                                                             )}
-                                                            className="text-[#00D1FF] hover:text-blue-800 font-medium text-sm"
+                                                            className="text-[#059669] hover:text-blue-800 font-medium text-sm"
                                                         >
                                                             {expandedEmployee === employee.employeeId ? 'Hide' : 'Show'} Details
                                                         </button>
@@ -358,7 +358,7 @@ const MonthlySalaryReport = () => {
                                                                     </span>
                                                                 </div>
                                                                 <div className="flex items-center gap-2">
-                                                                    <Clock className="text-[#00FFA3]" size={16} />
+                                                                    <Clock className="text-[#059669]" size={16} />
                                                                     <span className="text-sm text-primary">
                                                                         <strong>Late:</strong> {employee.attendance.late} days
                                                                     </span>

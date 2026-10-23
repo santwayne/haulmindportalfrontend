@@ -1770,7 +1770,7 @@ const Trucks: React.FC = () => {
                             }}
                             className={`flex-shrink-0 px-6 py-4 text-center font-medium transition-colors relative ${activeTab === 'All'
                                 ? 'text-[var(--accent-blue)] border-b-2 border-[var(--accent-blue)]'
-                                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                                 }`}
                         >
                             <div>
@@ -1792,7 +1792,7 @@ const Trucks: React.FC = () => {
                                 }}
                                 className={`flex-shrink-0 px-6 py-4 text-center font-medium transition-colors relative ${activeTab === yard._id?.toString()
                                     ? 'text-[var(--accent-blue)] border-b-2 border-[var(--accent-blue)]'
-                                    : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                                    : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                                     }`}
                             >
                                 <div>
@@ -1814,7 +1814,7 @@ const Trucks: React.FC = () => {
                             }}
                             className={`flex-shrink-0 px-6 py-4 text-center font-medium transition-colors relative ${activeTab === 'External'
                                 ? 'text-[var(--accent-blue)] border-b-2 border-[var(--accent-blue)]'
-                                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                                 }`}
                         >
                             <div>
@@ -1834,7 +1834,7 @@ const Trucks: React.FC = () => {
                             }}
                             className={`flex-shrink-0 px-6 py-4 text-center font-medium transition-colors relative ${activeTab === 'Unassigned'
                                 ? 'text-[var(--accent-blue)] border-b-2 border-[var(--accent-blue)]'
-                                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                                 }`}
                         >
                             <div>
@@ -2038,7 +2038,7 @@ const Trucks: React.FC = () => {
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-card divide-y divide-theme divide-white/5">
+                            <tbody className="bg-card divide-y divide-theme divide-black/5">
                                 {filteredTrucks.length === 0 ? (
                                     <tr>
                                         <td colSpan={8} className="px-4 py-8 text-center text-secondary">
@@ -2049,7 +2049,7 @@ const Trucks: React.FC = () => {
                                     filteredTrucks.map((truck) => (
                                         <tr
                                             onClick={() => handleEditTruck((truck._id || truck.id) ?? '')}
-                                            key={truck.id} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors cursor-pointer">
+                                            key={truck.id} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors cursor-pointer">
                                             <td className="px-4 py-3 text-sm text-primary">{truck.unitNumber}</td>
                                             <td className="px-4 py-3 text-sm text-primary">{truck.plateNumber}</td>
                                             <td className="px-4 py-3 text-sm text-primary">{truck.ownership}</td>
@@ -2077,7 +2077,7 @@ const Trucks: React.FC = () => {
                                                             e.stopPropagation();
                                                             handleEditTruck((truck._id || truck.id) ?? '');
                                                         }}
-                                                        className="p-1.5 text-[#00D1FF] hover:bg-[var(--accent-navyblue)] rounded transition-colors"
+                                                        className="p-1.5 text-[#059669] hover:bg-[var(--accent-navyblue)] rounded transition-colors"
                                                         title="Edit"
                                                     >
                                                         <Edit className="w-4 h-4" />
@@ -2149,7 +2149,7 @@ const Trucks: React.FC = () => {
                                         </>
                                     )}
                                 </div>
-                                <button className="w-full !mt-2 px-3 py-1.5 bg-gray-700 !text-white rounded-lg hover:bg-gray-800 transition-colors text-xs font-medium">
+                                <button className="w-full !mt-2 px-3 py-1.5 bg-gray-100 text-primary rounded-lg hover:bg-gray-100 transition-colors text-xs font-medium">
                                     UPLOAD
                                 </button>
                             </div>
@@ -2163,7 +2163,7 @@ const Trucks: React.FC = () => {
                                             onClick={() => setActiveStep(step)}
                                             className={`w-full px-3 py-2 text-left text-xs font-medium rounded-lg transition-colors ${activeStep === step
                                                 ? 'bg-[var(--accent-navyblue)] !text-white shadow-sm'
-                                                : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border border-theme'
+                                                : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border border-theme'
                                                 }`}
                                         >
                                             {step}
@@ -2178,7 +2178,7 @@ const Trucks: React.FC = () => {
                                                     onClick={() => setActiveStep(step)}
                                                     className={`w-full px-3 py-2 text-left text-xs font-medium rounded-lg transition-colors ${activeStep === step
                                                         ? 'bg-[var(--accent-navyblue)] !text-white shadow-sm'
-                                                        : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border border-theme'
+                                                        : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border border-theme'
                                                         }`}
                                                 >
                                                     {step}
@@ -2200,7 +2200,7 @@ const Trucks: React.FC = () => {
                                     <button
                                         onClick={handleSaveTruck}
                                         disabled={loading}
-                                        className="px-4 py-1.5 bg-gray-700 !text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="px-4 py-1.5 bg-gray-100 text-primary rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {loading ? 'SAVING...' : 'SAVE'}
                                     </button>
@@ -2452,7 +2452,7 @@ const Trucks: React.FC = () => {
                                                     className={`px-6 py-2 rounded-sm font-medium transition-colors duration-200
     ${formData.ownership === "COMPANY ASSET"
                                                             ? "bg-[var(--accent-navyblue)] text-white"
-                                                            : "bg-gray-700 text-white hover:bg-[var(--accent-navyblue)]"
+                                                            : "bg-gray-100 text-white hover:bg-[var(--accent-navyblue)]"
                                                         }`}
                                                 >
                                                     COMPANY ASSET
@@ -2465,7 +2465,7 @@ const Trucks: React.FC = () => {
                                                     className={`px-6 py-2 rounded-sm font-medium transition-colors duration-200
     ${formData.ownership === "OWNER OPERATOR"
                                                             ? "bg-[var(--accent-navyblue)] text-white"
-                                                            : "bg-gray-700 text-white hover:bg-[var(--accent-navyblue)]"
+                                                            : "bg-gray-100 text-white hover:bg-[var(--accent-navyblue)]"
                                                         }`}
                                                 >
                                                     OWNER OPERATOR
@@ -2543,7 +2543,7 @@ const Trucks: React.FC = () => {
                                                 type="button"
                                                 onClick={() => setInspectionType('One Time')}
                                                 className={`px-6 py-2 rounded-lg font-medium transition-colors border-2 ${inspectionType === 'One Time'
-                                                    ? 'bg-card border-gray-700 text-primary'
+                                                    ? 'bg-card border-gray-200 text-primary'
                                                     : 'bg-card border-theme text-primary hover:border-gray-400'
                                                     }`}
                                             >
@@ -2553,7 +2553,7 @@ const Trucks: React.FC = () => {
                                                 type="button"
                                                 onClick={() => setInspectionType('Recurring')}
                                                 className={`px-6 py-2 rounded-lg font-medium transition-colors border-2 ${inspectionType === 'Recurring'
-                                                    ? 'bg-card border-gray-700 text-primary'
+                                                    ? 'bg-card border-gray-200 text-primary'
                                                     : 'bg-card border-theme text-primary hover:border-gray-400'
                                                     }`}
                                             >
@@ -2599,7 +2599,7 @@ const Trucks: React.FC = () => {
                                                                 };
                                                                 input.click();
                                                             }}
-                                                            className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] text-sm font-medium bg-card"
+                                                            className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] text-sm font-medium bg-card"
                                                         >
                                                             {inspectionForm.file ? (
                                                                 <span className="flex items-center gap-1">
@@ -2626,7 +2626,7 @@ const Trucks: React.FC = () => {
                                                     </div>
                                                     <button
                                                         onClick={handleSaveInspection}
-                                                        className="w-10 h-10 bg-gray-700 !text-white rounded-lg flex items-center justify-center hover:bg-gray-800"
+                                                        className="w-10 h-10 bg-gray-100 text-primary rounded-lg flex items-center justify-center hover:bg-gray-100"
                                                         title={editingInspectionId ? "Update Inspection" : "Add Inspection"}
                                                     >
                                                         {editingInspectionId ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
@@ -2666,7 +2666,7 @@ const Trucks: React.FC = () => {
                                                                 oneTimeInspections.map((inspection) => (
                                                                     <tr
                                                                         key={inspection.id}
-                                                                        className={`border-t border-theme hover:bg-[rgba(255,255,255,0.03)] cursor-pointer ${editingInspectionId === inspection.id ? 'bg-card' : ''}`}
+                                                                        className={`border-t border-theme hover:bg-[rgba(15,31,23,0.03)] cursor-pointer ${editingInspectionId === inspection.id ? 'bg-card' : ''}`}
                                                                         onClick={() => handleEditInspection(inspection, 'oneTime')}
                                                                     >
                                                                         <td className="px-4 py-2 text-sm text-primary">{inspection.expiryDate}</td>
@@ -2678,14 +2678,14 @@ const Trucks: React.FC = () => {
                                                                                         href={inspection.fileUrl}
                                                                                         target="_blank"
                                                                                         rel="noopener noreferrer"
-                                                                                        className="flex items-center gap-2 text-[#00D1FF] hover:text-blue-800 hover:underline"
+                                                                                        className="flex items-center gap-2 text-[#059669] hover:text-blue-800 hover:underline"
                                                                                         onClick={(e) => e.stopPropagation()}
                                                                                     >
                                                                                         <FileText className="w-4 h-4" />
                                                                                         <span>{inspection.fileName || 'View File'}</span>
                                                                                     </a>
                                                                                 ) : (
-                                                                                    <div className="flex items-center gap-2 text-[#00D1FF]">
+                                                                                    <div className="flex items-center gap-2 text-[#059669]">
                                                                                         <FileText className="w-4 h-4" />
                                                                                         <span>{inspection.fileName || 'File attached'}</span>
                                                                                     </div>
@@ -2699,7 +2699,7 @@ const Trucks: React.FC = () => {
                                                                             <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                                                                                 <button
                                                                                     onClick={() => handleEditInspection(inspection, 'oneTime')}
-                                                                                    className="p-1 text-[#00D1FF] hover:bg-blue-50 rounded"
+                                                                                    className="p-1 text-[#059669] hover:bg-blue-50 rounded"
                                                                                     title="Edit"
                                                                                 >
                                                                                     <Edit className="w-4 h-4" />
@@ -2807,7 +2807,7 @@ const Trucks: React.FC = () => {
                                                                         };
                                                                         input.click();
                                                                     }}
-                                                                    className="w-full px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] text-sm font-medium bg-card flex items-center justify-center gap-2"
+                                                                    className="w-full px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] text-sm font-medium bg-card flex items-center justify-center gap-2"
                                                                 >
                                                                     <Upload className="w-4 h-4" />
                                                                     <span>Select File</span>
@@ -2830,7 +2830,7 @@ const Trucks: React.FC = () => {
                                                         <div className="flex gap-2">
                                                             <button
                                                                 onClick={handleSaveInspection}
-                                                                className="px-4 py-2 bg-gray-700 !text-white rounded-lg flex items-center gap-2 hover:bg-gray-800"
+                                                                className="px-4 py-2 bg-gray-100 text-primary rounded-lg flex items-center gap-2 hover:bg-gray-100"
                                                                 title={editingInspectionId ? "Update Inspection" : "Add Inspection"}
                                                             >
                                                                 {editingInspectionId ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
@@ -2876,7 +2876,7 @@ const Trucks: React.FC = () => {
                                                                 recurringInspections.map((inspection) => (
                                                                     <tr
                                                                         key={inspection.id}
-                                                                        className={`border-t border-theme hover:bg-[rgba(255,255,255,0.03)] cursor-pointer ${editingInspectionId === inspection.id ? 'bg-card' : ''}`}
+                                                                        className={`border-t border-theme hover:bg-[rgba(15,31,23,0.03)] cursor-pointer ${editingInspectionId === inspection.id ? 'bg-card' : ''}`}
                                                                         onClick={() => handleEditInspection(inspection, 'recurring')}
                                                                     >
                                                                         <td className="px-4 py-2 text-sm text-primary">{inspection.scheduledOn}</td>
@@ -2890,14 +2890,14 @@ const Trucks: React.FC = () => {
                                                                                         href={inspection.fileUrl}
                                                                                         target="_blank"
                                                                                         rel="noopener noreferrer"
-                                                                                        className="flex items-center gap-2 text-[#00D1FF] hover:text-blue-800 hover:underline"
+                                                                                        className="flex items-center gap-2 text-[#059669] hover:text-blue-800 hover:underline"
                                                                                         onClick={(e) => e.stopPropagation()}
                                                                                     >
                                                                                         <FileText className="w-4 h-4" />
                                                                                         <span>{inspection.fileName || 'View File'}</span>
                                                                                     </a>
                                                                                 ) : (
-                                                                                    <div className="flex items-center gap-2 text-[#00D1FF]">
+                                                                                    <div className="flex items-center gap-2 text-[#059669]">
                                                                                         <FileText className="w-4 h-4" />
                                                                                         <span>{inspection.fileName || 'File attached'}</span>
                                                                                     </div>
@@ -2911,7 +2911,7 @@ const Trucks: React.FC = () => {
                                                                             <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                                                                                 <button
                                                                                     onClick={() => handleEditInspection(inspection, 'recurring')}
-                                                                                    className="p-1 text-[#00D1FF] hover:bg-blue-50 rounded"
+                                                                                    className="p-1 text-[#059669] hover:bg-blue-50 rounded"
                                                                                     title="Edit"
                                                                                 >
                                                                                     <Edit className="w-4 h-4" />
@@ -3008,7 +3008,7 @@ const Trucks: React.FC = () => {
                                                             };
                                                             input.click();
                                                         }}
-                                                        className="w-full px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] text-sm font-medium bg-card flex items-center justify-center gap-2"
+                                                        className="w-full px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] text-sm font-medium bg-card flex items-center justify-center gap-2"
                                                     >
                                                         <Upload className="w-4 h-4" />
                                                         <span>Select File</span>
@@ -3071,7 +3071,7 @@ const Trucks: React.FC = () => {
                                                                 setDocumentForm({ title: '', expiryDate: '', description: '', file: null, ignoreExpiration: false });
                                                             }
                                                         }}
-                                                        className="px-4 py-2 bg-gray-700 !text-white rounded-lg flex items-center gap-2 hover:bg-gray-800"
+                                                        className="px-4 py-2 bg-gray-100 text-primary rounded-lg flex items-center gap-2 hover:bg-gray-100"
                                                     >
                                                         {editingDocumentId ? <Edit className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                                                         <span>{editingDocumentId ? 'Update' : 'Add'}</span>
@@ -3100,7 +3100,7 @@ const Trucks: React.FC = () => {
                                                         </tr>
                                                     ) : (
                                                         documents.map((doc) => (
-                                                            <tr key={doc.id} className={`border-t border-theme hover:bg-[rgba(255,255,255,0.03)] ${editingDocumentId === doc.id ? 'bg-card' : ''}`}>
+                                                            <tr key={doc.id} className={`border-t border-theme hover:bg-[rgba(15,31,23,0.03)] ${editingDocumentId === doc.id ? 'bg-card' : ''}`}>
                                                                 <td className="px-4 py-2 text-sm text-primary">{doc.title || '-'}</td>
                                                                 <td className="px-4 py-2 text-sm text-primary">{doc.expiryDate || '-'}</td>
                                                                 <td className="px-4 py-2 text-sm text-primary">{doc.description || '-'}</td>
@@ -3111,14 +3111,14 @@ const Trucks: React.FC = () => {
                                                                                 href={doc.fileUrl}
                                                                                 target="_blank"
                                                                                 rel="noopener noreferrer"
-                                                                                className="flex items-center gap-2 text-[#00D1FF] hover:text-blue-800 hover:underline"
+                                                                                className="flex items-center gap-2 text-[#059669] hover:text-blue-800 hover:underline"
                                                                                 onClick={(e) => e.stopPropagation()}
                                                                             >
                                                                                 <FileText className="w-4 h-4" />
                                                                                 <span>{doc.fileName || 'View File'}</span>
                                                                             </a>
                                                                         ) : (
-                                                                            <div className="flex items-center gap-2 text-[#00D1FF]">
+                                                                            <div className="flex items-center gap-2 text-[#059669]">
                                                                                 <FileText className="w-4 h-4" />
                                                                                 <span className="truncate max-w-[200px]">
                                                                                     {doc.fileName || (doc.file instanceof File ? doc.file.name : 'File attached')}
@@ -3143,7 +3143,7 @@ const Trucks: React.FC = () => {
                                                                                     ignoreExpiration: doc.ignoreExpiration
                                                                                 });
                                                                             }}
-                                                                            className="p-1 text-[#00D1FF] hover:bg-blue-50 rounded"
+                                                                            className="p-1 text-[#059669] hover:bg-blue-50 rounded"
                                                                             title="Edit"
                                                                         >
                                                                             <Edit className="w-4 h-4" />
@@ -3270,7 +3270,7 @@ const Trucks: React.FC = () => {
                                                         <button
                                                             type="button"
                                                             onClick={() => invoiceFileInputRef.current?.click()}
-                                                            className="w-full px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] text-sm font-medium bg-card flex items-center justify-center gap-2"
+                                                            className="w-full px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] text-sm font-medium bg-card flex items-center justify-center gap-2"
                                                         >
                                                             <Upload className="w-4 h-4" />
                                                             <span>Select File</span>
@@ -3304,7 +3304,7 @@ const Trucks: React.FC = () => {
                                                                 invoiceFileInputRef.current.value = '';
                                                             }
                                                         }}
-                                                        className="px-4 py-2 bg-gray-500 !text-white rounded-lg flex items-center gap-2 hover:bg-gray-600 transition-colors"
+                                                        className="px-4 py-2 bg-gray-500 !text-white rounded-lg flex items-center gap-2 hover:bg-gray-200 transition-colors"
                                                     >
                                                         <X className="w-4 h-4" />
                                                         <span>Cancel</span>
@@ -3354,7 +3354,7 @@ const Trucks: React.FC = () => {
                                                             }
                                                         }
                                                     }}
-                                                    className="px-4 py-2 bg-gray-700 !text-white rounded-lg flex items-center gap-2 hover:bg-gray-800 transition-colors"
+                                                    className="px-4 py-2 bg-gray-100 text-primary rounded-lg flex items-center gap-2 hover:bg-gray-100 transition-colors"
                                                 >
                                                     <Plus className="w-4 h-4" />
                                                     <span>{editingInvoiceId ? 'Update' : 'Add'} Invoice</span>
@@ -3383,7 +3383,7 @@ const Trucks: React.FC = () => {
                                                         </tr>
                                                     ) : (
                                                         invoices.map((invoice) => (
-                                                            <tr key={invoice.id} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                                                            <tr key={invoice.id} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                                                                 <td className="px-4 py-3 text-sm text-primary">{invoice.invoiceNumber}</td>
                                                                 <td className="px-4 py-3 text-sm text-primary">{invoice.vendorWorkshop}</td>
                                                                 <td className="px-4 py-3 text-sm text-primary">${parseFloat(invoice.amount || '0').toFixed(2)}</td>
@@ -3394,14 +3394,14 @@ const Trucks: React.FC = () => {
                                                                             href={invoice.fileUrl}
                                                                             target="_blank"
                                                                             rel="noopener noreferrer"
-                                                                            className="flex items-center gap-2 text-[#00D1FF] hover:text-blue-800 hover:underline"
+                                                                            className="flex items-center gap-2 text-[#059669] hover:text-blue-800 hover:underline"
                                                                             onClick={(e) => e.stopPropagation()}
                                                                         >
                                                                             <FileText className="w-4 h-4" />
                                                                             <span>{invoice.fileName || 'View File'}</span>
                                                                         </a>
                                                                     ) : invoice.fileName || invoice.file ? (
-                                                                        <div className="flex items-center gap-2 text-[#00D1FF]">
+                                                                        <div className="flex items-center gap-2 text-[#059669]">
                                                                             <FileText className="w-4 h-4" />
                                                                             <span className="truncate max-w-[150px]">
                                                                                 {invoice.fileName || (invoice.file instanceof File ? invoice.file.name : 'File attached')}
@@ -3430,7 +3430,7 @@ const Trucks: React.FC = () => {
                                                                                     notes: invoice.notes
                                                                                 });
                                                                             }}
-                                                                            className="p-1 text-[#00D1FF] hover:bg-blue-50 rounded"
+                                                                            className="p-1 text-[#059669] hover:bg-blue-50 rounded"
                                                                             title="Edit"
                                                                         >
                                                                             <Edit className="w-4 h-4" />
@@ -3533,7 +3533,7 @@ const Trucks: React.FC = () => {
                                                         setNoteForm({ note: '', category: 'Category' });
                                                     }
                                                 }}
-                                                className="w-10 h-10 bg-gray-700 !text-white rounded-lg flex items-center justify-center hover:bg-gray-800 transition-colors flex-shrink-0"
+                                                className="w-10 h-10 bg-gray-100 text-primary rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors flex-shrink-0"
                                                 title={editingNoteId ? 'Update Note' : 'Add Note'}
                                             >
                                                 {editingNoteId ? <Edit className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
@@ -3557,7 +3557,7 @@ const Trucks: React.FC = () => {
                                                         </tr>
                                                     ) : (
                                                         notes.map((note) => (
-                                                            <tr key={note.id} className={`hover:bg-[rgba(255,255,255,0.03)] transition-colors ${editingNoteId === note.id ? 'bg-card' : ''}`}>
+                                                            <tr key={note.id} className={`hover:bg-[rgba(15,31,23,0.03)] transition-colors ${editingNoteId === note.id ? 'bg-card' : ''}`}>
                                                                 <td className="px-4 py-3 text-sm text-primary">{note.note}</td>
                                                                 <td className="px-4 py-3 text-sm text-primary">{note.category}</td>
                                                                 <td className="px-4 py-3 text-sm text-primary">
@@ -3567,7 +3567,7 @@ const Trucks: React.FC = () => {
                                                                                 setEditingNoteId(note.id);
                                                                                 setNoteForm({ note: note.note, category: note.category });
                                                                             }}
-                                                                            className="p-1 text-[#00D1FF] hover:bg-blue-50 rounded"
+                                                                            className="p-1 text-[#059669] hover:bg-blue-50 rounded"
                                                                             title="Edit"
                                                                         >
                                                                             <Edit className="w-4 h-4" />
@@ -3659,8 +3659,8 @@ const Trucks: React.FC = () => {
                                                             key={method}
                                                             onClick={() => setPaymentMethod(method)}
                                                             className={`px-4 py-2 rounded-sm font-medium transition-colors text-sm ${paymentMethod === method
-                                                                ? 'bg-gray-700 !text-white'
-                                                                : 'bg-card border border-theme text-primary hover:bg-[rgba(255,255,255,0.03)]'
+                                                                ? 'bg-gray-100 text-primary'
+                                                                : 'bg-card border border-theme text-primary hover:bg-[rgba(15,31,23,0.03)]'
                                                                 }`}
                                                         >
                                                             {method}
@@ -3888,7 +3888,7 @@ const Trucks: React.FC = () => {
                                                                 setDeductionForm({ startDate: '', description: '', fee: '0', interval: 'Interval', currency: 'CAD' });
                                                             }
                                                         }}
-                                                        className="w-10 h-10 bg-gray-700 !text-white rounded-lg flex items-center justify-center hover:bg-gray-800 transition-colors flex-shrink-0"
+                                                        className="w-10 h-10 bg-gray-100 text-primary rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors flex-shrink-0"
                                                     >
                                                         <Plus className="w-5 h-5" />
                                                     </button>
@@ -3913,7 +3913,7 @@ const Trucks: React.FC = () => {
                                                                 </tr>
                                                             ) : (
                                                                 deductions.map((deduction) => (
-                                                                    <tr key={deduction.id} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                                                                    <tr key={deduction.id} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                                                                         <td className="px-4 py-3 text-sm text-primary">{deduction.startDate}</td>
                                                                         <td className="px-4 py-3 text-sm text-primary">{deduction.description}</td>
                                                                         <td className="px-4 py-3 text-sm text-primary">{deduction.fee}</td>
@@ -4009,7 +4009,7 @@ const Trucks: React.FC = () => {
                                                                 setAdditionForm({ startDate: '', description: '', amount: '0', interval: 'Interval', currency: 'CAD' });
                                                             }
                                                         }}
-                                                        className="w-10 h-10 bg-gray-700 !text-white rounded-lg flex items-center justify-center hover:bg-gray-800 transition-colors flex-shrink-0"
+                                                        className="w-10 h-10 bg-gray-100 text-primary rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors flex-shrink-0"
                                                     >
                                                         <Plus className="w-5 h-5" />
                                                     </button>
@@ -4034,7 +4034,7 @@ const Trucks: React.FC = () => {
                                                                 </tr>
                                                             ) : (
                                                                 additions.map((addition) => (
-                                                                    <tr key={addition.id} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                                                                    <tr key={addition.id} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                                                                         <td className="px-4 py-3 text-sm text-primary">{addition.startDate}</td>
                                                                         <td className="px-4 py-3 text-sm text-primary">{addition.description}</td>
                                                                         <td className="px-4 py-3 text-sm text-primary">{addition.amount}</td>
@@ -4059,8 +4059,8 @@ const Trucks: React.FC = () => {
                                         onClick={handlePrevious}
                                         disabled={!getPreviousStep()}
                                         className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${getPreviousStep()
-                                            ? 'bg-gray-700 !text-white hover:bg-[var(--accent-navyblue)]'
-                                            : 'bg-gray-700 text-secondary cursor-not-allowed'
+                                            ? 'bg-gray-100 !text-white hover:bg-[var(--accent-navyblue)]'
+                                            : 'bg-gray-100 text-secondary cursor-not-allowed'
                                             }`}
                                     >
                                         <ChevronLeft className="w-3.5 h-3.5" />
@@ -4070,7 +4070,7 @@ const Trucks: React.FC = () => {
                                         onClick={handleNext}
                                         disabled={!getNextStep()}
                                         className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${getNextStep()
-                                            ? 'bg-gray-700 !text-white hover:bg-gray-800'
+                                            ? 'bg-gray-100 text-primary hover:bg-gray-100'
                                             : 'bg-gray-200 text-secondary cursor-not-allowed'
                                             }`}
                                     >
@@ -4106,7 +4106,7 @@ const Trucks: React.FC = () => {
                         <div className="p-6 border-b border-theme">
                             <div className="flex items-start gap-4">
                                 <div className="flex-shrink-0 w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-[#F59E0B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-6 h-6 text-[#d97706]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                                     </svg>
                                 </div>
@@ -4129,7 +4129,7 @@ const Trucks: React.FC = () => {
                         <div className="p-6 flex items-center justify-end gap-3">
                             <button
                                 onClick={() => setTruckLimitModal({ show: false, maxTrucks: 0, usedTrucks: 0 })}
-                                className="px-5 py-2.5 border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors"
+                                className="px-5 py-2.5 border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors"
                             >
                                 Close
                             </button>

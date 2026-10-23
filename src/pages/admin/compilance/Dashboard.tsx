@@ -166,7 +166,7 @@ function Dashboard() {
   const DetailSection = ({ title, icon: Icon, children, onClickHeader }: { title: string, icon: any, children: React.ReactNode, onClickHeader?: () => void }) => (
     <div className="bg-card rounded-lg shadow-sm border border-theme overflow-hidden mb-6">
       <div
-        className={`px-6 py-4 border-b border-theme flex justify-between items-center ${onClickHeader ? 'cursor-pointer hover:bg-[rgba(255,255,255,0.03)] transition-colors' : ''}`}
+        className={`px-6 py-4 border-b border-theme flex justify-between items-center ${onClickHeader ? 'cursor-pointer hover:bg-[rgba(15,31,23,0.03)] transition-colors' : ''}`}
         onClick={onClickHeader}
       >
         <div className="flex items-center gap-3">
@@ -187,7 +187,7 @@ function Dashboard() {
   const InnerGridCard = ({ label, value, colorClass, onClick, icon: Icon }: { label: string, value: string | number, colorClass: string, onClick?: () => void, icon: any }) => (
     <div
       onClick={onClick}
-      className={`bg-card border border-theme rounded-lg p-4 flex items-center justify-between shadow-sm hover:shadow transition-all ${onClick ? 'cursor-pointer hover:border-[rgba(255,255,255,0.15)]' : ''}`}
+      className={`bg-card border border-theme rounded-lg p-4 flex items-center justify-between shadow-sm hover:shadow transition-all ${onClick ? 'cursor-pointer hover:border-[rgba(15,31,23,0.15)]' : ''}`}
     >
       <div>
         <p className="text-xs text-secondary font-medium uppercase tracking-wider">{label}</p>
@@ -340,7 +340,7 @@ function Dashboard() {
                   <InnerGridCard
                     label="Warning"
                     value={cvsaStats.warning}
-                    colorClass="text-[#00FFA3]"
+                    colorClass="text-[#059669]"
                     icon={FaExclamationTriangle}
                     onClick={() => navigate("/admin/compliance/cvsa-inspection?status=warning")}
                   />
@@ -378,7 +378,7 @@ function Dashboard() {
                   <InnerGridCard
                     label="Fighting"
                     value={ticketStats.fight}
-                    colorClass="text-[#F59E0B]"
+                    colorClass="text-[#d97706]"
                     icon={FaShieldAlt}
                     onClick={() => navigate("/admin/compliance/tickets?status=fight")}
                   />
@@ -411,7 +411,7 @@ function Dashboard() {
                   <InnerGridCard
                     label="Under Review"
                     value={incidentStats.underReview}
-                    colorClass="text-[#00FFA3]"
+                    colorClass="text-[#059669]"
                     icon={FaClipboardCheck}
                     onClick={() => navigate("/admin/compliance/accidents?status=under-review")}
                   />
@@ -427,7 +427,7 @@ function Dashboard() {
 
               {/* Monthly Report Quick Link */}
               <div
-                className="bg-card rounded-lg p-4 shadow-sm border border-theme flex items-center justify-between cursor-pointer hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                className="bg-card rounded-lg p-4 shadow-sm border border-theme flex items-center justify-between cursor-pointer hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                 onClick={() => navigate("/admin/compliance/monthly-report")}
               >
                 <div className="flex items-center gap-4">

@@ -1465,7 +1465,7 @@ const TrailersPage: React.FC = () => {
                             }}
                             className={`flex-shrink-0 px-6 py-4 text-center font-medium transition-colors relative ${activeTab === 'All'
                                 ? 'text-[var(--accent-blue)] border-b-2 border-[var(--accent-blue)]'
-                                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                                 }`}
                         >
                             <div className="font-semibold">
@@ -1485,7 +1485,7 @@ const TrailersPage: React.FC = () => {
                                     }}
                                     className={`flex-shrink-0 px-6 py-4 text-center font-medium transition-colors relative ${activeTab === yard._id
                                         ? 'text-headings border-b-2 border-[var(--accent-blue)]'
-                                        : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                                        : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                                         }`}
                                 >
                                     <div>
@@ -1507,7 +1507,7 @@ const TrailersPage: React.FC = () => {
                             }}
                             className={`flex-shrink-0 px-6 py-4 text-center font-medium transition-colors relative ${activeTab === 'External'
                                 ? 'text-[var(--accent-blue)] border-b-2 border-[var(--accent-blue)]'
-                                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                                 }`}
                         >
                             <div className="font-semibold">
@@ -1523,7 +1523,7 @@ const TrailersPage: React.FC = () => {
                             }}
                             className={`flex-shrink-0 px-6 py-4 text-center font-medium transition-colors relative ${activeTab === 'Unassigned'
                                 ? 'text-[var(--accent-blue)] border-b-2 border-[var(--accent-blue)]'
-                                : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+                                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                                 }`}
                         >
                             <div className="font-semibold">
@@ -1798,7 +1798,7 @@ const TrailersPage: React.FC = () => {
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-card divide-y divide-theme divide-white/5 ">
+                            <tbody className="bg-card divide-y divide-theme divide-black/5 ">
                                 {filteredTrailers.length === 0 ? (
                                     <tr>
                                         <td colSpan={12} className="px-4 py-8 text-center text-secondary">
@@ -1809,7 +1809,7 @@ const TrailersPage: React.FC = () => {
                                     filteredTrailers.map((trailer) => (
                                         <tr
                                             onClick={() => handleEditTrailer(trailer._id || trailer.id || '')}
-                                            key={trailer._id || trailer.id} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                                            key={trailer._id || trailer.id} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                                             <td className="px-4 py-3 text-sm text-secondary">{trailer.trailerNumber || trailer.trailer || trailer.unitNumber}</td>
                                             <td className="px-4 py-3 text-sm text-secondary">{trailer.plateNumber}</td>
                                             <td className="px-4 py-3 text-sm text-secondary">{trailer.type}</td>
@@ -1853,7 +1853,7 @@ const TrailersPage: React.FC = () => {
                                                 <div className="flex items-center gap-2">
                                                     <button
                                                         onClick={(e) => { e.stopPropagation(); handleEditTrailer(trailer._id || trailer.id || ''); }}
-                                                        className="p-1.5 text-[#00D1FF] hover:bg-[#00D1FF]/10 rounded-lg transition-colors"
+                                                        className="p-1.5 text-[#059669] hover:bg-[#059669]/10 rounded-lg transition-colors"
                                                         title="Edit"
                                                     >
                                                         <Edit className="w-4 h-4" />
@@ -1916,7 +1916,7 @@ const TrailersPage: React.FC = () => {
                                         </>
                                     )}
                                 </div>
-                                <button className="w-full !mt-2 px-3 py-1.5 bg-gray-700 !text-white rounded-lg hover:bg-gray-800 transition-colors text-xs font-medium">
+                                <button className="w-full !mt-2 px-3 py-1.5 bg-gray-100 text-primary rounded-lg hover:bg-gray-100 transition-colors text-xs font-medium">
                                     UPLOAD
                                 </button>
                             </div>
@@ -1931,7 +1931,7 @@ const TrailersPage: React.FC = () => {
                                             onClick={() => setActiveStep(step)}
                                             className={`w-full px-3 py-2 text-left text-xs font-medium rounded-lg transition-colors ${activeStep === step
                                                 ? 'bg-[var(--accent-navyblue)] !text-white shadow-sm'
-                                                : 'bg-card text-primary hover:bg-[rgba(255,255,255,0.03)] border border-theme'
+                                                : 'bg-card text-primary hover:bg-[rgba(15,31,23,0.03)] border border-theme'
                                                 }`}
                                         >
                                             {step}
@@ -1951,7 +1951,7 @@ const TrailersPage: React.FC = () => {
                                     <button
                                         onClick={handleSaveTrailer}
                                         disabled={loading}
-                                        className="px-4 py-1.5 bg-gray-700 !text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="px-4 py-1.5 bg-gray-100 text-primary rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {loading ? 'SAVING...' : 'SAVE'}
                                     </button>
@@ -2144,7 +2144,7 @@ const TrailersPage: React.FC = () => {
                                                     }
                                                     className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${formData.ownership === "COMPANY ASSET"
                                                             ? "bg-[var(--accent-navyblue)] text-white shadow-md"
-                                                            : "bg-[rgba(255,255,255,0.05)] text-primary border border-theme hover:bg-[rgba(0,209,255,0.08)]"
+                                                            : "bg-[rgba(15,31,23,0.05)] text-primary border border-theme hover:bg-[rgba(5,150,105,0.08)]"
                                                         }`}
                                                 >
                                                     COMPANY ASSET
@@ -2162,7 +2162,7 @@ const TrailersPage: React.FC = () => {
                                                     }
                                                     className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${formData.ownership === "THIRD PARTY ASSET"
                                                             ? "bg-[var(--accent-navyblue)] text-white shadow-md"
-                                                            : "bg-[rgba(255,255,255,0.05)] text-primary border border-theme hover:bg-[rgba(0,209,255,0.08)]"
+                                                            : "bg-[rgba(15,31,23,0.05)] text-primary border border-theme hover:bg-[rgba(5,150,105,0.08)]"
                                                         }`}
                                                 >
                                                     THIRD PARTY ASSET
@@ -2201,7 +2201,7 @@ const TrailersPage: React.FC = () => {
                                                                 onClick={() => setFormData({ ...formData, subType: 'HIGHWAY USE' })}
                                                                 className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${formData.subType === 'HIGHWAY USE'
                                                                         ? 'bg-[var(--accent-navyblue)] text-white shadow-md'
-                                                                        : 'bg-[rgba(255,255,255,0.05)] text-primary border border-theme hover:bg-[rgba(0,209,255,0.08)]'
+                                                                        : 'bg-[rgba(15,31,23,0.05)] text-primary border border-theme hover:bg-[rgba(5,150,105,0.08)]'
                                                                     }`}
                                                             >
                                                                 HIGHWAY USE
@@ -2213,7 +2213,7 @@ const TrailersPage: React.FC = () => {
                                                                 onClick={() => setFormData({ ...formData, subType: 'CITY USE' })}
                                                                 className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${formData.subType === 'CITY USE'
                                                                         ? 'bg-[var(--accent-navyblue)] text-white shadow-md'
-                                                                        : 'bg-[rgba(255,255,255,0.05)] text-primary border border-theme hover:bg-[rgba(0,209,255,0.08)]'
+                                                                        : 'bg-[rgba(15,31,23,0.05)] text-primary border border-theme hover:bg-[rgba(5,150,105,0.08)]'
                                                                     }`}
                                                             >
                                                                 CITY USE
@@ -2225,7 +2225,7 @@ const TrailersPage: React.FC = () => {
                                                                 onClick={() => setFormData({ ...formData, subType: 'STORAGE USE' })}
                                                                 className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${formData.subType === 'STORAGE USE'
                                                                         ? 'bg-[var(--accent-navyblue)] text-white shadow-md'
-                                                                        : 'bg-[rgba(255,255,255,0.05)] text-primary border border-theme hover:bg-[rgba(0,209,255,0.08)]'
+                                                                        : 'bg-[rgba(15,31,23,0.05)] text-primary border border-theme hover:bg-[rgba(5,150,105,0.08)]'
                                                                     }`}
                                                             >
                                                                 STORAGE USE
@@ -2239,7 +2239,7 @@ const TrailersPage: React.FC = () => {
                                                                 onClick={() => setFormData({ ...formData, subType: 'RENTAL' })}
                                                                 className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${formData.subType === 'RENTAL'
                                                                         ? 'bg-[var(--accent-navyblue)] text-white shadow-md'
-                                                                        : 'bg-[rgba(255,255,255,0.05)] text-primary border border-theme hover:bg-[rgba(0,209,255,0.08)]'
+                                                                        : 'bg-[rgba(15,31,23,0.05)] text-primary border border-theme hover:bg-[rgba(5,150,105,0.08)]'
                                                                     }`}
                                                             >
                                                                 RENTAL
@@ -2251,7 +2251,7 @@ const TrailersPage: React.FC = () => {
                                                                 onClick={() => setFormData({ ...formData, subType: 'OTHER' })}
                                                                 className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${formData.subType === 'OTHER'
                                                                         ? 'bg-[var(--accent-navyblue)] text-white shadow-md'
-                                                                        : 'bg-[rgba(255,255,255,0.05)] text-primary border border-theme hover:bg-[rgba(0,209,255,0.08)]'
+                                                                        : 'bg-[rgba(15,31,23,0.05)] text-primary border border-theme hover:bg-[rgba(5,150,105,0.08)]'
                                                                     }`}
                                                             >
                                                                 OTHER
@@ -2275,7 +2275,7 @@ const TrailersPage: React.FC = () => {
                                                 type="button"
                                                 onClick={() => setInspectionType('One Time')}
                                                 className={`px-6 py-2 rounded-lg font-medium transition-colors border-2 ${inspectionType === 'One Time'
-                                                    ? 'bg-card border-gray-700 text-headings'
+                                                    ? 'bg-card border-gray-200 text-headings'
                                                     : 'bg-card border-theme text-headings hover:border-gray-400'
                                                     }`}
                                             >
@@ -2285,7 +2285,7 @@ const TrailersPage: React.FC = () => {
                                                 type="button"
                                                 onClick={() => setInspectionType('Recurring')}
                                                 className={`px-6 py-2 rounded-lg font-medium transition-colors border-2 ${inspectionType === 'Recurring'
-                                                    ? 'bg-card border-gray-700 text-headings'
+                                                    ? 'bg-card border-gray-200 text-headings'
                                                     : 'bg-card border-theme text-headings hover:border-gray-400'
                                                     }`}
                                             >
@@ -2385,7 +2385,7 @@ const TrailersPage: React.FC = () => {
                                                             </button>
                                                             <button
                                                                 onClick={handleCancelEditInspection}
-                                                                className="w-10 h-10 bg-gray-500 !text-white rounded-lg flex items-center justify-center hover:bg-gray-600"
+                                                                className="w-10 h-10 bg-gray-500 !text-white rounded-lg flex items-center justify-center hover:bg-gray-200"
                                                                 title="Cancel"
                                                             >
                                                                 <X className="w-5 h-5" />
@@ -2406,7 +2406,7 @@ const TrailersPage: React.FC = () => {
                                                                     }
                                                                 }
                                                             }}
-                                                            className="w-10 h-10 bg-gray-700 !text-white rounded-lg flex items-center justify-center hover:bg-gray-800"
+                                                            className="w-10 h-10 bg-gray-100 text-primary rounded-lg flex items-center justify-center hover:bg-gray-100"
                                                             title="Add"
                                                         >
                                                             <Plus className="w-5 h-5" />
@@ -2435,7 +2435,7 @@ const TrailersPage: React.FC = () => {
                                                                     <tr
                                                                         key={inspection.id}
                                                                         onClick={() => handleEditInspection(inspection, 'oneTime')}
-                                                                        className={`border-t border-theme hover:bg-[rgba(255,255,255,0.03)] cursor-pointer ${editingInspectionId === inspection.id ? 'bg-card' : ''}`}
+                                                                        className={`border-t border-theme hover:bg-[rgba(15,31,23,0.03)] cursor-pointer ${editingInspectionId === inspection.id ? 'bg-card' : ''}`}
                                                                     >
                                                                         <td className="px-4 py-2 text-sm text-headings">{inspection.expiryDate}</td>
                                                                         <td className="px-4 py-2 text-sm text-headings">{inspection.description}</td>
@@ -2447,7 +2447,7 @@ const TrailersPage: React.FC = () => {
                                                                                         target="_blank"
                                                                                         rel="noopener noreferrer"
                                                                                         onClick={(e) => e.stopPropagation()}
-                                                                                        className="text-[#00D1FF] hover:underline flex items-center gap-1"
+                                                                                        className="text-[#059669] hover:underline flex items-center gap-1"
                                                                                     >
                                                                                         <FileText className="w-4 h-4" />
                                                                                         {inspection.fileName.length > 20
@@ -2471,7 +2471,7 @@ const TrailersPage: React.FC = () => {
                                                                             <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                                                                                 <button
                                                                                     onClick={() => handleEditInspection(inspection, 'oneTime')}
-                                                                                    className="p-1 text-[#00D1FF] hover:bg-blue-50 rounded"
+                                                                                    className="p-1 text-[#059669] hover:bg-blue-50 rounded"
                                                                                     title="Edit"
                                                                                 >
                                                                                     <Edit className="w-4 h-4" />
@@ -2611,7 +2611,7 @@ const TrailersPage: React.FC = () => {
                                                             </button>
                                                             <button
                                                                 onClick={handleCancelEditInspection}
-                                                                className="w-10 h-10 bg-gray-500 !text-white rounded-lg flex items-center justify-center hover:bg-gray-600"
+                                                                className="w-10 h-10 bg-gray-500 !text-white rounded-lg flex items-center justify-center hover:bg-gray-200"
                                                                 title="Cancel"
                                                             >
                                                                 <X className="w-5 h-5" />
@@ -2637,7 +2637,7 @@ const TrailersPage: React.FC = () => {
                                                                     }
                                                                 }
                                                             }}
-                                                            className="w-10 h-10 bg-gray-700 !text-white rounded-lg flex items-center justify-center hover:bg-gray-800"
+                                                            className="w-10 h-10 bg-gray-100 text-primary rounded-lg flex items-center justify-center hover:bg-gray-100"
                                                             title="Add"
                                                         >
                                                             <Plus className="w-5 h-5" />
@@ -2667,7 +2667,7 @@ const TrailersPage: React.FC = () => {
                                                                     <tr
                                                                         key={inspection.id}
                                                                         onClick={() => handleEditInspection(inspection, 'recurring')}
-                                                                        className={`border-t border-theme hover:bg-[rgba(255,255,255,0.03)] cursor-pointer ${editingInspectionId === inspection.id ? 'bg-card' : ''}`}
+                                                                        className={`border-t border-theme hover:bg-[rgba(15,31,23,0.03)] cursor-pointer ${editingInspectionId === inspection.id ? 'bg-card' : ''}`}
                                                                     >
                                                                         <td className="px-4 py-2 text-sm text-headings">{inspection.scheduledOn}</td>
                                                                         <td className="px-4 py-2 text-sm text-headings">{inspection.after}</td>
@@ -2681,7 +2681,7 @@ const TrailersPage: React.FC = () => {
                                                                                         target="_blank"
                                                                                         rel="noopener noreferrer"
                                                                                         onClick={(e) => e.stopPropagation()}
-                                                                                        className="text-[#00D1FF] hover:underline flex items-center gap-1"
+                                                                                        className="text-[#059669] hover:underline flex items-center gap-1"
                                                                                     >
                                                                                         <FileText className="w-4 h-4" />
                                                                                         {inspection.fileName.length > 20
@@ -2705,7 +2705,7 @@ const TrailersPage: React.FC = () => {
                                                                             <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                                                                                 <button
                                                                                     onClick={() => handleEditInspection(inspection, 'recurring')}
-                                                                                    className="p-1 text-[#00D1FF] hover:bg-blue-50 rounded"
+                                                                                    className="p-1 text-[#059669] hover:bg-blue-50 rounded"
                                                                                     title="Edit"
                                                                                 >
                                                                                     <Edit className="w-4 h-4" />
@@ -2803,7 +2803,7 @@ const TrailersPage: React.FC = () => {
                                                             <button
                                                                 type="button"
                                                                 onClick={() => documentFileInputRef.current?.click()}
-                                                                className="w-full px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] text-sm font-medium flex items-center justify-center gap-2"
+                                                                className="w-full px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] text-sm font-medium flex items-center justify-center gap-2"
                                                             >
                                                                 <Upload className="w-4 h-4" />
                                                                 <span>Select File</span>
@@ -2833,7 +2833,7 @@ const TrailersPage: React.FC = () => {
                                                         <button
                                                             type="button"
                                                             onClick={handleCancelEditDocument}
-                                                            className="w-10 h-10 bg-gray-500 !text-white rounded-lg flex items-center justify-center hover:bg-gray-600"
+                                                            className="w-10 h-10 bg-gray-500 !text-white rounded-lg flex items-center justify-center hover:bg-gray-200"
                                                             title="Cancel"
                                                         >
                                                             <X className="w-5 h-5" />
@@ -2843,7 +2843,7 @@ const TrailersPage: React.FC = () => {
                                                     <button
                                                         type="button"
                                                         onClick={handleSaveDocument}
-                                                        className="w-10 h-10 bg-gray-700 !text-white rounded-lg flex items-center justify-center hover:bg-gray-800"
+                                                        className="w-10 h-10 bg-gray-100 text-primary rounded-lg flex items-center justify-center hover:bg-gray-100"
                                                         title="Add"
                                                     >
                                                         <Plus className="w-5 h-5" />
@@ -2877,7 +2877,7 @@ const TrailersPage: React.FC = () => {
                                                             <tr
                                                                 key={doc.id}
                                                                 onClick={() => handleEditDocument(doc)}
-                                                                className={`border-t border-theme hover:bg-[rgba(255,255,255,0.03)] cursor-pointer ${editingDocumentId === doc.id ? 'bg-card' : ''}`}
+                                                                className={`border-t border-theme hover:bg-[rgba(15,31,23,0.03)] cursor-pointer ${editingDocumentId === doc.id ? 'bg-card' : ''}`}
                                                             >
                                                                 <td className="px-4 py-2 text-sm text-headings">{doc.title || '-'}</td>
                                                                 <td className="px-4 py-2 text-sm text-headings">{doc.expiryDate || '-'}</td>
@@ -2889,7 +2889,7 @@ const TrailersPage: React.FC = () => {
                                                                             target="_blank"
                                                                             rel="noopener noreferrer"
                                                                             onClick={(e) => e.stopPropagation()}
-                                                                            className="flex items-center gap-2 text-[#00D1FF] hover:text-blue-800"
+                                                                            className="flex items-center gap-2 text-[#059669] hover:text-blue-800"
                                                                         >
                                                                             <FileText className="w-4 h-4" />
                                                                             <span>{doc.fileName || 'View File'}</span>
@@ -2908,7 +2908,7 @@ const TrailersPage: React.FC = () => {
                                                                     <div className="flex items-center gap-2">
                                                                         <button
                                                                             onClick={() => handleEditDocument(doc)}
-                                                                            className="p-1 text-[#00D1FF] hover:bg-blue-50 rounded"
+                                                                            className="p-1 text-[#059669] hover:bg-blue-50 rounded"
                                                                             title="Edit"
                                                                         >
                                                                             <Edit className="w-4 h-4" />
@@ -2998,7 +2998,7 @@ const TrailersPage: React.FC = () => {
                                                         setNoteForm({ note: '', category: 'Category' });
                                                     }
                                                 }}
-                                                className="w-10 h-10 bg-gray-700 !text-white rounded-lg flex items-center justify-center hover:bg-gray-800 transition-colors flex-shrink-0"
+                                                className="w-10 h-10 bg-gray-100 text-primary rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors flex-shrink-0"
                                                 title={editingNoteId ? 'Update Note' : 'Add Note'}
                                             >
                                                 {editingNoteId ? <Edit className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
@@ -3022,7 +3022,7 @@ const TrailersPage: React.FC = () => {
                                                         </tr>
                                                     ) : (
                                                         notes.map((note) => (
-                                                            <tr key={note.id} className={`hover:bg-[rgba(255,255,255,0.03)] transition-colors ${editingNoteId === note.id ? 'bg-card' : ''}`}>
+                                                            <tr key={note.id} className={`hover:bg-[rgba(15,31,23,0.03)] transition-colors ${editingNoteId === note.id ? 'bg-card' : ''}`}>
                                                                 <td className="px-4 py-3 text-sm text-headings">{note.note}</td>
                                                                 <td className="px-4 py-3 text-sm text-headings">{note.category}</td>
                                                                 <td className="px-4 py-3 text-sm text-headings">
@@ -3032,7 +3032,7 @@ const TrailersPage: React.FC = () => {
                                                                                 setEditingNoteId(note.id);
                                                                                 setNoteForm({ note: note.note, category: note.category });
                                                                             }}
-                                                                            className="p-1 text-[#00D1FF] hover:bg-blue-50 rounded"
+                                                                            className="p-1 text-[#059669] hover:bg-blue-50 rounded"
                                                                             title="Edit"
                                                                         >
                                                                             <Edit className="w-4 h-4" />
@@ -3069,7 +3069,7 @@ const TrailersPage: React.FC = () => {
                                         onClick={handlePrevious}
                                         disabled={!getPreviousStep()}
                                         className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${getPreviousStep()
-                                            ? 'bg-gray-700 !text-white hover:bg-gray-800'
+                                            ? 'bg-gray-100 text-primary hover:bg-gray-100'
                                             : 'bg-gray-200 text-secondary cursor-not-allowed'
                                             }`}
                                     >
@@ -3080,7 +3080,7 @@ const TrailersPage: React.FC = () => {
                                         onClick={handleNext}
                                         disabled={!getNextStep()}
                                         className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${getNextStep()
-                                            ? 'bg-gray-700 !text-white hover:bg-gray-800'
+                                            ? 'bg-gray-100 text-primary hover:bg-gray-100'
                                             : 'bg-gray-200 text-secondary cursor-not-allowed'
                                             }`}
                                     >

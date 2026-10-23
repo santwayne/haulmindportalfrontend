@@ -388,7 +388,7 @@ const NewVehicleSidebar: FC<NewVehicleSidebarProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 !mr-3 border border-theme rounded-md text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+              className="px-4 py-2 !mr-3 border border-theme rounded-md text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors"
             >
               Cancel
             </button>

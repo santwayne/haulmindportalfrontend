@@ -477,7 +477,7 @@ export default function TaxConfigurationPage() {
                       <td className="px-4 py-3 text-sm text-headings">${item.rate}</td>
                       <td className="px-4 py-3 text-sm text-headings">{item.effectiveDate}</td>
                       <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                        <button onClick={() => handleEdit(item)} className="text-[#00D1FF] !mr-3 hover:text-blue-800 mr-3">
+                        <button onClick={() => handleEdit(item)} className="text-[#059669] !mr-3 hover:text-blue-800 mr-3">
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button onClick={() => handleDelete(item._id || item.id?.toString() || '')} className="text-[#A855F7] hover:text-red-800">
@@ -532,7 +532,7 @@ export default function TaxConfigurationPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                        <button onClick={() => handleEdit(item)} className="text-[#00D1FF] !mr-3 hover:text-blue-800 mr-3">
+                        <button onClick={() => handleEdit(item)} className="text-[#059669] !mr-3 hover:text-blue-800 mr-3">
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button onClick={() => handleDelete(item._id || item.id?.toString() || '')} className="text-[#A855F7] hover:text-red-800">
@@ -587,7 +587,7 @@ export default function TaxConfigurationPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                        <button onClick={() => handleEdit(item)} className="text-[#00D1FF] !mr-3 hover:text-blue-800 mr-3">
+                        <button onClick={() => handleEdit(item)} className="text-[#059669] !mr-3 hover:text-blue-800 mr-3">
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button onClick={() => handleDelete(item._id || item.id?.toString() || '')} className="text-[#A855F7] hover:text-red-800">
@@ -615,7 +615,7 @@ export default function TaxConfigurationPage() {
                   <th className="px-4 py-3 text-right text-sm font-semibold text-headings">Actions</th>
                 </tr>
               </thead>
-              <tbody className='divide-y divide-theme divide-white/5'>
+              <tbody className='divide-y divide-theme divide-black/5'>
                 {loading ? (
                   <tr>
                     <td colSpan={5} className="px-4 py-8 text-center text-slate-500">Loading...</td>
@@ -723,19 +723,19 @@ export default function TaxConfigurationPage() {
         {/* Navigation Tabs */}
         <div className="bg-card rounded-lg shadow-sm mb-6 overflow-hidden">
           <div className="flex border-b border-slate-200 ">
-            <button onClick={() => setActiveTab('ifta')} className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors flex-1 ${activeTab === 'ifta' ? 'text-[#016ab2] border-b-2 border-[var(--accent-blue)] bg-card' : 'text-slate-600 hover:bg-[var(--accent-navyblue)]/20'}`}>
+            <button onClick={() => setActiveTab('ifta')} className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors flex-1 ${activeTab === 'ifta' ? 'text-[#047857] border-b-2 border-[var(--accent-blue)] bg-card' : 'text-slate-600 hover:bg-[var(--accent-navyblue)]/20'}`}>
               <FileText className="w-5 h-5" />
               <span className="hidden sm:inline">IFTA Rates</span>
             </button>
-            <button onClick={() => setActiveTab('sales')} className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors flex-1 ${activeTab === 'sales' ? 'text-[#016ab2] border-b-2 border-[var(--accent-blue)] bg-card' : 'text-slate-600 hover:bg-[var(--accent-navyblue)]/20'}`}>
+            <button onClick={() => setActiveTab('sales')} className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors flex-1 ${activeTab === 'sales' ? 'text-[#047857] border-b-2 border-[var(--accent-blue)] bg-card' : 'text-slate-600 hover:bg-[var(--accent-navyblue)]/20'}`}>
               <MapPin className="w-5 h-5" />
               <span className="hidden sm:inline">Sales Tax</span>
             </button>
-            <button onClick={() => setActiveTab('payroll')} className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors flex-1 ${activeTab === 'payroll' ? 'text-[#016ab2] border-b-2 border-[var(--accent-blue)] bg-card' : 'text-slate-600 hover:bg-[var(--accent-navyblue)]/20'}`}>
+            <button onClick={() => setActiveTab('payroll')} className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors flex-1 ${activeTab === 'payroll' ? 'text-[#047857] border-b-2 border-[var(--accent-blue)] bg-card' : 'text-slate-600 hover:bg-[var(--accent-navyblue)]/20'}`}>
               <Calculator className="w-5 h-5" />
               <span className="hidden sm:inline">Payroll</span>
             </button>
-            <button onClick={() => setActiveTab('vendor')} className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors flex-1 ${activeTab === 'vendor' ? 'text-[#016ab2] border-b-2 border-[var(--accent-blue)] bg-card' : 'text-slate-600 hover:bg-[var(--accent-navyblue)]/20'}`}>
+            <button onClick={() => setActiveTab('vendor')} className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors flex-1 ${activeTab === 'vendor' ? 'text-[#047857] border-b-2 border-[var(--accent-blue)] bg-card' : 'text-slate-600 hover:bg-[var(--accent-navyblue)]/20'}`}>
               <DollarSign className="w-5 h-5" />
               <span className="hidden sm:inline">Vendor Tax</span>
             </button>
@@ -855,7 +855,7 @@ export default function TaxConfigurationPage() {
                             type="checkbox"
                             checked={salesFormData.qbSync}
                             onChange={(e) => setSalesFormData({ ...salesFormData, qbSync: e.target.checked })}
-                            className="w-4 h-4 text-[#00D1FF] border-slate-300 rounded focus:ring-blue-500"
+                            className="w-4 h-4 text-[#059669] border-slate-300 rounded focus:ring-blue-500"
                           />
                           <span className="text-sm font-medium text-headings">QuickBooks Sync</span>
                         </label>

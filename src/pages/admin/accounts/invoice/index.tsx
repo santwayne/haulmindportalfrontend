@@ -797,7 +797,7 @@ const InvoiceManagement: React.FC = () => {
                 return 'text-purple-400 bg-purple-400/10 border border-purple-400/20';
 
             default:
-                return 'text-secondary bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.08)]';
+                return 'text-secondary bg-[rgba(15,31,23,0.05)] border border-[rgba(15,31,23,0.08)]';
         }
     };
 
@@ -859,21 +859,21 @@ const InvoiceManagement: React.FC = () => {
 
         return (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40  ">
-                <div className="bg-[#121A2B] rounded-xl shadow-2xl border border-[rgba(0,209,255,0.1)] max-w-md w-full mx-4">
+                <div className="bg-[#ffffff] rounded-xl shadow-2xl border border-[rgba(5,150,105,0.1)] max-w-md w-full mx-4">
                     <div className="p-6">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="bg-rose-500/10 p-3 rounded-xl border border-rose-500/20">
                                 <Trash2 className="h-5 w-5 text-rose-400" />
                             </div>
-                            <h3 className="text-base font-semibold text-[#E6EDF3]">Delete Invoice</h3>
+                            <h3 className="text-base font-semibold text-[#0f1f17]">Delete Invoice</h3>
                         </div>
-                        <p className="text-[#8B9BB4] text-sm mb-6">
+                        <p className="text-[#5a7066] text-sm mb-6">
                             Are you sure you want to delete this invoice? This action cannot be undone.
                         </p>
                         <div className="flex gap-3 justify-end">
                             <button
                                 onClick={() => setDeleteModal({ show: false, invoiceId: null })}
-                                className="px-4 py-2 text-[#8B9BB4] bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.08)] rounded-lg hover:bg-[rgba(255,255,255,0.08)] transition-colors text-sm"
+                                className="px-4 py-2 text-[#5a7066] bg-[rgba(15,31,23,0.05)] border border-[rgba(15,31,23,0.08)] rounded-lg hover:bg-[rgba(15,31,23,0.08)] transition-colors text-sm"
                             >
                                 Cancel
                             </button>
@@ -893,53 +893,53 @@ const InvoiceManagement: React.FC = () => {
     const DashboardOverview: React.FC = () => (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {/* Total Revenue */}
-            <div className="bg-[#121A2B] rounded-xl p-5 border border-[rgba(0,209,255,0.12)] shadow-[0_0_20px_rgba(0,209,255,0.05)] hover:border-[rgba(0,209,255,0.25)] transition-all">
+            <div className="bg-[#ffffff] rounded-xl p-5 border border-[rgba(5,150,105,0.12)] shadow-[0_0_20px_rgba(5,150,105,0.05)] hover:border-[rgba(5,150,105,0.25)] transition-all">
                 <div className="flex items-center justify-between mb-3">
                     <p className="text-xs font-medium text-[var(--accent-blue)] uppercase tracking-wider">Total Revenue</p>
-                    <div className="p-2 rounded-lg bg-[#00D1FF]/10 shadow-[0_0_12px_rgba(0,209,255,0.2)]">
-                        <DollarSign className="h-4 w-4 text-[#00D1FF]" />
+                    <div className="p-2 rounded-lg bg-[#059669]/10 shadow-[0_0_12px_rgba(5,150,105,0.2)]">
+                        <DollarSign className="h-4 w-4 text-[#059669]" />
                     </div>
                 </div>
-                <p className="text-2xl font-bold text-[#E6EDF3]">{formatCurrency(stats.totalAmount)}</p>
-                <p className="text-xs text-[#8B9BB4] mt-1">{invoices.length} invoices total</p>
+                <p className="text-2xl font-bold text-[#0f1f17]">{formatCurrency(stats.totalAmount)}</p>
+                <p className="text-xs text-[#5a7066] mt-1">{invoices.length} invoices total</p>
             </div>
 
             {/* Paid */}
-            <div className="bg-[#121A2B] rounded-xl p-5 border border-[rgba(0,255,163,0.12)] shadow-[0_0_20px_rgba(0,255,163,0.05)] hover:border-[rgba(0,255,163,0.25)] transition-all">
+            <div className="bg-[#ffffff] rounded-xl p-5 border border-[rgba(5,150,105,0.12)] shadow-[0_0_20px_rgba(5,150,105,0.05)] hover:border-[rgba(5,150,105,0.25)] transition-all">
                 <div className="flex items-center justify-between mb-3">
                     <p className="text-xs font-medium text-[var(--accent-green)] uppercase tracking-wider">Paid</p>
-                    <div className="p-2 rounded-lg bg-[#00FFA3]/10 shadow-[0_0_12px_rgba(0,255,163,0.2)]">
-                        <TrendingUp className="h-4 w-4 text-[#00FFA3]" />
+                    <div className="p-2 rounded-lg bg-[#059669]/10 shadow-[0_0_12px_rgba(5,150,105,0.2)]">
+                        <TrendingUp className="h-4 w-4 text-[#059669]" />
                     </div>
                 </div>
-                <p className="text-2xl font-bold text-[#E6EDF3]">{formatCurrency(stats.paidAmount)}</p>
-                <p className="text-xs text-[#8B9BB4] mt-1">{stats.paidCount} invoices paid</p>
+                <p className="text-2xl font-bold text-[#0f1f17]">{formatCurrency(stats.paidAmount)}</p>
+                <p className="text-xs text-[#5a7066] mt-1">{stats.paidCount} invoices paid</p>
             </div>
 
             {/* Pending */}
-            <div className="bg-[#121A2B] rounded-xl p-5 border border-[rgba(245,158,11,0.12)] shadow-[0_0_20px_rgba(245,158,11,0.05)] hover:border-[rgba(245,158,11,0.25)] transition-all">
+            <div className="bg-[#ffffff] rounded-xl p-5 border border-[rgba(245,158,11,0.12)] shadow-[0_0_20px_rgba(245,158,11,0.05)] hover:border-[rgba(245,158,11,0.25)] transition-all">
                 <div className="flex items-center justify-between mb-3">
                     <p className="text-xs font-medium text-[var(--accent-orange)] uppercase tracking-wider">Pending</p>
                     <div className="p-2 rounded-lg bg-[#F59E0B]/10 shadow-[0_0_12px_rgba(245,158,11,0.2)]">
-                        <Calendar className="h-4 w-4 text-[#F59E0B]" />
+                        <Calendar className="h-4 w-4 text-[#d97706]" />
                     </div>
                 </div>
-                <p className="text-2xl font-bold text-[#E6EDF3]">{formatCurrency(stats.pendingAmount)}</p>
-                <p className="text-xs text-[#8B9BB4] mt-1">{stats.pendingCount} invoices pending</p>
+                <p className="text-2xl font-bold text-[#0f1f17]">{formatCurrency(stats.pendingAmount)}</p>
+                <p className="text-xs text-[#5a7066] mt-1">{stats.pendingCount} invoices pending</p>
             </div>
 
             {/* Collection Rate */}
-            <div className="bg-[#121A2B] rounded-xl p-5 border border-[rgba(168,85,247,0.12)] shadow-[0_0_20px_rgba(168,85,247,0.05)] hover:border-[rgba(168,85,247,0.25)] transition-all">
+            <div className="bg-[#ffffff] rounded-xl p-5 border border-[rgba(168,85,247,0.12)] shadow-[0_0_20px_rgba(168,85,247,0.05)] hover:border-[rgba(168,85,247,0.25)] transition-all">
                 <div className="flex items-center justify-between mb-3">
                     <p className="text-xs font-medium text-[var(--accent-purple)] uppercase tracking-wider">Collection Rate</p>
                     <div className="p-2 rounded-lg bg-[#A855F7]/10 shadow-[0_0_12px_rgba(168,85,247,0.2)]">
                         <Users className="h-4 w-4 text-[#A855F7]" />
                     </div>
                 </div>
-                <p className="text-2xl font-bold text-[#E6EDF3]">
+                <p className="text-2xl font-bold text-[#0f1f17]">
                     {stats.totalAmount > 0 ? ((stats.paidAmount / stats.totalAmount) * 100).toFixed(1) : 0}%
                 </p>
-                <p className="text-xs text-[#8B9BB4] mt-1">Payment efficiency</p>
+                <p className="text-xs text-[#5a7066] mt-1">Payment efficiency</p>
             </div>
         </div>
     );
@@ -955,7 +955,7 @@ const InvoiceManagement: React.FC = () => {
                             <select
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-                                className="bg-[#0B1220] border border-[rgba(0,209,255,0.15)] text-[#E6EDF3] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#00D1FF] focus:ring-1 focus:ring-[rgba(0,209,255,0.3)] transition-colors"
+                                className="bg-[#f2f7f4] border border-[rgba(5,150,105,0.15)] text-[#0f1f17] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[rgba(5,150,105,0.3)] transition-colors"
                             >
                                 <option value="all">All Status</option>
                                 <option value="paid">Paid</option>
@@ -984,7 +984,7 @@ const InvoiceManagement: React.FC = () => {
                                 <th className="text-left py-3 px-6 font-medium text-headings">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-theme divide-white/5">
+                        <tbody className="divide-y divide-theme divide-black/5">
                             {filteredInvoices.map((invoice) => {
                                 // Extract trip number from notes if tripId is null
                                 const extractTripNumberFromNotes = (notes: string): string | null => {
@@ -1004,7 +1004,7 @@ const InvoiceManagement: React.FC = () => {
                                 return (
                                     <tr
                                         key={invoice._id}
-                                        className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                                        className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                                         onClick={() => {
                                             setSelectedInvoice(invoice);
                                             setActiveTab('view');
@@ -1089,7 +1089,7 @@ const InvoiceManagement: React.FC = () => {
                                                         setSelectedInvoice(invoice);
                                                         setActiveTab('view');
                                                     }}
-                                                    className="text-[#00D1FF] hover:text-blue-800 transition-colors"
+                                                    className="text-[#059669] hover:text-blue-800 transition-colors"
                                                     title="View Invoice"
                                                 >
                                                     <Eye className="h-4 w-4" />
@@ -1099,7 +1099,7 @@ const InvoiceManagement: React.FC = () => {
                                                         e.stopPropagation();
                                                         handleDownloadPDF(invoice);
                                                     }}
-                                                    className="p-2 text-primary hover:text-[#00D1FF] hover:bg-[rgba(0,209,255,0.08)] rounded-lg transition-all"
+                                                    className="p-2 text-primary hover:text-[#059669] hover:bg-[rgba(5,150,105,0.08)] rounded-lg transition-all"
                                                     title="Download PDF"
                                                 >
                                                     <Download className="h-4 w-4" />
@@ -1175,7 +1175,7 @@ const InvoiceManagement: React.FC = () => {
                             </button>
                             <button
                                 onClick={() => setActiveTab('list')}
-                                className="text-[#8B9BB4] bg-[var(--accent-navyblue)] hover:text-[#00D1FF] transition-colors px-3 py-2 hover:bg-[rgba(0,209,255,0.08)] rounded-lg text-sm"
+                                className="text-[#5a7066] bg-[var(--accent-navyblue)] hover:text-[#059669] transition-colors px-3 py-2 hover:bg-[rgba(5,150,105,0.08)] rounded-lg text-sm"
                             >
                                 ← Back to List
                             </button>
@@ -1183,7 +1183,7 @@ const InvoiceManagement: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="p-6 bg-[#0B1220]">
+                <div className="p-6 bg-[#f2f7f4]">
                     {/* Invoice Document Preview */}
                     <div className="max-w-4xl mx-auto bg-card shadow-2xl rounded-sm overflow-hidden border border-theme">
                         {/* Header - White Background with Logo and Title */}
@@ -1578,7 +1578,7 @@ const InvoiceManagement: React.FC = () => {
                                     <tbody>
                                         {selectedInvoice.serviceBreakdown && selectedInvoice.serviceBreakdown.length > 0 ? (
                                             selectedInvoice.serviceBreakdown.map((item, index) => (
-                                                <tr key={index} className="border-b border-theme hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                                                <tr key={index} className="border-b border-theme hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                                                     <td className="py-4 px-5 text-sm text-primary">{item.description || 'Service'}</td>
                                                     <td className="py-4 px-5 text-sm text-primary text-center">{item.quantity || 1}</td>
                                                     <td className="py-4 px-5 text-sm text-primary text-right font-mono">
@@ -1590,7 +1590,7 @@ const InvoiceManagement: React.FC = () => {
                                                 </tr>
                                             ))
                                         ) : (
-                                            <tr className="border-b border-theme hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                                            <tr className="border-b border-theme hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                                                 <td className="py-4 px-5 text-sm text-primary">{description}</td>
                                                 <td className="py-4 px-5 text-sm text-primary text-center">1</td>
                                                 <td className="py-4 px-5 text-sm text-primary text-right font-mono">
@@ -2351,7 +2351,7 @@ const InvoiceManagement: React.FC = () => {
                                     </p>
                                 )}
                                 {newInvoice.tripId && newInvoice.clientName && !newInvoice.clientEmail && (
-                                    <p className="text-xs text-[#00D1FF] mt-1">
+                                    <p className="text-xs text-[#059669] mt-1">
                                         ℹ️ Customer name found, but no email available - please add email manually if needed
                                     </p>
                                 )}
@@ -2482,7 +2482,7 @@ const InvoiceManagement: React.FC = () => {
                                     onClick={(e) => (e.currentTarget as HTMLInputElement).showPicker?.()}
                                     className="w-full border border-theme rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
                                     min={new Date().toISOString().split('T')[0]}
-                                    style={{ colorScheme: 'light', color: 'var(--text-primary, #e2e8f0)', backgroundColor: 'var(--bg-input, #1e293b)' }}
+                                    style={{ colorScheme: 'light', color: 'var(--text-primary, #5a7066)', backgroundColor: 'var(--bg-input, #1e293b)' }}
                                     required
                                 />
                             </div>

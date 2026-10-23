@@ -631,13 +631,13 @@ const CustomersPage = () => {
           body { background: #ffffff !important; }
           .print-hide { display: none !important; }
           table { border-collapse: collapse !important; width: 100% !important; font-size: 11px !important; }
-          thead tr { background: #1183e0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          thead th { color: #ffffff !important; padding: 8px 12px !important; border: 1px solid #0d6bc7 !important; font-weight: 600 !important; text-transform: uppercase !important; font-size: 10px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          tbody tr:nth-child(even) { background: #f0f6ff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          thead tr { background: #059669 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          thead th { color: #ffffff !important; padding: 8px 12px !important; border: 1px solid #047857 !important; font-weight: 600 !important; text-transform: uppercase !important; font-size: 10px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          tbody tr:nth-child(even) { background: #f0fdf4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           tbody td { padding: 7px 12px !important; border: 1px solid #dde6f0 !important; color: #1a1a2e !important; }
           .bg-main, .bg-card { background: #ffffff !important; }
           .border-theme { border-color: #dde6f0 !important; }
-          h1 { color: #1183e0 !important; font-size: 20px !important; }
+          h1 { color: #059669 !important; font-size: 20px !important; }
         }
       `}</style>
       {/* Toast Notifications */}
@@ -670,7 +670,7 @@ const CustomersPage = () => {
             <div className="p-6 border-t border-theme flex items-center justify-end gap-3">
               <button
                 onClick={() => setDeleteConfirmation({ show: false, customerId: null, customerName: '' })}
-                className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors font-medium"
+                className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors font-medium"
               >
                 Cancel
               </button>
@@ -812,7 +812,7 @@ const CustomersPage = () => {
                 className="px-3 py-2 bg-card text-primary border border-theme rounded-lg 
   focus:outline-none focus:ring-2 focus:ring-[var(--accent-green)]/30 
   focus:border-transparent 
-  hover:bg-[rgba(255,255,255,0.05)]"
+  hover:bg-[rgba(15,31,23,0.05)]"
               >
                 <option value="" className="bg-card text-primary">Select</option>
                 <option value="name" className="bg-card text-primary">Customer</option>
@@ -832,7 +832,7 @@ const CustomersPage = () => {
               <thead className="bg-card border-b border-theme">
                 <tr>
                   <th
-                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(15,31,23,0.03)]"
                     onClick={() => handleSort('name')}
                   >
                     <div className="flex items-center gap-2">
@@ -841,7 +841,7 @@ const CustomersPage = () => {
                     </div>
                   </th>
                   <th
-                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(15,31,23,0.03)]"
                     onClick={() => handleSort('type')}
                   >
                     <div className="flex items-center gap-2">
@@ -850,7 +850,7 @@ const CustomersPage = () => {
                     </div>
                   </th>
                   <th
-                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(15,31,23,0.03)]"
                     onClick={() => handleSort('address')}
                   >
                     <div className="flex items-center gap-2">
@@ -859,7 +859,7 @@ const CustomersPage = () => {
                     </div>
                   </th>
                   <th
-                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(15,31,23,0.03)]"
                     onClick={() => handleSort('city')}
                   >
                     <div className="flex items-center gap-2">
@@ -868,7 +868,7 @@ const CustomersPage = () => {
                     </div>
                   </th>
                   <th
-                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-3 text-left text-xs font-medium text-[var(--accent-navyblue)] uppercase cursor-pointer hover:bg-[rgba(15,31,23,0.03)]"
                     onClick={() => handleSort('lastLoadDate')}
                   >
                     <div className="flex items-center gap-2">
@@ -896,7 +896,7 @@ const CustomersPage = () => {
                   filteredCustomers.map((customer, index) => (
                     <tr
                       key={customer._id || index}
-                      className="hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                      className="hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                       onClick={() => {
                         if (customer._id) {
                           loadCustomerForEdit(customer._id);
@@ -916,7 +916,7 @@ const CustomersPage = () => {
                                 loadCustomerForEdit(customer._id);
                               }
                             }}
-                            className="p-2 !text-[var(--accent-navyblue)] hover:bg-[rgba(0,209,255,0.1)] rounded-lg transition-colors border border-theme"
+                            className="p-2 !text-[var(--accent-navyblue)] hover:bg-[rgba(5,150,105,0.1)] rounded-lg transition-colors border border-theme"
                             title="Edit Customer"
                           >
                             <Edit className="w-4 h-4" />
@@ -983,7 +983,7 @@ const CustomersPage = () => {
               </div>
 
               {/* Basic Tab Bar */}
-              <div className="px-6 py-3 border-b border-theme bg-[rgba(17,131,224,0.08)]">
+              <div className="px-6 py-3 border-b border-theme bg-[rgba(5,150,105,0.08)]">
                 <span className="text-[var(--accent-navyblue)] font-medium text-sm">Basic</span>
               </div>
 
@@ -1004,7 +1004,7 @@ const CustomersPage = () => {
                             onClick={() => setCustomerType('CUSTOMER')}
                             className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${customerType === 'CUSTOMER'
                               ? 'bg-[var(--accent-navyblue)] !text-white shadow-sm'
-                              : 'bg-card text-secondary hover:bg-[rgba(255,255,255,0.05)]'
+                              : 'bg-card text-secondary hover:bg-[rgba(15,31,23,0.05)]'
                               }`}
                           >
                             CUSTOMER
@@ -1014,7 +1014,7 @@ const CustomersPage = () => {
                             onClick={() => setCustomerType('SHIPPER AND RECEIVER')}
                             className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${customerType === 'SHIPPER AND RECEIVER'
                               ? 'bg-[var(--accent-navyblue)] !text-white shadow-sm'
-                              : 'bg-card text-secondary hover:bg-[rgba(255,255,255,0.05)]'
+                              : 'bg-card text-secondary hover:bg-[rgba(15,31,23,0.05)]'
                               }`}
                           >
                             SHIPPER AND RECEIVER
@@ -1038,7 +1038,7 @@ const CustomersPage = () => {
                               onClick={() => setBillingType('DEFAULT / LOAD')}
                               className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors text-sm ${billingType === 'DEFAULT / LOAD'
                                 ? 'bg-[var(--accent-navyblue)] !text-white shadow-sm'
-                                : 'bg-card text-secondary hover:bg-[rgba(255,255,255,0.05)]'
+                                : 'bg-card text-secondary hover:bg-[rgba(15,31,23,0.05)]'
                                 }`}
                             >
                               DEFAULT / LOAD
@@ -1048,7 +1048,7 @@ const CustomersPage = () => {
                               onClick={() => setBillingType('BATCH WEEKLY')}
                               className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors text-sm ${billingType === 'BATCH WEEKLY'
                                 ? 'bg-[var(--accent-navyblue)] !text-white shadow-sm'
-                                : 'bg-card text-secondary hover:bg-[rgba(255,255,255,0.05)]'
+                                : 'bg-card text-secondary hover:bg-[rgba(15,31,23,0.05)]'
                                 }`}
                             >
                               BATCH WEEKLY
@@ -1058,7 +1058,7 @@ const CustomersPage = () => {
                               onClick={() => setBillingType('BATCH MONTHLY')}
                               className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors text-sm ${billingType === 'BATCH MONTHLY'
                                 ? 'bg-[var(--accent-navyblue)] !text-white shadow-sm'
-                                : 'bg-card text-secondary hover:bg-[rgba(255,255,255,0.05)]'
+                                : 'bg-card text-secondary hover:bg-[rgba(15,31,23,0.05)]'
                                 }`}
                             >
                               BATCH MONTHLY
@@ -1244,7 +1244,7 @@ const CustomersPage = () => {
                               </div>
                             )}
                           </div>
-                          <div className="h-6 w-px bg-[rgba(255,255,255,0.15)]"></div>
+                          <div className="h-6 w-px bg-[rgba(15,31,23,0.15)]"></div>
                           <input
                             type="tel"
                             placeholder=""
@@ -1341,7 +1341,7 @@ const CustomersPage = () => {
                               </div>
                             )}
                           </div>
-                          <div className="h-6 w-px bg-[rgba(255,255,255,0.15)]"></div>
+                          <div className="h-6 w-px bg-[rgba(15,31,23,0.15)]"></div>
                           <input
                             type="tel"
                             placeholder=""

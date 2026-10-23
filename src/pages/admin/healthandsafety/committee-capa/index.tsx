@@ -32,12 +32,12 @@ import {
 import { getEmployees } from '../../../../axios/api/account.payroll';
 
 const CUSTOM_COLORS = {
-  background: '#EDF8FF',
-  primary: '#016ab2',
-  dark: '#063f6f',
-  light: '#398bc3',
-  gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)',
-  gradientVertical: 'linear-gradient(to bottom right, #016ab2, #063f6f)',
+  background: '#ecfdf5',
+  primary: '#047857',
+  dark: '#065f46',
+  light: '#059669',
+  gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)',
+  gradientVertical: 'linear-gradient(to bottom right, #047857, #065f46)',
 };
 
 // ============================================================================
@@ -719,8 +719,8 @@ const EnhancedCommitteeCAPA = () => {
           <div className="text-sm text-[var(--accent-red)]">Overdue</div>
         </div>
         <div className="bg-[var(--accent-green)]/20 rounded-lg shadow-md p-4 border-2 border-theme">
-          <div className="text-3xl font-bold text-[#00FFA3]">{capaStats.dueThisWeek}</div>
-          <div className="text-sm text-[#00FFA3]">Due This Week</div>
+          <div className="text-3xl font-bold text-[#059669]">{capaStats.dueThisWeek}</div>
+          <div className="text-sm text-[#059669]">Due This Week</div>
         </div>
         <div className="bg-[var(--accent-blue)]/20 rounded-lg shadow-md p-4 border-2 border-theme">
           <div className="text-3xl font-bold text-[var(--accent-blue)]">{capaStats.inProgress}</div>
@@ -864,7 +864,7 @@ const EnhancedCommitteeCAPA = () => {
 
                 {isUrgent && capa.status !== 'overdue' && (
                   <div className="bg-yellow-100 border-2 border-yellow-400 rounded-lg p-3 mb-4 flex items-center gap-3">
-                    <Clock className="w-6 h-6 text-[#00FFA3]" />
+                    <Clock className="w-6 h-6 text-[#059669]" />
                     <div>
                       <p className="font-bold text-yellow-800">Due in {daysUntilDue} days</p>
                       <p className="text-sm text-yellow-700">This CAPA requires immediate attention</p>
@@ -907,7 +907,7 @@ const EnhancedCommitteeCAPA = () => {
                         <ul className="space-y-1">
                           {capa.preventiveActions.map((action, idx) => (
                             <li key={idx} className="text-sm text-primary flex gap-2">
-                              <span className="text-[#00D1FF]">→</span>
+                              <span className="text-[#059669]">→</span>
                               <span>{action}</span>
                             </li>
                           ))}
@@ -951,7 +951,7 @@ const EnhancedCommitteeCAPA = () => {
                             <p className="text-blue-700 text-xs">ID: {capa.sourceReference.recordId}</p>
                           )}
                           {capa.sourceReference.linkUrl && (
-                            <button className="mt-2 text-xs text-[#00D1FF] hover:text-blue-800 underline">
+                            <button className="mt-2 text-xs text-[#059669] hover:text-blue-800 underline">
                               View Original Record →
                             </button>
                           )}
@@ -1036,7 +1036,7 @@ const EnhancedCommitteeCAPA = () => {
         </div>
       )}
 
-      <div className="mt-6 bg-white/5 border border-white/10 rounded-xl p-5">
+      <div className="mt-6 bg-black/5 border border-black/10 rounded-xl p-5">
         <h3 className="font-bold text-white mb-2 flex items-center gap-2">
           <CheckCircle className="w-5 h-5" /> CAPA System Features
         </h3>
@@ -1090,7 +1090,7 @@ const EnhancedCommitteeCAPA = () => {
             onClick={() => setActiveTab('committee')}
             className={`flex-1 py-3 px-6 rounded-lg font-semibold transition flex items-center justify-center gap-2 ${activeTab === 'committee'
               ? '!text-white'
-              : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+              : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
               }`}
             style={activeTab === 'committee' ? { background: CUSTOM_COLORS.primary } : {}}
           >
@@ -1101,7 +1101,7 @@ const EnhancedCommitteeCAPA = () => {
             onClick={() => setActiveTab('capa')}
             className={`flex-1 py-3 px-6 rounded-lg font-semibold transition flex items-center justify-center gap-2 ${activeTab === 'capa'
               ? '!text-white'
-              : 'text-secondary hover:bg-[rgba(255,255,255,0.03)]'
+              : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
               }`}
             style={activeTab === 'capa' ? { background: CUSTOM_COLORS.primary } : {}}
           >
@@ -1187,7 +1187,7 @@ const EnhancedCommitteeCAPA = () => {
                   <button
                     type="button"
                     onClick={() => setShowMemberModal(false)}
-                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
                   >
                     Cancel
                   </button>
@@ -1361,7 +1361,7 @@ const EnhancedCommitteeCAPA = () => {
                         preventiveAction: ''
                       });
                     }}
-                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
                   >
                     Cancel
                   </button>

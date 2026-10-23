@@ -808,7 +808,7 @@ const VehicleEldMonitor = () => {
                                         </tr>
                                     ) : (
                                         auditLogs.map((log) => (
-                                            <tr key={log.id} className="hover:bg-[rgba(1,106,178,0.05)]">
+                                            <tr key={log.id} className="hover:bg-[rgba(4,120,87,0.05)]">
                                                 <td className="px-6 py-4 font-bold text-primary">{log.driver}</td>
                                                 <td className="px-6 py-4 text-secondary">{log.date}</td>
                                                 <td className="px-6 py-4 font-mono text-primary">{log.driveUsed}</td>
@@ -920,9 +920,9 @@ const VehicleEldMonitor = () => {
                                                             const mins = Math.round((durationMs % (1000 * 60 * 60)) / (1000 * 60));
                                                             const durationStr = `${hours}h ${mins}m`;
                                                             return (
-                                                                <tr key={idx} className="hover:bg-[rgba(255,255,255,0.03)]">
+                                                                <tr key={idx} className="hover:bg-[rgba(15,31,23,0.03)]">
                                                                     <td className="px-4 py-2">
-                                                                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${entry.status === 'Driving' ? 'bg-[rgba(1,106,178,0.1)] text-[var(--accent-blue)]' :
+                                                                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${entry.status === 'Driving' ? 'bg-[rgba(4,120,87,0.1)] text-[var(--accent-blue)]' :
                                                                             entry.status === 'OnDuty' ? 'bg-amber-100 text-amber-700' :
                                                                                 'bg-card text-primary'
                                                                             }`}>
@@ -952,7 +952,7 @@ const VehicleEldMonitor = () => {
                                         <button
                                             type="button"
                                             onClick={() => setViewLogModalOpen(false)}
-                                            className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                                            className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
                                         >
                                             Close
                                         </button>
@@ -1286,7 +1286,7 @@ const VehicleEldMonitor = () => {
                                     </label>
                                     <div className="space-y-2">
                                         <label className="flex flex-col gap-2 cursor-pointer">
-                                            <div className="px-4 py-3 border border-theme rounded-lg border-dashed hover:bg-[rgba(255,255,255,0.03)] text-center">
+                                            <div className="px-4 py-3 border border-theme rounded-lg border-dashed hover:bg-[rgba(15,31,23,0.03)] text-center">
                                                 <input
                                                     type="file"
                                                     multiple
@@ -1373,7 +1373,7 @@ const VehicleEldMonitor = () => {
                                             });
                                             setAuditFormDocuments([]);
                                         }}
-                                        className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)]"
+                                        className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)]"
                                     >
                                         Reset
                                     </button>
@@ -1435,7 +1435,7 @@ const VehicleEldMonitor = () => {
                                             </tr>
                                         ) : (
                                             auditTableData.map((row) => (
-                                                <tr key={row.id} className="hover:bg-[rgba(1,106,178,0.05)]">
+                                                <tr key={row.id} className="hover:bg-[rgba(4,120,87,0.05)]">
                                                     <td className="px-6 py-4 font-medium text-primary">{row.driverName}</td>
                                                     <td className="px-6 py-4 text-secondary">{row.driverId || '—'}</td>
                                                     <td className="px-6 py-4 text-secondary">{row.reportingTo || '—'}</td>
@@ -1908,7 +1908,7 @@ const VehicleEldMonitor = () => {
                                                 onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
                                                 className="hidden"
                                             />
-                                            <div className="px-4 py-3 border border-theme rounded-lg border-dashed hover:bg-[rgba(255,255,255,0.03)] text-center">
+                                            <div className="px-4 py-3 border border-theme rounded-lg border-dashed hover:bg-[rgba(15,31,23,0.03)] text-center">
                                                 {selectedFile ? (
                                                     <div className="flex items-center justify-center gap-2 text-[var(--accent-blue)]">
                                                         <FileText size={20} />
@@ -1941,7 +1941,7 @@ const VehicleEldMonitor = () => {
                                         onClick={handleFileUpload}
                                         disabled={!selectedFile || uploadingFile}
                                         style={{
-                                            background: (!selectedFile || uploadingFile) ? '#9CA3AF' : 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)',
+                                            background: (!selectedFile || uploadingFile) ? '#9CA3AF' : 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)',
                                         }}
                                         className="px-6 py-2 !text-white font-semibold rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                                     >
@@ -1992,7 +1992,7 @@ const VehicleEldMonitor = () => {
                                         </thead>
                                         <tbody className="divide-y divide-gray-100">
                                             {eLogs.map((log) => (
-                                                <tr key={log._id} className="hover:bg-[rgba(1,106,178,0.05)]">
+                                                <tr key={log._id} className="hover:bg-[rgba(4,120,87,0.05)]">
                                                     <td className="px-6 py-4 font-medium text-primary">
                                                         {editingELogId === log._id ? (
                                                             <div className="flex items-center gap-2">
@@ -2018,7 +2018,7 @@ const VehicleEldMonitor = () => {
                                                                 <button
                                                                     type="button"
                                                                     onClick={cancelRenameELog}
-                                                                    className="p-1.5 text-secondary hover:bg-[rgba(255,255,255,0.03)] rounded"
+                                                                    className="p-1.5 text-secondary hover:bg-[rgba(15,31,23,0.03)] rounded"
                                                                     title="Cancel"
                                                                 >
                                                                     <X size={16} />
@@ -2031,7 +2031,7 @@ const VehicleEldMonitor = () => {
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => startRenameELog(log)}
-                                                                    className="p-1 text-secondary hover:text-[var(--accent-blue)] hover:bg-[rgba(1,106,178,0.05)]rounded flex-shrink-0"
+                                                                    className="p-1 text-secondary hover:text-[var(--accent-blue)] hover:bg-[rgba(4,120,87,0.05)]rounded flex-shrink-0"
                                                                     title="Rename"
                                                                 >
                                                                     <Pencil size={14} />

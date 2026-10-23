@@ -99,7 +99,7 @@ const exportToExcel = async (trailers: TrailerData[]) => {
 const DR = ({ label, value }: { label: string; value: React.ReactNode }) => (
   <div className="flex flex-col gap-0.5">
     <span className="text-[10px] font-semibold text-secondary uppercase tracking-wider">{label}</span>
-    <span className="text-sm text-primary">{value || <span className="text-gray-300">—</span>}</span>
+    <span className="text-sm text-primary">{value || <span className="text-gray-600">—</span>}</span>
   </div>
 );
 
@@ -258,7 +258,7 @@ const TrailersPage = () => {
             ))}
           </select>
         </div>
-        <button onClick={load} className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.03)] text-secondary hover:text-[var(--accent-blue)] border border-theme">
+        <button onClick={load} className="p-2 rounded-lg hover:bg-[rgba(15,31,23,0.03)] text-secondary hover:text-[var(--accent-blue)] border border-theme">
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
         </button>
       </div>
@@ -288,7 +288,7 @@ const TrailersPage = () => {
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-theme divide-white/5">
+              <tbody className="divide-y divide-theme divide-black/5">
                 {trailers.map((t) => (
                   <tr key={t._id} onClick={() => setSelected(t)} className="hover:bg-[var(--accent-blue)]/5 cursor-pointer group transition-colors">
                     <td className="px-4 py-3 whitespace-nowrap">
@@ -309,7 +309,7 @@ const TrailersPage = () => {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-secondary">{fmt(t.safetyExpiryDate)}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-right pr-4">
-                      <ChevronRight size={15} className="text-gray-300 group-hover:text-[var(--accent-blue)] transition-colors inline-block" />
+                      <ChevronRight size={15} className="text-gray-600 group-hover:text-[var(--accent-blue)] transition-colors inline-block" />
                     </td>
                   </tr>
                 ))}

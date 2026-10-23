@@ -115,12 +115,12 @@ const ReportsAnalytics = () => {
   });
 
   const CUSTOM_COLORS = {
-    background: '#EDF8FF',
-    primary: '#016ab2',
-    dark: '#063f6f',
-    light: '#398bc3',
-    gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)',
-    gradientVertical: 'linear-gradient(to bottom right, #016ab2, #063f6f)',
+    background: '#ecfdf5',
+    primary: '#047857',
+    dark: '#065f46',
+    light: '#059669',
+    gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)',
+    gradientVertical: 'linear-gradient(to bottom right, #047857, #065f46)',
   };
 
   const showNotification = (type: 'success' | 'error' | 'info' | 'warning', message: string) => {
@@ -479,7 +479,7 @@ const ReportsAnalytics = () => {
                       <div className="text-xs text-secondary">Scheduled ({inspectionPercentages.scheduled}%)</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-[#00FFA3]">
+                      <div className="text-2xl font-bold text-[#059669]">
                         {inspectionStatus['in-progress'] || 0}
                       </div>
                       <div className="text-xs text-secondary">In Progress ({inspectionPercentages.inProgress}%)</div>
@@ -564,7 +564,7 @@ const ReportsAnalytics = () => {
                   </tr>
                 ) : (
                   reports.map((report) => (
-                    <tr key={report._id} className="border-b border-theme hover:bg-[rgba(255,255,255,0.03)]">
+                    <tr key={report._id} className="border-b border-theme hover:bg-[rgba(15,31,23,0.03)]">
                       <td className="px-6 py-4 font-medium">{report.reportNumber}</td>
                       <td className="px-6 py-4">{report.title}</td>
                       <td className="px-6 py-4">
@@ -715,7 +715,7 @@ const ReportsAnalytics = () => {
                   <button
                     type="button"
                     onClick={() => setShowGenerateModal(false)}
-                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
                   >
                     Cancel
                   </button>

@@ -51,8 +51,8 @@ const ToastNotification = ({ notification, onClose }: { notification: ToastNotif
   const icons = {
     success: <FaCheckCircle className="text-green-600" size={20} />,
     error: <FaExclamationCircle className="text-[#A855F7]" size={20} />,
-    info: <FaExclamationCircle className="text-[#00D1FF]" size={20} />,
-    warning: <FaExclamationCircle className="text-[#00FFA3]" size={20} />
+    info: <FaExclamationCircle className="text-[#059669]" size={20} />,
+    warning: <FaExclamationCircle className="text-[#059669]" size={20} />
   };
 
   return (
@@ -308,11 +308,11 @@ const Index = () => {
                   <tbody className="divide-y divide-theme">
                     {filteredVendors.length > 0 ? (
                       filteredVendors.map((vendor) => (
-                        <tr key={vendor._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                        <tr key={vendor._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                <Building2 className="w-4 h-4 text-[#00D1FF]" />
+                                <Building2 className="w-4 h-4 text-[#059669]" />
                               </div>
                               <div className="ml-3">
                                 <div className="text-sm font-medium text-primary">
@@ -455,7 +455,7 @@ const Index = () => {
               <button
                 onClick={() => setIsEditModalOpen(false)}
                 disabled={editLoading}
-                className="rounded-md border border-theme px-5 py-2 text-sm text-primary transition hover:bg-[rgba(255,255,255,0.03)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-md border border-theme px-5 py-2 text-sm text-primary transition hover:bg-[rgba(15,31,23,0.03)] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Cancel
               </button>
@@ -493,7 +493,7 @@ const Index = () => {
               <button
                 onClick={closeDeleteModal}
                 disabled={deleteLoading}
-                className="rounded-md border border-theme px-4 py-2 text-sm text-primary transition hover:bg-[rgba(255,255,255,0.03)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-md border border-theme px-4 py-2 text-sm text-primary transition hover:bg-[rgba(15,31,23,0.03)] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Cancel
               </button>

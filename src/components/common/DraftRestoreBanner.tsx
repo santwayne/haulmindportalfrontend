@@ -25,7 +25,7 @@ const DraftRestoreBanner: React.FC<DraftRestoreBannerProps> = ({ updatedAt, onRe
       </button>
       <button
         onClick={onDiscard}
-        className="px-3 py-1 text-xs font-medium rounded-md border border-theme text-primary hover:bg-[rgba(255,255,255,0.03)]"
+        className="px-3 py-1 text-xs font-medium rounded-md border border-theme text-primary hover:bg-[rgba(15,31,23,0.03)]"
       >
         Discard
       </button>

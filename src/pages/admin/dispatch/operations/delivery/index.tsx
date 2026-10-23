@@ -446,7 +446,7 @@ const Delivery = () => {
               {filteredLoads.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-6 py-12 text-center text-secondary">
-                    <FaTruck className="mx-auto mb-3 text-gray-300" size={48} />
+                    <FaTruck className="mx-auto mb-3 text-gray-600" size={48} />
                     <p className="text-lg font-medium">No delivered loads found</p>
                     <p className="text-sm">{emptyStateMessage || 'Completed loads will appear here once deliveries are recorded.'}</p>
                   </td>
@@ -454,7 +454,7 @@ const Delivery = () => {
               ) : (
                 filteredLoads.map((load) => (
                   <tr key={load._id} className="hover:bg-blue-50">
-                    <td className="px-6 py-4 whitespace-nowrap font-semibold text-[#00D1FF]">
+                    <td className="px-6 py-4 whitespace-nowrap font-semibold text-[#059669]">
                       {load.loadNumber || load._id}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">
@@ -532,7 +532,7 @@ const Delivery = () => {
                   setShowDocumentModal(false);
                   setSelectedLoad(null);
                 }}
-                className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-lg"
+                className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-lg"
               >
                 <FaTimes className="text-secondary" size={20} />
               </button>
@@ -565,7 +565,7 @@ const Delivery = () => {
                     <div className="flex items-center gap-3">
                       <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${selectedLoad.documents?.bol ? 'bg-green-100' : 'bg-blue-100'
                         }`}>
-                        <FaFileAlt className={`${selectedLoad.documents?.bol ? 'text-green-600' : 'text-[#00D1FF]'}`} size={24} />
+                        <FaFileAlt className={`${selectedLoad.documents?.bol ? 'text-green-600' : 'text-[#059669]'}`} size={24} />
                       </div>
                       <div>
                         <h5 className="font-semibold text-primary">Bill of Lading (BOL) *</h5>
@@ -582,8 +582,8 @@ const Delivery = () => {
                   </div>
                   <label className="block">
                     <div className="flex items-center gap-2 px-4 py-2 bg-card hover:bg-blue-100 rounded-lg cursor-pointer transition-colors">
-                      <FaUpload className="text-[#00D1FF]" />
-                      <span className="text-[#00D1FF] font-medium">Choose File</span>
+                      <FaUpload className="text-[#059669]" />
+                      <span className="text-[#059669] font-medium">Choose File</span>
                     </div>
                     <input
                       type="file"
@@ -691,7 +691,7 @@ const Delivery = () => {
                   setShowDocumentModal(false);
                   setSelectedLoad(null);
                 }}
-                className="px-6 py-2 bg-gray-600 !text-white rounded-lg hover:bg-gray-700 font-medium"
+                className="px-6 py-2 bg-gray-200 text-primary rounded-lg hover:bg-gray-100 font-medium"
               >
                 Close
               </button>
@@ -781,7 +781,7 @@ const Delivery = () => {
                   setPaymentDate(new Date().toISOString().split('T')[0]);
                   setPaymentNotes('');
                 }}
-                className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
               >
                 Cancel
               </button>

@@ -713,7 +713,7 @@ const InsuranceClaims: React.FC = () => {
                   <thead className="bg-card border-b border-theme">
                     <tr>
                       <th
-                        className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-[rgba(255,255,255,0.03)]"
+                        className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-[rgba(15,31,23,0.03)]"
                         onClick={() => handleSort('claimNumber')}
                       >
                         <div className="flex items-center gap-2">
@@ -725,7 +725,7 @@ const InsuranceClaims: React.FC = () => {
                         Accident Number
                       </th>
                       <th
-                        className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-[rgba(255,255,255,0.03)]"
+                        className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-[rgba(15,31,23,0.03)]"
                         onClick={() => handleSort('incidentDate')}
                       >
                         <div className="flex items-center gap-2">
@@ -746,7 +746,7 @@ const InsuranceClaims: React.FC = () => {
                         Insurance Company
                       </th>
                       <th
-                        className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-[rgba(255,255,255,0.03)]"
+                        className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-[rgba(15,31,23,0.03)]"
                         onClick={() => handleSort('amount')}
                       >
                         <div className="flex items-center gap-2">
@@ -770,7 +770,7 @@ const InsuranceClaims: React.FC = () => {
                 <table className="w-full min-w-[1200px]">
                   <tbody className="bg-card divide-y divide-theme">
                     {filteredClaims.map((claim) => (
-                      <tr key={claim._id} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+                      <tr key={claim._id} className="hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex flex-col h-[3.5rem] justify-center">
                             <div className="text-sm font-medium text-primary leading-5">{claim.claimNumber || 'N/A'}</div>
@@ -854,14 +854,14 @@ const InsuranceClaims: React.FC = () => {
                             <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={() => handleView(claim)}
-                                className="text-[#00D1FF] hover:text-[var(--accent-blue)] p-2 hover:bg-[var(--accent-blue)]/15 rounded transition-colors"
+                                className="text-[#059669] hover:text-[var(--accent-blue)] p-2 hover:bg-[var(--accent-blue)]/15 rounded transition-colors"
                                 title="View Details"
                               >
                                 <FaEye size={16} />
                               </button>
                               <button
                                 onClick={() => handleEdit(claim)}
-                                className="text-[#00D1FF] hover:text-[var(--accent-blue)] p-2 hover:bg-[var(--accent-blue)]/15 rounded transition-colors"
+                                className="text-[#059669] hover:text-[var(--accent-blue)] p-2 hover:bg-[var(--accent-blue)]/15 rounded transition-colors"
                                 title="Edit"
                               >
                                 <FaEdit size={16} />
@@ -893,7 +893,7 @@ const InsuranceClaims: React.FC = () => {
                     <button
                       onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                       disabled={currentPage === 1}
-                      className="p-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <FaChevronLeft size={16} />
                     </button>
@@ -903,7 +903,7 @@ const InsuranceClaims: React.FC = () => {
                     <button
                       onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                       disabled={currentPage === totalPages}
-                      className="p-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <FaChevronRight size={16} />
                     </button>
@@ -1267,7 +1267,7 @@ const InsuranceClaims: React.FC = () => {
                     setShowEditModal(false);
                     setSelectedClaim(null);
                   }}
-                  className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                  className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                 >
                   Cancel
                 </button>
@@ -1400,7 +1400,7 @@ const InsuranceClaims: React.FC = () => {
                     setShowViewModal(false);
                     setSelectedClaim(null);
                   }}
-                  className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                  className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                 >
                   Close
                 </button>
@@ -1442,7 +1442,7 @@ const InsuranceClaims: React.FC = () => {
                     setShowDeleteModal(false);
                     setClaimToDelete(null);
                   }}
-                  className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                  className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                 >
                   Cancel
                 </button>

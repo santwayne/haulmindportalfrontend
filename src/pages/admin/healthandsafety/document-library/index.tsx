@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 const CUSTOM_COLORS = {
-  background: '#EDF8FF',
-  primary: '#016ab2',
-  dark: '#063f6f',
-  light: '#398bc3',
-  gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)',
-  gradientVertical: 'linear-gradient(to bottom right, #016ab2, #063f6f)',
+  background: '#ecfdf5',
+  primary: '#047857',
+  dark: '#065f46',
+  light: '#059669',
+  gradient: 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)',
+  gradientVertical: 'linear-gradient(to bottom right, #047857, #065f46)',
 };
 import {
   FaFolder,
@@ -215,7 +215,7 @@ const DocumentLibrary: React.FC = () => {
       case 'pdf':
         return <FaFilePdf className="text-[#A855F7]" size={24} />;
       case 'word':
-        return <FaFileWord className="text-[#00D1FF]" size={24} />;
+        return <FaFileWord className="text-[#059669]" size={24} />;
       case 'image':
         return <FaFileImage className="text-green-600" size={24} />;
       default:
@@ -371,7 +371,7 @@ const DocumentLibrary: React.FC = () => {
                         setSelectedDocument(doc);
                         setShowDetailModal(true);
                       }}
-                      className="hover:bg-[rgba(255,255,255,0.03)] transition cursor-pointer"
+                      className="hover:bg-[rgba(15,31,23,0.03)] transition cursor-pointer"
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
@@ -448,7 +448,7 @@ const DocumentLibrary: React.FC = () => {
                               setSelectedDocument(doc);
                               setShowDetailModal(true);
                             }}
-                            className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition"
+                            className="p-2 text-[#059669] hover:bg-blue-50 rounded-lg transition"
                             title="View Details"
                           >
                             <FaEye />
@@ -743,7 +743,7 @@ const DocumentLibrary: React.FC = () => {
                     type="checkbox"
                     checked={newDocument.autoDelete}
                     onChange={(e) => setNewDocument({ ...newDocument, autoDelete: e.target.checked })}
-                    className="w-5 h-5 text-[#00D1FF] focus:ring-blue-500 rounded"
+                    className="w-5 h-5 text-[#059669] focus:ring-blue-500 rounded"
                   />
                   <span className="font-medium text-primary">Auto Delete After Retention</span>
                 </label>
@@ -752,7 +752,7 @@ const DocumentLibrary: React.FC = () => {
                     type="checkbox"
                     checked={newDocument.requiredForAudit}
                     onChange={(e) => setNewDocument({ ...newDocument, requiredForAudit: e.target.checked })}
-                    className="w-5 h-5 text-[#00D1FF] focus:ring-blue-500 rounded"
+                    className="w-5 h-5 text-[#059669] focus:ring-blue-500 rounded"
                   />
                   <span className="font-medium text-primary">Required for Audit</span>
                 </label>
@@ -923,7 +923,7 @@ const DocumentLibrary: React.FC = () => {
                     setShowDetailModal(false);
                     setShowUploadModal(true);
                   }}
-                  className="px-4 py-2 bg-gray-600 !text-white rounded-lg hover:bg-gray-700 flex items-center gap-2"
+                  className="px-4 py-2 bg-gray-200 text-primary rounded-lg hover:bg-gray-100 flex items-center gap-2"
                 >
                   <FaEdit /> Edit
                 </button>

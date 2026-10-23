@@ -212,7 +212,7 @@ const NewFleetSidebar: FC<NewFleetSidebarProps> = ({
             </div>
             <button
               onClick={onClose}
-              className="text-secondary hover:text-secondary p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition-colors"
+              className="text-secondary hover:text-secondary p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -369,7 +369,7 @@ const NewFleetSidebar: FC<NewFleetSidebarProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-3 border border-theme !mr-3 rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors font-medium"
+              className="px-6 py-3 border border-theme !mr-3 rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors font-medium"
             >
               Cancel
             </button>

@@ -570,7 +570,7 @@ const Company = () => {
               type="button"
               onClick={() => setActiveTab('company')}
               className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'company'
-                ? 'border-blue-600 text-[#00D1FF]'
+                ? 'border-blue-600 text-[#059669]'
                 : 'border-transparent text-secondary hover:text-primary hover:border-theme'
                 }`}
             >
@@ -580,7 +580,7 @@ const Company = () => {
               type="button"
               onClick={() => setActiveTab('maintenance')}
               className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'maintenance'
-                ? 'border-blue-600 text-[#00D1FF]'
+                ? 'border-blue-600 text-[#059669]'
                 : 'border-transparent text-secondary hover:text-primary hover:border-theme'
                 }`}
             >
@@ -595,7 +595,7 @@ const Company = () => {
             <div className="bg-card rounded-xl shadow-sm border border-theme">
               <div className="p-6 border-b border-theme">
                 <div className="flex items-center gap-3">
-                  <Building className="text-[#00D1FF]" size={24} />
+                  <Building className="text-[#059669]" size={24} />
                   <h2 className="text-xl font-bold text-primary">Company Information</h2>
                 </div>
               </div>
@@ -745,7 +745,7 @@ const Company = () => {
               <div className="p-6 border-b border-theme">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Settings className="text-[#00D1FF]" size={24} />
+                    <Settings className="text-[#059669]" size={24} />
                     <h2 className="text-xl font-bold text-primary">API Configuration</h2>
                   </div>
                   <button
@@ -772,7 +772,7 @@ const Company = () => {
                 {/* Samsara Configuration */}
                 <div>
                   <div className="flex items-center gap-2 mb-4">
-                    <Key className="text-[#00D1FF]" size={20} />
+                    <Key className="text-[#059669]" size={20} />
                     <h3 className="text-lg font-semibold text-primary">Samsara API</h3>
                   </div>
                   <div className="space-y-4">
@@ -802,7 +802,7 @@ const Company = () => {
                 {/* ThermoKing Configuration */}
                 <div className="border-t border-theme pt-6">
                   <div className="flex items-center gap-2 mb-4">
-                    <Key className="text-[#F59E0B]" size={20} />
+                    <Key className="text-[#d97706]" size={20} />
                     <h3 className="text-lg font-semibold text-primary">ThermoKing API</h3>
                   </div>
                   <div className="space-y-4">
@@ -915,7 +915,7 @@ const Company = () => {
               {/* Info Banner */}
               <div className="p-4 bg-card border border-blue-200 rounded-lg">
                 <div className="flex items-start gap-3">
-                  <Info className="text-[#00D1FF] flex-shrink-0 mt-0.5" size={20} />
+                  <Info className="text-[#059669] flex-shrink-0 mt-0.5" size={20} />
                   <div className="text-sm text-blue-800">
                     <p className="font-semibold mb-1">Maintenance Policy Configuration</p>
                     <p>Configure maintenance intervals for trucks and trailers. Add services with your own names (e.g., "Oil Change", "Full Inspection", "Service A", "Preventive Maintenance"). Each service can be configured for trucks and trailers with intervals based on days, miles, or kilometers. You can also exclude specific trailer types (reefer, dryvan, flatbed) from certain services.</p>
@@ -1146,7 +1146,7 @@ const Company = () => {
                         <li key={index}>
                           • {service.name || 'Unnamed Service'}: Every {service.trailer.value.toLocaleString()} {service.trailer.unit}
                           {(service.excludeTypes || []).length > 0 && (
-                            <span className="text-[#F59E0B] ml-1">(Excluded: {(service.excludeTypes || []).map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(', ')})</span>
+                            <span className="text-[#d97706] ml-1">(Excluded: {(service.excludeTypes || []).map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(', ')})</span>
                           )}
                         </li>
                       ))}

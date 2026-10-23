@@ -97,7 +97,7 @@ const DeliveryComponent: React.FC<DeliveryComponentProps> = ({ load, onClose, on
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition-colors"
+            className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors"
           >
             <FaTimes className="text-secondary" size={20} />
           </button>
@@ -133,7 +133,7 @@ const DeliveryComponent: React.FC<DeliveryComponentProps> = ({ load, onClose, on
                     <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
                       documents.bol.uploaded ? 'bg-green-100' : 'bg-blue-100'
                     }`}>
-                      <FaFileAlt className={`${documents.bol.uploaded ? 'text-green-600' : 'text-[#00D1FF]'}`} size={24} />
+                      <FaFileAlt className={`${documents.bol.uploaded ? 'text-green-600' : 'text-[#059669]'}`} size={24} />
                     </div>
                     <div>
                       <h5 className="font-semibold text-primary">Bill of Lading (BOL) *</h5>
@@ -150,8 +150,8 @@ const DeliveryComponent: React.FC<DeliveryComponentProps> = ({ load, onClose, on
                 </div>
                 <label className="block">
                   <div className="flex items-center gap-2 px-4 py-2 bg-card hover:bg-blue-100 rounded-lg cursor-pointer transition-colors">
-                    <FaUpload className="text-[#00D1FF]" />
-                    <span className="text-[#00D1FF] font-medium">Choose File</span>
+                    <FaUpload className="text-[#059669]" />
+                    <span className="text-[#059669] font-medium">Choose File</span>
                   </div>
                   <input
                     type="file"
@@ -266,7 +266,7 @@ const DeliveryComponent: React.FC<DeliveryComponentProps> = ({ load, onClose, on
         <div className="sticky bottom-0 bg-card px-6 py-4 flex justify-between items-center border-t rounded-b-xl">
           <button
             onClick={onClose}
-            className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium"
+            className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium"
           >
             Cancel
           </button>
@@ -334,7 +334,7 @@ const DeliveryComponent: React.FC<DeliveryComponentProps> = ({ load, onClose, on
             <div className="p-6 border-t flex justify-end gap-3">
               <button
                 onClick={() => setShowPaymentModal(false)}
-                className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                className="px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
               >
                 Cancel
               </button>

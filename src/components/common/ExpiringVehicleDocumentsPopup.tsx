@@ -110,8 +110,8 @@ const ExpiringVehicleDocumentsPopup: React.FC<ExpiringVehicleDocumentsPopupProps
 
   const getUrgencyColor = (daysUntilExpiry: number) => {
     if (daysUntilExpiry <= 7) return 'text-[#A855F7] bg-card border-red-200';
-    if (daysUntilExpiry <= 14) return 'text-[#F59E0B] bg-card border-orange-200';
-    return 'text-[#00FFA3] bg-card border-yellow-200';
+    if (daysUntilExpiry <= 14) return 'text-[#d97706] bg-card border-orange-200';
+    return 'text-[#059669] bg-card border-yellow-200';
   };
 
   const getUrgencyBadge = (daysUntilExpiry: number) => {

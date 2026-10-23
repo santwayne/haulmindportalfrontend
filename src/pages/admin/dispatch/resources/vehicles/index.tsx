@@ -373,7 +373,7 @@ const VehiclesTable = () => {
             <tbody className="divide-y divide-theme">
               {displayedVehicles.length > 0 && (
                 displayedVehicles.map((vehicle) => (
-                  <tr key={vehicle._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                  <tr key={vehicle._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                     <td className="px-6 py-4 text-sm text-secondary font-mono">{vehicle.internalId}</td>
                     <td className="px-6 py-4 text-sm text-secondary font-mono">{vehicle.plateNumber}</td>
                     <td className="px-6 py-4 text-sm text-secondary">{vehicle.vinNumber}</td>
@@ -404,7 +404,7 @@ const VehiclesTable = () => {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleEditVehicle(vehicle)}
-                          className="flex items-center gap-1 px-3 py-1.5 rounded-md border border-blue-200 text-[#00D1FF] hover:bg-blue-50 transition-colors"
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-md border border-blue-200 text-[#059669] hover:bg-blue-50 transition-colors"
                         >
                           <Pencil className="w-4 h-4" /> Update
                         </button>
@@ -448,7 +448,7 @@ const VehiclesTable = () => {
                   }
                 }}
                 disabled={currentPage === 1 || loading}
-                className="px-3 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                className="px-3 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
               >
                 <ChevronLeft className="w-4 h-4" />
                 Previous
@@ -474,7 +474,7 @@ const VehiclesTable = () => {
                       disabled={loading}
                       className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${currentPage === pageNum
                           ? 'bg-blue-600 text-white'
-                          : 'text-primary bg-card border border-theme hover:bg-[rgba(255,255,255,0.03)]'
+                          : 'text-primary bg-card border border-theme hover:bg-[rgba(15,31,23,0.03)]'
                         } disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
                       {pageNum}
@@ -490,7 +490,7 @@ const VehiclesTable = () => {
                   }
                 }}
                 disabled={currentPage === totalPages || loading}
-                className="px-3 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                className="px-3 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
               >
                 Next
                 <ChevronRight className="w-4 h-4" />
@@ -503,7 +503,7 @@ const VehiclesTable = () => {
                   setCurrentPage(1);
                 }}
                 disabled={loading}
-                className="ml-4 px-3 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)] focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="ml-4 px-3 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)] focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <option value={10}>10 per page</option>
                 <option value={25}>25 per page</option>
@@ -553,7 +553,7 @@ const VehiclesTable = () => {
               <button
                 onClick={closeDeleteModal}
                 disabled={deleteLoading}
-                className="px-5 py-2.5 text-primary bg-card border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                className="px-5 py-2.5 text-primary bg-card border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>

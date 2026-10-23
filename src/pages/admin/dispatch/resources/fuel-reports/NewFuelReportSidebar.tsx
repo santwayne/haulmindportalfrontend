@@ -451,7 +451,7 @@ const NewFuelReportSidebar: FC<NewFuelReportSidebarProps> = ({ isOpen, onClose, 
                 <div className="p-4 border-b border-theme flex-shrink-0 bg-[var(--accent-navyblue)]">
                     <div className="flex items-center justify-between">
                         <h2 className="text-lg font-semibold text-white">New Fuel Report</h2>
-                        <button onClick={handleClose} className="text-white/80 hover:text-white">
+                        <button onClick={handleClose} className="text-white/80 hover:text-[var(--accent-navyblue)]">
                             <X className="w-5 h-5" />
                         </button>
                     </div>
@@ -482,7 +482,7 @@ const NewFuelReportSidebar: FC<NewFuelReportSidebarProps> = ({ isOpen, onClose, 
                                 {/* Upload document – AI extracts data (static) */}
                                 <div className="bg-card border border-dashed border-blue-200 rounded-lg p-4 space-y-2">
                                     <div className="flex items-center gap-2 text-sm font-medium text-primary">
-                                        <Sparkles className="w-4 h-4 text-[#00D1FF]" />
+                                        <Sparkles className="w-4 h-4 text-[#059669]" />
                                         Upload receipt / document – AI will extract data
                                     </div>
                                     <p className="text-xs text-secondary">Upload a photo or PDF of your fuel receipt. AI will extract transaction amount, fuel amount, date, vendor, and other details.</p>
@@ -498,7 +498,7 @@ const NewFuelReportSidebar: FC<NewFuelReportSidebarProps> = ({ isOpen, onClose, 
                                             type="button"
                                             onClick={() => extractInputRef.current?.click()}
                                             disabled={extracting}
-                                            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-theme text-sm hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-60"
+                                            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-theme text-sm hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-60"
                                         >
                                             <Upload className="w-4 h-4" />
                                             {extracting ? 'Extracting...' : 'Choose file'}
@@ -811,7 +811,7 @@ const NewFuelReportSidebar: FC<NewFuelReportSidebarProps> = ({ isOpen, onClose, 
                                     <button
                                         type="button"
                                         onClick={() => fileInputRef.current?.click()}
-                                        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-theme text-sm hover:bg-[rgba(255,255,255,0.03)]"
+                                        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-theme text-sm hover:bg-[rgba(15,31,23,0.03)]"
                                     >
                                         <Plus className="w-4 h-4" />
                                         Add document(s)
@@ -857,7 +857,7 @@ const NewFuelReportSidebar: FC<NewFuelReportSidebarProps> = ({ isOpen, onClose, 
                     <button
                         onClick={handleClose}
                         disabled={loadingSubmit}
-                        className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors disabled:opacity-60"
+                        className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors disabled:opacity-60"
                     >
                         Cancel
                     </button>
@@ -905,7 +905,7 @@ const NewFuelReportSidebar: FC<NewFuelReportSidebarProps> = ({ isOpen, onClose, 
                                             setNewTypeName('');
                                         }}
                                         disabled={addingType}
-                                        className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors disabled:opacity-60"
+                                        className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors disabled:opacity-60"
                                     >
                                         Cancel
                                     </button>
@@ -958,7 +958,7 @@ const NewFuelReportSidebar: FC<NewFuelReportSidebarProps> = ({ isOpen, onClose, 
                                             setNewUnitName('');
                                         }}
                                         disabled={addingUnit}
-                                        className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors disabled:opacity-60"
+                                        className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors disabled:opacity-60"
                                     >
                                         Cancel
                                     </button>
@@ -1011,7 +1011,7 @@ const NewFuelReportSidebar: FC<NewFuelReportSidebarProps> = ({ isOpen, onClose, 
                                             setNewVendorName('');
                                         }}
                                         disabled={addingVendor}
-                                        className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors disabled:opacity-60"
+                                        className="px-4 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors disabled:opacity-60"
                                     >
                                         Cancel
                                     </button>

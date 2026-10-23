@@ -85,7 +85,7 @@ const TimelineEntryRow: React.FC<{
                   setDraftNote(entry.note);
                 }}
                 disabled={saving}
-                className="px-3 py-1.5 text-xs font-medium rounded-lg border border-theme text-primary hover:bg-[rgba(255,255,255,0.03)]"
+                className="px-3 py-1.5 text-xs font-medium rounded-lg border border-theme text-primary hover:bg-[rgba(15,31,23,0.03)]"
               >
                 Cancel
               </button>
@@ -207,7 +207,7 @@ const TimelineNotes: React.FC<TimelineNotesProps> = ({ entityType, entityId }) =
               <button
                 onClick={loadMore}
                 disabled={loadingMore}
-                className="px-4 py-1.5 text-xs font-medium rounded-lg border border-theme text-primary hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50"
+                className="px-4 py-1.5 text-xs font-medium rounded-lg border border-theme text-primary hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50"
               >
                 {loadingMore ? 'Loading...' : 'Load more'}
               </button>

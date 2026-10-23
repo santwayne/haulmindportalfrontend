@@ -323,7 +323,7 @@ const CostReports = () => {
                 <p className="text-sm font-medium text-secondary">Work Orders</p>
                 <p className="text-2xl font-bold text-primary">{summaryStats.totalWorkOrders}</p>
               </div>
-              <Wrench className="h-8 w-8 text-[#00D1FF]" />
+              <Wrench className="h-8 w-8 text-[#059669]" />
             </div>
             <div className="mt-2 flex items-center text-sm">
               <TrendingDown className="h-4 w-4 text-[#A855F7] mr-1" />
@@ -350,7 +350,7 @@ const CostReports = () => {
                 <p className="text-sm font-medium text-secondary">Avg Cost/Order</p>
                 <p className="text-2xl font-bold text-primary">${summaryStats.avgCostPerWorkOrder}</p>
               </div>
-              <Calendar className="h-8 w-8 text-[#F59E0B]" />
+              <Calendar className="h-8 w-8 text-[#d97706]" />
             </div>
             <div className="mt-2 flex items-center text-sm">
               <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
@@ -523,7 +523,7 @@ const CostReports = () => {
                     <td className="px-6 py-4 whitespace-nowrap border-0">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                          <Truck className="h-4 w-4 text-[#00D1FF]" />
+                          <Truck className="h-4 w-4 text-[#059669]" />
                         </div>
                         <span className="text-sm font-medium text-primary">{item.plateNumber}</span>
                       </div>

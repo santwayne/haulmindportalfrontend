@@ -433,7 +433,7 @@ const UnifiedSchedulingPage = () => {
               </div>
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center px-3.5 py-1.5 border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                className="flex items-center px-3.5 py-1.5 border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)] transition-colors"
               >
                 <Filter className="w-3.5 h-3.5 mr-1.5" />
                 Filters
@@ -499,7 +499,7 @@ const UnifiedSchedulingPage = () => {
                     setDriverFilter('all');
                     setStatusFilter('all');
                   }}
-                  className="w-[50%] px-2 py-1.5 text-sm text-primary bg-card hover:bg-[rgba(255,255,255,0.05)] rounded-md transition-colors"
+                  className="w-[50%] px-2 py-1.5 text-sm text-primary bg-card hover:bg-[rgba(15,31,23,0.05)] rounded-md transition-colors"
                 >
                   Clear Filters
                 </button>
@@ -591,7 +591,7 @@ const UnifiedSchedulingPage = () => {
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => viewMode === 'month' ? navigateMonth(-1) : viewMode === 'week' ? navigateWeek(-1) : navigateDay(-1)}
-                    className="p-1.5 rounded-md hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="p-1.5 rounded-md hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
@@ -602,7 +602,7 @@ const UnifiedSchedulingPage = () => {
                   </h2>
                   <button
                     onClick={() => viewMode === 'month' ? navigateMonth(1) : viewMode === 'week' ? navigateWeek(1) : navigateDay(1)}
-                    className="p-1.5 rounded-md hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="p-1.5 rounded-md hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -659,7 +659,7 @@ const UnifiedSchedulingPage = () => {
                           ${isToday ? 'bg-card' : ''}
                           ${hasOrder && !isToday ? 'bg-[var(--accent-green)]/10' : ''}
                           ${draggedOrder ? 'bg-[var(--accent-blue)]/10 border-2 border-dashed border-[var(--accent-blue)]' : ''}
-                          hover:bg-[rgba(255,255,255,0.03)]
+                          hover:bg-[rgba(15,31,23,0.03)]
                         `}
                       >
                         <div className={`text-sm font-medium mb-1.5 ${!day.isCurrentMonth ? 'text-secondary' : isToday ? 'text-accent font-bold' : 'text-primary'
@@ -943,7 +943,7 @@ const UnifiedSchedulingPage = () => {
                   setSelectedOrder(null);
                   setSelectedTime(DEFAULT_SCHEDULE_TIME);
                 }}
-                className="px-4 py-2 text-sm !mr-3 font-medium text-primary bg-card border border-theme rounded-md hover:bg-[rgba(255,255,255,0.03)]"
+                className="px-4 py-2 text-sm !mr-3 font-medium text-primary bg-card border border-theme rounded-md hover:bg-[rgba(15,31,23,0.03)]"
               >
                 Cancel
               </button>
@@ -956,7 +956,7 @@ const UnifiedSchedulingPage = () => {
                 }}
                 className="px-4 py-2 text-sm font-medium !text-white bg-[var(--accent-blue)] rounded-md hover:bg-[var(--accent-blue)]"
                 style={{
-                  background: "linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)",
+                  background: "linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)",
                 }}
               >
                 Schedule Order
@@ -1084,7 +1084,7 @@ const UnifiedSchedulingPage = () => {
                 <div className="flex justify-end space-x-3 pt-4 border-t">
                   <button
                     onClick={() => setSelectedOrder(null)}
-                    className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-md hover:bg-[rgba(255,255,255,0.05)]"
+                    className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme rounded-md hover:bg-[rgba(15,31,23,0.05)]"
                   >
                     Close
                   </button>

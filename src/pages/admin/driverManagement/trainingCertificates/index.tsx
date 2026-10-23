@@ -358,7 +358,7 @@ const TrainingCertificates = ({ hideHeader = false }: { hideHeader?: boolean }) 
                     <div className="flex justify-between items-center ">
                         <div>
                             <h1 className="text-3xl font-bold text-primary flex items-center gap-3">
-                                <FileText className="text-[#00D1FF]" size={32} />
+                                <FileText className="text-[#059669]" size={32} />
                                 Training Certificates
                             </h1>
                             <p className="text-secondary mt-2">Manage driver training certificates and certifications</p>
@@ -366,7 +366,7 @@ const TrainingCertificates = ({ hideHeader = false }: { hideHeader?: boolean }) 
                         <button
                             onClick={handleAddClick}
                             style={{
-                                background: 'linear-gradient(90deg, var(--accent-navyblue) 0%, var(--accent-navyblue) 40%, rgba(0,209,255,0.15) 100%)',
+                                background: 'linear-gradient(90deg, var(--accent-navyblue) 0%, var(--accent-navyblue) 40%, rgba(5,150,105,0.15) 100%)',
                             }}
                             className="flex items-center gap-2 px-6 py-3 !text-white font-semibold rounded-lg hover:opacity-90 transition-opacity"
                         >
@@ -421,16 +421,16 @@ const TrainingCertificates = ({ hideHeader = false }: { hideHeader?: boolean }) 
                         <select
                             value={selectedDriver}
                             onChange={(e) => setSelectedDriver(e.target.value)}
-                            className="w-full px-4 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200"
+                            className="w-full px-4 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200"
                         >
-                            <option  className="bg-[#0f1b2d] text-white" value="">
+                            <option  className="bg-[#ffffff] text-white" value="">
                                 All Drivers
                             </option>
                             {drivers.map((driver) => (
                                 <option
                                     key={driver._id}
                                     value={driver._id}
-                                    className="bg-[#0f1b2d] text-white"
+                                    className="bg-[#ffffff] text-white"
                                 >
                                     {driver.name}
                                 </option>
@@ -445,16 +445,16 @@ const TrainingCertificates = ({ hideHeader = false }: { hideHeader?: boolean }) 
                         <select
                             value={selectedType}
                             onChange={(e) => setSelectedType(e.target.value)}
-                            className="w-full px-4 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200"
+                            className="w-full px-4 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200"
                         >
-                            <option className="bg-[#0f1b2d] text-white" value="">
+                            <option className="bg-[#ffffff] text-white" value="">
                                 All Types
                             </option>
                             {certificateTypes.map((type) => (
                                 <option
                                     key={type}
                                     value={type}
-                                    className="bg-[#0f1b2d] text-white"
+                                    className="bg-[#ffffff] text-white"
                                 >
                                     {type}
                                 </option>
@@ -469,18 +469,18 @@ const TrainingCertificates = ({ hideHeader = false }: { hideHeader?: boolean }) 
                         <select
                             value={selectedStatus}
                             onChange={(e) => setSelectedStatus(e.target.value)}
-                            className="w-full px-4 py-2 bg-[rgba(255,255,255,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200"
+                            className="w-full px-4 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200"
                         >
-                            <option className="bg-[#0f1b2d] text-white" value="">
+                            <option className="bg-[#ffffff] text-white" value="">
                                 All Status
                             </option>
-                            <option className="bg-[#0f1b2d] text-white" value="active">
+                            <option className="bg-[#ffffff] text-white" value="active">
                                 Active
                             </option>
-                            <option className="bg-[#0f1b2d] text-white" value="expiring_soon">
+                            <option className="bg-[#ffffff] text-white" value="expiring_soon">
                                 Expiring Soon
                             </option>
-                            <option className="bg-[#0f1b2d] text-white" value="expired">
+                            <option className="bg-[#ffffff] text-white" value="expired">
                                 Expired
                             </option>
                         </select>
@@ -538,9 +538,9 @@ const TrainingCertificates = ({ hideHeader = false }: { hideHeader?: boolean }) 
                                     <th className="px-6 py-4 text-left text-xs font-semibold  uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-card divide-y divide-theme divide-white/5">
+                            <tbody className="bg-card divide-y divide-theme divide-black/5">
                                 {filteredCertificates.map((cert) => (
-                                    <tr key={cert._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                                    <tr key={cert._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-primary">{cert.driverName || 'Unknown'}</div>
                                         </td>
@@ -572,7 +572,7 @@ const TrainingCertificates = ({ hideHeader = false }: { hideHeader?: boolean }) 
                                             <div className="flex items-center gap-3">
                                                 <button
                                                     onClick={() => handleViewDetails(cert)}
-                                                    className="text-[#00D1FF] hover:text-blue-800"
+                                                    className="text-[#059669] hover:text-blue-800"
                                                     title="View Details"
                                                 >
                                                     <Eye size={18} />
@@ -773,9 +773,9 @@ const TrainingCertificates = ({ hideHeader = false }: { hideHeader?: boolean }) 
                                             onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
                                             className="hidden"
                                         />
-                                        <div className="px-4 py-2 border border-theme rounded-lg border-dashed hover:bg-[rgba(255,255,255,0.03)] text-center">
+                                        <div className="px-4 py-2 border border-theme rounded-lg border-dashed hover:bg-[rgba(15,31,23,0.03)] text-center">
                                             {selectedFile ? (
-                                                <span className="text-[#00D1FF]">{selectedFile.name}</span>
+                                                <span className="text-[#059669]">{selectedFile.name}</span>
                                             ) : editingCertificate?.fileName ? (
                                                 <span className="text-secondary">Current: {editingCertificate.fileName} (select new file to replace)</span>
                                             ) : (
@@ -803,7 +803,7 @@ const TrainingCertificates = ({ hideHeader = false }: { hideHeader?: boolean }) 
                                 <button
                                     type="button"
                                     onClick={() => setShowAddModal(false)}
-                                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)]"
+                                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)]"
                                     disabled={saving}
                                 >
                                     Cancel
@@ -944,7 +944,7 @@ const TrainingCertificates = ({ hideHeader = false }: { hideHeader?: boolean }) 
                             <div className="flex justify-end gap-4 pt-4 border-t border-theme">
                                 <button
                                     onClick={() => setShowDetailsModal(false)}
-                                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)]"
+                                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)]"
                                 >
                                     Close
                                 </button>
@@ -986,7 +986,7 @@ const TrainingCertificates = ({ hideHeader = false }: { hideHeader?: boolean }) 
                             <div className="flex items-center justify-end gap-3">
                                 <button
                                     onClick={() => setConfirmDelete({ open: false, id: null, name: null })}
-                                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors font-medium"
+                                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors font-medium"
                                 >
                                     Cancel
                                 </button>

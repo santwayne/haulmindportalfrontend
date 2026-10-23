@@ -401,7 +401,7 @@ const TrainingContentView: React.FC = () => {
                     )}
                     <div className="flex items-center justify-between text-sm text-secondary mt-3">
                       <div className="flex items-center gap-2">
-                        <span className="capitalize bg-[rgba(255,255,255,0.08)] text-secondary px-2 py-1 rounded text-xs">{getTypeLabel(item.type)}</span>
+                        <span className="capitalize bg-[rgba(15,31,23,0.08)] text-secondary px-2 py-1 rounded text-xs">{getTypeLabel(item.type)}</span>
                         <span className="bg-[var(--accent-blue)]/10 text-[var(--accent-blue)] px-2 py-1 rounded text-xs">{getTestTypeDisplayName(item.testType)}</span>
                       </div>
                       <span>
@@ -542,7 +542,7 @@ const TrainingContentView: React.FC = () => {
                           ) : (
                             <button
                               onClick={() => handleResetQA(item._id)}
-                              className="px-4 py-2 bg-[rgba(255,255,255,0.08)] text-secondary border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.12)] transition-colors"
+                              className="px-4 py-2 bg-[rgba(15,31,23,0.08)] text-secondary border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.12)] transition-colors"
                             >
                               Retake Quiz
                             </button>

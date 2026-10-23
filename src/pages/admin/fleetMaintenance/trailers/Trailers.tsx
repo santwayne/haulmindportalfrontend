@@ -426,11 +426,11 @@ const Trailers: React.FC = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl shadow-lg" style={{ background: 'linear-gradient(to bottom right, #016ab2, #063f6f)' }}>
+              <div className="p-3 rounded-2xl shadow-lg" style={{ background: 'linear-gradient(to bottom right, #047857, #065f46)' }}>
                 <Truck className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(to right, #016ab2, #063f6f)' }}>
+                <h1 className="text-4xl font-bold bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(to right, #047857, #065f46)' }}>
                   Trailers
                 </h1>
                 <p className="text-secondary mt-1 flex items-center gap-2">
@@ -450,7 +450,7 @@ const Trailers: React.FC = () => {
               <button
                 onClick={handleAddTrailer}
                 className="flex items-center gap-2 px-6 py-3 text-white rounded-lg shadow-lg transition-all duration-200 font-medium hover:opacity-90"
-                style={{ background: 'linear-gradient(to right, #016ab2, #063f6f)' }}
+                style={{ background: 'linear-gradient(to right, #047857, #065f46)' }}
               >
                 <Plus className="w-5 h-5" />
                 Add Trailer
@@ -469,8 +469,8 @@ const Trailers: React.FC = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 pr-4 py-2 w-full border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-              style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-              onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+              style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+              onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
               onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
             />
           </div>
@@ -480,7 +480,7 @@ const Trailers: React.FC = () => {
         <div className="bg-card rounded-xl shadow-lg border border-theme overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="text-white" style={{ background: 'linear-gradient(to right, #016ab2, #063f6f)' }}>
+              <thead className="text-white" style={{ background: 'linear-gradient(to right, #047857, #065f46)' }}>
                 <tr>
                   <th className="px-6 py-4 text-left text-sm font-semibold">Unit No.</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold">Plate Number</th>
@@ -494,7 +494,7 @@ const Trailers: React.FC = () => {
                   <th className="px-6 py-4 text-left text-sm font-semibold">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-theme divide-white/5">
+              <tbody className="divide-y divide-theme divide-black/5">
                 {filteredTrailers.length === 0 ? (
                   <tr>
                     <td colSpan={10} className="px-6 py-12 text-center text-secondary">
@@ -505,7 +505,7 @@ const Trailers: React.FC = () => {
                   filteredTrailers.map((trailer) => {
                     const compliance = getComplianceStatus(trailer.safetyExpiryDate);
                     return (
-                      <tr key={trailer._id} className={`hover:bg-[rgba(255,255,255,0.03)] transition-colors ${compliance.status === 'expired' ? 'bg-card' :
+                      <tr key={trailer._id} className={`hover:bg-[rgba(15,31,23,0.03)] transition-colors ${compliance.status === 'expired' ? 'bg-card' :
                         compliance.status === 'expiring-soon' ? 'bg-card' : ''
                         }`}>
                         <td className="px-6 py-4 font-medium text-primary">{trailer.internalId}</td>
@@ -551,7 +551,7 @@ const Trailers: React.FC = () => {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleEditTrailer(trailer)}
-                              className="p-2 text-[#00D1FF] hover:bg-blue-50 rounded-lg transition-colors"
+                              className="p-2 text-[#059669] hover:bg-blue-50 rounded-lg transition-colors"
                               title="Edit"
                             >
                               <Edit className="w-4 h-4" />
@@ -559,8 +559,8 @@ const Trailers: React.FC = () => {
                             <button
                               onClick={() => handleSafetyRecord(trailer)}
                               className="p-2 rounded-lg transition-colors"
-                              style={{ color: '#016ab2' }}
-                              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(1, 106, 178, 0.1)'}
+                              style={{ color: '#047857' }}
+                              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(4,120,87, 0.1)'}
                               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ''}
                               title="Safety Record"
                             >
@@ -594,7 +594,7 @@ const Trailers: React.FC = () => {
             }} />
             <div className="fixed top-0 right-0 h-full w-full sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] bg-card shadow-2xl transform transition-transform duration-500 ease-out z-[101] border-l border-theme">
               <div className="h-full flex flex-col">
-                <div className="flex-shrink-0 px-6 py-4 flex items-center justify-between text-white" style={{ background: 'linear-gradient(to right, #016ab2, #063f6f)' }}>
+                <div className="flex-shrink-0 px-6 py-4 flex items-center justify-between text-white" style={{ background: 'linear-gradient(to right, #047857, #065f46)' }}>
                   <h2 className="text-2xl font-bold">{showAddModal ? 'Add New Trailer' : 'Edit Trailer'}</h2>
                   <button
                     onClick={() => {
@@ -616,8 +616,8 @@ const Trailers: React.FC = () => {
                         value={formData.internalId}
                         onChange={(e) => setFormData({ ...formData, internalId: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="e.g., BRV001"
                       />
@@ -629,8 +629,8 @@ const Trailers: React.FC = () => {
                         value={formData.trailer}
                         onChange={(e) => setFormData({ ...formData, trailer: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="e.g., Reefer Unit 001"
                       />
@@ -642,8 +642,8 @@ const Trailers: React.FC = () => {
                         value={formData.plateNumber}
                         onChange={(e) => setFormData({ ...formData, plateNumber: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="e.g., TRL-001"
                       />
@@ -655,8 +655,8 @@ const Trailers: React.FC = () => {
                         value={formData.vinNumber}
                         onChange={(e) => setFormData({ ...formData, vinNumber: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent font-mono"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="17-character VIN"
                       />
@@ -667,8 +667,8 @@ const Trailers: React.FC = () => {
                         value={formData.trailerType}
                         onChange={(e) => setFormData({ ...formData, trailerType: e.target.value as TrailerType })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                       >
                         {trailerTypes.map(type => (
@@ -683,8 +683,8 @@ const Trailers: React.FC = () => {
                         value={formData.capacity}
                         onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="e.g., 53 ft"
                       />
@@ -696,8 +696,8 @@ const Trailers: React.FC = () => {
                         value={formData.make}
                         onChange={(e) => setFormData({ ...formData, make: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="e.g., Utility"
                       />
@@ -709,8 +709,8 @@ const Trailers: React.FC = () => {
                         value={formData.model}
                         onChange={(e) => setFormData({ ...formData, model: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="e.g., 4000R"
                       />
@@ -722,8 +722,8 @@ const Trailers: React.FC = () => {
                         value={formData.year || ''}
                         onChange={(e) => setFormData({ ...formData, year: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         min="1900"
                         max={new Date().getFullYear() + 1}
@@ -736,8 +736,8 @@ const Trailers: React.FC = () => {
                         value={formData.odometer}
                         onChange={(e) => setFormData({ ...formData, odometer: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="0"
                       />
@@ -748,8 +748,8 @@ const Trailers: React.FC = () => {
                         value={formData.status}
                         onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                       >
                         <option value="available">Available</option>
@@ -764,8 +764,8 @@ const Trailers: React.FC = () => {
                         value={formData.operationStatus}
                         onChange={(e) => setFormData({ ...formData, operationStatus: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                       >
                         <option value="available">Available</option>
@@ -783,14 +783,14 @@ const Trailers: React.FC = () => {
                       setShowEditModal(false);
                       setSelectedTrailer(null);
                     }}
-                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSaveTrailer}
                     className="px-6 py-2 text-white rounded-lg transition-colors hover:opacity-90"
-                    style={{ background: 'linear-gradient(to right, #016ab2, #063f6f)' }}
+                    style={{ background: 'linear-gradient(to right, #047857, #065f46)' }}
                   >
                     {showAddModal ? 'Add Trailer' : 'Save Changes'}
                   </button>
@@ -809,7 +809,7 @@ const Trailers: React.FC = () => {
             }} />
             <div className="fixed top-0 right-0 h-full w-full sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] bg-card shadow-2xl transform transition-transform duration-500 ease-out z-[101] border-l border-theme">
               <div className="h-full flex flex-col">
-                <div className="flex-shrink-0 px-6 py-4 flex items-center justify-between text-white" style={{ background: 'linear-gradient(to right, #016ab2, #063f6f)' }}>
+                <div className="flex-shrink-0 px-6 py-4 flex items-center justify-between text-white" style={{ background: 'linear-gradient(to right, #047857, #065f46)' }}>
                   <div>
                     <h2 className="text-2xl font-bold">Safety Compliance Record</h2>
                     <p className="text-sm mt-1 opacity-90">
@@ -835,8 +835,8 @@ const Trailers: React.FC = () => {
                         value={safetyForm.safetyExpiryDate}
                         onChange={(e) => setSafetyForm({ ...safetyForm, safetyExpiryDate: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         required
                       />
@@ -848,8 +848,8 @@ const Trailers: React.FC = () => {
                         value={safetyForm.safetyDecalNumber}
                         onChange={(e) => setSafetyForm({ ...safetyForm, safetyDecalNumber: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="SD-2024-BRV001"
                       />
@@ -861,8 +861,8 @@ const Trailers: React.FC = () => {
                         value={safetyForm.safetyPaperNumber}
                         onChange={(e) => setSafetyForm({ ...safetyForm, safetyPaperNumber: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="SP-2024-BRV001"
                       />
@@ -874,8 +874,8 @@ const Trailers: React.FC = () => {
                         value={safetyForm.lastInspectionShop}
                         onChange={(e) => setSafetyForm({ ...safetyForm, lastInspectionShop: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="Name of inspection shop"
                       />
@@ -887,8 +887,8 @@ const Trailers: React.FC = () => {
                         value={safetyForm.lastInspectionInvoice}
                         onChange={(e) => setSafetyForm({ ...safetyForm, lastInspectionInvoice: e.target.value })}
                         className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                        style={{ '--tw-ring-color': '#016ab2' } as React.CSSProperties & { '--tw-ring-color': string }}
-                        onFocus={(e) => { e.target.style.borderColor = '#016ab2'; e.target.style.boxShadow = '0 0 0 2px rgba(1, 106, 178, 0.2)'; }}
+                        style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                        onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
                         onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                         placeholder="INV-SAF-2024-001"
                       />
@@ -901,14 +901,14 @@ const Trailers: React.FC = () => {
                       setShowSafetyModal(false);
                       setSelectedTrailer(null);
                     }}
-                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSaveSafety}
                     className="px-6 py-2 text-white rounded-lg transition-colors hover:opacity-90"
-                    style={{ background: 'linear-gradient(to right, #016ab2, #063f6f)' }}
+                    style={{ background: 'linear-gradient(to right, #047857, #065f46)' }}
                   >
                     Save Safety Record
                   </button>
@@ -939,7 +939,7 @@ const Trailers: React.FC = () => {
                 <div className="flex justify-end gap-3">
                   <button
                     onClick={() => setShowDeleteModal(false)}
-                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="px-6 py-2 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                   >
                     Cancel
                   </button>

@@ -627,7 +627,7 @@ const NewCustomerSidebar: FC<NewCustomerSidebarProps> = ({
                                         id="useFactoringCompany"
                                         checked={customerData.useFactoringCompany}
                                         onChange={handleInputChange}
-                                        className="w-4 h-4 text-[#00D1FF] border-theme rounded focus:ring-blue-500"
+                                        className="w-4 h-4 text-[#059669] border-theme rounded focus:ring-blue-500"
                                     />
                                     <label htmlFor="useFactoringCompany" className="ml-2 text-sm font-medium text-primary">
                                         Use Factoring Company
@@ -647,7 +647,7 @@ const NewCustomerSidebar: FC<NewCustomerSidebarProps> = ({
                                         id="csaFastApproved"
                                         checked={customerData.csaFastApproved}
                                         onChange={handleInputChange}
-                                        className="w-4 h-4 text-[#00D1FF] border-theme rounded focus:ring-blue-500"
+                                        className="w-4 h-4 text-[#059669] border-theme rounded focus:ring-blue-500"
                                     />
                                     <label htmlFor="csaFastApproved" className="ml-2 text-sm font-medium text-primary">
                                         CSA/FAST Approved
@@ -661,7 +661,7 @@ const NewCustomerSidebar: FC<NewCustomerSidebarProps> = ({
                                         id="softBlock"
                                         checked={customerData.softBlock}
                                         onChange={handleInputChange}
-                                        className="w-4 h-4 text-[#00D1FF] border-theme rounded focus:ring-blue-500"
+                                        className="w-4 h-4 text-[#059669] border-theme rounded focus:ring-blue-500"
                                     />
                                     <label htmlFor="softBlock" className="ml-2 text-sm font-medium text-primary">
                                         Soft Block
@@ -675,7 +675,7 @@ const NewCustomerSidebar: FC<NewCustomerSidebarProps> = ({
                                         id="hardBlock"
                                         checked={customerData.hardBlock}
                                         onChange={handleInputChange}
-                                        className="w-4 h-4 text-[#00D1FF] border-theme rounded focus:ring-blue-500"
+                                        className="w-4 h-4 text-[#059669] border-theme rounded focus:ring-blue-500"
                                     />
                                     <label htmlFor="hardBlock" className="ml-2 text-sm font-medium text-primary">
                                         Hard Block
@@ -691,7 +691,7 @@ const NewCustomerSidebar: FC<NewCustomerSidebarProps> = ({
                     <button
                         type="button"
                         onClick={handleClose}
-                        className="px-5 py-2.5 border border-theme rounded-lg text-primary hover:bg-[rgba(255,255,255,0.03)] transition-colors font-medium"
+                        className="px-5 py-2.5 border border-theme rounded-lg text-primary hover:bg-[rgba(15,31,23,0.03)] transition-colors font-medium"
                         disabled={isLoading}
                     >
                         Cancel

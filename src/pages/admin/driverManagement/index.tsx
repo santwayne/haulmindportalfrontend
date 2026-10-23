@@ -358,7 +358,7 @@ const Index = () => {
                       key={action.id}
                       onClick={() => navigate(action.path)}
                       className="group p-4 rounded-xl border border-theme hover:border-[var(--accent-blue)]/30
-hover:bg-[rgba(255,255,255,0.05)] transition-all cursor-pointer"
+hover:bg-[rgba(15,31,23,0.05)] transition-all cursor-pointer"
                     >
                       <div className="flex items-center justify-between mb-3">
                         <div className={`${action.bgColor} group-hover:bg-card p-2 rounded-lg transition-colors`}>
@@ -504,7 +504,7 @@ hover:bg-[rgba(255,255,255,0.05)] transition-all cursor-pointer"
                           : null;
 
                         return (
-                          <tr key={index} className="hover:bg-[rgba(255,255,255,0.03)]">
+                          <tr key={index} className="hover:bg-[rgba(15,31,23,0.03)]">
                             <td className="px-4 py-3 text-sm text-primary">{doc.employeeOrDriverName || 'Unknown'}</td>
                             <td className="px-4 py-3 text-sm text-secondary">{doc.documentType || 'N/A'}</td>
                             <td className="px-4 py-3 text-sm text-secondary">

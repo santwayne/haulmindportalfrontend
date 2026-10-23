@@ -41,7 +41,7 @@ export default function DateField({
           type="date"
           value={value}
           onChange={onChange}
-          className={`w-full pl-10 pr-3 py-2 bg-[rgba(255,255,255,0.05)] text-primary border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(0,209,255,0.08)] transition-all duration-200 cursor-pointer ${
+          className={`w-full pl-10 pr-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 cursor-pointer ${
             error ? "border-[var(--accent-red)]" : "border-theme"
           }`}
         />

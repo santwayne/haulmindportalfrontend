@@ -582,7 +582,7 @@ const Index = () => {
                 maxHeight: '20px',
                 marginBottom: '2px',
                 scrollbarWidth: 'thin',
-                scrollbarColor: '#224c75 #111c24' /* Firefox */
+                scrollbarColor: '#065f46 #e7f2ec' /* Firefox */
               }}
             >
               <div className="top-scroll-content" style={{ height: '1px' }}></div>
@@ -650,7 +650,7 @@ const Index = () => {
                       return (
                         <tr
                           key={previewKey}
-                          className="hover:bg-[rgba(0,209,255,0.05)] transition-colors cursor-pointer"
+                          className="hover:bg-[rgba(5,150,105,0.05)] transition-colors cursor-pointer"
                           onClick={() => {
                             setSelectedUnit(unit);
                             setShowUnitDetails(true);
@@ -831,7 +831,7 @@ const Index = () => {
                       setShowUnitDetails(false);
                       setTimeout(() => setSelectedUnit(null), 300);
                     }}
-                    className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] transition-all"
+                    className="p-2 rounded-lg text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] transition-all"
                   >
                     <X size={24} />
                   </button>
@@ -839,7 +839,7 @@ const Index = () => {
 
                 <div className="space-y-6">
                   {/* Unit Header */}
-                  <div className="bg-gradient-to-r from-[rgba(0,209,255,0.2)] to-[rgba(168,85,247,0.2)] text-white p-6 rounded-lg">
+                  <div className="bg-gradient-to-r from-[rgba(5,150,105,0.2)] to-[rgba(168,85,247,0.2)] text-white p-6 rounded-lg">
                     <div className="flex items-center gap-4">
                       <div className="h-20 w-20 flex-shrink-0">
                         <div className="h-20 w-20 rounded-full flex items-center justify-center text-white font-bold text-2xl border-4 border-white bg-gradient-to-br from-[var(--accent-blue)] to-[var(--accent-purple)]">
@@ -1055,7 +1055,7 @@ const Index = () => {
                         setShowUnitDetails(false);
                         setTimeout(() => setSelectedUnit(null), 300);
                       }}
-                      className="px-6 py-2.5 bg-card border border-theme text-primary font-medium rounded-lg hover:bg-[rgba(255,255,255,0.05)] transition-all"
+                      className="px-6 py-2.5 bg-card border border-theme text-primary font-medium rounded-lg hover:bg-[rgba(15,31,23,0.05)] transition-all"
                     >
                       Close
                     </button>

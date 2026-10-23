@@ -418,7 +418,7 @@ const Services: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-secondary uppercase tracking-wide">In Progress</p>
-              <p className="text-2xl font-bold text-[#00D1FF] mt-1">{stats.inProgress}</p>
+              <p className="text-2xl font-bold text-[#059669] mt-1">{stats.inProgress}</p>
             </div>
             <div className="p-3 rounded-lg ">
               <Play className="text-[var(--accent-blue)]" size={24} />
@@ -522,7 +522,7 @@ const Services: React.FC = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-card  divide-white/5">
+            <tbody className="bg-card  divide-black/5">
               {services.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="px-6 py-12 text-center text-secondary">
@@ -531,7 +531,7 @@ const Services: React.FC = () => {
                 </tr>
               ) : (
                 services.map((service) => (
-                  <tr key={service._id} className="hover:bg-[rgba(255,255,255,0.03)]">
+                  <tr key={service._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">
                       {formatDate(service.serviceDate)}
                     </td>
@@ -602,8 +602,8 @@ const Services: React.FC = () => {
                             setSelectedService(service);
                           }}
                           className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 
-      bg-[rgba(255,255,255,0.05)] text-secondary border border-theme 
-      hover:bg-[rgba(255,255,255,0.08)] hover:text-white"
+      bg-[rgba(15,31,23,0.05)] text-secondary border border-theme 
+      hover:bg-[rgba(15,31,23,0.08)] hover:text-white"
                         >
                           <FileText size={14} />
                           View
@@ -629,7 +629,7 @@ const Services: React.FC = () => {
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={pagination.page <= 1 || loading}
-                className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-headings bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-headings bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft size={16} />
                 Previous
@@ -641,7 +641,7 @@ const Services: React.FC = () => {
                 type="button"
                 onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
                 disabled={pagination.page >= pagination.totalPages || loading}
-                className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-headings bg-card border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-headings bg-card border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
                 <ChevronRight size={16} />
@@ -670,7 +670,7 @@ const Services: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setSelectedService(null)}
-                className="p-2 text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition"
+                className="p-2 text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition"
               >
                 ×
               </button>
@@ -755,7 +755,7 @@ const Services: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedService(null)}
-                  className="px-4 py-2 text-sm font-medium text-headings bg-card border border-theme hover:bg-[rgba(255,255,255,0.03)] rounded-lg"
+                  className="px-4 py-2 text-sm font-medium text-headings bg-card border border-theme hover:bg-[rgba(15,31,23,0.03)] rounded-lg"
                 >
                   Close
                 </button>
@@ -787,7 +787,7 @@ const Services: React.FC = () => {
                   setCompleteModal(null);
                   setCompleteForm({ parts: [] });
                 }}
-                className="p-2 text-secondary hover:text-secondary hover:bg-[rgba(255,255,255,0.03)] rounded-lg transition"
+                className="p-2 text-secondary hover:text-secondary hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition"
               >
                 ×
               </button>
@@ -901,7 +901,7 @@ const Services: React.FC = () => {
                     setCompleteModal(null);
                     setCompleteForm({ parts: [] });
                   }}
-                  className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme hover:bg-[rgba(255,255,255,0.03)] rounded-lg"
+                  className="px-4 py-2 text-sm font-medium text-primary bg-card border border-theme hover:bg-[rgba(15,31,23,0.03)] rounded-lg"
                 >
                   Cancel
                 </button>

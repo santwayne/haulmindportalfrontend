@@ -280,14 +280,14 @@ const EmployeeDocumentsPage = () => {
                     <div>
                         <h2 className="text-2xl font-bold text-primary">Employee Documents</h2>
                         {selectedEmployee && (
-                            <p className="text-secondary mt-1">Viewing documents for: <span className="font-semibold text-[#00D1FF]">{selectedEmployee.name}</span></p>
+                            <p className="text-secondary mt-1">Viewing documents for: <span className="font-semibold text-[#059669]">{selectedEmployee.name}</span></p>
                         )}
                     </div>
                     <div className="flex items-center space-x-3">
                         <button
                             onClick={() => setShowUploadModal(true)}
                             style={{
-                                background: "linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)"
+                                background: "linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)"
                             }}
                             className="px-4 py-2  !mr-4 !text-white rounded-lg transition-colors flex items-center space-x-2"
                         >
@@ -347,7 +347,7 @@ const EmployeeDocumentsPage = () => {
                         <div className="bg-card rounded-lg p-4 border border-blue-200">
                             <div className="flex items-center justify-between mb-2">
                                 <FileText className="w-5 h-5 text-blue-500" />
-                                <span className="text-xs bg-blue-100 text-[#00D1FF] px-2 py-0.5 rounded">Total</span>
+                                <span className="text-xs bg-blue-100 text-[#059669] px-2 py-0.5 rounded">Total</span>
                             </div>
                             <p className="text-sm font-medium text-primary mb-1">Total Documents</p>
                             <p className="text-2xl font-bold text-blue-900">{documentStats.totalDocuments}</p>
@@ -363,7 +363,7 @@ const EmployeeDocumentsPage = () => {
                         <div className="bg-card rounded-lg p-4 border border-yellow-200">
                             <div className="flex items-center justify-between mb-2">
                                 <AlertTriangle className="w-5 h-5 text-yellow-500" />
-                                <span className="text-xs bg-yellow-100 text-[#00FFA3] px-2 py-0.5 rounded">Pending</span>
+                                <span className="text-xs bg-yellow-100 text-[#059669] px-2 py-0.5 rounded">Pending</span>
                             </div>
                             <p className="text-sm font-medium text-primary mb-1">Pending Documents</p>
                             <p className="text-2xl font-bold text-yellow-900">{documentStats.pendingDocuments}</p>
@@ -414,7 +414,7 @@ const EmployeeDocumentsPage = () => {
                         <button
                             onClick={() => setShowUploadModal(true)}
                             style={{
-                                background: "linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)"
+                                background: "linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)"
                             }}
                             className="px-4 py-2  !text-white rounded-lg  transition-colors"
                         >
@@ -468,7 +468,7 @@ const EmployeeDocumentsPage = () => {
                                         </thead>
                                         <tbody className="divide-y divide-theme">
                                             {empDoc.documents.map((doc: EmployeeDocument, index: number) => (
-                                                <tr key={index} className="hover:bg-[rgba(255,255,255,0.03)]">
+                                                <tr key={index} className="hover:bg-[rgba(15,31,23,0.03)]">
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center space-x-2">
                                                             <FileText className="w-4 h-4 text-secondary" />
@@ -509,14 +509,14 @@ const EmployeeDocumentsPage = () => {
                                                             )}
                                                             <button
                                                                 onClick={() => handleViewDocument(doc)}
-                                                                className="p-1.5 hover:bg-blue-50 rounded text-[#00D1FF]"
+                                                                className="p-1.5 hover:bg-blue-50 rounded text-[#059669]"
                                                                 title="View Details"
                                                             >
                                                                 <Eye className="w-4 h-4" />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleEditDocument(doc)}
-                                                                className="p-1.5 hover:bg-yellow-50 rounded text-[#00FFA3]"
+                                                                className="p-1.5 hover:bg-yellow-50 rounded text-[#059669]"
                                                                 title="Edit"
                                                             >
                                                                 <Edit className="w-4 h-4" />
@@ -557,14 +557,14 @@ const EmployeeDocumentsPage = () => {
                             <button
                                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                                 disabled={currentPage === 1}
-                                className="px-3 py-1 border border-theme rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[rgba(255,255,255,0.03)]"
+                                className="px-3 py-1 border border-theme rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[rgba(15,31,23,0.03)]"
                             >
                                 Previous
                             </button>
                             <button
                                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                                 disabled={currentPage === totalPages}
-                                className="px-3 py-1 border border-theme rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[rgba(255,255,255,0.03)]"
+                                className="px-3 py-1 border border-theme rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[rgba(15,31,23,0.03)]"
                             >
                                 Next
                             </button>
@@ -1001,7 +1001,7 @@ const ViewDocumentModal = ({
                     <button
                         onClick={() => onEdit(document)}
                         style={{
-                            background: "linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)"
+                            background: "linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)"
                         }}
                         className="!text-white px-4 py-2 rounded-lg  flex items-center gap-2 transition-colors"
                     >
@@ -1010,7 +1010,7 @@ const ViewDocumentModal = ({
                     </button>
                     <button
                         onClick={onClose}
-                        className="text-secondary hover:text-primary px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                        className="text-secondary hover:text-primary px-6 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                     >
                         Close
                     </button>
@@ -1047,7 +1047,7 @@ const DeleteConfirmationModal = ({
                     <div className="flex items-center justify-end gap-3">
                         <button
                             onClick={onCancel}
-                            className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                            className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                         >
                             Cancel
                         </button>
@@ -1355,7 +1355,7 @@ const UploadDocumentModal = ({
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="px-4 py-2 !mr-4 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
+                                className="px-4 py-2 !mr-4 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)]"
                             >
                                 Cancel
                             </button>
@@ -1363,7 +1363,7 @@ const UploadDocumentModal = ({
                                 type="submit"
                                 disabled={loading}
                                 style={{
-                                    background: "linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(0,209,255,0.15) 100%)"
+                                    background: "linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)"
                                 }}
                                 className="px-4 py-2  !text-white rounded-lg  disabled:opacity-50"
                             >

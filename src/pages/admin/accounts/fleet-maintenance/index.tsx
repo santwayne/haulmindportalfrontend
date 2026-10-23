@@ -721,7 +721,7 @@ export default function FleetMaintenanceFinance() {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${activeTab === tab.id
-                      ? 'border-[var(--accent-blue)] text-[#016ab2]'
+                      ? 'border-[var(--accent-blue)] text-[#047857]'
                       : 'border-transparent text-secondary hover:text-primary hover:border-theme'
                       }`}
                   >
@@ -780,12 +780,12 @@ export default function FleetMaintenanceFinance() {
                   className="pl-10 pr-4 py-2 border border-theme rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64"
                 />
               </div>
-              <button className="p-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors">
+              <button className="p-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors">
                 <Filter className="w-4 h-4 text-secondary" />
               </button>
             </div>
             <div className="flex items-center gap-2">
-              <button className="px-4 py-2 text-sm border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors flex items-center gap-2">
+              <button className="px-4 py-2 text-sm border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors flex items-center gap-2">
                 <Download className="w-4 h-4" />
                 Export Report
               </button>
@@ -828,14 +828,14 @@ export default function FleetMaintenanceFinance() {
                       expenseSummary.map((expense, idx) => (
                         <tr
                           key={idx}
-                          className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                          className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                           onClick={() => {
                             setSelectedItem(expense);
                             setSelectedItemType('expense');
                             setShowDetailModal(true);
                           }}
                         >
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#00D1FF]">{expense.vehicle}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#059669]">{expense.vehicle}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-primary">${expense.totalExpense.toLocaleString()}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">${expense.costPerMile.toFixed(2)}/mi</td>
                           <td className="px-6 py-4 text-sm text-secondary max-w-xs">{expense.breakdown}</td>
@@ -850,7 +850,7 @@ export default function FleetMaintenanceFinance() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
                             <div className="flex items-center gap-2">
-                              <button className="p-1 text-[#00D1FF] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors" title="View Details">
+                              <button className="p-1 text-[#059669] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors" title="View Details">
                                 <FileText className="w-4 h-4" />
                               </button>
                               <button className="p-1 text-green-400 hover:text-[var(--accent-green)] hover:bg-[var(--accent-green)]/15 rounded transition-colors" title="Download Report">
@@ -893,14 +893,14 @@ export default function FleetMaintenanceFinance() {
                       partsCostLog.map((part) => (
                         <tr
                           key={part._id || part.id}
-                          className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                          className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                           onClick={() => {
                             setSelectedItem(part);
                             setSelectedItemType('parts');
                             setShowDetailModal(true);
                           }}
                         >
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#00D1FF]">{part.partNumber}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#059669]">{part.partNumber}</td>
                           <td className="px-6 py-4 text-sm text-primary">{part.description}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">${part.unitCost.toFixed(2)}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">{part.quantity}</td>
@@ -913,7 +913,7 @@ export default function FleetMaintenanceFinance() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
                             <div className="flex items-center gap-2">
-                              <button onClick={() => handleEditParts(part)} className="p-1 text-[#00D1FF] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors">
+                              <button onClick={() => handleEditParts(part)} className="p-1 text-[#059669] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors">
                                 <Edit className="w-4 h-4" />
                               </button>
                               <button onClick={() => handleDeleteParts(part._id!)} className="p-1 text-red-400 hover:text-red-500 hover:bg-red-500/15 rounded">
@@ -953,7 +953,7 @@ export default function FleetMaintenanceFinance() {
                       laborRates.map((rate) => (
                         <tr
                           key={rate._id || rate.id}
-                          className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                          className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                           onClick={() => {
                             setSelectedItem(rate);
                             setSelectedItemType('labor');
@@ -971,7 +971,7 @@ export default function FleetMaintenanceFinance() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
                             <div className="flex items-center gap-2">
-                              <button onClick={() => handleEditLabor(rate)} className="p-1 text-[#00D1FF] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors">
+                              <button onClick={() => handleEditLabor(rate)} className="p-1 text-[#059669] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors">
                                 <Edit className="w-4 h-4" />
                               </button>
                               <button onClick={() => handleDeleteLabor(rate._id!)} className="p-1 text-red-400 hover:text-red-500 hover:bg-red-500/15 rounded">
@@ -1013,7 +1013,7 @@ export default function FleetMaintenanceFinance() {
                       maintenancePlans.map((plan) => (
                         <tr
                           key={plan._id || plan.id}
-                          className="hover:bg-[rgba(255,255,255,0.03)] cursor-pointer transition-colors"
+                          className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
                           onClick={() => {
                             setSelectedItem(plan);
                             setSelectedItemType('plan');
@@ -1021,7 +1021,7 @@ export default function FleetMaintenanceFinance() {
                           }}
                         >
                           <td className="px-6 py-4 text-sm font-medium text-primary">{plan.planName}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#00D1FF] font-medium">{plan.vehicle}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#059669] font-medium">{plan.vehicle}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">${plan.plannedCost.toLocaleString()}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-primary">
                             {plan.actualCost > 0 ? `$${plan.actualCost.toLocaleString()}` : '-'}
@@ -1045,10 +1045,10 @@ export default function FleetMaintenanceFinance() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
                             <div className="flex items-center gap-2">
-                              <button className="p-1 text-[#00D1FF] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors" title="View Report">
+                              <button className="p-1 text-[#059669] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors" title="View Report">
                                 <FileText className="w-4 h-4" />
                               </button>
-                              <button onClick={() => handleEditPlan(plan)} className="p-1 text-[#00D1FF] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors" title="Edit">
+                              <button onClick={() => handleEditPlan(plan)} className="p-1 text-[#059669] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors" title="Edit">
                                 <Edit className="w-4 h-4" />
                               </button>
                               <button onClick={() => handleDeletePlan(plan._id!)} className="p-1 text-red-400 hover:text-red-500 hover:bg-red-500/15 rounded" title="Delete">
@@ -1178,7 +1178,7 @@ export default function FleetMaintenanceFinance() {
                       setShowPartsModal(false);
                       resetPartsForm();
                     }}
-                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                   >
                     Cancel
                   </button>
@@ -1262,7 +1262,7 @@ export default function FleetMaintenanceFinance() {
                       setShowLaborModal(false);
                       resetLaborForm();
                     }}
-                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                   >
                     Cancel
                   </button>
@@ -1386,7 +1386,7 @@ export default function FleetMaintenanceFinance() {
                       setShowPlanModal(false);
                       resetPlanForm();
                     }}
-                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors"
+                    className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                   >
                     Cancel
                   </button>

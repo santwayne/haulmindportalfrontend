@@ -185,7 +185,7 @@ const exportToExcel = async (manifests: Manifest[]) => {
 const DR = ({ label, value }: { label: string; value: React.ReactNode }) => (
   <div className="flex flex-col gap-0.5">
     <span className="text-[10px] font-semibold text-secondary uppercase tracking-wider">{label}</span>
-    <span className="text-sm text-primary">{value || <span className="text-gray-300">—</span>}</span>
+    <span className="text-sm text-primary">{value || <span className="text-gray-600">—</span>}</span>
   </div>
 );
 
@@ -216,8 +216,8 @@ const SlidePanel = ({ manifest: m, onClose }: { manifest: Manifest; onClose: () 
       >
         {/* Header */}
         <div
-          className="flex items-center justify-between px-5 py-4 border-b border-white/10 flex-shrink-0"
-          style={{ background: "linear-gradient(135deg, var(--accent-blue) 0%, rgba(0,209,255,0.15) 100%)" }}
+          className="flex items-center justify-between px-5 py-4 border-b border-black/10 flex-shrink-0"
+          style={{ background: "linear-gradient(135deg, var(--accent-blue) 0%, rgba(5,150,105,0.15) 100%)" }}
         >
           <div>
             <div className="flex items-center gap-2">
@@ -455,7 +455,7 @@ const ManifestListPage = () => {
         </div>
         <button
           onClick={fetch}
-          className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.03)] text-secondary hover:text-[var(--accent-blue)] transition-colors border border-theme"
+          className="p-2 rounded-lg hover:bg-[rgba(15,31,23,0.03)] text-secondary hover:text-[var(--accent-blue)] transition-colors border border-theme"
         >
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
         </button>
@@ -508,7 +508,7 @@ const ManifestListPage = () => {
                           <p className="text-sm font-medium text-primary">{m.truck.unitNumber || m.truck.plateNumber}</p>
                           <p className="text-[11px] text-secondary">{[m.truck.make, m.truck.model].filter(Boolean).join(" ")}</p>
                         </div>
-                      ) : <span className="text-gray-300 text-sm">—</span>}
+                      ) : <span className="text-gray-600 text-sm">—</span>}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       {m.trailer ? (
@@ -516,7 +516,7 @@ const ManifestListPage = () => {
                           <p className="text-sm font-medium text-primary">{m.trailer.unitNumber || m.trailer.plateNumber}</p>
                           <p className="text-[11px] text-secondary">{m.trailer.type}</p>
                         </div>
-                      ) : <span className="text-gray-300 text-sm">—</span>}
+                      ) : <span className="text-gray-600 text-sm">—</span>}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       {m.driver ? (
@@ -529,12 +529,12 @@ const ManifestListPage = () => {
                             <p className="text-[11px] text-secondary">{m.driver.internalId}</p>
                           </div>
                         </div>
-                      ) : <span className="text-gray-300 text-sm">—</span>}
+                      ) : <span className="text-gray-600 text-sm">—</span>}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1.5 max-w-[200px]">
                         <span className="text-sm text-primary truncate" style={{ maxWidth: 80 }}>{m.startLocation?.place || "—"}</span>
-                        <ChevronRight size={11} className="text-gray-300 flex-shrink-0" />
+                        <ChevronRight size={11} className="text-gray-600 flex-shrink-0" />
                         <span className="text-sm text-primary truncate" style={{ maxWidth: 80 }}>{m.endLocation?.place || "—"}</span>
                       </div>
                     </td>
@@ -551,10 +551,10 @@ const ManifestListPage = () => {
                     <td className="px-4 py-3 whitespace-nowrap">
                       {m.documentsApproved
                         ? <CheckCircle size={15} className="text-green-500" />
-                        : <X size={15} className="text-gray-300" />}
+                        : <X size={15} className="text-gray-600" />}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-right pr-4">
-                      <ChevronRight size={15} className="text-gray-300 group-hover:text-[var(--accent-blue)] transition-colors inline-block" />
+                      <ChevronRight size={15} className="text-gray-600 group-hover:text-[var(--accent-blue)] transition-colors inline-block" />
                     </td>
                   </tr>
                 ))}

@@ -341,7 +341,7 @@ export const GlobalCallHandler: React.FC = () => {
       <>
         {audioEl}
         <div
-          className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-4 py-3 rounded-2xl shadow-2xl border border-white/10"
+          className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-4 py-3 rounded-2xl shadow-2xl border border-black/10"
           style={{ background: "linear-gradient(135deg,#1a1a2e,#16213e)", minWidth: 300 }}
         >
           <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md">
@@ -353,14 +353,14 @@ export const GlobalCallHandler: React.FC = () => {
           </div>
           <button
             onClick={toggleMute}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isMuted ? "bg-white/30" : "bg-white/10 hover:bg-white/20"}`}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isMuted ? "bg-white/30" : "bg-black/10 hover:bg-black/20"}`}
             title={isMuted ? "Unmute" : "Mute"}
           >
             {isMuted ? <MicOff className="w-4 h-4 text-white" /> : <Mic className="w-4 h-4 text-white" />}
           </button>
           <button
             onClick={() => setIsMinimized(false)}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+            className="w-8 h-8 rounded-full bg-black/10 hover:bg-black/20 flex items-center justify-center transition-colors"
             title="Expand"
           >
             <Maximize2 className="w-4 h-4 text-white" />
@@ -416,7 +416,7 @@ export const GlobalCallHandler: React.FC = () => {
               {callState === "connected" ? (
                 <button
                   onClick={() => setIsMinimized(true)}
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                  className="w-9 h-9 rounded-full bg-black/10 hover:bg-black/20 flex items-center justify-center transition-colors"
                 >
                   <Minimize2 className="w-4 h-4 text-white/70" />
                 </button>
@@ -425,7 +425,7 @@ export const GlobalCallHandler: React.FC = () => {
 
             {/* Center */}
             <div className="flex-1 flex flex-col items-center justify-center">
-              <div className={`w-28 h-28 rounded-full bg-blue-600 flex items-center justify-center mb-6 text-white text-5xl font-bold border-4 border-white/10 shadow-[0_0_40px_rgba(25,118,210,0.4)] ${callState === "incoming" ? "animate-pulse" : ""}`}>
+              <div className={`w-28 h-28 rounded-full bg-blue-600 flex items-center justify-center mb-6 text-white text-5xl font-bold border-4 border-black/10 shadow-[0_0_40px_rgba(5,150,105,0.4)] ${callState === "incoming" ? "animate-pulse" : ""}`}>
                 {(callerName || "D").charAt(0).toUpperCase()}
               </div>
               <p className="text-white text-3xl font-bold mb-2 tracking-tight">{callerName || "Driver"}</p>
@@ -441,14 +441,14 @@ export const GlobalCallHandler: React.FC = () => {
                   <div className="flex flex-col items-center gap-2">
                     <button
                       onClick={toggleMute}
-                      className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors border ${isMuted ? "bg-white/30 border-white/40" : "bg-white/10 border-white/15 hover:bg-white/20"}`}
+                      className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors border ${isMuted ? "bg-white/30 border-white/40" : "bg-black/10 border-black/15 hover:bg-black/20"}`}
                     >
                       {isMuted ? <MicOff className="w-6 h-6 text-white" /> : <Mic className="w-6 h-6 text-white" />}
                     </button>
                     <span className="text-white/55 text-xs">{isMuted ? "Unmute" : "Mute"}</span>
                   </div>
                   <div className="flex flex-col items-center gap-2">
-                    <div className="w-14 h-14 rounded-full bg-white/10 border border-white/15 flex items-center justify-center opacity-40 cursor-not-allowed">
+                    <div className="w-14 h-14 rounded-full bg-black/10 border border-black/15 flex items-center justify-center opacity-40 cursor-not-allowed">
                       <Volume2 className="w-6 h-6 text-white" />
                     </div>
                     <span className="text-white/35 text-xs">Speaker</span>

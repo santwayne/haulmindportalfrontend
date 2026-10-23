@@ -291,7 +291,7 @@ function DriverDocument() {
           </h3>
           <button
             onClick={() => setShowDocModal(false)}
-            className="p-2 hover:bg-[rgba(255,255,255,0.03)] rounded-full transition-colors"
+            className="p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-full transition-colors"
             disabled={submitting}
           >
             <FaTimes className="text-secondary" size={20} />
@@ -392,7 +392,7 @@ function DriverDocument() {
         <div className="sticky bottom-0 bg-card px-6 py-4 flex justify-end gap-3 border-t rounded-b-2xl">
           <button
             type="button"
-            className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors"
+            className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors"
             onClick={() => setShowDocModal(false)}
             disabled={submitting}
           >
@@ -433,7 +433,7 @@ function DriverDocument() {
         <div className="bg-card px-6 py-4 flex justify-end gap-3 border-t rounded-b-2xl">
           <button
             type="button"
-            className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-colors"
+            className="px-6 py-2.5 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-colors"
             onClick={cancelDelete}
           >
             Cancel
@@ -524,7 +524,7 @@ function DriverDocument() {
         <div className="space-y-6">
           <button
             onClick={handleBackToDrivers}
-            className="flex items-center gap-2 !mb-3 px-5 py-3 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(255,255,255,0.03)] font-medium transition-all shadow-md"
+            className="flex items-center gap-2 !mb-3 px-5 py-3 bg-card border border-theme text-primary rounded-lg hover:bg-[rgba(15,31,23,0.03)] font-medium transition-all shadow-md"
           >
             <FaArrowLeft /> Back to Drivers
           </button>
@@ -592,7 +592,7 @@ function DriverDocument() {
                         <tr
                           key={doc._id}
                           className={`${index % 2 === 0 ? "bg-card" : "bg-card"
-                            } border-t hover:bg-[rgba(255,255,255,0.03)] transition-colors`}
+                            } border-t hover:bg-[rgba(15,31,23,0.03)] transition-colors`}
                         >
                           <td className="p-4">
                             <span className="font-semibold text-primary capitalize">{doc.documentType}</span>
