@@ -1,0 +1,511 @@
+@import "tailwindcss";
+
+/* Font Families */
+:root {
+  --bg-main: #0B1220;
+  --bg-card: #121A2B;
+  --bg-card-light: #182235;
+
+  --accent-navyblue: #1183e0;
+  --accent-blue: #00D1FF;
+  --accent-green: #00FFA3;
+  --accent-purple: #A855F7;
+  --accent-orange: #F59E0B;
+  --accent-cyan: #22D3EE;
+  --accent-teal: #14B8A6;
+  --accent-red: #F43F5E;
+  --accent-amber: #FBBF24;
+
+  --text-heading: #1183e0;
+  --text-primary: #E6EDF3;
+  --text-secondary: #8B9BB4;
+
+
+  --border-glow: rgba(0, 209, 255, 0.2);
+}
+
+/* Custom Scrollbar — theme-aware, slim */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 209, 255, 0.25) var(--bg-main);
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 209, 255, 0.25);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 209, 255, 0.5);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-main);
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-poppins);
+}
+
+body {
+  font-family: var(--font-poppins);
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+}
+
+/* Custom toast notification animation - slide in from right */
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(120%) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideInRight 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes shrink {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes chatPopupIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-chat-popup {
+  animation: chatPopupIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Enhanced shadow for notifications */
+.shadow-3xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Ensure Ant Design notifications appear above modals */
+.ant-notification {
+  z-index: 10001 !important;
+  position: fixed !important;
+  pointer-events: auto !important;
+}
+
+.ant-notification-topRight {
+  z-index: 10001 !important;
+  position: fixed !important;
+  top: 24px !important;
+  right: 24px !important;
+  pointer-events: auto !important;
+}
+
+.ant-notification-notice {
+  z-index: 10001 !important;
+  position: relative !important;
+  pointer-events: auto !important;
+}
+
+/* Error notification specific styling */
+.error-notification {
+  z-index: 10001 !important;
+  pointer-events: auto !important;
+}
+
+
+
+/* Ensure notification container is positioned correctly */
+.ant-notification-topRight>.ant-notification-notice-wrapper {
+  z-index: 10001 !important;
+  position: relative !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure notification notice content has proper z-index */
+.ant-notification-notice-content {
+  z-index: 10001 !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure message notifications appear above modals */
+.ant-message {
+  z-index: 10001 !important;
+  position: fixed !important;
+  pointer-events: none !important;
+}
+
+.ant-message-notice {
+  z-index: 10001 !important;
+  pointer-events: auto !important;
+}
+
+.ant-message-notice-content {
+  z-index: 10001 !important;
+  pointer-events: auto !important;
+}
+
+/* Override any modal z-index that might block notifications */
+.ant-modal-mask {
+  z-index: 1000 !important;
+}
+
+.ant-modal-wrap {
+  z-index: 1000 !important;
+}
+
+.ant-modal {
+  z-index: 1000 !important;
+}
+
+/* Ensure custom modals don't block notifications - target modal backdrop */
+.modal-backdrop {
+  z-index: 100 !important;
+}
+
+
+/* 🌑 Card UI */
+.card {
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 0 12px rgba(0, 209, 255, 0.05);
+}
+
+/* 🔵 Neon Text */
+.neon-blue {
+  color: var(--accent-blue);
+  text-shadow: 0 0 6px var(--accent-blue),
+    0 0 12px var(--accent-blue);
+}
+
+.neon-green {
+  color: var(--accent-green);
+  text-shadow: 0 0 6px var(--accent-green),
+    0 0 12px var(--accent-green);
+}
+
+/* 🟢 Status Glow */
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.status-active {
+  background-color: var(--accent-green);
+  box-shadow: 0 0 8px var(--accent-green),
+    0 0 16px var(--accent-green);
+}
+
+.status-inactive {
+  background-color: #ff4d4f;
+  box-shadow: 0 0 8px #ff4d4f;
+}
+
+/* 🔘 Neon Button */
+.btn-neon {
+  border: 1px solid var(--accent-blue);
+  color: var(--accent-blue);
+  background: transparent;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: 0.3s ease;
+}
+
+.btn-neon:hover {
+  background: var(--accent-blue);
+  color: #000;
+  box-shadow: 0 0 12px var(--accent-blue);
+}
+
+
+.ant-card {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+.ant-btn-primary {
+  background: var(--accent-navyblue) !important;
+  border-color: var(--accent-navyblue) !important;
+}
+
+.ant-btn-primary:hover {
+  background: #0d6fc7 !important;
+  border-color: #0d6fc7 !important;
+}
+
+.ant-layout {
+  background: var(--bg-main) !important;
+}
+
+/* 🌑 THEME UTILITIES */
+.bg-main {
+  background-color: var(--bg-main);
+}
+
+.bg-card {
+  background-color: var(--bg-card);
+}
+
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-accent {
+  color: var(--accent-blue);
+}
+
+.hover-accent:hover {
+  background-color: rgba(0, 209, 255, 0.08);
+}
+
+.active-accent {
+  background-color: rgba(0, 209, 255, 0.15);
+  color: var(--accent-blue);
+}
+
+.border-theme {
+  border-color: rgba(0, 209, 255, 0.1);
+}
+
+/* Date inputs — dark scheme so the native calendar icon renders white */
+input[type="date"] {
+  color-scheme: dark;
+  cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.8;
+  padding-left: 6px;
+}
+.form-select {
+  @apply w-full px-3 py-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2;
+
+  /* Custom styles (NOT @apply) */
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.form-select:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 2px var(--accent-blue);
+}
+
+.form-select:hover {
+  background-color: rgba(0, 209, 255, 0.08);
+}
+
+.form-option {
+  background-color: #0f1b2d;
+  color: #ffffff;
+}
+.card-premium {
+  background: linear-gradient(145deg, var(--bg-card), var(--bg-card-light));
+  border-radius: 14px;
+  padding: 16px;
+
+  border: 1px solid #00d1ff1a;
+
+  box-shadow:
+    0 0 20px rgba(0, 209, 255, 0.05),
+    inset 0 0 20px rgba(0, 209, 255, 0.02);
+
+  transition: all 0.3s ease;
+}
+
+.card-premium:hover {
+  box-shadow:
+    0 0 25px rgba(0, 209, 255, 0.2),
+    0 0 50px rgba(0, 209, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+
+.sidebar {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+}
+
+.sidebar-item {
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  border-radius: 8px;
+}
+
+.sidebar-item:hover {
+  background: rgba(0, 209, 255, 0.08);
+  color: var(--accent-blue);
+}
+
+.sidebar-item-active {
+  background: rgba(0, 209, 255, 0.15);
+  color: var(--accent-blue);
+}
+
+.btn-primary {
+  background-color: var(--accent-blue);
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 10px var(--accent-blue);
+}
+
+.btn-outline {
+  border: 1px solid var(--accent-blue);
+  color: var(--accent-blue);
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+.btn-outline:hover {
+  background: var(--accent-blue);
+  color: #000;
+}
+
+
+.progress-glow {
+  height: 3px;
+  border-radius: 10px;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+
+.pulse-marker {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.pulse-marker::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: inherit;
+  animation: pulse 1.8s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+
+  70% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.divide-theme> :not([hidden])~ :not([hidden]) {
+  border-color: rgba(0, 209, 255, 0.1);
+}
+
+
+.scrollbar-theme::-webkit-scrollbar {
+  height: 8px;
+}
+
+.scrollbar-theme::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  /* 👈 visible on dark */
+}
+
+.scrollbar-theme::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg,
+      rgba(168, 85, 247, 0.6),
+      rgba(0, 209, 255, 0.6));
+  border-radius: 10px;
+}
+
+.scrollbar-theme::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg,
+      rgba(168, 85, 247, 0.9),
+      rgba(0, 209, 255, 0.9));
+}
+
+.header-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.header-btn:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+}
+
+.text-headings {
+  color: var(--accent-navyblue);
+}

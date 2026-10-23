@@ -1,0 +1,176 @@
+warning: in the working copy of 'src/pages/admin/compilance/invoices/index.tsx', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/src/pages/admin/compilance/invoices/index.tsx b/src/pages/admin/compilance/invoices/index.tsx[m
+[1mindex 40ed070..839b8f4 100644[m
+[1m--- a/src/pages/admin/compilance/invoices/index.tsx[m
+[1m+++ b/src/pages/admin/compilance/invoices/index.tsx[m
+[36m@@ -9,16 +9,11 @@[m [mimport {[m
+   Wrench,[m
+   ClipboardList,[m
+   Search,[m
+[31m-  Edit,[m
+[31m-  Trash2,[m
+[31m-  X,[m
+ } from "lucide-react";[m
+[31m-import { FaCheckCircle, FaExclamationCircle, FaTimes } from "react-icons/fa";[m
+[31m-import { getComplianceInvoices, updateComplianceInvoice, deleteComplianceInvoice } from "../../../../axios/api/admin";[m
+[32m+[m[32mimport { getComplianceInvoices } from "../../../../axios/api/admin";[m
+ [m
+ type MechanicInvoice = {[m
+   id: string;[m
+[31m-  type?: 'general' | 'scheduled' | 'safety';[m
+   serviceDate: string;[m
+   unitNumber: string;[m
+   makeModel: string;[m
+[36m@@ -35,46 +30,6 @@[m [mtype MechanicInvoice = {[m
+   location: string;[m
+ };[m
+ [m
+[31m-interface Notification {[m
+[31m-  id: number;[m
+[31m-  type: 'success' | 'error';[m
+[31m-  message: string;[m
+[31m-}[m
+[31m-[m
+[31m-const ToastNotification = ({ notification, onClose }: { notification: Notification; onClose: (id: number) => void }) => {[m
+[31m-  const icons = {[m
+[31m-    success: <FaCheckCircle className="text-green-500" size={24} />,[m
+[31m-    error: <FaExclamationCircle className="text-red-500" size={24} />,[m
+[31m-  };[m
+[31m-[m
+[31m-  const bgColors = {[m
+[31m-    success: 'bg-green-50 border-green-200',[m
+[31m-    error: 'bg-red-50 border-red-200',[m
+[31m-  };[m
+[31m-[m
+[31m-  useEffect(() => {[m
+[31m-    const timer = setTimeout(() => {[m
+[31m-      onClose(notification.id);[m
+[31m-    }, 5000);[m
+[31m-    return () => clearTimeout(timer);[m
+[31m-  }, [notification.id, onClose]);[m
+[31m-[m
+[31m-  return ([m
+[31m-    <div className={`fixed top-4 right-4 flex items-start gap-3 p-4 rounded-lg border-2 shadow-lg z-[10000] ${bgColors[notification.type]} animate-slide-in`}>[m
+[31m-      <div className="flex-shrink-0 mt-0.5">[m
+[31m-        {icons[notification.type]}[m
+[31m-      </div>[m
+[31m-      <p className="flex-1 text-sm font-medium text-gray-800">{notification.message}</p>[m
+[31m-      <button[m
+[31m-        onClick={() => onClose(notification.id)}[m
+[31m-        className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"[m
+[31m-      >[m
+[31m-        <FaTimes size={16} />[m
+[31m-      </button>[m
+[31m-    </div>[m
+[31m-  );[m
+[31m-};[m
+[31m-[m
+ // Removed static data - now fetching from API[m
+ [m
+ const ComplianceInvoices = () => {[m
+[36m@@ -89,19 +44,6 @@[m [mconst ComplianceInvoices = () => {[m
+   const [totalPages, setTotalPages] = useState(1);[m
+   const [total, setTotal] = useState(0);[m
+   const pageSize = 50;[m
+[31m-  const [notifications, setNotifications] = useState<Notification[]>([]);[m
+[31m-  const [editModal, setEditModal] = useState<{ show: boolean; invoice: MechanicInvoice | null }>({ show: false, invoice: null });[m
+[31m-  const [deleteModal, setDeleteModal] = useState<{ show: boolean; invoice: MechanicInvoice | null }>({ show: false, invoice: null });[m
+[31m-  const [saving, setSaving] = useState(false);[m
+[31m-  const [deleting, setDeleting] = useState(false);[m
+[31m-  const [editForm, setEditForm] = useState({[m
+[31m-    invoiceNumber: '',[m
+[31m-    serviceProvider: '',[m
+[31m-    notes: '',[m
+[31m-    odometer: 0,[m
+[31m-    parts: '',[m
+[31m-    description: '',[m
+[31m-  });[m
+ [m
+   // Fetch invoices from API[m
+   useEffect(() => {[m
+[36m@@ -124,7 +66,6 @@[m [mconst ComplianceInvoices = () => {[m
+           // Map API response to MechanicInvoice format[m
+           const mappedInvoices: MechanicInvoice[] = response.data.map((invoice: any) => ({[m
+             id: invoice.id || invoice._id || '',[m
+[31m-            type: invoice.type || 'general',[m
+             serviceDate: invoice.serviceDate || new Date().toISOString(),[m
+             unitNumber: invoice.unitNumber || 'N/A',[m
+             makeModel: invoice.makeModel || 'N/A',[m
+[36m@@ -280,165 +221,6 @@[m [mconst ComplianceInvoices = () => {[m
+     setSearchTerm("");[m
+   };[m
+ [m
+[31m-  const showNotification = (type: 'success' | 'error', message: string) => {[m
+[31m-    const id = Date.now();[m
+[31m-    setNotifications(prev => [...prev, { id, type, message }]);[m
+[31m-    setTimeout(() => {[m
+[31m-      setNotifications(prev => prev.filter(n => n.id !== id));[m
+[31m-    }, 5000);[m
+[31m-  };[m
+[31m-[m
+[31m-  const handleEdit = (invoice: MechanicInvoice) => {[m
+[31m-    setEditForm({[m
+[31m-      invoiceNumber: invoice.invoiceNumber || '',[m
+[31m-      serviceProvider: invoice.serviceProvider || '',[m
+[31m-      notes: invoice.notes || '',[m
+[31m-      odometer: invoice.odometer || 0,[m
+[31m-      parts: invoice.parts && invoice.parts.length > 0 [m
+[31m-        ? invoice.parts.map(p => `${p.name}${p.cost > 0 ? ` $${p.cost.toFixed(2)}` : ''}`).join(', ')[m
+[31m-        : '',[m
+[31m-      description: invoice.description || '',[m
+[31m-    });[m
+[31m-    setEditModal({ show: true, invoice });[m
+[31m-  };[m
+[31m-[m
+[31m-  const handleSaveEdit = async () => {[m
+[31m-    if (!editModal.invoice) return;[m
+[31m-[m
+[31m-    setSaving(true);[m
+[31m-    try {[m
+[31m-      const updateData: any = {[m
+[31m-        type: editModal.invoice.type || 'general',[m
+[31m-        invoiceNumber: editForm.invoiceNumber,[m
+[31m-        serviceProvider: editForm.serviceProvider,[m
+[31m-        notes: editForm.notes,[m
+[31m-        odometer: editForm.odometer,[m
+[31m-        parts: editForm.parts,[m
+[31m-        description: editForm.description,[m
+[31m-      };[m
+[31m-[m
+[31m-      // Add type-specific fields[m
+[31m-      if (editModal.invoice.type === 'scheduled') {[m
+[31m-        // VehicleService specific fields can be added here if needed[m
+[31m-      } else if (editModal.invoice.type === 'general') {[m
+[31m-        // GeneralRepair specific fields[m
+[31m-      } else if (editModal.invoice.type === 'safety') {[m
+[31m-        // RegulatorySafety specific fields[m
+[31m-        updateData.invoiceNo = editForm.invoiceNumber;[m
+[31m-        updateData.shopName = editForm.serviceProvider;[m
+[31m-      }[m
+[31m-[m
+[31m-      const response = await updateComplianceInvoice(editModal.invoice.id, updateData);[m
+[31m-      [m
+[31m-      if (response?.success) {[m
+[31m-        showNotification('success', response.message || 'Invoice updated successfully');[m
+[31m-        setEditModal({ show: false, invoice: null });[m
+[31m-        // Refresh invoices[m
+[31m-        const params: any = {[m
+[31m-          page: currentPage,[m
+[31m-          limit: pageSize[m
+[31m-        };[m
+[31m-        if (truckFilter !== "all") params.unitNumber = truckFilter;[m
+[31m-        if (driverFilter !== "all") params.driver = driverFilter;[m
+[31m-        if (mechanicFilter !== "all") params.serviceProvider = mechanicFilter;[m
+[31m-        if (searchTerm.trim()) params.search = searchTerm.trim();[m
+[31m-        const updatedResponse = await getComplianceInvoices(params);[m
+[31m-        if (updatedResponse?.success && updatedResponse?.data) {[m
+[31m-          const mappedInvoices: MechanicInvoice[] = updatedResponse.data.map((invoice: any) => ({[m
+[31m-            id: invoice.id || invoice._id || '',[m
+[31m-            type: invoice.type || 'general',[m
+[31m-            serviceDate: invoice.serviceDate || new Date().toISOString(),[m
+[31m-            unitNumber: invoice.unitNumber || 'N/A',[m
+[31m-            makeModel: invoice.makeModel || 'N/A',[m
+[31m-            vinOrPlate: invoice.vinOrPlate || 'N/A',[m
+[31m-            description: invoice.description || '',[m
+[31m-            odometer: invoice.odometer || 0,[m
+[31m-            parts: invoice.parts || [

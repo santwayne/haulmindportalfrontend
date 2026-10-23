@@ -1,0 +1,54 @@
+# Notification Sound Setup
+
+## Quick Setup:
+To enable notification sounds, add a file named "notification.mp3" to this directory.
+
+## Recommended Sound:
+- Duration: 0.5 - 1 second
+- Type: Short, pleasant tone (ding, pop, or chime)
+- Volume: Already set to 50% in code
+
+## Free Sound Sources:
+
+### Option 1: Notification Sounds
+Website: https://notificationsounds.com/
+- Browse "Message Sounds" or "Chat Sounds"
+- Download as MP3
+- Rename to "notification.mp3"
+- Place in this folder
+
+### Option 2: Freesound
+Website: https://freesound.org/
+Search: "notification", "message ping", "chat sound"
+- Download WAV or MP3
+- Convert to MP3 if needed
+- Rename to "notification.mp3"
+
+### Option 3: Use System Sounds
+On Windows: C:\Windows\Media\
+On Mac: /System/Library/Sounds/
+- Copy a pleasant sound
+- Convert to MP3
+- Rename and place here
+
+## File Requirements:
+- Format: MP3
+- Name: notification.mp3 (exact name, all lowercase)
+- Location: blackRiverFrontend/public/notification.mp3
+- Size: < 100KB recommended
+
+## Test the Sound:
+1. Place notification.mp3 in this folder
+2. Restart the dev server (npm run dev)
+3. Have a driver send a message
+4. Sound should play with the popup
+
+## Optional:
+If you don't want sound notifications, just don't add the file.
+The popup notifications will still work perfectly without audio.
+The system gracefully handles missing sound files.
+
+---
+Current Status: No sound file present
+Action Required: Add notification.mp3 for audio alerts
+
