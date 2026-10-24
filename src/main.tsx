@@ -10,7 +10,7 @@ import { store } from "./redux/store.tsx";
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
-    <ConfigProvider>
+    <ConfigProvider theme={{ token: { colorPrimary: "#059669", colorLink: "#047857" } }}>
       <App />
     </ConfigProvider>
     </Provider>

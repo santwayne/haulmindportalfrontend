@@ -542,7 +542,7 @@ const ViewAllAccounts = () => {
 
             <div className="p-6">
                 {/* Filters and Search */}
-                <div className="bg-card rounded-xl shadow-sm border border-theme p-6 mb-6">
+                <div className="hm-dark bg-card rounded-xl shadow-sm border border-theme p-6 mb-6">
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 lg:space-x-4">
                         {/* Search */}
                         <div className="relative flex-1 max-w-md">
@@ -562,7 +562,7 @@ const ViewAllAccounts = () => {
                             <select
                                 value={selectedFilter}
                                 onChange={(e) => setSelectedFilter(e.target.value)}
-                                className="w-32 bg-slate-900 text-slate-700 border border-slate-700 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-32 bg-card text-primary border border-theme rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#059669]"
                             >
                                 <option value="all">All</option>
                                 <option value="active">Active</option>

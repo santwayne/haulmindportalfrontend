@@ -66,7 +66,7 @@ const SuperAdminOverview = () => {
 
   const getPlanColor = (plan: string) => {
     const planLower = plan.toLowerCase();
-    if (planLower.includes('enterprise')) return 'bg-purple-100 text-purple-800';
+    if (planLower.includes('enterprise')) return 'bg-[#ecfdf5] text-[#047857]';
     if (planLower.includes('professional')) return 'bg-blue-100 text-blue-800';
     if (planLower.includes('starter') || planLower.includes('basic')) return 'bg-green-100 text-green-800';
     return 'bg-card text-primary';
@@ -76,7 +76,7 @@ const SuperAdminOverview = () => {
     return (
       <div className="w-full flex items-center justify-center py-20">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#059669] mx-auto"></div>
           <p className="mt-4 text-secondary">Loading dashboard data...</p>
         </div>
       </div>
@@ -87,10 +87,10 @@ const SuperAdminOverview = () => {
     return (
       <div className="w-full flex items-center justify-center py-20">
         <div className="text-center">
-          <p className="text-[#A855F7] mb-4 text-lg font-medium">{error}</p>
+          <p className="text-[#047857] mb-4 text-lg font-medium">{error}</p>
           <button
             onClick={fetchDashboardData}
-            className="px-6 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
+            className="px-6 py-2.5 bg-[#059669] text-white rounded-lg hover:bg-[#047857] transition-colors font-medium"
           >
             Retry
           </button>
@@ -106,7 +106,7 @@ const SuperAdminOverview = () => {
           <p className="text-secondary mb-4 text-lg">No data available</p>
           <button
             onClick={fetchDashboardData}
-            className="px-6 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
+            className="px-6 py-2.5 bg-[#059669] text-white rounded-lg hover:bg-[#047857] transition-colors font-medium"
           >
             Retry
           </button>
@@ -132,7 +132,7 @@ const SuperAdminOverview = () => {
       change: typeof stats.customerGrowth === 'number' ? `${stats.customerGrowth >= 0 ? '+' : ''}${stats.customerGrowth.toFixed(1)}%` : '0%',
       trend: (typeof stats.customerGrowth === 'number' && stats.customerGrowth >= 0) ? 'up' : 'down',
       icon: Building2,
-      color: 'bg-blue-500'
+      color: 'bg-[#059669]'
     },
     {
       title: 'Active Subscriptions',
@@ -148,7 +148,7 @@ const SuperAdminOverview = () => {
       change: typeof stats.revenueChange === 'number' ? `${stats.revenueChange >= 0 ? '+' : ''}${stats.revenueChange.toFixed(1)}%` : '0%',
       trend: (typeof stats.revenueChange === 'number' && stats.revenueChange >= 0) ? 'up' : 'down',
       icon: DollarSign,
-      color: 'bg-purple-500'
+      color: 'bg-[#059669]'
     },
     {
       title: 'Active Customers',
@@ -178,7 +178,7 @@ const SuperAdminOverview = () => {
                   key={range}
                   onClick={() => setSelectedTimeRange(range)}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${selectedTimeRange === range
-                      ? 'bg-card text-purple-600 shadow-sm'
+                      ? 'bg-card text-[#059669] shadow-sm'
                       : 'text-secondary hover:text-primary'
                     }`}
                 >
@@ -193,12 +193,12 @@ const SuperAdminOverview = () => {
             {statsArray.map((stat, index) => {
               const IconComponent = stat.icon;
               return (
-                <div key={index} className="bg-card rounded-xl shadow-sm border border-theme p-6">
+                <div key={index} className="hm-dark bg-card rounded-xl shadow-sm border border-theme p-6">
                   <div className="flex items-center justify-between">
                     <div className={`${stat.color} p-3 rounded-lg`}>
                       <IconComponent className="w-6 h-6 text-white" />
                     </div>
-                    <div className={`flex items-center text-sm font-medium ${stat.trend === 'up' ? 'text-green-600' : 'text-[#A855F7]'
+                    <div className={`flex items-center text-sm font-medium ${stat.trend === 'up' ? 'text-green-600' : 'text-[#047857]'
                       }`}>
                       {stat.trend === 'up' ? (
                         <ArrowUp className="w-4 h-4 mr-1" />
@@ -224,7 +224,7 @@ const SuperAdminOverview = () => {
               <div className="px-6 py-4 border-b border-theme">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold text-primary">Recent Customers</h2>
-                  <button className="text-purple-600 hover:text-purple-700 text-sm font-medium">
+                  <button className="text-[#059669] hover:text-[#047857] text-sm font-medium">
                     View All Customers
                   </button>
                 </div>
@@ -235,8 +235,8 @@ const SuperAdminOverview = () => {
                     <div key={customer.id} className="px-6 py-4 border-b border-theme last:border-b-0 hover:bg-[rgba(15,31,23,0.03)]">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
-                          <div className="bg-purple-100 p-2 rounded-lg">
-                            <Building2 className="w-5 h-5 text-purple-600" />
+                          <div className="bg-[#ecfdf5] p-2 rounded-lg">
+                            <Building2 className="w-5 h-5 text-[#059669]" />
                           </div>
                           <div>
                             <h3 className="font-medium text-primary">{customer.adminName || 'N/A'}</h3>
@@ -285,7 +285,7 @@ const SuperAdminOverview = () => {
             <div className="space-y-6">
               {/* Additional Stats */}
               {dashboardData.subscriptionStats && (
-                <div className="bg-card rounded-xl shadow-sm border border-theme p-6">
+                <div className="hm-dark bg-card rounded-xl shadow-sm border border-theme p-6">
                   <h2 className="text-lg font-semibold text-primary mb-4">Subscription Overview</h2>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
@@ -302,7 +302,7 @@ const SuperAdminOverview = () => {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-secondary">Cancelled</span>
-                      <span className="font-semibold text-[#A855F7]">{dashboardData.subscriptionStats.cancelled || 0}</span>
+                      <span className="font-semibold text-[#047857]">{dashboardData.subscriptionStats.cancelled || 0}</span>
                     </div>
                   </div>
                 </div>

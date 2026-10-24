@@ -832,3 +832,50 @@ body :is(h1,h2,h3,h4,h5,h6,p,li,ul,ol,label,th,td,dt,dd,span,div,a,button,svg,sm
     [class*="bg-[#B"]) *) {
   color: var(--text-primary);
 }
+
+/* Super Admin: selected boxes in the deep HaulMind green (#043D2E) to break up the white.
+   Text, icon tiles, inputs and buttons inside are re-tinted so they stay readable. */
+.hm-dark {
+  background: #043d2e !important;
+  border-color: rgba(236, 253, 245, 0.1) !important;
+  color: #ecfdf5;
+}
+.hm-dark :is(.text-primary, .text-headings, [class*="text-gray-9"], [class*="text-gray-8"], [class*="text-gray-7"], [class*="text-slate-9"], [class*="text-slate-8"]) {
+  color: #ffffff !important;
+}
+.hm-dark :is(.text-secondary, [class*="text-gray-5"], [class*="text-gray-6"], [class*="text-gray-4"], [class*="text-slate-5"], [class*="text-slate-6"]) {
+  color: #a9d6c2 !important;
+}
+.hm-dark :is([class*="text-green-"], [class*="text-emerald-"], [class*="text-teal-"], [class*="text-blue-"], [class*="text-sky-"], [class*="text-indigo-"], [class*="text-yellow-"], [class*="text-amber-"], [class*="text-orange-"], [class*="text-[#059669]"], [class*="text-[#047857]"], [class*="text-[#d97706]"]) {
+  color: #6ee7b7 !important;
+}
+.hm-dark :is([class*="text-red-"], [class*="text-rose-"], [class*="text-[#ef4444]"], [class*="text-[#f43f5e]"]) {
+  color: #fda4af !important;
+}
+.hm-dark :is(span, p, h1, h2, h3, h4, div).font-semibold:not([class*="text-"]) {
+  color: #ffffff;
+}
+/* icon tiles (light or bright squares) become translucent mint */
+.hm-dark :is(div, span)[class*="rounded-lg"]:is([class*="p-2"], [class*="p-3"]):is([class*="bg-"]) {
+  background: rgba(236, 253, 245, 0.12) !important;
+}
+.hm-dark :is(div, span)[class*="rounded-lg"]:is([class*="p-2"], [class*="p-3"]) svg {
+  color: #6ee7b7 !important;
+}
+/* primary buttons inside a dark box */
+.hm-dark button:is([class*="bg-[#059669]"], [class*="bg-green-"], [class*="bg-emerald-"]) {
+  background: #34d399 !important;
+  color: #022c22 !important;
+}
+.hm-dark :is(input, select, textarea) {
+  background: rgba(236, 253, 245, 0.08) !important;
+  color: #ecfdf5 !important;
+  border-color: rgba(236, 253, 245, 0.2) !important;
+}
+.hm-dark :is(input, textarea)::placeholder {
+  color: #a9d6c2 !important;
+}
+.hm-dark option {
+  color: #0f1f17;
+  background: #ffffff;
+}

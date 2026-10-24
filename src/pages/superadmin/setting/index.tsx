@@ -156,7 +156,7 @@ const SystemSettings = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#059669] mx-auto"></div>
           <p className="mt-4 text-secondary">Loading settings...</p>
         </div>
       </div>
@@ -166,11 +166,11 @@ const SystemSettings = () => {
   return (
     <div className="min-h-screen bg-card p-6">
       {/* Header */}
-      <div className="bg-card rounded-xl shadow-sm border border-theme px-6 py-4 mb-6">
+      <div className="hm-dark bg-card rounded-xl shadow-sm border border-theme px-6 py-4 mb-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-primary flex items-center">
-              <Settings className="w-6 h-6 mr-3 text-purple-600" />
+              <Settings className="w-6 h-6 mr-3 text-[#059669]" />
               System Settings
             </h1>
             <p className="text-secondary mt-1">Manage your super admin profile and preferences</p>
@@ -178,7 +178,7 @@ const SystemSettings = () => {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center px-4 py-2 bg-[#059669] text-white rounded-lg hover:bg-[#047857] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save className="w-4 h-4 mr-2" />
             {saving ? 'Saving...' : 'Save All Changes'}
@@ -191,8 +191,8 @@ const SystemSettings = () => {
         {/* Profile Information */}
         <div className="bg-card rounded-xl shadow-sm border border-theme p-6">
           <div className="flex items-center mb-6">
-            <div className="bg-purple-100 p-2 rounded-lg mr-3">
-              <User className="w-5 h-5 text-purple-600" />
+            <div className="bg-[#ecfdf5] p-2 rounded-lg mr-3">
+              <User className="w-5 h-5 text-[#059669]" />
             </div>
             <h2 className="text-lg font-semibold text-primary">Profile Information</h2>
           </div>
@@ -206,7 +206,7 @@ const SystemSettings = () => {
                 type="text"
                 value={settings.name}
                 onChange={(e) => updateSetting('name', e.target.value)}
-                className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-[#059669] focus:border-[#059669]"
                 placeholder="Enter your full name"
                 required
               />
@@ -222,7 +222,7 @@ const SystemSettings = () => {
                   type="email"
                   value={settings.email}
                   onChange={(e) => updateSetting('email', e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full pl-10 pr-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-[#059669] focus:border-[#059669]"
                   placeholder="Enter your email"
                   required
                 />
@@ -239,7 +239,7 @@ const SystemSettings = () => {
                   type="tel"
                   value={settings.phone}
                   onChange={(e) => updateSetting('phone', e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full pl-10 pr-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-[#059669] focus:border-[#059669]"
                   placeholder="Enter your phone number"
                 />
               </div>
@@ -267,7 +267,7 @@ const SystemSettings = () => {
                   type="text"
                   value={settings.country}
                   onChange={(e) => updateSetting('country', e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full pl-10 pr-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-[#059669] focus:border-[#059669]"
                   placeholder="Enter country"
                 />
               </div>
@@ -282,7 +282,7 @@ const SystemSettings = () => {
                   type="text"
                   value={settings.state}
                   onChange={(e) => updateSetting('state', e.target.value)}
-                  className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-[#059669] focus:border-[#059669]"
                   placeholder="Enter state"
                 />
               </div>
@@ -294,7 +294,7 @@ const SystemSettings = () => {
                   type="text"
                   value={settings.city}
                   onChange={(e) => updateSetting('city', e.target.value)}
-                  className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-[#059669] focus:border-[#059669]"
                   placeholder="Enter city"
                 />
               </div>
@@ -308,7 +308,7 @@ const SystemSettings = () => {
                 value={settings.address}
                 onChange={(e) => updateSetting('address', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-[#059669] focus:border-[#059669]"
                 placeholder="Enter full address"
               />
             </div>
@@ -332,7 +332,7 @@ const SystemSettings = () => {
               value={settings.policies}
               onChange={(e) => updateSetting('policies', e.target.value)}
               rows={5}
-              className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-[#059669] focus:border-[#059669]"
               placeholder="Enter policies or terms"
             />
           </div>
@@ -356,7 +356,7 @@ const SystemSettings = () => {
               min={1}
               value={settings.defaultTrialDays}
               onChange={(e) => updateSetting('defaultTrialDays', e.target.value)}
-              className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-[#059669] focus:border-[#059669]"
               placeholder="e.g. 30"
             />
             <p className="text-xs text-secondary mt-1">
@@ -385,7 +385,7 @@ const SystemSettings = () => {
                   type={showCurrentPassword ? 'text' : 'password'}
                   value={settings.password}
                   onChange={(e) => updateSetting('password', e.target.value)}
-                  className="w-full px-3 py-2 pr-10 border border-theme rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full px-3 py-2 pr-10 border border-theme rounded-lg focus:ring-2 focus:ring-[#059669] focus:border-[#059669]"
                   placeholder="Enter current password"
                 />
                 <button
@@ -411,7 +411,7 @@ const SystemSettings = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={settings.newPassword}
                   onChange={(e) => updateSetting('newPassword', e.target.value)}
-                  className="w-full px-3 py-2 pr-10 border border-theme rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full px-3 py-2 pr-10 border border-theme rounded-lg focus:ring-2 focus:ring-[#059669] focus:border-[#059669]"
                   placeholder="Enter new password (min 6 characters)"
                 />
                 <button

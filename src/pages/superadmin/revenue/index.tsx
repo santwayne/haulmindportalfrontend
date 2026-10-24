@@ -101,7 +101,7 @@ const RevenueDashboard = () => {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                    <p className="text-[#A855F7] mb-4">{error}</p>
+                    <p className="text-[#047857] mb-4">{error}</p>
                     <button
                         onClick={fetchRevenueData}
                         className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
@@ -216,7 +216,7 @@ const RevenueDashboard = () => {
                 {/* Revenue Metrics Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                     {/* Total Revenue */}
-                    <div className="bg-card rounded-xl shadow-sm border border-theme p-6">
+                    <div className="hm-dark bg-card rounded-xl shadow-sm border border-theme p-6">
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-secondary mb-1">Total Revenue</p>
@@ -237,7 +237,7 @@ const RevenueDashboard = () => {
                     </div>
 
                     {/* Monthly Recurring Revenue */}
-                    <div className="bg-card rounded-xl shadow-sm border border-theme p-6">
+                    <div className="hm-dark bg-card rounded-xl shadow-sm border border-theme p-6">
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-secondary mb-1">Monthly Recurring</p>
@@ -258,7 +258,7 @@ const RevenueDashboard = () => {
                     </div>
 
                     {/* Overdue Payments */}
-                    <div className="bg-card rounded-xl shadow-sm border border-theme p-6">
+                    <div className="hm-dark bg-card rounded-xl shadow-sm border border-theme p-6">
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-secondary mb-1">Overdue Amount</p>
@@ -267,17 +267,17 @@ const RevenueDashboard = () => {
                                 </p>
                                 <div className="flex items-center mt-2">
                                     <AlertCircle className="w-4 h-4 text-red-500 mr-1" />
-                                    <span className="text-sm text-[#A855F7]">Needs attention</span>
+                                    <span className="text-sm text-[#047857]">Needs attention</span>
                                 </div>
                             </div>
                             <div className="bg-red-100 p-3 rounded-lg">
-                                <AlertCircle className="w-6 h-6 text-[#A855F7]" />
+                                <AlertCircle className="w-6 h-6 text-[#047857]" />
                             </div>
                         </div>
                     </div>
 
                     {/* Trial Potential */}
-                    <div className="bg-card rounded-xl shadow-sm border border-theme p-6">
+                    <div className="hm-dark bg-card rounded-xl shadow-sm border border-theme p-6">
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-secondary mb-1">Trial Potential</p>
@@ -285,12 +285,12 @@ const RevenueDashboard = () => {
                                     ${typeof trialRevenuePotential === 'number' && !isNaN(trialRevenuePotential) ? trialRevenuePotential.toLocaleString('en-CA', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '0'}
                                 </p>
                                 <div className="flex items-center mt-2">
-                                    <Clock className="w-4 h-4 text-purple-500 mr-1" />
-                                    <span className="text-sm text-purple-600">Conversion pending</span>
+                                    <Clock className="w-4 h-4 text-[#059669] mr-1" />
+                                    <span className="text-sm text-[#059669]">Conversion pending</span>
                                 </div>
                             </div>
-                            <div className="bg-purple-100 p-3 rounded-lg">
-                                <Users className="w-6 h-6 text-purple-600" />
+                            <div className="bg-[#ecfdf5] p-3 rounded-lg">
+                                <Users className="w-6 h-6 text-[#059669]" />
                             </div>
                         </div>
                     </div>

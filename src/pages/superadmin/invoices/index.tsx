@@ -542,7 +542,7 @@ const InvoicesPage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#059669] mx-auto"></div>
           <p className="mt-4 text-secondary">Loading invoices...</p>
         </div>
       </div>
@@ -553,10 +553,10 @@ const InvoicesPage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-[#A855F7] mb-4">{error}</p>
+          <p className="text-[#047857] mb-4">{error}</p>
           <button
             onClick={fetchInvoices}
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+            className="px-4 py-2 bg-[#059669] text-white rounded-lg hover:bg-[#047857]"
           >
             Retry
           </button>
@@ -572,7 +572,7 @@ const InvoicesPage = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold text-primary flex items-center">
-              <Receipt className="w-8 h-8 text-purple-600 mr-3" />
+              <Receipt className="w-8 h-8 text-[#059669] mr-3" />
               Subscription Invoices
             </h1>
             <p className="text-secondary mt-1">View and manage all subscription invoices</p>
@@ -583,19 +583,19 @@ const InvoicesPage = () => {
       <div className="p-6">
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <div className="bg-card rounded-xl shadow-sm border border-theme p-6">
+          <div className="hm-dark bg-card rounded-xl shadow-sm border border-theme p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-secondary mb-1">Total Invoices</p>
                 <p className="text-2xl font-bold text-primary">{stats.total}</p>
               </div>
-              <div className="bg-purple-100 p-3 rounded-lg">
-                <FileText className="w-6 h-6 text-purple-600" />
+              <div className="bg-[#ecfdf5] p-3 rounded-lg">
+                <FileText className="w-6 h-6 text-[#059669]" />
               </div>
             </div>
           </div>
 
-          <div className="bg-card rounded-xl shadow-sm border border-theme p-6">
+          <div className="hm-dark bg-card rounded-xl shadow-sm border border-theme p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-secondary mb-1">Paid Invoices</p>
@@ -607,7 +607,7 @@ const InvoicesPage = () => {
             </div>
           </div>
 
-          <div className="bg-card rounded-xl shadow-sm border border-theme p-6">
+          <div className="hm-dark bg-card rounded-xl shadow-sm border border-theme p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-secondary mb-1">Pending Invoices</p>
@@ -619,7 +619,7 @@ const InvoicesPage = () => {
             </div>
           </div>
 
-          <div className="bg-card rounded-xl shadow-sm border border-theme p-6">
+          <div className="hm-dark bg-card rounded-xl shadow-sm border border-theme p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-secondary mb-1">Total Revenue</p>
@@ -704,7 +704,7 @@ const InvoicesPage = () => {
                 overflow: 'hidden',
                 transition: 'border-color 0.2s ease',
               }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(139,92,246,0.6)')}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(5,150,105,0.6)')}
               onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(15,31,23,0.12)')}
             >
               <Select
@@ -752,7 +752,7 @@ const InvoicesPage = () => {
                 overflow: 'hidden',
                 transition: 'border-color 0.2s ease',
               }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(139,92,246,0.6)')}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(5,150,105,0.6)')}
               onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(15,31,23,0.12)')}
             >
               <Select
@@ -836,8 +836,8 @@ const InvoicesPage = () => {
                     <tr key={invoice._id} className="hover:bg-[rgba(15,31,23,0.03)]">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="bg-purple-100 p-2 rounded-lg mr-3">
-                            <Receipt className="w-5 h-5 text-purple-600" />
+                          <div className="bg-[#ecfdf5] p-2 rounded-lg mr-3">
+                            <Receipt className="w-5 h-5 text-[#059669]" />
                           </div>
                           <div>
                             <div className="text-sm font-medium text-primary">
@@ -936,7 +936,7 @@ const InvoicesPage = () => {
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() => handleViewDetails(invoice)}
-                            className="text-secondary hover:text-purple-600 p-1 rounded transition-colors"
+                            className="text-secondary hover:text-[#059669] p-1 rounded transition-colors"
                             title="View Details"
                           >
                             <Eye className="w-4 h-4" />
@@ -1038,7 +1038,7 @@ const InvoicesPage = () => {
       <Modal
         title={
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Receipt style={{ width: '20px', height: '20px', color: '#8b5cf6' }} />
+            <Receipt style={{ width: '20px', height: '20px', color: '#059669' }} />
             <span style={{ color: '#5a7066', fontWeight: 600 }}>Invoice Details</span>
           </div>
         }
@@ -1071,7 +1071,7 @@ const InvoicesPage = () => {
               if (selectedInvoice) handleExport(selectedInvoice);
             }}
             style={{
-              backgroundColor: '#7c3aed',
+              backgroundColor: '#047857',
               border: '1px solid #6d28d9',
               color: '#fff',
               borderRadius: '8px',
@@ -1109,10 +1109,10 @@ const InvoicesPage = () => {
 
             {/* Invoice Header */}
             <div style={{
-              background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(99,102,241,0.1))',
+              background: 'linear-gradient(135deg, rgba(5,150,105,0.15), rgba(99,102,241,0.1))',
               borderRadius: '10px',
               padding: '16px',
-              border: '1px solid rgba(139,92,246,0.25)',
+              border: '1px solid rgba(5,150,105,0.25)',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <div>
@@ -1142,7 +1142,7 @@ const InvoicesPage = () => {
               border: '1px solid rgba(15,31,23,0.08)',
             }}>
               <h3 style={{ fontSize: '13px', fontWeight: 600, color: '#5a7066', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Building2 style={{ width: '16px', height: '16px', color: '#8b5cf6' }} />
+                <Building2 style={{ width: '16px', height: '16px', color: '#059669' }} />
                 Customer Information
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -1186,7 +1186,7 @@ const InvoicesPage = () => {
               border: '1px solid rgba(15,31,23,0.08)',
             }}>
               <h3 style={{ fontSize: '13px', fontWeight: 600, color: '#5a7066', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <CreditCard style={{ width: '16px', height: '16px', color: '#8b5cf6' }} />
+                <CreditCard style={{ width: '16px', height: '16px', color: '#059669' }} />
                 Plan Information
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -1293,7 +1293,7 @@ const InvoicesPage = () => {
               border: '1px solid rgba(15,31,23,0.08)',
             }}>
               <h3 style={{ fontSize: '13px', fontWeight: 600, color: '#5a7066', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Calendar style={{ width: '16px', height: '16px', color: '#8b5cf6' }} />
+                <Calendar style={{ width: '16px', height: '16px', color: '#059669' }} />
                 Additional Information
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>

@@ -439,7 +439,7 @@ const Billing = () => {
               return (
                 <div key={i} className={`relative bg-card rounded-xl p-4 border-2 transition-shadow ${isPopular ? 'border-blue-500 shadow-md' : 'border-theme'}`}>
                   {isPopular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full border border-blue-200">Most popular</div>
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-100 text-[#047857] text-xs font-semibold px-3 py-1 rounded-full border border-blue-200">Most popular</div>
                   )}
                   <p className="text-xs font-semibold text-secondary uppercase tracking-wide mb-1">{tier.minTrucks} – {tier.maxTrucks} Trucks</p>
                   <div className="flex items-baseline gap-1 mb-1">
@@ -561,7 +561,7 @@ const Billing = () => {
 
           <div className="p-5 grid grid-cols-2 gap-4">
             {/* Tier 1: 1–10 Trucks */}
-            <div className="rounded-xl border-2 bg-card p-4" style={{ borderColor: 'rgba(245,158,11,0.3)' }}>
+            <div className="rounded-xl border-2 bg-card p-4" style={{ borderColor: 'rgba(236,253,245,0.3)' }}>
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                   <Zap className="w-4 h-4 text-white" />
@@ -586,7 +586,7 @@ const Billing = () => {
             {/* Tier 2: 11–20 Trucks */}
             <div className="rounded-xl border-2 bg-card p-4" style={{ borderColor: 'rgba(5,150,105,0.25)' }}>
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-[#059669] rounded-lg flex items-center justify-center">
                   <Star className="w-4 h-4 text-white" />
                 </div>
                 <div>
@@ -792,7 +792,7 @@ const Billing = () => {
 
           {/* Statistics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div className="rounded-xl shadow-lg p-4 text-white border" style={{ background: 'linear-gradient(135deg, #022c22 0%, #065f46 100%)', borderColor: 'rgba(5,150,105,0.3)' }}>
+            <div className="rounded-xl shadow-lg p-4 text-white border" style={{ background: '#043D2E', borderColor: 'rgba(5,150,105,0.3)' }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Total Plans</p>
@@ -801,7 +801,7 @@ const Billing = () => {
                 <CreditCard className="w-8 h-8 opacity-80" />
               </div>
             </div>
-            <div className="rounded-xl shadow-lg p-4 text-white border" style={{ background: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)', borderColor: 'rgba(5,150,105,0.2)' }}>
+            <div className="rounded-xl shadow-lg p-4 text-white border" style={{ background: '#043D2E', borderColor: 'rgba(5,150,105,0.2)' }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Active Plans</p>
@@ -810,7 +810,7 @@ const Billing = () => {
                 <CheckCircle className="w-8 h-8 opacity-80" />
               </div>
             </div>
-            <div className="rounded-xl shadow-lg p-4 text-white border" style={{ background: 'linear-gradient(135deg, #451a03 0%, #78350f 100%)', borderColor: 'rgba(245,158,11,0.25)' }}>
+            <div className="rounded-xl shadow-lg p-4 text-white border" style={{ background: '#043D2E', borderColor: 'rgba(245,158,11,0.25)' }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Default Plan</p>
