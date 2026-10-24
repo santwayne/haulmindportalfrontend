@@ -79,7 +79,7 @@ const ManifestSidebar: React.FC<ManifestSidebarProps> = ({
             {isCollapsed ? (
               <img src={Logo} alt="Logo" className="h-auto w-6 transition-all duration-300" />
             ) : (
-              <img src={FullLogo} alt="Logo" className="h-auto max-h-10 transition-all duration-300" />
+              <img src={FullLogo} alt="Logo" className="h-auto max-h-20 transition-all duration-300" />
             )}
           </div>
         </div>

@@ -32,7 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
                 <div className="flex items-center flex-1">
                     {!isCollapsed && (
                         <div className="flex items-center space-x-2 flex-1">
-                            <img src={Logo} alt="FleetGo Logo" className="w-20 h-auto" />
+                            <img src={Logo} alt="HaulMind Logo" className="w-36 h-auto" />
                         </div>
                     )}
                     {isCollapsed && (

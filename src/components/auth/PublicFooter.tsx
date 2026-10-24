@@ -10,7 +10,7 @@ export function PublicFooter() {
         {/* Brand column */}
         <div>
           <div className="flex items-center gap-2">
-            <img src={Logo} alt="Logistiq Innovations" className="h-9 w-auto" />
+            <img src={Logo} alt="Logistiq Innovations" className="h-20 w-auto" />
           </div>
           <p className="mt-4 text-sm" style={{ color: "var(--text-secondary)" }}>
             AI-powered platform for smarter trucking and fleet operations.

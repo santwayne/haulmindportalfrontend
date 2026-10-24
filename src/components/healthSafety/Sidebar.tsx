@@ -78,7 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false }) => {
             {isCollapsed ? (
               <img src={Logo} alt="FleetGo Logo" className="h-auto w-6 transition-all duration-300" />
             ) : (
-              <img src={FullLogo} alt="FleetGo Logo" className="h-auto max-h-10 transition-all duration-300" />
+              <img src={FullLogo} alt="FleetGo Logo" className="h-auto max-h-20 transition-all duration-300" />
             )}
           </div>
         </div>
