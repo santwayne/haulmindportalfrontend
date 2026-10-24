@@ -1,0 +1,1 @@
+import{A as a}from"./index-CnrUjWUV.js";const c=async t=>{var r;try{return(await a.post("dispatcher/fuel-report",t)).data}catch(e){return(r=e.response)==null?void 0:r.data}},o=async()=>{var t;try{return(await a.get("dispatcher/place")).data}catch(r){return(t=r.response)==null?void 0:t.data}};export{c,o as l};

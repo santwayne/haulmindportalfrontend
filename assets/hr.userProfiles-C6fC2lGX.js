@@ -1,0 +1,1 @@
+import{A as i}from"./index-CnrUjWUV.js";const f=async(e={})=>{const t=new URLSearchParams;Object.entries(e).forEach(([o,r])=>{r!=null&&r!==""&&t.set(o,String(r))});const s=t.toString(),n=`/hr/user-profiles${s?`?${s}`:""}`;return(await i.get(n)).data};export{f};

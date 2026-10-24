@@ -1,0 +1,1 @@
+import{j as r}from"./index-CnrUjWUV.js";import"./vendor-antd-AQGMDB11.js";import"./vendor-react-Cw1Y5kQV.js";import"./vendor-export-Be836oOH.js";import"./vendor-redux-BBPoFZ78.js";import"./vendor-icons-CyiE_MWF.js";import"./vendor-socket-BcxXcwBL.js";const n=()=>r.jsx("div",{children:"Api"});export{n as default};
