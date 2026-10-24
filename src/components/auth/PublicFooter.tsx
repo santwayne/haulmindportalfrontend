@@ -10,7 +10,7 @@ export function PublicFooter() {
         {/* Brand column */}
         <div>
           <div className="flex items-center gap-2">
-            <img src={Logo} alt="Logistiq Innovations" className="h-20 w-auto" />
+            <img src={Logo} alt="HaulMind" className="h-20 w-auto" />
           </div>
           <p className="mt-4 text-sm" style={{ color: "var(--text-secondary)" }}>
             AI-powered platform for smarter trucking and fleet operations.
@@ -24,10 +24,10 @@ export function PublicFooter() {
           </h4>
           <ul className="space-y-2 text-sm" style={{ color: "var(--text-secondary)" }}>
             {[
-              { href: "https://logistiqinnovations.ca/ai", label: "AI Platform" },
-              { href: "https://logistiqinnovations.ca/manifest", label: "Manifest" },
-              { href: "https://logistiqinnovations.ca/compliance", label: "Compliance" },
-              { href: "https://logistiqinnovations.ca/driver-app", label: "Driver App" },
+              { href: "https://haulmind.wayneesolutions.com/ai", label: "AI Platform" },
+              { href: "https://haulmind.wayneesolutions.com/manifest", label: "Manifest" },
+              { href: "https://haulmind.wayneesolutions.com/compliance", label: "Compliance" },
+              { href: "https://haulmind.wayneesolutions.com/driver-app", label: "Driver App" },
             ].map((link) => (
               <li key={link.href}>
                 <a
@@ -51,7 +51,7 @@ export function PublicFooter() {
           <ul className="space-y-2 text-sm">
             <li>
               <a
-                href="https://logistiqinnovations.ca/contact"
+                href="https://haulmind.wayneesolutions.com/contact"
                 style={{ color: "var(--text-secondary)" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-primary)")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-secondary)")}
@@ -61,7 +61,7 @@ export function PublicFooter() {
             </li>
             <li>
               <a
-                href="https://portal.logistiqinnovations.ca/"
+                href="https://haulmindportal.wayneesolutions.com/"
                 style={{ color: "var(--text-secondary)" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-primary)")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-secondary)")}
@@ -105,19 +105,19 @@ export function PublicFooter() {
             </li>
             <li>
               <a
-                href="mailto:info@logistiqinnovations.ca"
+                href="mailto:hello@haulmind.io"
                 style={{ color: "var(--text-secondary)" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-primary)")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-secondary)")}
                 className="flex items-center gap-2"
               >
                 
-                <span>info@logistiqinnovations.ca</span>
+                <span>hello@haulmind.io</span>
               </a>
             </li>
           </ul>
           <a
-            href="https://logistiqinnovations.ca/contact"
+            href="https://haulmind.wayneesolutions.com/contact"
             className="inline-block mt-4 px-4 py-2 rounded-lg text-sm font-medium text-white transition-all duration-200"
             style={{ backgroundColor: "var(--accent-navyblue)" }}
             onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#047857")}
@@ -137,7 +137,7 @@ export function PublicFooter() {
           backgroundColor: "var(--bg-main)",
         }}
       >
-        © {new Date().getFullYear()} Logistiq Innovations. All rights reserved.
+        © {new Date().getFullYear()} HaulMind. All rights reserved.
       </div>
     </footer>
   );

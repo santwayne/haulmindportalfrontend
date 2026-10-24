@@ -3,12 +3,12 @@ import { Menu, X } from "lucide-react";
 import Logo from "../../assets/FleetGo.png";
 
 const nav = [
-  { href: "https://logistiqinnovations.ca/", label: "Home" },
-  { href: "https://logistiqinnovations.ca/ai", label: "AI Platform" },
-  { href: "https://logistiqinnovations.ca/manifest", label: "Manifest" },
-  { href: "https://logistiqinnovations.ca/compliance", label: "Compliance" },
-  { href: "https://logistiqinnovations.ca/driver-app", label: "Driver App" },
-  { href: "https://logistiqinnovations.ca/contact", label: "Contact" },
+  { href: "https://haulmind.wayneesolutions.com/", label: "Home" },
+  { href: "https://haulmind.wayneesolutions.com/ai", label: "AI Platform" },
+  { href: "https://haulmind.wayneesolutions.com/manifest", label: "Manifest" },
+  { href: "https://haulmind.wayneesolutions.com/compliance", label: "Compliance" },
+  { href: "https://haulmind.wayneesolutions.com/driver-app", label: "Driver App" },
+  { href: "https://haulmind.wayneesolutions.com/contact", label: "Contact" },
 ];
 
 export function PublicHeader() {
@@ -26,10 +26,10 @@ export function PublicHeader() {
 
       <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <a href="https://logistiqinnovations.ca/" className="flex items-center gap-2 group">
+        <a href="https://haulmind.wayneesolutions.com/" className="flex items-center gap-2 group">
           <img
             src={Logo}
-            alt="Logistiq Innovations"
+            alt="HaulMind"
             className="h-12 w-auto group-hover:scale-105 transition-transform"
           />
         </a>
@@ -53,7 +53,7 @@ export function PublicHeader() {
         {/* Desktop CTA */}
         <div className="hidden lg:flex items-center gap-3">
           <a
-            href="https://logistiqinnovations.ca/contact"
+            href="https://haulmind.wayneesolutions.com/contact"
             className="px-4 py-2 rounded-lg text-sm font-medium text-white transition-all duration-200"
             style={{ backgroundColor: "var(--accent-navyblue)" }}
             onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#047857")}
@@ -97,7 +97,7 @@ export function PublicHeader() {
             </a>
           ))}
           <a
-            href="https://logistiqinnovations.ca/contact"
+            href="https://haulmind.wayneesolutions.com/contact"
             onClick={() => setOpen(false)}
             className="mt-2 px-4 py-2 rounded-lg text-sm font-medium text-white text-center transition-all"
             style={{ backgroundColor: "var(--accent-navyblue)" }}
@@ -111,8 +111,8 @@ export function PublicHeader() {
             <a href="tel:+16264797965" className="flex items-center gap-2 text-xs py-1" style={{ color: "var(--text-secondary)" }}>
              <span>US: +1 (626) 479-7965</span>
             </a>
-            <a href="mailto:info@logistiqinnovations.ca" className="flex items-center gap-2 text-xs py-1" style={{ color: "var(--text-secondary)" }}>
-             <span>info@logistiqinnovations.ca</span>
+            <a href="mailto:hello@haulmind.io" className="flex items-center gap-2 text-xs py-1" style={{ color: "var(--text-secondary)" }}>
+             <span>hello@haulmind.io</span>
             </a>
           </div>
         </div>

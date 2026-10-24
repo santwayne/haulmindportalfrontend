@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://portal.logistiqinnovations.ca/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://haulmindportal.wayneesolutions.com/api/v1';
 
 // Get all insurance claims
 export const getInsuranceClaims = async (params?: {
