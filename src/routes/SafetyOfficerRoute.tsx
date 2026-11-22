@@ -3,7 +3,7 @@ import { Suspense, lazy } from "react";
 import React from "react";
 import Loading from "../components/common/Loading";
 import ErrorBoundary from "../components/common/ErrorBoundary";
-import { getUserRole } from "../utils/auth";
+import { canAccessPortal } from "../utils/portalAccess";
 
 const HealthSafetyRoutes = lazy(() => import("./AdminFeatures/HealthSafetyRoutes"));
 
@@ -16,10 +16,9 @@ const RouteDebugger = ({ children }: { children: React.ReactNode }) => {
 };
 
 function SafetyOfficerRoute() {
-  const userRole = getUserRole();
 
   // If not safety officer, redirect to login
-  if (userRole !== 'safety officer') {
+  if (!canAccessPortal('health_safety')) {
     return <Navigate to="/" replace />;
   }
 

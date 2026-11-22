@@ -130,3 +130,13 @@ export const importEmployeesFromFile = async (file: File, fieldMap: Record<strin
     return (error as any).response?.data;
   }
 };
+
+// Advanced Permissions: extra portals an employee can open besides their own role's panel
+export const updateEmployeePortals = async (id: string, portals: string[]) => {
+  try {
+    const res: AxiosResponse = await apiClient.patch(`employee/${id}/portals`, { portals });
+    return res.data;
+  } catch (error) {
+    return (error as any).response?.data || { success: false, message: 'Could not save portal access' };
+  }
+};

@@ -25,6 +25,7 @@ const Trucks = lazy(() => import("../../pages/admin/driverManagement/trucks/Truc
 const Trailers = lazy(() => import("../../pages/admin/driverManagement/trailers/index"));
 const HRRoleBasedTraining = lazy(() => import("../../pages/admin/training/hrTraining/HRRoleBasedTraining"));
 const TrainingContent = lazy(() => import("../../pages/admin/training/TrainingContentView"));
+const HRAuditTrail = lazy(() => import("../../pages/admin/driverManagement/auditTrail/index"));
 
 function DriverManagementRoutes() {
     return (
@@ -37,7 +38,9 @@ function DriverManagementRoutes() {
 
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/employeelist" element={<EmployeeList />} />
-                    <Route path="/customers" element={<Customers />} />
+                    <Route path="/customers" element={<Customers key="all" />} />
+                    <Route path="/carriers" element={<Customers key="carriers" lockedCategory="Carrier" />} />
+                    <Route path="/customs-brokers" element={<Customers key="customs-brokers" lockedCategory="Customs Broker" />} />
                     <Route path="/documents" element={<Documents />} />
                     <Route path="/company-documents" element={<CompanyDocuments />} />
                     <Route path="/vehicle-documents" element={<VehicleDocuments />} />
@@ -55,6 +58,7 @@ function DriverManagementRoutes() {
                     <Route path="/trailers" element={<Trailers />} />
                     <Route path="/role-based-training" element={<HRRoleBasedTraining />} />
                     <Route path="/training" element={<TrainingContent />} />
+                    <Route path="/audit-trail" element={<HRAuditTrail />} />
                 </Route>
             </Routes>
         </Suspense>

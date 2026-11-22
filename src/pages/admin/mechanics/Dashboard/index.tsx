@@ -71,6 +71,12 @@ const Dashboard: React.FC = () => {
 
   const recentOrders = stats.recentOrders || [];
 
+  // Completed work lives in Completed Orders; open work in Assign Tasks (services or repair tab)
+  const taskLink = (order: { status?: string; type?: string }) => {
+    if ((order.status || "").toLowerCase() === "completed") return `${basePath}/completed-orders`;
+    return order.type === "order" ? `${basePath}/assign-tasks?tab=repairs` : `${basePath}/assign-tasks`;
+  };
+
   const formatCurrency = (n: number) =>
     new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0 }).format(n);
 
@@ -112,7 +118,7 @@ const Dashboard: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="text-xl font-bold text-headings">Mechanics Dashboard</h1>
-          <p className="text-sm text-secondary mt-1">Overview of maintenance orders for the selected month</p>
+          <p className="text-sm text-secondary mt-1">Open tasks right now, plus work completed in the selected month</p>
         </div>
 
         <div className="relative">
@@ -157,10 +163,10 @@ const Dashboard: React.FC = () => {
         <div className="p-4 rounded-lg border-2 border-theme bg-card hover:border-[var(--accent-blue)]/40 transition">
           <div className="flex items-center gap-2">
             <LayoutGrid className="text-[var(--accent-blue)]" size={20} />
-            <span className="text-sm font-medium text-[var(--accent-blue)]">Total Orders</span>
+            <span className="text-sm font-medium text-[var(--accent-blue)]">Total Tasks</span>
           </div>
           <p className="text-2xl font-bold  mt-1">{stats.total}</p>
-          <p className="text-xs text-secondary mt-0.5">This month</p>
+          <p className="text-xs text-secondary mt-0.5">Open + completed this month</p>
         </div>
 
         <div className="p-4 rounded-lg border-2 border-theme bg-card hover:border-green-500/40 transition">
@@ -169,7 +175,7 @@ const Dashboard: React.FC = () => {
             <span className="text-sm font-medium text-[var(--accent-green)]">Completed</span>
           </div>
           <p className="text-2xl font-bold  mt-1">{stats.completed}</p>
-          <p className="text-xs text-secondary  mt-0.5">This month</p>
+          <p className="text-xs text-secondary  mt-0.5">{MONTHS[selectedMonth]}</p>
         </div>
 
         <div className="p-4 rounded-lg border-2 border-theme bg-card hover:border-amber-500/40 transition">
@@ -178,7 +184,7 @@ const Dashboard: React.FC = () => {
             <span className="text-sm font-medium text-[var(--accent-amber)]">Pending</span>
           </div>
           <p className="text-2xl font-bold text-primary mt-1">{stats.pending}</p>
-          <p className="text-xs text-secondary mt-0.5">This month</p>
+          <p className="text-xs text-secondary mt-0.5">Open right now</p>
         </div>
 
         <div className="p-4 rounded-lg border-2 border-theme bg-card hover:border-[var(--accent-blue)]/40 transition">
@@ -238,15 +244,15 @@ const Dashboard: React.FC = () => {
           <div>
             <h2 className="text-sm font-bold text-headings flex items-center gap-2">
               <Package className="text-[var(--accent-navyblue)]" size={18} />
-              Recent Orders
+              Recent Activity
             </h2>
-            <p className="text-xs text-secondary mt-0.5">Last 5 orders</p>
+            <p className="text-xs text-secondary mt-0.5">Latest 5 tasks</p>
           </div>
           <button
-            onClick={() => navigate(`${basePath}/orders`)}
+            onClick={() => navigate(`${basePath}/assign-tasks`)}
             className="flex items-center gap-2 text-sm font-medium text-[var(--accent-blue)] hover:text-[#3598c4] transition"
           >
-            View all orders
+            View all tasks
             <ArrowRight size={16} />
           </button>
         </div>
@@ -265,7 +271,7 @@ const Dashboard: React.FC = () => {
               {recentOrders.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-4 py-8 text-center text-secondary">
-                    No recent orders
+                    No recent tasks
                   </td>
                 </tr>
               ) : (
@@ -273,7 +279,7 @@ const Dashboard: React.FC = () => {
                   <tr
                     key={order.id}
                     className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition"
-                    onClick={() => navigate(`${basePath}/orders`)}
+                    onClick={() => navigate(taskLink(order))}
                   >
                     <td className="px-4 py-3 text-sm font-medium text-secondary">{order.unit}</td>
                     <td className="px-4 py-3 text-sm text-secondary">{order.description}</td>
@@ -291,7 +297,7 @@ const Dashboard: React.FC = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate(`${basePath}/orders`);
+                          navigate(taskLink(order));
                         }}
                         className="text-sm font-medium text-[var(--accent-blue)] hover:text-[#3598c4]"
                       >

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   DollarSign,
   Building2,
@@ -11,6 +12,7 @@ import {
 import { getSuperAdminDashboard } from '../../../axios/api/superadmin';
 
 const SuperAdminOverview = () => {
+  const navigate = useNavigate();
   const [selectedTimeRange, setSelectedTimeRange] = useState('30d');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +57,9 @@ const SuperAdminOverview = () => {
     const statusLower = status.toLowerCase();
     switch (statusLower) {
       case 'active': return 'bg-green-100 text-green-800';
+      case 'paid': return 'bg-green-100 text-green-800';
+      case 'overdue': return 'bg-red-100 text-red-800';
+      case 'failed': return 'bg-red-100 text-red-800';
       case 'pending': return 'bg-blue-100 text-blue-800';
       case 'trial': return 'bg-blue-100 text-blue-800';
       case 'suspended': return 'bg-red-100 text-red-800';
@@ -129,7 +134,7 @@ const SuperAdminOverview = () => {
     {
       title: 'Total Customers',
       value: typeof stats.totalCustomers === 'number' ? stats.totalCustomers.toLocaleString() : (stats.totalCustomers || '0'),
-      change: typeof stats.customerGrowth === 'number' ? `${stats.customerGrowth >= 0 ? '+' : ''}${stats.customerGrowth.toFixed(1)}%` : '0%',
+      change: typeof stats.customerGrowth === 'number' ? `${stats.customerGrowth >= 0 ? '+' : ''}${stats.customerGrowth.toFixed(1)}%` : null,
       trend: (typeof stats.customerGrowth === 'number' && stats.customerGrowth >= 0) ? 'up' : 'down',
       icon: Building2,
       color: 'bg-[#059669]'
@@ -137,15 +142,15 @@ const SuperAdminOverview = () => {
     {
       title: 'Active Subscriptions',
       value: typeof stats.activeSubscriptions === 'number' ? stats.activeSubscriptions.toLocaleString() : (stats.activeSubscriptions || '0'),
-      change: typeof stats.subscriptionGrowth === 'number' ? `${stats.subscriptionGrowth >= 0 ? '+' : ''}${stats.subscriptionGrowth.toFixed(1)}%` : '0%',
+      change: typeof stats.subscriptionGrowth === 'number' ? `${stats.subscriptionGrowth >= 0 ? '+' : ''}${stats.subscriptionGrowth.toFixed(1)}%` : null,
       trend: (typeof stats.subscriptionGrowth === 'number' && stats.subscriptionGrowth >= 0) ? 'up' : 'down',
       icon: UserCheck,
       color: 'bg-green-500'
     },
     {
-      title: 'Current Month Revenue',
+      title: `Revenue (last ${selectedTimeRange})`,
       value: formatCurrency(typeof stats.currentMonthRevenue === 'number' ? stats.currentMonthRevenue : 0),
-      change: typeof stats.revenueChange === 'number' ? `${stats.revenueChange >= 0 ? '+' : ''}${stats.revenueChange.toFixed(1)}%` : '0%',
+      change: typeof stats.revenueChange === 'number' ? `${stats.revenueChange >= 0 ? '+' : ''}${stats.revenueChange.toFixed(1)}%` : null,
       trend: (typeof stats.revenueChange === 'number' && stats.revenueChange >= 0) ? 'up' : 'down',
       icon: DollarSign,
       color: 'bg-[#059669]'
@@ -153,7 +158,7 @@ const SuperAdminOverview = () => {
     {
       title: 'Active Customers',
       value: typeof stats.totalActiveCustomers === 'number' ? stats.totalActiveCustomers.toLocaleString() : (stats.totalActiveCustomers || stats.activeCustomers || '0'),
-      change: typeof stats.customerGrowth === 'number' ? `${stats.customerGrowth >= 0 ? '+' : ''}${stats.customerGrowth.toFixed(1)}%` : '0%',
+      change: typeof stats.customerGrowth === 'number' ? `${stats.customerGrowth >= 0 ? '+' : ''}${stats.customerGrowth.toFixed(1)}%` : null,
       trend: (typeof stats.customerGrowth === 'number' && stats.customerGrowth >= 0) ? 'up' : 'down',
       icon: Package,
       color: 'bg-orange-500'
@@ -198,15 +203,17 @@ const SuperAdminOverview = () => {
                     <div className={`${stat.color} p-3 rounded-lg`}>
                       <IconComponent className="w-6 h-6 text-white" />
                     </div>
-                    <div className={`flex items-center text-sm font-medium ${stat.trend === 'up' ? 'text-green-600' : 'text-[#047857]'
-                      }`}>
-                      {stat.trend === 'up' ? (
-                        <ArrowUp className="w-4 h-4 mr-1" />
-                      ) : (
-                        <ArrowDown className="w-4 h-4 mr-1" />
-                      )}
-                      {stat.change}
-                    </div>
+                    {stat.change !== null && (
+                      <div className={`flex items-center text-sm font-medium ${stat.trend === 'up' ? 'text-green-600' : 'text-[#047857]'
+                        }`}>
+                        {stat.trend === 'up' ? (
+                          <ArrowUp className="w-4 h-4 mr-1" />
+                        ) : (
+                          <ArrowDown className="w-4 h-4 mr-1" />
+                        )}
+                        {stat.change}
+                      </div>
+                    )}
                   </div>
                   <div className="mt-4">
                     <h3 className="text-2xl font-bold text-primary">{stat.value}</h3>
@@ -224,7 +231,11 @@ const SuperAdminOverview = () => {
               <div className="px-6 py-4 border-b border-theme">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold text-primary">Recent Customers</h2>
-                  <button className="text-[#059669] hover:text-[#047857] text-sm font-medium">
+                  <button
+                    type="button"
+                    onClick={() => navigate('/superadmin/viewalladmins')}
+                    className="text-purple-600 hover:text-purple-700 text-sm font-medium"
+                  >
                     View All Customers
                   </button>
                 </div>

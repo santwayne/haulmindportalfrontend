@@ -3,7 +3,7 @@ import { Suspense, lazy } from "react";
 import React from "react";
 import Loading from "../components/common/Loading";
 import ErrorBoundary from "../components/common/ErrorBoundary";
-import { getUserRole } from "../utils/auth";
+import { canAccessPortal } from "../utils/portalAccess";
 
 const HRManagementRoutes = lazy(() => import("./AdminFeatures/HRManagementRoutes"));
 
@@ -17,10 +17,9 @@ const RouteDebugger = ({ children }: { children: React.ReactNode }) => {
 
 function HRRoute() {
   // Check if user is HR
-  const userRole = getUserRole();
   
   // If not HR, redirect to login
-  if (userRole !== 'hr') {
+  if (!canAccessPortal('human_resource')) {
     return <Navigate to="/" replace />;
   }
 

@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Plus, Info, ChevronUp, ChevronDown, X, User, FileText, Upload, Edit, Trash2, Save, Calendar, Eye, EyeOff, FileDown, MessageSquare } from 'lucide-react';
+import { COUNTRIES, sortByDialCodeMatch, type Country } from '../../../../utils/countries';
 import TimelineNotes from '../../../../components/common/TimelineNotes';
 import { useAutoSaveDraft } from '../../../../customHooks/useAutoSaveDraft';
+import { toDraftSafe } from '../../../../utils/draftSnapshot';
 import DraftRestoreBanner from '../../../../components/common/DraftRestoreBanner';
 import AutoSaveIndicator from '../../../../components/common/AutoSaveIndicator';
-import ExcelJS from 'exceljs';
 import { FaTimes, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import * as employeeApi from '../../../../axios/api/employee';
 import { importEmployeesFromFile } from '../../../../axios/api/employee';
@@ -12,6 +13,9 @@ import ImportButton from '../../../../components/common/ImportButton';
 import { getDocumentsByEmployee, updateEmployeeDocument, deleteEmployeeDocument } from '../../../../axios/api/employeeDocument';
 import { deleteDeductionAddition } from '../../../../axios/api/account.settlement';
 import AddressSearch from '../../../../components/common/AddressSearch';
+import DateOfBirthField from '../../../../components/common/DateOfBirthField';
+import AdvancedPermissionsPanel from '../../../../components/hr/AdvancedPermissionsPanel';
+import { exportFullRecords, formatExportDate } from '../../../../utils/fullRecordExport';
 
 interface Employee {
   _id?: string;
@@ -69,16 +73,6 @@ const ToastNotificationComponent = ({ notification, onClose }: { notification: T
     </div>
   );
 };
-
-// Country selector data for the phone field, cached at module scope so navigating
-// away from and back to this page doesn't re-hit the public restcountries.com API.
-interface Country {
-  name: string;
-  code: string;
-  flag: string;
-  dialCode: string;
-}
-let cachedCountries: Country[] | null = null;
 
 const EmployeesPage = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -186,7 +180,7 @@ const EmployeesPage = () => {
   const [editingAdditionId, setEditingAdditionId] = useState<string | null>(null);
 
   // Country selector state for phone (Country type + fetch cache declared at module scope above)
-  const [countries, setCountries] = useState<Country[]>(cachedCountries || []);
+  const countries = COUNTRIES;
   const [phoneCountry, setPhoneCountry] = useState<string>('US');
   const [phoneCountryDropdownOpen, setPhoneCountryDropdownOpen] = useState(false);
   const [phoneCountrySearch, setPhoneCountrySearch] = useState('');
@@ -197,7 +191,7 @@ const EmployeesPage = () => {
     if (!phone) return { countryCode: 'US', phoneNumber: '' };
 
     const cleanPhone = phone.trim();
-    const sortedCountries = [...countriesList].sort((a, b) => b.dialCode.length - a.dialCode.length);
+    const sortedCountries = sortByDialCodeMatch(countriesList);
 
     for (const country of sortedCountries) {
       if (cleanPhone.startsWith(country.dialCode)) {
@@ -210,44 +204,6 @@ const EmployeesPage = () => {
 
     return { countryCode: 'US', phoneNumber: cleanPhone.replace(/^\+1/, '').trim() };
   };
-
-  // Fetch countries data (skip the network call entirely if we already cached it this session)
-  useEffect(() => {
-    if (cachedCountries) return;
-
-    fetch('https://restcountries.com/v3.1/all?fields=name,flag,idd,cca2')
-      .then(res => res.json())
-      .then(data => {
-        const sortedCountries = data
-          .filter((c: any) => c.idd && c.idd.root)
-          .map((c: any) => ({
-            name: c.name.common,
-            code: c.cca2,
-            flag: c.flag,
-            dialCode: c.idd.root + (c.idd.suffixes ? c.idd.suffixes[0] : ''),
-          }))
-          .sort((a: Country, b: Country) => a.name.localeCompare(b.name));
-
-        cachedCountries = sortedCountries;
-        setCountries(sortedCountries);
-        const defaultCountry = sortedCountries.find((c: Country) => c.code === 'US');
-        if (defaultCountry) {
-          setPhoneCountry('US');
-        }
-      })
-      .catch(() => {
-        const fallback = [
-          { name: 'United States', code: 'US', flag: '🇺🇸', dialCode: '+1' },
-          { name: 'Canada', code: 'CA', flag: '🇨🇦', dialCode: '+1' },
-          { name: 'India', code: 'IN', flag: '🇮🇳', dialCode: '+91' },
-          { name: 'United Kingdom', code: 'GB', flag: '🇬🇧', dialCode: '+44' },
-          { name: 'Australia', code: 'AU', flag: '🇦🇺', dialCode: '+61' },
-        ];
-        cachedCountries = fallback;
-        setCountries(fallback);
-        setPhoneCountry('US');
-      });
-  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -287,8 +243,8 @@ const EmployeesPage = () => {
 
   // Auto-save draft protection (crash/power-loss safety net for the create/edit form)
   const employeeDraftSnapshot = useMemo(
-    () => ({ basicData, personalData, notesBenefits, deductions, additions }),
-    [basicData, personalData, notesBenefits, deductions, additions]
+    () => toDraftSafe({ basicData, personalData, notesBenefits, deductions, additions, documents, activeFormTab }),
+    [basicData, personalData, notesBenefits, deductions, additions, documents, activeFormTab]
   );
   const {
     status: draftStatus,
@@ -312,6 +268,8 @@ const EmployeesPage = () => {
     if (typeof draft.notesBenefits === 'string') setNotesBenefits(draft.notesBenefits);
     if (Array.isArray(draft.deductions)) setDeductions(draft.deductions);
     if (Array.isArray(draft.additions)) setAdditions(draft.additions);
+    if (Array.isArray(draft.documents)) setDocuments(draft.documents);
+    if (draft.activeFormTab) setActiveFormTab(draft.activeFormTab);
   };
 
   // Toast notifications state
@@ -917,58 +875,35 @@ const EmployeesPage = () => {
   };
 
   const handleExportEmployees = async () => {
-    const workbook = new ExcelJS.Workbook();
-    workbook.creator = 'Logistiq Innovation';
-    workbook.created = new Date();
-    const sheet = workbook.addWorksheet('Employees', { views: [{ state: 'frozen', ySplit: 1 }] });
-
-    sheet.columns = [
-      { header: 'First Name', key: 'firstName', width: 18 },
-      { header: 'Last Name', key: 'lastName', width: 18 },
-      { header: 'Email', key: 'email', width: 30 },
-      { header: 'Phone', key: 'phone', width: 18 },
-      { header: 'Role', key: 'role', width: 22 },
-      { header: 'Department', key: 'department', width: 20 },
-      { header: 'Status', key: 'status', width: 12 },
-      { header: 'Created At', key: 'createdAt', width: 18 },
-    ];
-
-    const headerRow = sheet.getRow(1);
-    headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
-    headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF42AEEC' } };
-    headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
-    headerRow.height = 22;
-
-    filteredEmployees.forEach((emp: any) => {
-      const nameParts = (emp.name || '').split(' ');
-      const row = sheet.addRow({
-        firstName: emp.firstName || nameParts[0] || '',
-        lastName: emp.lastName || nameParts.slice(1).join(' ') || '',
-        email: emp.email || '',
-        phone: emp.phone || '',
-        role: emp.role || '',
-        department: emp.department || '',
-        status: emp.status || '',
-        createdAt: emp.createdAt ? new Date(emp.createdAt).toLocaleDateString() : '',
-      });
-      row.alignment = { vertical: 'middle' };
+    // Every field on the record (hire date, address, pay, etc.), important ones first
+    const d = (e: any) => e.details || {};
+    await exportFullRecords({
+      records: filteredEmployees as any[],
+      sheetName: 'Employees',
+      fileName: `Employees-${new Date().toISOString().split('T')[0]}.xlsx`,
+      preferred: [
+        { header: 'Employee ID', get: (e) => d(e).employeeCode || e.employeeId || e.internalId },
+        { header: 'First Name', get: (e) => e.firstName || (e.name || '').split(' ')[0] },
+        { header: 'Last Name', get: (e) => e.lastName || (e.name || '').split(' ').slice(1).join(' ') },
+        { header: 'Email', get: (e) => e.email, width: 30 },
+        { header: 'Phone', get: (e) => e.phone || e.phoneNumber },
+        { header: 'Role', get: (e) => e.role, width: 22 },
+        { header: 'Department', get: (e) => d(e).department || e.department },
+        { header: 'Job Title', get: (e) => d(e).title || e.jobTitle },
+        { header: 'Status', get: (e) => e.status },
+        { header: 'Hire Date', get: (e) => formatExportDate(d(e).hireDate || e.hireDate || e.joinDate) },
+        { header: 'Termination Date', get: (e) => formatExportDate(d(e).termDate) },
+        { header: 'Date of Birth', get: (e) => formatExportDate(d(e).dateOfBirth || e.dob || e.dateOfBirth) },
+        { header: 'Address', get: (e) => e.address || d(e).address, width: 30 },
+        { header: 'City', get: (e) => e.city || d(e).city },
+        { header: 'Province / State', get: (e) => e.province || e.state || d(e).province },
+        { header: 'Postal Code', get: (e) => d(e).postalCode || e.postalCode },
+        { header: 'Country', get: (e) => e.country || d(e).country },
+        { header: 'Pay Type', get: (e) => d(e).payType || e.payType },
+        { header: 'Pay Rate', get: (e) => d(e).payRate ?? d(e).hourlyRate ?? e.payRate },
+        { header: 'Created At', get: (e) => formatExportDate(e.createdAt) },
+      ],
     });
-
-    sheet.eachRow((row, i) => {
-      if (i > 1) row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: i % 2 === 0 ? 'FFF0F9FF' : 'FFFFFFFF' } };
-      row.eachCell(cell => { cell.border = { bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } } }; });
-    });
-
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Employees-${new Date().toISOString().split('T')[0]}.xlsx`;
-    document.body.appendChild(a);
-    a.click();
-    URL.revokeObjectURL(url);
-    document.body.removeChild(a);
   };
 
   const resetForm = () => {
@@ -1397,7 +1332,10 @@ const EmployeesPage = () => {
           </div>
         </div>
 
-        {/* Employees Table */}
+        {/* Employees Table (Advanced Permissions tab shows the portal access editor instead) */}
+        {activeTab === 'advanced' ? (
+          <AdvancedPermissionsPanel employees={employees as any} loading={loading} />
+        ) : (
         <div className="bg-card rounded-lg shadow-sm border border-theme overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -1571,8 +1509,9 @@ const EmployeesPage = () => {
             </table>
           </div>
         </div>
+        )}
 
-        {/* Non Signin Employees and Advanced Permissions use the same table */}
+        {/* Non Signin Employees use the same table */}
       </div>
 
       {/* Delete Confirmation Modal */}
@@ -1779,6 +1718,8 @@ const EmployeesPage = () => {
                         </label>
                         <input
                           type="email"
+                          name="employee-email"
+                          autoComplete="off"
                           placeholder="Email"
                           value={basicData.email}
                           onChange={(e) => { setBasicData({ ...basicData, email: e.target.value }); if (formErrors.email) setFormErrors({ ...formErrors, email: undefined }); }}
@@ -1797,6 +1738,7 @@ const EmployeesPage = () => {
                             <div className="relative">
                               <input
                                 type="password"
+                                autoComplete="new-password"
                                 value="••••••••"
                                 readOnly
                                 onFocus={() => {
@@ -1821,6 +1763,10 @@ const EmployeesPage = () => {
                             <div className="relative">
                               <input
                                 type={showPassword ? 'text' : 'password'}
+                                name="employee-new-password"
+                                autoComplete="new-password"
+                                data-lpignore="true"
+                                data-1p-ignore="true"
                                 placeholder="Enter new password"
                                 value={basicData.password}
                                 onChange={(e) => setBasicData({ ...basicData, password: e.target.value })}
@@ -2167,11 +2113,9 @@ const EmployeesPage = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-primary mb-1">Date of Birth</label>
-                        <input
-                          type="date"
+                        <DateOfBirthField
                           value={personalData.dateOfBirth}
-                          onChange={(e) => setPersonalData({ ...personalData, dateOfBirth: e.target.value })}
-                          className="w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-navyblue)] focus:border-transparent"
+                          onChange={(dateOfBirth) => setPersonalData((prev) => ({ ...prev, dateOfBirth }))}
                         />
                       </div>
                       <div>

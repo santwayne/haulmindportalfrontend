@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Edit, Trash2, Plus, X, RefreshCw, User, Search, FileText, MapPin, DollarSign, Upload, Save, ChevronUp, ChevronDown, Calendar, Award, AlertTriangle, FileText as FileTextIcon, PlusCircle, Check, ClipboardCheck, Ticket, FlaskConical, Lock, Eye, EyeOff, FileDown } from 'lucide-react';
-import ExcelJS from 'exceljs';
+import { COUNTRIES, sortByDialCodeMatch, type Country } from '../../../../utils/countries';
+import { exportFullRecords, formatExportDate } from '../../../../utils/fullRecordExport';
 import { FaCheckCircle, FaExclamationCircle, FaTimes } from 'react-icons/fa';
 import * as driverApi from '../../../../axios/api/driver';
 import { getTestResults, approveTestResult, rejectTestResult, getDriverTicketSignedUrl, verifyDrugTestPassword } from '../../../../axios/api/driver';
@@ -12,10 +13,12 @@ import { deleteViolation } from '../../../../axios/api/violations';
 import { deleteDeductionAddition } from '../../../../axios/api/account.settlement';
 import AddressSearch from '../../../../components/common/AddressSearch';
 import { useAutoSaveDraft } from '../../../../customHooks/useAutoSaveDraft';
+import { toDraftSafe } from '../../../../utils/draftSnapshot';
 import DraftRestoreBanner from '../../../../components/common/DraftRestoreBanner';
 import AutoSaveIndicator from '../../../../components/common/AutoSaveIndicator';
 
 import DateField from "../../../../components/common/DateField"
+import DateOfBirthField from "../../../../components/common/DateOfBirthField"
 
 // US States
 const US_STATES = [
@@ -174,7 +177,6 @@ const DriverManagement = () => {
   const expiryRef = useRef<HTMLInputElement>(null);
   const hireDateRef = useRef<HTMLInputElement>(null);
   const terminationDateRef = useRef<HTMLInputElement>(null);
-  const dateRef = useRef<HTMLInputElement>(null);
   const [filterBy, setFilterBy] = useState('Active');
   const [category, setCategory] = useState('');
   const [complianceStatus, setComplianceStatus] = useState('All');
@@ -208,14 +210,7 @@ const DriverManagement = () => {
   } | null>(null);
 
   // Country data for phone inputs
-  interface Country {
-    name: string;
-    code: string;
-    flag: string;
-    dialCode: string;
-  }
-
-  const [countries, setCountries] = useState<Country[]>([]);
+  const countries = COUNTRIES;
   const [primaryPhoneCountry, setPrimaryPhoneCountry] = useState<string>('US');
   const [secondaryPhoneCountry, setSecondaryPhoneCountry] = useState<string>('US');
   const [primaryCountryDropdownOpen, setPrimaryCountryDropdownOpen] = useState(false);
@@ -233,7 +228,7 @@ const DriverManagement = () => {
     const cleanPhone = phone.trim();
 
     // Try to match country code (try longer codes first to avoid partial matches)
-    const sortedCountries = [...countriesList].sort((a, b) => b.dialCode.length - a.dialCode.length);
+    const sortedCountries = sortByDialCodeMatch(countriesList);
     for (const country of sortedCountries) {
       if (cleanPhone.startsWith(country.dialCode)) {
         return {
@@ -246,42 +241,6 @@ const DriverManagement = () => {
     // Default to US if no match found
     return { countryCode: 'US', phoneNumber: cleanPhone.replace(/^\+1/, '').trim() };
   };
-
-  // Fetch countries data
-  useEffect(() => {
-    fetch('https://restcountries.com/v3.1/all?fields=name,flag,idd,cca2')
-      .then(res => res.json())
-      .then(data => {
-        const sortedCountries = data
-          .filter((c: any) => c.idd && c.idd.root)
-          .map((c: any) => ({
-            name: c.name.common,
-            code: c.cca2,
-            flag: c.flag,
-            dialCode: c.idd.root + (c.idd.suffixes ? c.idd.suffixes[0] : ''),
-          }))
-          .sort((a: Country, b: Country) => a.name.localeCompare(b.name));
-
-        setCountries(sortedCountries);
-        const defaultCountry = sortedCountries.find((c: Country) => c.code === 'US');
-        if (defaultCountry) {
-          setPrimaryPhoneCountry('US');
-          setSecondaryPhoneCountry('US');
-        }
-      })
-      .catch(() => {
-        const fallback = [
-          { name: 'United States', code: 'US', flag: '🇺🇸', dialCode: '+1' },
-          { name: 'Canada', code: 'CA', flag: '🇨🇦', dialCode: '+1' },
-          { name: 'India', code: 'IN', flag: '🇮🇳', dialCode: '+91' },
-          { name: 'United Kingdom', code: 'GB', flag: '🇬🇧', dialCode: '+44' },
-          { name: 'Australia', code: 'AU', flag: '🇦🇺', dialCode: '+61' },
-        ];
-        setCountries(fallback);
-        setPrimaryPhoneCountry('US');
-        setSecondaryPhoneCountry('US');
-      });
-  }, []);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -321,27 +280,6 @@ const DriverManagement = () => {
     stateProvince: '',
     profileImage: null as File | null
   });
-
-  // Auto-save draft protection (crash/power-loss safety net for the create/edit form)
-  const {
-    status: draftStatus,
-    lastSavedAt: draftLastSavedAt,
-    pendingRestore: draftPendingRestore,
-    restoreDraft: restoreDriverDraft,
-    discardDraft: discardDriverDraft,
-    clearDraft: clearDriverDraft,
-  } = useAutoSaveDraft({
-    entityType: 'drivers',
-    entityId: editingId || 'new',
-    formData,
-    enabled: showNewDriverModal,
-  });
-
-  const handleRestoreDriverDraft = () => {
-    const draft = restoreDriverDraft();
-    if (!draft) return;
-    setFormData((prev) => ({ ...prev, ...draft }));
-  };
 
   // Form state for Personal Information
   const [personalData, setPersonalData] = useState({
@@ -434,7 +372,8 @@ const DriverManagement = () => {
     // SIN Number (mandatory)
     sinNumber: '',
     // Canadian Worker Status
-    canadianWorkerStatus: 'PERMANENT RESIDENT' as 'CANADIAN CITIZEN' | 'PERMANENT RESIDENT' | 'WORK PERMIT',
+    // No default: preselecting PERMANENT RESIDENT made new drivers fail on a hidden PR-card error
+    canadianWorkerStatus: '' as '' | 'CANADIAN CITIZEN' | 'PERMANENT RESIDENT' | 'WORK PERMIT',
     // Permanent Residence Expiry
     permanentResidenceExpiry: '',
     // Work Permit Expiry
@@ -675,6 +614,74 @@ const DriverManagement = () => {
     currentValue: boolean;
   } | null>(null);
 
+  // Auto-save draft protection (crash/power-loss safety net for the create/edit form).
+  // Snapshot covers every tab's state so a restore brings back the whole form.
+  const driverDraftSnapshot = useMemo(
+    () =>
+      toDraftSafe({
+        formData: { ...formData, profileImage: null },
+        personalData,
+        travelData,
+        documents,
+        certifications,
+        violations,
+        tickets,
+        drugTests,
+        notes,
+        deductions,
+        additions,
+        handlesHazardousLoads,
+        winterTestRequired,
+        activeFormTab,
+      }),
+    [formData, personalData, travelData, documents, certifications, violations, tickets, drugTests, notes, deductions, additions, handlesHazardousLoads, winterTestRequired, activeFormTab]
+  );
+  const {
+    status: draftStatus,
+    lastSavedAt: draftLastSavedAt,
+    pendingRestore: draftPendingRestore,
+    restoreDraft: restoreDriverDraft,
+    discardDraft: discardDriverDraft,
+    clearDraft: clearDriverDraft,
+  } = useAutoSaveDraft({
+    entityType: 'drivers',
+    entityId: editingId || 'new',
+    formData: driverDraftSnapshot,
+    enabled: showNewDriverModal,
+  });
+
+  const handleRestoreDriverDraft = () => {
+    const draft = restoreDriverDraft() as any;
+    if (!draft) return;
+    // Older drafts only stored the Basic tab as a flat object
+    if (!draft.formData) {
+      setFormData((prev) => ({ ...prev, ...draft, profileImage: prev.profileImage }));
+      return;
+    }
+    setFormData((prev) => ({ ...prev, ...draft.formData, profileImage: prev.profileImage }));
+    if (draft.personalData) setPersonalData((prev) => ({ ...prev, ...draft.personalData }));
+    if (draft.travelData) {
+      setTravelData((prev) => ({
+        ...prev,
+        ...draft.travelData,
+        workPermitDocument: prev.workPermitDocument,
+        prCardDocument: prev.prCardDocument,
+      }));
+    }
+    if (Array.isArray(draft.documents)) setDocuments(draft.documents);
+    if (Array.isArray(draft.certifications)) setCertifications(draft.certifications);
+    if (Array.isArray(draft.violations)) setViolations(draft.violations);
+    if (Array.isArray(draft.tickets)) setTickets(draft.tickets);
+    if (Array.isArray(draft.drugTests)) setDrugTests(draft.drugTests);
+    if (Array.isArray(draft.notes)) setNotes(draft.notes);
+    if (Array.isArray(draft.deductions)) setDeductions(draft.deductions);
+    if (Array.isArray(draft.additions)) setAdditions(draft.additions);
+    if (typeof draft.handlesHazardousLoads === 'boolean') setHandlesHazardousLoads(draft.handlesHazardousLoads);
+    if (typeof draft.winterTestRequired === 'boolean') setWinterTestRequired(draft.winterTestRequired);
+    // The Drug Test tab needs the password again after a reload, so a draft left there reopens on Basic
+    if (draft.activeFormTab) setActiveFormTab(draft.activeFormTab === 'drugtest' ? 'basic' : draft.activeFormTab);
+  };
+
   // Fetch test results for a driver
   const fetchDriverTestResults = async (driverId: string) => {
     try {
@@ -770,6 +777,17 @@ const DriverManagement = () => {
     setShowApprovalModal(false);
     setSelectedTest(null);
     setRejectionReason('');
+  };
+
+  // Every way of opening a form tab (sidebar, Previous / Next buttons) goes through here, so the
+  // Drug Test tab always asks for the password first. Opening it directly showed an empty panel,
+  // because its content only renders once the password is verified.
+  const goToFormTab = (tabId: string) => {
+    if (tabId === 'drugtest' && !drugTestPasswordVerified) {
+      setShowDrugTestPasswordModal(true);
+      return;
+    }
+    setActiveFormTab(tabId as any);
   };
 
   // Handle drug test password verification
@@ -885,6 +903,9 @@ const DriverManagement = () => {
   };
 
   // Fetch drivers from API
+  // Full API records (the table keeps only a few fields); used by the Excel report
+  const rawDriversRef = useRef<any[]>([]);
+
   const fetchDrivers = async () => {
     try {
       setLoading(true);
@@ -914,6 +935,7 @@ const DriverManagement = () => {
           });
         }
 
+        rawDriversRef.current = Array.isArray(response.data) ? response.data : [];
         // Transform backend data to match Driver interface
         const transformedDrivers: Driver[] = response.data.map((driver: any) => {
           // Handle name field (could be name string or firstName/lastName)
@@ -1145,7 +1167,7 @@ const DriverManagement = () => {
             })(),
             fastCardValid: driver.fastCardValid !== undefined ? driver.fastCardValid : (driver.details?.fastCardValid || false),
             sinNumber: driver.sinNo || driver.details?.sinNo || driver.socialInsuranceNumber || '',
-            canadianWorkerStatus: (driver.canadianWorkerStatus || driver.details?.canadianWorkerStatus || 'PERMANENT RESIDENT') as 'CANADIAN CITIZEN' | 'PERMANENT RESIDENT' | 'WORK PERMIT',
+            canadianWorkerStatus: (driver.canadianWorkerStatus || driver.details?.canadianWorkerStatus || '') as '' | 'CANADIAN CITIZEN' | 'PERMANENT RESIDENT' | 'WORK PERMIT',
             permanentResidenceExpiry: (() => {
               const expiryValue = driver.permanentResidenceExpiry || driver.details?.permanentResidenceExpiry;
               return expiryValue ? new Date(expiryValue).toISOString().split('T')[0] : '';
@@ -1554,7 +1576,7 @@ const DriverManagement = () => {
                 })(),
                 fastCardValid: driver.fastCardValid !== undefined ? driver.fastCardValid : (driver.details?.fastCardValid || false),
                 sinNumber: driver.sinNo || driver.details?.sinNo || driver.socialInsuranceNumber || '',
-                canadianWorkerStatus: (driver.canadianWorkerStatus || driver.details?.canadianWorkerStatus || 'PERMANENT RESIDENT') as 'CANADIAN CITIZEN' | 'PERMANENT RESIDENT' | 'WORK PERMIT',
+                canadianWorkerStatus: (driver.canadianWorkerStatus || driver.details?.canadianWorkerStatus || '') as '' | 'CANADIAN CITIZEN' | 'PERMANENT RESIDENT' | 'WORK PERMIT',
                 permanentResidenceExpiry: (() => {
                   const expiryValue = driver.permanentResidenceExpiry || driver.details?.permanentResidenceExpiry;
                   return expiryValue ? new Date(expiryValue).toISOString().split('T')[0] : '';
@@ -1670,7 +1692,7 @@ const DriverManagement = () => {
         fastCardExpiry: '',
         fastCardValid: false,
         sinNumber: '',
-        canadianWorkerStatus: 'PERMANENT RESIDENT',
+        canadianWorkerStatus: '',
         permanentResidenceExpiry: '',
         workPermitExpiry: '',
         wcbNumber: '',
@@ -1872,6 +1894,16 @@ const DriverManagement = () => {
       errors.dateOfBirth = 'Date of Birth is required';
     }
 
+    // A new driver with app access needs their own PIN to log in
+    if (!editingId && formData.mobileApp && !formData.pin?.trim()) {
+      errors.pin = 'PIN is required when Mobile App is on';
+    }
+    // Turning on app access for an existing driver also needs a fresh PIN,
+    // so an old default password can never become a working login
+    if (editingId && originalDriverData && formData.mobileApp && !originalDriverData.formData.mobileApp && !formData.pin?.trim()) {
+      errors.pin = 'Set a new PIN when turning on Mobile App';
+    }
+
     if (!formData.primaryPhone || !formData.primaryPhone.trim()) {
       errors.primaryPhone = 'Primary Phone Number is required';
     } else {
@@ -1916,6 +1948,11 @@ const DriverManagement = () => {
       errors.sinNumber = 'SIN Number is required';
     }
 
+    // Canadian Worker Status must be picked (there is no default any more)
+    if (!travelData.canadianWorkerStatus) {
+      errors.canadianWorkerStatus = 'Canadian Worker Status is required';
+    }
+
     // Document Validation based on Canadian Worker Status
     if (travelData.canadianWorkerStatus === 'WORK PERMIT') {
       if (!travelData.workPermitDocument && !travelData.existingWorkPermitUrl) {
@@ -1949,6 +1986,7 @@ const DriverManagement = () => {
       if (errors.lastName) errorFields.push('Last Name');
       if (errors.emailAddress) errorFields.push('Email Address');
       if (errors.dateOfBirth) errorFields.push('Date of Birth');
+      if (errors.pin) errorFields.push('PIN');
       if (errors.primaryPhone) errorFields.push('Primary Phone');
       if (errors.country) errorFields.push('Country');
       if (errors.stateProvince) errorFields.push('Province/State');
@@ -1957,6 +1995,14 @@ const DriverManagement = () => {
       if (errors.driversLicenseExpiry) errorFields.push('Drivers License Expiry Date');
       if (errors.passportNumber) errorFields.push('Passport Number');
       if (errors.passportExpiry) errorFields.push('Passport Expiry Date');
+      // These were validated but never named, so the message ended with an empty list
+      if (errors.sinNumber) errorFields.push('SIN Number');
+      if (errors.canadianWorkerStatus) errorFields.push('Canadian Worker Status');
+      if (errors.prCardDocument) errorFields.push('PR Card Document');
+      if (errors.workPermitDocument) errorFields.push('Work Permit Document');
+      if (Object.keys(errors).some(k => k.startsWith('violationType_'))) errorFields.push('Violation Type');
+      // Anything else still gets counted rather than producing an empty message
+      if (errorFields.length === 0) errorFields.push(...Object.values(errors));
 
       // Create detailed error message
       let errorMessage = `Please complete the following required field${errorCount > 1 ? 's' : ''}: ${errorFields.join(', ')}`;
@@ -1969,12 +2015,15 @@ const DriverManagement = () => {
       addNotification('error', errorMessage);
 
       // Switch to the tab with the first error
-      if (errors.firstName || errors.lastName || errors.emailAddress || errors.dateOfBirth || errors.primaryPhone || errors.country || errors.stateProvince) {
+      if (errors.firstName || errors.lastName || errors.emailAddress || errors.dateOfBirth || errors.pin || errors.primaryPhone || errors.country || errors.stateProvince) {
         setActiveFormTab('basic');
       } else if (errors.status) {
         setActiveFormTab('personal');
-      } else if (errors.driversLicenseNumber || errors.driversLicenseExpiry || errors.passportNumber || errors.passportExpiry) {
+      } else if (errors.driversLicenseNumber || errors.driversLicenseExpiry || errors.passportNumber || errors.passportExpiry ||
+        errors.sinNumber || errors.canadianWorkerStatus || errors.prCardDocument || errors.workPermitDocument) {
         setActiveFormTab('travel');
+      } else if (Object.keys(errors).some(k => k.startsWith('violationType_'))) {
+        setActiveFormTab('violations');
       }
 
       return false;
@@ -2026,7 +2075,9 @@ const DriverManagement = () => {
 
       if (formData.country) driverFormData.append('country', formData.country);
       if (formData.driverId) driverFormData.append('internalId', formData.driverId);
-      driverFormData.append('password', formData.pin || 'TempPassword123!'); // Default password if not provided
+      // Only send a PIN the user typed. With no PIN the backend stores a random
+      // secret, so the driver can't sign in until HR sets a real PIN.
+      if (formData.pin?.trim()) driverFormData.append('password', formData.pin.trim());
       driverFormData.append('role', 'driver');
       // Use status from personalData if available, otherwise default to 'active'
       const statusValue = personalData.status ? personalData.status.toLowerCase() : 'active';
@@ -2480,7 +2531,7 @@ const DriverManagement = () => {
           fastCardExpiry: '',
           fastCardValid: false,
           sinNumber: '',
-          canadianWorkerStatus: 'PERMANENT RESIDENT',
+          canadianWorkerStatus: '',
           permanentResidenceExpiry: '',
           workPermitExpiry: '',
           wcbNumber: '',
@@ -2510,63 +2561,36 @@ const DriverManagement = () => {
   };
 
   const handleExportDrivers = async () => {
-    const workbook = new ExcelJS.Workbook();
-    workbook.creator = 'Logistiq Innovation';
-    workbook.created = new Date();
-    const sheet = workbook.addWorksheet('Drivers', { views: [{ state: 'frozen', ySplit: 1 }] });
-
-    sheet.columns = [
-      { header: 'Driver ID', key: 'driverId', width: 18 },
-      { header: 'First Name', key: 'firstName', width: 16 },
-      { header: 'Last Name', key: 'lastName', width: 16 },
-      { header: 'Email', key: 'email', width: 28 },
-      { header: 'Phone', key: 'phone', width: 18 },
-      { header: 'Date of Birth', key: 'dateOfBirth', width: 16 },
-      { header: "Driver's Licence", key: 'driversLicence', width: 22 },
-      { header: 'Passport', key: 'passport', width: 18 },
-      { header: 'Status', key: 'status', width: 12 },
-      { header: 'Compliance', key: 'compliance', width: 18 },
-      { header: 'Notes', key: 'notes', width: 30 },
-    ];
-
-    const headerRow = sheet.getRow(1);
-    headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
-    headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF42AEEC' } };
-    headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
-    headerRow.height = 22;
-
-    drivers.forEach((d: any) => {
-      const row = sheet.addRow({
-        driverId: d.driverId || '',
-        firstName: d.firstName || '',
-        lastName: d.lastName || '',
-        email: d.email || '',
-        phone: d.phone || '',
-        dateOfBirth: d.dateOfBirth || '',
-        driversLicence: d.driversLicence || '',
-        passport: d.passport || '',
-        status: d.status || '',
-        compliance: d.compliance || '',
-        notes: d.notes || '',
-      });
-      row.alignment = { vertical: 'middle' };
+    // Same drivers as the table, with every field on their record (hire date, licence, address...)
+    const byId = new Map(rawDriversRef.current.map((r: any) => [String(r._id), r]));
+    const records = drivers.map((t: any) => ({ ...(byId.get(String(t._id)) || {}), _table: t }));
+    const d = (r: any) => r.details || {};
+    await exportFullRecords({
+      records,
+      sheetName: 'Drivers',
+      fileName: `Drivers-${new Date().toISOString().split('T')[0]}.xlsx`,
+      preferred: [
+        { header: 'Driver ID', get: (r) => r._table.driverId },
+        { header: 'First Name', get: (r) => r._table.firstName },
+        { header: 'Last Name', get: (r) => r._table.lastName },
+        { header: 'Email', get: (r) => r._table.email || r.email, width: 28 },
+        { header: 'Phone', get: (r) => r._table.phone || r.phone },
+        { header: 'Status', get: (r) => r._table.status || r.status },
+        { header: 'Hire Date', get: (r) => formatExportDate(d(r).hireDate || r.hireDate || r.joinDate) },
+        { header: 'Termination Date', get: (r) => formatExportDate(d(r).termDate) },
+        { header: 'Date of Birth', get: (r) => r._table.dateOfBirth || formatExportDate(d(r).dateOfBirth || r.dob) },
+        { header: "Driver's Licence", get: (r) => r._table.driversLicence, width: 20 },
+        { header: 'Licence Expiry', get: (r) => formatExportDate(d(r).licenceExpiry || d(r).licenseExpiry || r.licenseExpiry) },
+        { header: 'Passport', get: (r) => r._table.passport },
+        { header: 'Address', get: (r) => r.address || d(r).address, width: 30 },
+        { header: 'City', get: (r) => r.city || d(r).city },
+        { header: 'Province / State', get: (r) => r.province || r.state || d(r).province },
+        { header: 'Postal Code', get: (r) => d(r).postalCode || r.postalCode },
+        { header: 'Country', get: (r) => r.country || d(r).country },
+        { header: 'Compliance', get: (r) => r._table.compliance },
+        { header: 'Notes', get: (r) => r._table.notes, width: 30 },
+      ],
     });
-
-    sheet.eachRow((row, i) => {
-      if (i > 1) row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: i % 2 === 0 ? 'FFF0F9FF' : 'FFFFFFFF' } };
-      row.eachCell(cell => { cell.border = { bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } } }; });
-    });
-
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Drivers-${new Date().toISOString().split('T')[0]}.xlsx`;
-    document.body.appendChild(a);
-    a.click();
-    URL.revokeObjectURL(url);
-    document.body.removeChild(a);
   };
 
   // Helper function to reset all form state
@@ -2648,7 +2672,7 @@ const DriverManagement = () => {
       fastCardExpiry: '',
       fastCardValid: false,
       sinNumber: '',
-      canadianWorkerStatus: 'PERMANENT RESIDENT',
+      canadianWorkerStatus: '',
       permanentResidenceExpiry: '',
       workPermitExpiry: '',
       wcbNumber: '',
@@ -3447,7 +3471,7 @@ const DriverManagement = () => {
                 })(),
                 fastCardValid: driver.fastCardValid !== undefined ? driver.fastCardValid : (driver.details?.fastCardValid || false),
                 sinNumber: driver.details?.sinNumber || travelData.sinNumber || '',
-                canadianWorkerStatus: (driver.canadianWorkerStatus || driver.details?.canadianWorkerStatus || 'PERMANENT RESIDENT') as 'CANADIAN CITIZEN' | 'PERMANENT RESIDENT' | 'WORK PERMIT',
+                canadianWorkerStatus: (driver.canadianWorkerStatus || driver.details?.canadianWorkerStatus || '') as '' | 'CANADIAN CITIZEN' | 'PERMANENT RESIDENT' | 'WORK PERMIT',
                 permanentResidenceExpiry: (() => {
                   const expiryValue = driver.permanentResidenceExpiry || driver.details?.permanentResidenceExpiry;
                   return expiryValue ? new Date(expiryValue).toISOString().split('T')[0] : '';
@@ -4287,11 +4311,7 @@ const DriverManagement = () => {
                       <button
                         key={tab.id}
                         onClick={() => {
-                          if (tab.id === 'drugtest' && !drugTestPasswordVerified) {
-                            setShowDrugTestPasswordModal(true);
-                          } else {
-                            setActiveFormTab(tab.id as any);
-                          }
+                          goToFormTab(tab.id);
                         }}
                         className={`w-full flex items-center gap-1.5 px-2 py-1.5 transition-colors text-left ${isActive
                           ? 'bg-[var(--accent-navyblue)]/15 !text-white shadow-md'
@@ -4422,6 +4442,8 @@ const DriverManagement = () => {
                         </label>
                         <input
                           type="email"
+                          name="driver-email"
+                          autoComplete="off"
                           placeholder="Email Address"
                           value={formData.emailAddress}
                           onChange={(e) => {
@@ -4442,40 +4464,16 @@ const DriverManagement = () => {
                           Date Of Birth <span className="text-[var(--accent-red)]">*</span>
                         </label>
 
-                        <div
-                          className="relative cursor-pointer"
-                          onMouseDown={(e) => {
-                            e.preventDefault(); // IMPORTANT
-                            if (dateRef.current) {
-                              dateRef.current.showPicker?.(); // open calendar
-                              dateRef.current.focus();
+                        <DateOfBirthField
+                          value={formData.dateOfBirth}
+                          error={!!validationErrors.dateOfBirth}
+                          onChange={(dateOfBirth) => {
+                            setFormData((prev) => ({ ...prev, dateOfBirth }));
+                            if (validationErrors.dateOfBirth) {
+                              setValidationErrors((prev) => ({ ...prev, dateOfBirth: '' }));
                             }
                           }}
-                        >
-                          {/* Icon */}
-                          <Calendar className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-secondary pointer-events-none z-10" />
-
-                          {/* Input */}
-                          <input
-                            ref={dateRef}
-                            type="date"
-                            value={formData.dateOfBirth}
-                            onChange={(e) => {
-                              setFormData({ ...formData, dateOfBirth: e.target.value });
-                              if (validationErrors.dateOfBirth) {
-                                setValidationErrors({
-                                  ...validationErrors,
-                                  dateOfBirth: "",
-                                });
-                              }
-                            }}
-                            className={`w-full pl-7 pr-2 py-2 text-sm bg-[rgba(15,31,23,0.05)] text-primary border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] hover:bg-[rgba(5,150,105,0.08)] transition-all duration-200 cursor-pointer ${validationErrors.dateOfBirth
-                              ? "border-[var(--accent-red)]"
-                              : "border-theme"
-                              }`}
-                            max={new Date().toISOString().split("T")[0]}
-                          />
-                        </div>
+                        />
 
                         {validationErrors.dateOfBirth && (
                           <p className="text-xs text-[var(--accent-red)] mt-0.5">
@@ -4505,6 +4503,7 @@ const DriverManagement = () => {
                           <div className="relative">
                             <input
                               type="password"
+                              autoComplete="new-password"
                               value="••••••••"
                               readOnly
                               onFocus={() => {
@@ -4529,10 +4528,17 @@ const DriverManagement = () => {
                           <div className="relative">
                             <input
                               type={showPin ? 'text' : 'password'}
+                              name="driver-new-pin"
+                              autoComplete="new-password"
+                              data-lpignore="true"
+                              data-1p-ignore="true"
                               placeholder="Enter new PIN"
                               value={formData.pin}
-                              onChange={(e) => setFormData({ ...formData, pin: e.target.value })}
-                              className="w-full px-2 py-1 pr-7 text-xs border border-theme rounded focus:outline-none focus:ring-2 focus:ring-[var(--accent-navyblue)] focus:border-transparent"
+                              onChange={(e) => {
+                                setFormData({ ...formData, pin: e.target.value });
+                                if (validationErrors.pin) setValidationErrors({ ...validationErrors, pin: '' });
+                              }}
+                              className={`w-full px-2 py-1 pr-7 text-xs border rounded focus:outline-none focus:ring-2 focus:ring-[var(--accent-navyblue)] focus:border-transparent ${validationErrors.pin ? 'border-[var(--accent-red)]' : 'border-theme'}`}
                               autoFocus
                             />
                             <button
@@ -4544,6 +4550,9 @@ const DriverManagement = () => {
                               {showPin ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                             </button>
                           </div>
+                        )}
+                        {validationErrors.pin && (
+                          <p className="text-xs text-[var(--accent-red)] mt-0.5">{validationErrors.pin}</p>
                         )}
                       </div>
                     </div>
@@ -6142,6 +6151,10 @@ const DriverManagement = () => {
                         </button>
                       </div>
                     </div>
+
+                    {validationErrors.canadianWorkerStatus && !travelData.canadianWorkerStatus && (
+                      <p className="text-xs text-red-500 mt-2">{validationErrors.canadianWorkerStatus}</p>
+                    )}
 
                     {/* Permanent Residence Expiry */}
                     {travelData.canadianWorkerStatus === 'PERMANENT RESIDENT' && (
@@ -8323,10 +8336,12 @@ const DriverManagement = () => {
                             <AlertTriangle className="w-4 h-4 text-[#059669] mt-0.5 flex-shrink-0" />
                             <div className="flex-1">
                               <p className="text-xs font-medium text-[var(--accent-orange)] mb-1">
-                                Complete Required Tests First
+                                {editingId ? 'Complete Required Tests First' : 'Save This Driver First'}
                               </p>
                               <p className="text-xs text-[var(--accent-orange)]">
-                                Driver must complete and have HR approval for VEHICLE and HOS tests before enabling driver flags.
+                                {editingId
+                                  ? 'Driver must complete and have HR approval for VEHICLE and HOS tests before enabling driver flags.'
+                                  : 'These options aren\'t needed to create the driver. To give app access, turn on Mobile App and set a PIN on the Basic tab, then save. VEHICLE and HOS tests appear in the driver app automatically. You can enable these options after HR approves both tests.'}
                               </p>
                             </div>
                           </div>
@@ -8974,7 +8989,7 @@ const DriverManagement = () => {
                     {prevTab ? (
                       <button
                         type="button"
-                        onClick={() => setActiveFormTab(prevTab.id as any)}
+                        onClick={() => goToFormTab(prevTab.id)}
                         className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary bg-card border border-theme rounded-lg shadow-sm hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                       >
                         <span aria-hidden>←</span> {prevTab.label}
@@ -8983,7 +8998,7 @@ const DriverManagement = () => {
                     {nextTab ? (
                       <button
                         type="button"
-                        onClick={() => setActiveFormTab(nextTab.id as any)}
+                        onClick={() => goToFormTab(nextTab.id)}
                         className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary bg-card border border-theme rounded-lg shadow-sm hover:bg-[rgba(15,31,23,0.03)] transition-colors"
                       >
                         {nextTab.label} <span aria-hidden>→</span>

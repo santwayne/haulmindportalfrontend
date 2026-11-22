@@ -10,9 +10,9 @@ interface Error {
     };
 }
 
-export const getAccountsDashboard = async () => {
+export const getAccountsDashboard = async (params?: { startDate?: string; endDate?: string }) => {
     try {
-        const res: AxiosResponse = await apiClient.get(`hr/accounts-dashboard`);
+        const res: AxiosResponse = await apiClient.get(`hr/accounts-dashboard`, { params });
         console.log("==getAccountsDashboard res", res);
         return res.data;
     } catch (error: any) {

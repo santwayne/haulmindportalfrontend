@@ -1,8 +1,12 @@
-import axios from 'axios';
+import { type AxiosResponse } from 'axios';
+import apiClient from '../apiClient';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://haulmindportal.wayneesolutions.com/api/v1';
+// Uses the shared API client (same base URL, token and session-expiry handling as
+// the rest of the portal). This file previously called a hard-coded production URL.
 
-// Get all insurance claims
+const errorBody = (error: any) => error?.response?.data || { success: false, message: error?.message || 'Request failed' };
+
+// Get all insurance claims (the page filters client-side, so ask for the full list)
 export const getInsuranceClaims = async (params?: {
   status?: string;
   claimType?: string;
@@ -11,93 +15,61 @@ export const getInsuranceClaims = async (params?: {
   limit?: number;
 }) => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${API_BASE_URL}/admin/insurance-claims`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-      params
+    const res: AxiosResponse = await apiClient.get('admin/insurance-claims', {
+      params: { limit: 1000, ...params }
     });
-    return response.data;
+    return res.data;
   } catch (error: any) {
-    throw error.response?.data || error;
+    return errorBody(error);
   }
 };
 
 // Get insurance claim by ID
 export const getInsuranceClaimById = async (id: string) => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${API_BASE_URL}/admin/insurance-claims/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return response.data;
+    const res: AxiosResponse = await apiClient.get(`admin/insurance-claims/${id}`);
+    return res.data;
   } catch (error: any) {
-    throw error.response?.data || error;
+    return errorBody(error);
   }
 };
 
-// Create insurance claim
+// Create insurance claim — pass FormData to include document files
 export const createInsuranceClaim = async (data: any) => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await axios.post(`${API_BASE_URL}/admin/insurance-claims`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-    return response.data;
+    const res: AxiosResponse = await apiClient.post('admin/insurance-claims', data);
+    return res.data;
   } catch (error: any) {
-    throw error.response?.data || error;
+    return errorBody(error);
   }
 };
 
-// Update insurance claim
+// Update insurance claim — pass FormData to add files / remove documents
 export const updateInsuranceClaim = async (id: string, data: any) => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await axios.put(`${API_BASE_URL}/admin/insurance-claims/${id}`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-    return response.data;
+    const res: AxiosResponse = await apiClient.put(`admin/insurance-claims/${id}`, data);
+    return res.data;
   } catch (error: any) {
-    throw error.response?.data || error;
+    return errorBody(error);
   }
 };
 
 // Delete insurance claim
 export const deleteInsuranceClaim = async (id: string) => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await axios.delete(`${API_BASE_URL}/admin/insurance-claims/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return response.data;
+    const res: AxiosResponse = await apiClient.delete(`admin/insurance-claims/${id}`);
+    return res.data;
   } catch (error: any) {
-    throw error.response?.data || error;
+    return errorBody(error);
   }
 };
 
 // Get insurance claim statistics
 export const getInsuranceClaimStats = async () => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${API_BASE_URL}/admin/insurance-claims/stats`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return response.data;
+    const res: AxiosResponse = await apiClient.get('admin/insurance-claims/stats');
+    return res.data;
   } catch (error: any) {
-    throw error.response?.data || error;
+    return errorBody(error);
   }
 };
-

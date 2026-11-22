@@ -9,6 +9,7 @@ import {
   FaArrowRight, FaTimes
 } from 'react-icons/fa';
 import { getComplianceRecords } from '../../../../axios/api/healthSafety';
+import { downloadExcel, summarySheet, countBy, fmtDate } from '../../../../utils/excelExport';
 
 const CUSTOM_COLORS = {
   background: '#ecfdf5',
@@ -321,6 +322,52 @@ const EnhancedComplianceRecords: React.FC = () => {
     return iconMap[type] || <FaFileAlt className="text-secondary" />;
   };
 
+  // Report of the records shown (filters applied); fields differ per record type, so read them loosely
+  const downloadComplianceReport = async () => {
+    type Row = ComplianceRecord;
+    const pick = (r: Row, ...keys: string[]): string | number => {
+      const rec = r as unknown as Record<string, unknown>;
+      for (const k of keys) {
+        const v = rec[k];
+        if (v !== undefined && v !== null && v !== '') return typeof v === 'number' ? v : String(v);
+      }
+      return '';
+    };
+    const date = (r: Row, ...keys: string[]) => fmtDate(String(pick(r, ...keys)) || null);
+    const field = (r: Row, k: string) => (r as unknown as Record<string, unknown>)[k] as string | undefined;
+    await downloadExcel(`Compliance-Records-${new Date().toISOString().slice(0, 10)}`, [
+      {
+        name: 'Compliance Records',
+        rows: filteredRecords,
+        columns: [
+          { header: 'Record ID', value: (r: Row) => pick(r, 'recordId', '_id') },
+          { header: 'Title', value: (r: Row) => pick(r, 'title', 'specificPolicyName'), width: 34 },
+          { header: 'Type', value: (r: Row) => getRecordType(r) },
+          { header: 'Sub-type', value: (r: Row) => pick(r, 'policyType', 'trainingType', 'incidentType', 'hazardType', 'inspectionType') },
+          { header: 'Category', value: (r: Row) => pick(r, 'category'), width: 22 },
+          { header: 'Status', value: (r: Row) => pick(r, 'status') },
+          { header: 'Compliance', value: (r: Row) => pick(r, 'complianceLevel') },
+          { header: 'Issue / Event Date', value: (r: Row) => date(r, 'issueDate', 'incidentDate', 'inspectionDate', 'identifiedDate', 'reportedDate') },
+          { header: 'Expiry Date', value: (r: Row) => date(r, 'expiryDate') },
+          { header: 'Next Review', value: (r: Row) => date(r, 'nextReviewDate') },
+          { header: 'Responsible / Employee', value: (r: Row) => pick(r, 'responsiblePerson', 'employeeName', 'reportedBy', 'inspector'), width: 24 },
+          { header: 'Department', value: (r: Row) => pick(r, 'department') },
+          { header: 'Location', value: (r: Row) => pick(r, 'location'), width: 26 },
+          { header: 'Severity / Risk', value: (r: Row) => pick(r, 'severity', 'riskRating', 'riskLevel') },
+          { header: 'Certificate #', value: (r: Row) => pick(r, 'certificateNumber') },
+          { header: 'Acknowledgments', value: (r: Row) => (Array.isArray((r as unknown as Record<string, unknown>).acknowledgments) ? ((r as unknown as Record<string, unknown>).acknowledgments as unknown[]).length : '') },
+        ],
+      },
+      summarySheet([
+        ['Records', filteredRecords.length],
+        ['Downloaded', new Date().toLocaleString()],
+        ...countBy(filteredRecords, (r: Row) => getRecordType(r), 'Type: '),
+        ...countBy(filteredRecords, (r: Row) => field(r, 'status'), 'Status: '),
+        ...countBy(filteredRecords, (r: Row) => field(r, 'complianceLevel'), 'Compliance: '),
+      ]),
+    ]);
+  };
+
   const filteredRecords = records.filter(record => {
     const recordTitle = record.title.toLowerCase();
     const recordId = record.recordId.toLowerCase();
@@ -366,6 +413,16 @@ const EnhancedComplianceRecords: React.FC = () => {
                 Comprehensive view of all compliance records aggregated from Health & Safety modules.
               </p>
             </div>
+            <div className="flex items-center gap-3">
+            <button
+              onClick={() => downloadComplianceReport()}
+              disabled={filteredRecords.length === 0}
+              className="px-6 py-3 rounded-xl border border-theme text-primary font-semibold hover:bg-[rgba(15,31,23,0.05)] transition-all flex items-center space-x-2 disabled:opacity-50"
+              title="Download the records shown (filters applied) as Excel"
+            >
+              <FaDownload size={16} />
+              <span>Download Report</span>
+            </button>
             <button
               onClick={() => handleNavigation('../Dashboard')}
               className=" bg-[var(--accent-navyblue)] px-6 py-3 rounded-xl !text-white font-semibold shadow-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center space-x-2 "
@@ -374,6 +431,7 @@ const EnhancedComplianceRecords: React.FC = () => {
               <FaChartLine size={18} className="text-primary" />
               <span>View Dashboard</span>
             </button>
+            </div>
           </div>
         </div>
 

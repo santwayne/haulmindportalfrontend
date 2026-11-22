@@ -50,7 +50,9 @@ function DispatchRoutes() {
 
           <Route path="/drivers" element={<DriversPage />} />
           <Route path="/fleets" element={<Fleets />} />
-          <Route path="/contacts" element={<Contacts />} />
+          <Route path="/contacts" element={<Contacts key="all" />} />
+          <Route path="/carriers" element={<Contacts key="carriers" lockedCategory="Carrier" />} />
+          <Route path="/customs-brokers" element={<Contacts key="customs-brokers" lockedCategory="Customs Broker" />} />
           
           <Route path="/utilization" element={<Utilization />} />
           <Route path="/revenue-per-mile" element={<RevenuePerMile />} />

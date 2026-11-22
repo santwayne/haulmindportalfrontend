@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Plus, Upload, ChevronUp, ChevronDown, HelpCircle, Clock, X, Image as ImageIcon, Edit, Trash2, Calendar, ChevronLeft, ChevronRight, FileText, FileDown } from 'lucide-react';
 import ExcelJS from 'exceljs';
 import { getAllTrailers, createTrailer, updateTrailer, deleteTrailer, getTrailerById } from '../../../../axios/api/trailer';
@@ -10,8 +10,10 @@ import { getAllYards, type Yard } from '../../../../axios/api/fleet.yards';
 import apiClient from '../../../../axios/apiClient';
 import ConfirmationModal from '../../../../components/common/ConfirmationModal';
 import { useAutoSaveDraft } from '../../../../customHooks/useAutoSaveDraft';
+import { toDraftSafe } from '../../../../utils/draftSnapshot';
 import DraftRestoreBanner from '../../../../components/common/DraftRestoreBanner';
 import AutoSaveIndicator from '../../../../components/common/AutoSaveIndicator';
+import { COUNTRIES } from '../../../../utils/countries';
 
 interface Trailer {
     _id?: string;
@@ -39,13 +41,6 @@ interface Trailer {
     vinNumber?: string;
     status?: string;
     yard?: any;
-}
-
-interface Country {
-    name: string;
-    code: string;
-    flag: string;
-    dialCode: string;
 }
 
 // Trailer data will be fetched from API
@@ -96,27 +91,6 @@ const TrailersPage: React.FC = () => {
         subType: '' as '' | 'HIGHWAY USE' | 'CITY USE' | 'STORAGE USE' | 'RENTAL' | 'OTHER',
         yard: ''
     });
-
-    // Auto-save draft protection (crash/power-loss safety net for the create/edit form)
-    const {
-        status: draftStatus,
-        lastSavedAt: draftLastSavedAt,
-        pendingRestore: draftPendingRestore,
-        restoreDraft: restoreTrailerDraft,
-        discardDraft: discardTrailerDraft,
-        clearDraft: clearTrailerDraft,
-    } = useAutoSaveDraft({
-        entityType: 'trailers',
-        entityId: editingId || 'new',
-        formData,
-        enabled: showSidebar,
-    });
-
-    const handleRestoreTrailerDraft = () => {
-        const draft = restoreTrailerDraft();
-        if (!draft) return;
-        setFormData((prev) => ({ ...prev, ...draft }));
-    };
 
     // Store original trailer data for partial updates
     const [originalTrailerData, setOriginalTrailerData] = useState<any>(null);
@@ -199,6 +173,50 @@ const TrailersPage: React.FC = () => {
     });
     const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
 
+    // Auto-save draft protection (crash/power-loss safety net for the create/edit form).
+    // Snapshot covers every step's state so a restore brings back the whole form.
+    const trailerDraftSnapshot = useMemo(
+        () =>
+            toDraftSafe({
+                formData,
+                oneTimeInspections,
+                recurringInspections,
+                documents,
+                notes,
+                activeStep,
+            }),
+        [formData, oneTimeInspections, recurringInspections, documents, notes, activeStep]
+    );
+    const {
+        status: draftStatus,
+        lastSavedAt: draftLastSavedAt,
+        pendingRestore: draftPendingRestore,
+        restoreDraft: restoreTrailerDraft,
+        discardDraft: discardTrailerDraft,
+        clearDraft: clearTrailerDraft,
+    } = useAutoSaveDraft({
+        entityType: 'trailers',
+        entityId: editingId || 'new',
+        formData: trailerDraftSnapshot,
+        enabled: showSidebar,
+    });
+
+    const handleRestoreTrailerDraft = () => {
+        const draft = restoreTrailerDraft() as any;
+        if (!draft) return;
+        // Older drafts only stored the Details step as a flat object
+        if (!draft.formData) {
+            setFormData((prev) => ({ ...prev, ...draft }));
+            return;
+        }
+        setFormData((prev) => ({ ...prev, ...draft.formData }));
+        if (Array.isArray(draft.oneTimeInspections)) setOneTimeInspections(draft.oneTimeInspections);
+        if (Array.isArray(draft.recurringInspections)) setRecurringInspections(draft.recurringInspections);
+        if (Array.isArray(draft.documents)) setDocuments(draft.documents);
+        if (Array.isArray(draft.notes)) setNotes(draft.notes);
+        if (draft.activeStep) setActiveStep(draft.activeStep);
+    };
+
     // Column filters
     const [filters, setFilters] = useState({
         trailerNumber: '',
@@ -221,7 +239,7 @@ const TrailersPage: React.FC = () => {
     });
 
     // Countries data
-    const [countries, setCountries] = useState<Country[]>([]);
+    const countries = COUNTRIES;
 
     // Fetch active orders to determine trailer assignments (for Unassigned tab)
     useEffect(() => {
@@ -318,35 +336,6 @@ const TrailersPage: React.FC = () => {
         };
         fetchTrailers();
     }, [activeTab, assignedTrailerIds]);
-
-    // Fetch countries data
-    useEffect(() => {
-        fetch('https://restcountries.com/v3.1/all?fields=name,flag,idd,cca2')
-            .then(res => res.json())
-            .then(data => {
-                const sortedCountries = data
-                    .filter((c: any) => c.idd && c.idd.root)
-                    .map((c: any) => ({
-                        name: c.name.common,
-                        code: c.cca2,
-                        flag: c.flag,
-                        dialCode: c.idd.root + (c.idd.suffixes ? c.idd.suffixes[0] : ''),
-                    }))
-                    .sort((a: Country, b: Country) => a.name.localeCompare(b.name));
-
-                setCountries(sortedCountries);
-            })
-            .catch(() => {
-                const fallback = [
-                    { name: 'United States', code: 'US', flag: '🇺🇸', dialCode: '+1' },
-                    { name: 'Canada', code: 'CA', flag: '🇨🇦', dialCode: '+1' },
-                    { name: 'India', code: 'IN', flag: '🇮🇳', dialCode: '+91' },
-                    { name: 'United Kingdom', code: 'GB', flag: '🇬🇧', dialCode: '+44' },
-                    { name: 'Australia', code: 'AU', flag: '🇦🇺', dialCode: '+61' },
-                ];
-                setCountries(fallback);
-            });
-    }, []);
 
     // Fetch drivers from API
     useEffect(() => {

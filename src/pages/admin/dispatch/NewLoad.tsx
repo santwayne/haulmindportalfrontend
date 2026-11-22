@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { X, Plus, ChevronDown, ChevronUp, Search, Pencil } from "lucide-react";
 import { listPlace } from "../../../axios/api/dispatcher.places";
 import { listCustomer, createLoad } from "../../../axios/api/distapcher";
+import { getAllEmployees } from "../../../axios/api/employee";
 
 interface Place {
     _id: string;
@@ -37,6 +38,16 @@ const NewLoad = ({ onClose }: NewLoadProps) => {
     const [loadType, setLoadType] = useState("FTL");
     const [freightOn, setFreightOn] = useState("Order");
     const [selectedSalesman, setSelectedSalesman] = useState("");
+    // Real salespeople from the Employees list (replaces the old hard-coded sample names)
+    const [salespeople, setSalespeople] = useState<{ _id: string; name: string }[]>([]);
+    useEffect(() => {
+        getAllEmployees(1, 200, undefined, "salesperson", "active")
+            .then((res) => {
+                const list = Array.isArray(res?.data) ? res.data : [];
+                setSalespeople(list.map((e: { _id: string; name?: string; email?: string }) => ({ _id: e._id, name: e.name || e.email || "Salesperson" })));
+            })
+            .catch(() => setSalespeople([]));
+    }, []);
     const [orderNotes, setOrderNotes] = useState("");
     const [commodity, setCommodity] = useState("");
     const [valueOfGoods, setValueOfGoods] = useState("");
@@ -496,8 +507,9 @@ const NewLoad = ({ onClose }: NewLoadProps) => {
                                         className="flex-1 p-2 border border-theme rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
                                     >
                                         <option value="">Select</option>
-                                        <option value="john">John Doe</option>
-                                        <option value="jane">Jane Smith</option>
+                                        {salespeople.map((sp) => (
+                                            <option key={sp._id} value={sp._id}>{sp.name}</option>
+                                        ))}
                                     </select>
                                     <button className="px-2 text-blue-500 hover:bg-blue-50 rounded text-xl leading-none flex-shrink-0">+</button>
                                 </div>

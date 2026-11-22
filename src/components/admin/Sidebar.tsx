@@ -187,7 +187,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false }) => {
                   ) : (
                     // --- NORMAL LINK ---
                     <NavLink
-                      to={link.key === "dashboard" ? "/admin/" : `/admin/${link.key}`}
+                      to={link.key === "dashboard" ? "/admin/" : link.key.startsWith("/") ? link.key : `/admin/${link.key}`}
                       className={({ isActive }) => {
                         const pathname = window.location.pathname;
                         const activeState = isActiveLink(link.key, isActive, pathname);

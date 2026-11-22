@@ -601,7 +601,9 @@ const SubscriptionPage = () => {
                       <div className="bg-[rgba(245,158,11,0.06)] rounded-xl p-4 border border-[rgba(245,158,11,0.2)]">
                         <div className="flex items-center gap-2 mb-2">
                           <Calendar className="w-5 h-5 text-[#d97706]" />
-                          <span className="text-primary text-sm font-medium">Next Billing</span>
+                          <span className="text-primary text-sm font-medium">
+                            {new Date(activeSubscription.nextBillingDate).getTime() < Date.now() ? 'Renewal Overdue' : 'Next Billing'}
+                          </span>
                         </div>
                         <p className="text-primary text-xl font-bold">
                           {new Date(activeSubscription.nextBillingDate).toLocaleDateString('en-US', {

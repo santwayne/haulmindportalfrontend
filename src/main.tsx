@@ -1,3 +1,5 @@
+// Must load before antd: without it message.* and Modal.confirm don't appear on React 19
+import '@ant-design/v5-patch-for-react-19'
 import { StrictMode } from 'react'
 import { ConfigProvider } from "antd";
 import './index.css'

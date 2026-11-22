@@ -254,14 +254,33 @@ export const saveCarrierProfileData = async (extractedData: any) => {
   }
 };
 
-export const getCarrierPerformance = async (params?: { year?: number; months?: number }) => {
+export const getCarrierPerformance = async (params?: { country?: 'canada' | 'usa' }) => {
   try {
     const queryParams = new URLSearchParams();
-    if (params?.year) queryParams.append('year', params.year.toString());
-    if (params?.months) queryParams.append('months', params.months.toString());
-    
+    if (params?.country) queryParams.append('country', params.country);
+
     const url = `admin/cvsa-inspections/carrier-performance${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     const res: AxiosResponse = await apiClient.get(url);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return (error as Error).response?.data;
+  }
+};
+
+export const getCarrierProfileImports = async () => {
+  try {
+    const res: AxiosResponse = await apiClient.get('admin/cvsa-inspections/carrier-profile-imports');
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return (error as Error).response?.data;
+  }
+};
+
+export const deleteCarrierProfileImport = async (id: string) => {
+  try {
+    const res: AxiosResponse = await apiClient.delete(`admin/cvsa-inspections/carrier-profile-imports/${id}`);
     return res.data;
   } catch (error) {
     console.log(error);
@@ -385,7 +404,7 @@ export const deleteComplianceInvoice = async (id: string, type: string) => {
 };
 
 // Incident API Functions
-export const getIncidents = async (params?: { status?: string; type?: string; location?: string; driver?: string; search?: string; page?: number; limit?: number }) => {
+export const getIncidents = async (params?: { status?: string; type?: string; location?: string; driver?: string; search?: string; country?: string; page?: number; limit?: number }) => {
   try {
     const queryParams = new URLSearchParams();
     if (params?.status) queryParams.append('status', params.status);
@@ -393,6 +412,8 @@ export const getIncidents = async (params?: { status?: string; type?: string; lo
     if (params?.location) queryParams.append('location', params.location);
     if (params?.driver) queryParams.append('driver', params.driver);
     if (params?.search) queryParams.append('search', params.search);
+    // Canada / USA tab (was never sent, so both tabs listed every accident)
+    if (params?.country) queryParams.append('country', params.country);
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     

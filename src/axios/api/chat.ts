@@ -431,3 +431,20 @@ export const getDriverUnreadMessageCount = async (
   }
 };
 
+
+// Group / broadcast message from staff to all drivers or selected drivers
+export const broadcastDriverMessage = async (payload: {
+  message: string;
+  driverIds?: string[];
+  allDrivers?: boolean;
+}): Promise<{ success: boolean; message: string; data?: { sentCount: number } }> => {
+  try {
+    const res: AxiosResponse = await apiClient.post('chat/drivers/broadcast', payload);
+    return res.data;
+  } catch (error) {
+    return {
+      success: false,
+      message: (error as any).response?.data?.message || 'Failed to send message',
+    };
+  }
+};

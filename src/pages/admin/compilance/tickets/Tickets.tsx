@@ -36,6 +36,8 @@ import { getAllVehicles } from '../../../../axios/api/vehicle';
 import { getAllTrailers } from '../../../../axios/api/trailer';
 import { listDriver } from '../../../../axios/api/distapcher';
 import { FLEET_COLORS } from '../../fleetMaintenance/colorUtils';
+import { FileDown } from 'lucide-react';
+import { fmtMoney, MONEY_FMT, downloadExcel, summarySheet, countBy, fmtDate, titleCase, monthKey } from '../../../../utils/excelExport';
 
 const ACCENT_PRIMARY = FLEET_COLORS.primary;
 const hexToRgba = (hex: string, alpha = 1) => {
@@ -51,6 +53,13 @@ const ACCENT_SOFT_BORDER = hexToRgba(ACCENT_PRIMARY, 0.25);
 
 
 // Types
+type TicketStatus = 'paid' | 'unpaid' | 'fight' | 'dismissed' | 'reduced';
+type TicketOutcome = 'paid' | 'reduced' | 'dismissed' | 'on fight' | 'unpaid';
+
+// Outcome follows Status unless someone deliberately picks a different one afterwards
+const outcomeForStatus = (status: TicketStatus): TicketOutcome =>
+  status === 'fight' ? 'on fight' : status;
+
 interface Ticket {
   _id: string;
   ticketNumber: string;
@@ -61,8 +70,8 @@ interface Ticket {
   location: string; // Province (Canada) or State (USA)
   amount: number; // Fine Amount
   finalAmount?: number; // Final amount after reduction
-  status: 'paid' | 'unpaid' | 'fight' | 'dismissed' | 'reduced';
-  outcome?: 'paid' | 'reduced' | 'dismissed' | 'on fight' | 'unpaid';
+  status: TicketStatus;
+  outcome?: TicketOutcome;
   driver: {
     _id: string;
     name?: string;
@@ -337,6 +346,86 @@ const Tickets: React.FC = () => {
     fetchTrailers();
   }, []);
 
+  // Excel export: all tickets matching the current filters (status, search, country tab), not just this page
+  const [exporting, setExporting] = useState<boolean>(false);
+  const handleExportTickets = async () => {
+    setExporting(true);
+    try {
+      const res = await getTickets({
+        status: statusFilter !== 'all' ? statusFilter : undefined,
+        search: searchQuery || undefined,
+        page: 1,
+        limit: 10000
+      });
+      let rows: Ticket[] = res?.success ? (res.data || []) : [];
+      if (activeTab !== 'all') rows = rows.filter(t => t.country === activeTab);
+      const fine = (t: Ticket) => Number(t.amount) || 0;
+      const finalAmt = (t: Ticket) => (t.finalAmount !== undefined && t.finalAmount !== null ? Number(t.finalAmount) : fine(t));
+      const totalFines = rows.reduce((a, t) => a + fine(t), 0);
+      const totalFinal = rows.reduce((a, t) => a + finalAmt(t), 0);
+      const paid = rows.filter(t => t.status === 'paid').reduce((a, t) => a + finalAmt(t), 0);
+      const unpaid = rows.filter(t => t.status === 'unpaid').reduce((a, t) => a + finalAmt(t), 0);
+
+      await downloadExcel('Tickets', [
+        {
+          name: 'Tickets',
+          rows,
+          columns: [
+            { header: 'Ticket #', width: 16, value: t => t.ticketNumber },
+            { header: 'Country', width: 10, value: t => (t.country || '').toUpperCase() },
+            { header: 'Date Issued', width: 14, value: t => fmtDate(t.dateIssued) },
+            { header: 'Province / State', width: 16, value: t => t.location },
+            { header: 'Violation Type', width: 22, value: t => t.violationType },
+            { header: 'Description', width: 36, value: t => t.violationDescription },
+            { header: 'Driver', width: 22, value: t => getDriverName(t.driver) },
+            { header: 'Vehicle', width: 22, value: t => getVehicleInfo(t.vehicle) },
+            { header: 'Unit #', width: 12, value: t => t.unitNumber },
+            { header: 'Trailer #', width: 12, value: t => t.trailerNumber },
+            { header: 'Officer', width: 18, value: t => t.officerName },
+            { header: 'Fine Amount', width: 14, value: t => fine(t), numFmt: MONEY_FMT },
+            { header: 'Final Amount', width: 14, value: t => finalAmt(t), numFmt: MONEY_FMT },
+            { header: 'Status', width: 12, value: t => titleCase(t.status) },
+            { header: 'Outcome', width: 12, value: t => titleCase(t.outcome) },
+            { header: 'Due Date', width: 14, value: t => fmtDate(t.dueDate) },
+            { header: 'Court Date', width: 14, value: t => fmtDate(t.courtDate || t.lawyerDetails?.courtDate) },
+            { header: 'Fighting By', width: 12, value: t => titleCase(t.fightingBy) },
+            { header: 'Lawyer', width: 20, value: t => [t.lawyerDetails?.name, t.lawyerDetails?.firm].filter(Boolean).join(' — ') },
+            { header: 'Paid Date', width: 14, value: t => fmtDate(t.paidDate) },
+            { header: 'Payment Method', width: 14, value: t => t.paymentMethod },
+            { header: 'Payment Ref', width: 16, value: t => t.paymentReference },
+            { header: 'Notes', width: 30, value: t => t.notes },
+          ]
+        },
+        summarySheet([
+          ['Total tickets', rows.length],
+          ['Total fine amount', fmtMoney(totalFines)],
+          ['Total final amount (after reductions)', fmtMoney(totalFinal)],
+          ['Paid amount', fmtMoney(paid)],
+          ['Unpaid amount', fmtMoney(unpaid)],
+          ['', ''],
+          ['BY STATUS', ''],
+          ...countBy(rows, t => titleCase(t.status)),
+          ['', ''],
+          ['BY COUNTRY', ''],
+          ...countBy(rows, t => (t.country || '').toUpperCase()),
+          ['', ''],
+          ['BY VIOLATION TYPE', ''],
+          ...countBy(rows, t => t.violationType),
+          ['', ''],
+          ['BY DRIVER', ''],
+          ...countBy(rows, t => getDriverName(t.driver)),
+          ['', ''],
+          ['BY MONTH (date issued)', ''],
+          ...countBy(rows, t => monthKey(t.dateIssued)).sort((a, b) => a[0].localeCompare(b[0])),
+        ]),
+      ]);
+    } catch (error) {
+      console.error('Error exporting tickets:', error);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   // Function to refresh tickets and stats
   const refreshData = async (page = currentPage, limit = pageSize) => {
     try {
@@ -351,6 +440,11 @@ const Tickets: React.FC = () => {
         }),
         getTicketStats()
       ]);
+
+      if (!ticketsRes?.success) {
+        // Don't silently show an empty list when the request failed
+        addNotification('error', ticketsRes?.message || 'Failed to load tickets. Please refresh the page.');
+      }
 
       if (ticketsRes?.success) {
         setTickets(ticketsRes.data || []);
@@ -715,7 +809,7 @@ const Tickets: React.FC = () => {
       amount: ticket.amount,
       finalAmount: ticket.finalAmount,
       status: ticket.status,
-      outcome: ticket.outcome || ticket.status === 'fight' ? 'on fight' : ticket.status,
+      outcome: ticket.outcome || outcomeForStatus(ticket.status),
       driver: typeof ticket.driver === 'string' ? ticket.driver : ticket.driver?._id || '',
       vehicle: typeof ticket.vehicle === 'string' ? ticket.vehicle : ticket.vehicle?._id || '',
       unitNumber: ticket.unitNumber || '',
@@ -998,12 +1092,22 @@ const Tickets: React.FC = () => {
                   <span className="text-xs">Manage traffic violations and legal disputes for USA & Canada</span>
                 </div>
               </div>
+              <div className="flex items-center gap-2">
+              <button
+                onClick={handleExportTickets}
+                disabled={exporting}
+                title="Export to Excel"
+                className="w-10 h-10 !text-white rounded-lg flex items-center justify-center bg-[var(--accent-navyblue)] hover:bg-[var(--accent-navyblue)] transition-colors shadow-md disabled:opacity-60"
+              >
+                <FileDown className={`w-5 h-5 ${exporting ? 'animate-pulse' : ''}`} />
+              </button>
               <button
                 onClick={handleAddTicket}
                 className="flex items-center gap-2 px-4 py-2 bg-[var(--accent-navyblue)] text-[rgba(5,150,105,0.15)] rounded-lg hover:bg-card/90 shadow-sm transition-all font-bold text-sm"
               >
                 <FaPlus /> Add Ticket
               </button>
+              </div>
             </div>
           </div>
 
@@ -1705,7 +1809,10 @@ const Tickets: React.FC = () => {
                     <label className="block text-sm font-medium text-headings mb-1">Status <span className="text-red-500">*</span></label>
                     <select
                       value={ticketForm.status}
-                      onChange={(e) => setTicketForm(prev => ({ ...prev, status: e.target.value as 'paid' | 'unpaid' | 'fight' | 'dismissed' | 'reduced' }))}
+                      onChange={(e) => {
+                        const status = e.target.value as TicketStatus;
+                        setTicketForm(prev => ({ ...prev, status, outcome: outcomeForStatus(status) }));
+                      }}
                       className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-[var(--accent-color)] focus:border-transparent"
                     >
                       <option className='form-option' value="unpaid">Unpaid</option>
@@ -2233,17 +2340,10 @@ const Tickets: React.FC = () => {
                     <label className="block text-sm font-medium text-headings mb-1">Status <span className="text-red-500">*</span></label>
                     <select
                       value={ticketForm.status}
-                      onChange={(e) =>
-                        setTicketForm((prev) => ({
-                          ...prev,
-                          status: e.target.value as
-                            | "paid"
-                            | "unpaid"
-                            | "fight"
-                            | "dismissed"
-                            | "reduced",
-                        }))
-                      }
+                      onChange={(e) => {
+                        const status = e.target.value as TicketStatus;
+                        setTicketForm((prev) => ({ ...prev, status, outcome: outcomeForStatus(status) }));
+                      }}
                       className="w-full px-3 py-2 text-sm border border-theme rounded-lg
   bg-[var(--bg-card)] text-[var(--text-primary)]
   focus:ring-2 focus:ring-[var(--accent-blue)]

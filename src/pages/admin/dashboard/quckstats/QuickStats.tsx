@@ -488,10 +488,13 @@ export default function QuickStatsUI() {
                 onClick={() => navigate("/admin/Management/documents")}
               >
                 {alerts.expiringDocs?.length > 0 ? (
-                  alerts.expiringDocs.map((doc, i) => (
+                  alerts.expiringDocs.map((doc, i) => {
+                    const expiry = doc.license?.expiryDate || doc.expiryDate;
+                    const isExpired = !!expiry && new Date(expiry).getTime() < Date.now();
+                    return (
                     <AlertItem
                       key={i}
-                      color="amber"
+                      color={isExpired ? "rose" : "amber"}
                       leftIcon={
                         doc.type === "vehicle"
                           ? <Truck className="h-4 w-4 text-amber-400" />
@@ -499,10 +502,11 @@ export default function QuickStatsUI() {
                       }
                       title={`${doc.documentType || "Document"} — ${doc.name}`}
                       subtitle={formatDate(doc.license?.expiryDate || doc.expiryDate || "")}
-                      badge="Expiring"
+                      badge={isExpired ? "Expired" : "Expiring"}
                       onClick={() => navigate("/admin/Management/documents")}
                     />
-                  ))
+                    );
+                  })
                 ) : (
                   <OkRow label="All documents valid" />
                 )}

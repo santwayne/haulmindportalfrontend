@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { getUserRole } from "../../utils/auth";
 import { useQuickActions } from "../common/QuickAction";
 import { usePageTitle } from "../../hooks/usePageTitle";
+import DriverMessagesButton from '../chat/DriverMessagesButton';
 
 function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -126,8 +127,8 @@ function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
                 </div>
 
                 {/* CENTER: Page Title */}
-                <div className="absolute left-1/2 -translate-x-1/2">
-                    <span className="text-primary font-semibold text-lg tracking-wide">
+                <div className="absolute left-1/2 -translate-x-1/2 hidden lg:block max-w-[40%]">
+                    <span className="block truncate text-primary font-semibold text-lg tracking-wide">
                         {pageTitle || 'GPS Tracking & Vehicle Telematics'}
                     </span>
                 </div>
@@ -146,6 +147,7 @@ function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
                     </button>
 
                     {/* Logout */}
+                    <DriverMessagesButton className="header-btn" />
                     <button
                         onClick={handleLogoutClick}
                         className="header-btn"

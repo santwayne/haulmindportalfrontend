@@ -24,6 +24,7 @@ import {
 
 import {
   createPolicyDocument,
+  updatePolicyDocument,
   getPolicyDocuments,
   getPolicyDocumentSignedUrl
 } from '../../../../axios/api/healthSafety';
@@ -167,6 +168,18 @@ const PolicyManagementModule = () => {
     } catch (error: any) {
       console.error('Error accessing policy document:', error);
       showNotification('error', error?.response?.data?.message || 'Failed to access policy document');
+    }
+  };
+
+  const changePolicyStatus = async (policy: { _id: string }, status: string) => {
+    const fd = new FormData();
+    fd.append('status', status);
+    const res = await updatePolicyDocument(policy._id, fd);
+    if (res?.success) {
+      showNotification('success', `Policy marked ${status.replace('-', ' ')}`);
+      fetchPolicies();
+    } else {
+      showNotification('error', res?.message || 'Could not change the status');
     }
   };
 
@@ -435,6 +448,7 @@ const PolicyManagementModule = () => {
       owner: string;
       version: string;
       linkedTraining: string;
+      status: string;
       file: File | null;
     }>({
       title: '',
@@ -448,6 +462,7 @@ const PolicyManagementModule = () => {
       owner: '',
       version: '1.0',
       linkedTraining: '',
+      status: 'active',
       file: null
     });
 
@@ -530,6 +545,19 @@ const PolicyManagementModule = () => {
                   onChange={(e) => setFormData({ ...formData, reviewDate: e.target.value })}
                   style={{ colorScheme: 'dark' }}
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-headings">Status *</label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                  className="w-full px-4 py-3 border border-theme rounded-lg focus:ring-2 focus:ring-purple-500"
+                >
+                  <option className="form-option" value="active">Active (in force)</option>
+                  <option className="form-option" value="under-review">Under Review</option>
+                  <option className="form-option" value="draft">Draft</option>
+                </select>
               </div>
 
               <div>
@@ -1051,9 +1079,18 @@ const PolicyManagementModule = () => {
                       <span className='text-xs text-secondary'>Read Receipts for Audit</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(policy.status)}`}>
-                        {policy.status.replace('-', ' ').toUpperCase()}
-                      </span>
+                      {/* Status can be changed here: existing policies were all saved as Draft */}
+                      <select
+                        value={policy.status}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => changePolicyStatus(policy, e.target.value)}
+                        className={`px-2 py-1 rounded-full text-xs font-semibold border-0 cursor-pointer ${getStatusColor(policy.status)}`}
+                        aria-label="Policy status"
+                      >
+                        {['active', 'under-review', 'draft', 'archived'].map((st) => (
+                          <option key={st} value={st} className="form-option">{st.replace('-', ' ').toUpperCase()}</option>
+                        ))}
+                      </select>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
@@ -1191,7 +1228,8 @@ const PolicyManagementModule = () => {
               formData.append('version', data.version);
               formData.append('effectiveDate', data.effectiveDate);
               formData.append('reviewDate', data.reviewDate);
-              formData.append('status', 'draft');
+              // Was always 'draft', so no uploaded policy ever counted as active
+              formData.append('status', data.status || 'active');
               formData.append('documentType', data.documentType.toLowerCase());
 
               if (data.file) {

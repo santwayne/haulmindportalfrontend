@@ -1,7 +1,9 @@
 import apiClient from "../apiClient";
 
-export const listAttendance = async (params?: { month?: number; year?: number; date?: string; employee?: string; includeActiveSessions?: boolean }) => {
+export const listAttendance = async (params?: { month?: number; year?: number; date?: string; startDate?: string; endDate?: string; employee?: string; includeActiveSessions?: boolean }) => {
   const q = new URLSearchParams();
+  if (params?.startDate) q.set("startDate", params.startDate);
+  if (params?.endDate) q.set("endDate", params.endDate);
   if (params?.month) q.set("month", String(params.month));
   if (params?.year) q.set("year", String(params.year));
   if (params?.date) q.set("date", params.date);
@@ -26,6 +28,26 @@ export const upsertAttendance = async (payload: {
 
 export const deleteAttendance = async (id: string) => {
   const res = await apiClient.delete(`/hr/attendance/${id}`);
+  return res.data;
+};
+
+export const getCurrentSession = async () => {
+  const res = await apiClient.get(`/hr/attendance/session/current`);
+  return res.data;
+};
+
+export const clockIn = async () => {
+  const res = await apiClient.post(`/hr/attendance/session/start`);
+  return res.data;
+};
+
+export const startBreak = async () => {
+  const res = await apiClient.post(`/hr/attendance/break/start`);
+  return res.data;
+};
+
+export const endBreak = async () => {
+  const res = await apiClient.post(`/hr/attendance/break/end`);
   return res.data;
 };
 

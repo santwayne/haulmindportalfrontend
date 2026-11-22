@@ -207,6 +207,11 @@ const DriverPortfolio: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
     const [timePeriod, setTimePeriod] = useState<TimePeriod>('1month');
+    // Custom period: any start and end date
+    const [customMode, setCustomMode] = useState(false);
+    const [customStart, setCustomStart] = useState('');
+    const [customEnd, setCustomEnd] = useState('');
+    const customReady = customMode && !!customStart && !!customEnd && customStart <= customEnd;
     const [profiles, setProfiles] = useState<DriverProfile[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -252,7 +257,7 @@ const DriverPortfolio: React.FC = () => {
                 const response = await fetchUserProfiles({
                     search: debouncedSearchTerm || undefined,
                     role: 'driver',
-                    timeRange: timePeriod,
+                    ...(customReady ? { startDate: customStart, endDate: customEnd } : { timeRange: timePeriod }),
                     page: 1,
                     limit: PAGE_SIZE
                 });
@@ -294,7 +299,7 @@ const DriverPortfolio: React.FC = () => {
         return () => {
             isMounted = false;
         };
-    }, [debouncedSearchTerm, timePeriod]);
+    }, [debouncedSearchTerm, timePeriod, customReady, customStart, customEnd]);
 
     useEffect(() => {
         if (!selectedProfile) return;
@@ -672,7 +677,7 @@ const DriverPortfolio: React.FC = () => {
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `Driver_Portfolio_${timePeriod}_${new Date().toISOString().split('T')[0]}.xlsx`;
+            link.download = `Driver_Portfolio_${customReady ? `${customStart}_to_${customEnd}` : timePeriod}_${new Date().toISOString().split('T')[0]}.xlsx`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -860,15 +865,34 @@ const DriverPortfolio: React.FC = () => {
                                 {(['1week', '2weeks', '1month'] as TimePeriod[]).map((period) => (
                                     <button
                                         key={period}
-                                        onClick={() => setTimePeriod(period)}
-                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${timePeriod === period ? '!text-white shadow-md' : 'bg-card text-primary hover:hover:bg-[rgba(15,31,23,0.05)]'
+                                        onClick={() => { setCustomMode(false); setTimePeriod(period); }}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${timePeriod === period && !customMode ? '!text-white shadow-md' : 'bg-card text-primary hover:hover:bg-[rgba(15,31,23,0.05)]'
                                             }`}
-                                        style={timePeriod === period ? { background: "var(--accent-navyblue)" } : undefined}
+                                        style={timePeriod === period && !customMode ? { background: "var(--accent-navyblue)" } : undefined}
                                     >
                                         {period === '1week' ? '1 Week' : period === '2weeks' ? '2 Weeks' : '1 Month'}
                                     </button>
                                 ))}
+                                <button
+                                    onClick={() => setCustomMode(true)}
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${customMode ? '!text-white shadow-md' : 'bg-card text-primary hover:hover:bg-[rgba(15,31,23,0.05)]'}`}
+                                    style={customMode ? { background: "var(--accent-navyblue)" } : undefined}
+                                >
+                                    Custom
+                                </button>
                             </div>
+                            {customMode && (
+                                <div className="flex items-center gap-2">
+                                    <input type="date" aria-label="From date" value={customStart} max={customEnd || undefined}
+                                        onChange={(e) => setCustomStart(e.target.value)}
+                                        className="px-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg text-sm [color-scheme:dark]" />
+                                    <span className="text-secondary text-sm">to</span>
+                                    <input type="date" aria-label="To date" value={customEnd} min={customStart || undefined}
+                                        onChange={(e) => setCustomEnd(e.target.value)}
+                                        className="px-3 py-2 bg-[rgba(15,31,23,0.05)] text-primary border border-theme rounded-lg text-sm [color-scheme:dark]" />
+                                    {!customReady && <span className="text-xs text-secondary">Pick both dates</span>}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

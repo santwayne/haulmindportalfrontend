@@ -16,7 +16,7 @@ export const CompilanceSidebarLinks: CompilanceSidebarLink[] = [
     {
         key: "compilance-summary",
         icon: <MdDashboard />,
-        label: "Compilance Summary",
+        label: "Compliance Summary",
     },
     {
         key: "hos-eld",

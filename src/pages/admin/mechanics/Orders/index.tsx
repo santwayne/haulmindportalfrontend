@@ -49,10 +49,12 @@ interface SparePartOption {
 }
 
 interface OrdersProps {
-  defaultStatus?: string; // e.g. "completed" for Completed Orders page
+  defaultStatus?: string; // "completed" for Completed Orders page, "pending" for open repair orders
+  /** Rendered inside the Assign Tasks page (no page header / padding) */
+  embedded?: boolean;
 }
 
-const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
+const Orders: React.FC<OrdersProps> = ({ defaultStatus, embedded = false }) => {
   const [orders, setOrders] = useState<MechanicOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -72,6 +74,8 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>(defaultStatus || "all");
+  const isCompletedOnly = defaultStatus === "completed";
+  const isPendingOnly = defaultStatus === "pending";
   const [page, setPage] = useState(1);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [limit] = useState(10);
@@ -265,7 +269,10 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
         invoiceFile
       );
       if (response?.success) {
-        setNotification({ type: "success", message: "Order completed successfully" });
+        setNotification({
+          type: "success",
+          message: isPendingOnly ? "Task completed — moved to Completed Orders" : "Order completed successfully",
+        });
         closeCompleteModal();
         await loadOrders(page);
       } else {
@@ -283,7 +290,7 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
 
   if (loading) {
     return (
-      <div className="p-6 min-h-screen bg-main ">
+      <div className={embedded ? "" : "p-6 min-h-screen bg-main "}>
         <div className="flex items-center justify-center py-16">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[var(--accent-blue)]" />
         </div>
@@ -291,16 +298,18 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
     );
   }
 
-  const isCompletedOnly = defaultStatus === "completed";
-
   return (
-    <div className="p-6 bg-main min-h-screen ">
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-headings">{isCompletedOnly ? "Completed Orders" : "Mechanics Portal"}</h1>
-        <p className="text-sm text-secondary mt-1">
-          {isCompletedOnly ? "All completed maintenance orders" : "Maintenance orders assigned to mechanics"}
-        </p>
-      </div>
+    <div className={embedded ? "" : "p-6 bg-main min-h-screen "}>
+      {!embedded && (
+        <div className="mb-6">
+          <h1 className="text-xl font-bold text-headings">{isCompletedOnly ? "Completed Orders" : "Mechanics Portal"}</h1>
+          <p className="text-sm text-secondary mt-1">
+            {isCompletedOnly
+              ? "Completed tasks — repair orders and scheduled services you have finished"
+              : "Maintenance orders assigned to mechanics"}
+          </p>
+        </div>
+      )}
 
       {notification && (
         <div
@@ -319,8 +328,8 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
         </div>
       )}
 
-      {/* Count cards - hidden on Completed Orders page */}
-      {!isCompletedOnly && (
+      {/* Count cards - hidden on Completed Orders page and in Assign Tasks */}
+      {!isCompletedOnly && !isPendingOnly && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6  ">
           <div
             onClick={() => { setStatusFilter("all"); setPage(1); }}
@@ -378,7 +387,9 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
       <div className="bg-card rounded-lg shadow-sm border border-theme overflow-hidden">
         <div className="px-4 py-3 border-b border-theme bg-gradient-to-r from-[var(--accent-blue)]/5 to-transparent flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="text-sm font-bold text-headings">{isCompletedOnly ? "Completed Orders" : "Orders"}</h2>
+            <h2 className="text-sm font-bold text-headings">
+              {isCompletedOnly ? "Completed Orders" : isPendingOnly ? "Repair Orders" : "Orders"}
+            </h2>
             <p className="text-xs text-secondary mt-0.5">
               {pagination.totalCount} order{pagination.totalCount !== 1 ? "s" : ""} found
               {pagination.totalPages > 1 && ` • Page ${pagination.page} of ${pagination.totalPages}`}
@@ -395,7 +406,7 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
                 className="pl-9 pr-3 py-2 text-sm border border-theme rounded-lg w-48 focus:border-[var(--accent-blue)] focus:ring-2 focus:ring-[var(--accent-blue)]/20"
               />
             </div>
-            {!isCompletedOnly && (
+            {!isCompletedOnly && !isPendingOnly && (
               <select
                 value={statusFilter}
                 onChange={(e) => {
@@ -449,7 +460,7 @@ const Orders: React.FC<OrdersProps> = ({ defaultStatus }) => {
               {orders.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-secondary">
-                    No maintenance orders found
+                    {isPendingOnly ? "No open repair orders assigned to you" : "No maintenance orders found"}
                   </td>
                 </tr>
               ) : (

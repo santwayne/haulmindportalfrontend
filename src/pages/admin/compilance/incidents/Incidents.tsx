@@ -34,6 +34,8 @@ import { createIssue } from '../../../../axios/api/distapcher';
 import { getAllVehicles } from '../../../../axios/api/vehicle';
 import { getAllTrailers } from '../../../../axios/api/trailer';
 import { listDriver } from '../../../../axios/api/distapcher';
+import { FileDown } from 'lucide-react';
+import { downloadExcel, summarySheet, countBy, fmtDateTime, fmtMoney, MONEY_FMT, titleCase, monthKey, yesNo } from '../../../../utils/excelExport';
 
 
 
@@ -45,6 +47,12 @@ interface ActionTakenLog {
   takenBy: string;
   notes?: string;
 }
+
+// A datetime-local input needs the browser's local time, not UTC from toISOString()
+const toLocalInputValue = (value: string) => {
+  const d = new Date(value);
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+};
 
 interface CostTracking {
   category: string;
@@ -219,6 +227,8 @@ const Incidents: React.FC = () => {
   const [locationFilter, setLocationFilter] = useState<string>('all');
   const [driverFilter, setDriverFilter] = useState<string>('all');
   const [countryFilter, setCountryFilter] = useState<'all' | 'canada' | 'usa'>('all');
+  // Tab counts from the server (independent of which tab is open)
+  const [countryCounts, setCountryCounts] = useState<{ all: number; canada: number; usa: number } | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
   const [total, setTotal] = useState(0);
@@ -356,6 +366,100 @@ const Incidents: React.FC = () => {
     refreshData();
   }, [statusFilter, typeFilter, locationFilter, driverFilter, countryFilter, debouncedSearch, currentPage, pageSize]);
 
+  // Excel export: all accidents matching the current filters, not just this page
+  const [exporting, setExporting] = useState<boolean>(false);
+  const handleExportIncidents = async () => {
+    setExporting(true);
+    try {
+      const params: any = { page: 1, limit: 10000, sortBy: 'incidentDateTime', sortOrder: 'desc' };
+      if (statusFilter !== 'all') params.status = statusFilter;
+      if (typeFilter !== 'all') params.type = typeFilter;
+      if (locationFilter !== 'all') params.location = locationFilter;
+      if (driverFilter !== 'all') params.driver = driverFilter;
+      if (countryFilter !== 'all') params.country = countryFilter;
+      if (debouncedSearch) params.search = debouncedSearch;
+      const res = await getIncidents(params);
+      const rows: Incident[] = res?.success ? (res.data || []) : [];
+      const estimated = (i: Incident) => (i.costTracking || []).reduce((a, c) => a + (Number(c.estimated) || 0), 0);
+      const actual = (i: Incident) => (i.costTracking || []).reduce((a, c) => a + (Number(c.actual) || 0), 0);
+      const totalEst = rows.reduce((a, i) => a + estimated(i), 0);
+      const totalAct = rows.reduce((a, i) => a + actual(i), 0);
+      const costRows = rows.flatMap(i => (i.costTracking || []).map(c => ({ i, c })));
+      const place = (i: Incident) => [i.location?.city, i.location?.stateProvince].filter(Boolean).join(', ');
+
+      await downloadExcel('Accidents', [
+        {
+          name: 'Accidents',
+          rows,
+          columns: [
+            { header: 'Accident #', width: 16, value: i => i.incidentNumber },
+            { header: 'Date & Time', width: 20, value: i => fmtDateTime(i.incidentDateTime) },
+            { header: 'Type', width: 18, value: i => titleCase(i.incidentType) },
+            { header: 'Status', width: 14, value: i => titleCase(i.incidentStatus) },
+            { header: 'Country', width: 10, value: i => (i.location?.country || '').toUpperCase() },
+            { header: 'City / Province', width: 22, value: i => place(i) },
+            { header: 'Street Address', width: 24, value: i => i.location?.streetAddress },
+            { header: 'Driver', width: 22, value: i => getDriverName(i.driver) },
+            { header: 'Co-Driver', width: 20, value: i => (i.coDriver ? getCoDriverName(i.coDriver) : '') },
+            { header: "Driver's Licence", width: 16, value: i => i.driversLicense },
+            { header: 'Unit #', width: 12, value: i => i.unitNumber },
+            { header: 'Trailer #', width: 12, value: i => i.trailerNumber },
+            { header: 'VIN / Plate', width: 18, value: i => i.vinPlateNumber },
+            { header: 'Damage', width: 30, value: i => i.damageDescription },
+            { header: 'Description', width: 36, value: i => i.description },
+            { header: 'Police Report #', width: 16, value: i => i.policeReportNumber },
+            { header: 'Case File #', width: 14, value: i => i.caseFileNumber },
+            { header: 'Reporting Party', width: 18, value: i => i.reportingParty },
+            { header: 'CVSA/DOT Impact', width: 12, value: i => yesNo(i.cvsaDotImpact) },
+            { header: 'FMCSA Reportable', width: 12, value: i => yesNo(i.fmcsaReportable) },
+            { header: 'Estimated Cost', width: 14, value: i => estimated(i), numFmt: MONEY_FMT },
+            { header: 'Actual Cost', width: 14, value: i => actual(i), numFmt: MONEY_FMT },
+            { header: 'Preventative Measures', width: 30, value: i => i.preventativeMeasures },
+            { header: 'Notes', width: 30, value: i => i.notes },
+          ]
+        },
+        {
+          name: 'Costs',
+          rows: costRows,
+          columns: [
+            { header: 'Accident #', width: 16, value: r => r.i.incidentNumber },
+            { header: 'Date', width: 20, value: r => fmtDateTime(r.i.incidentDateTime) },
+            { header: 'Category', width: 20, value: r => r.c.category },
+            { header: 'Estimated', width: 14, value: r => Number(r.c.estimated) || 0, numFmt: MONEY_FMT },
+            { header: 'Actual', width: 14, value: r => Number(r.c.actual) || 0, numFmt: MONEY_FMT },
+            { header: 'Notes', width: 30, value: r => r.c.notes },
+          ]
+        },
+        summarySheet([
+          ['Total accidents', rows.length],
+          ['Open', rows.filter(i => i.incidentStatus === 'open').length],
+          ['Under review', rows.filter(i => i.incidentStatus === 'under-review').length],
+          ['Closed', rows.filter(i => i.incidentStatus === 'closed').length],
+          ['FMCSA reportable', rows.filter(i => i.fmcsaReportable).length],
+          ['With CVSA/DOT impact', rows.filter(i => i.cvsaDotImpact).length],
+          ['Total estimated cost', fmtMoney(totalEst)],
+          ['Total actual cost', fmtMoney(totalAct)],
+          ['', ''],
+          ['BY TYPE', ''],
+          ...countBy(rows, i => titleCase(i.incidentType)),
+          ['', ''],
+          ['BY COUNTRY', ''],
+          ...countBy(rows, i => (i.location?.country || '').toUpperCase() || undefined),
+          ['', ''],
+          ['BY DRIVER', ''],
+          ...countBy(rows, i => getDriverName(i.driver)),
+          ['', ''],
+          ['BY MONTH', ''],
+          ...countBy(rows, i => monthKey(i.incidentDateTime)).sort((a, b) => a[0].localeCompare(b[0])),
+        ]),
+      ]);
+    } catch (error) {
+      console.error('Error exporting accidents:', error);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const refreshData = async () => {
     setLoading(true);
     try {
@@ -376,6 +480,7 @@ const Incidents: React.FC = () => {
       const res = await getIncidents(params);
       if (res && res.success && res.data) {
         setIncidents(res.data);
+        setCountryCounts(res.countryCounts || null);
         if (res.pagination) {
           setTotal(res.pagination.total);
           setTotalPages(res.pagination.totalPages);
@@ -554,7 +659,7 @@ const Incidents: React.FC = () => {
   const handleEditIncident = (incident: Incident) => {
     setSelectedIncident(incident);
     setIncidentForm({
-      incidentDateTime: incident.incidentDateTime ? new Date(incident.incidentDateTime).toISOString().slice(0, 16) : '',
+      incidentDateTime: incident.incidentDateTime ? toLocalInputValue(incident.incidentDateTime) : '',
       location: {
         city: incident.location?.city || '',
         stateProvince: incident.location?.stateProvince || '',
@@ -612,12 +717,88 @@ const Incidents: React.FC = () => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
+  const updateCost = (index: number, patch: Partial<CostTracking>) => {
+    setIncidentForm(prev => ({
+      ...prev,
+      costTracking: (prev.costTracking || []).map((c, i) => (i === index ? { ...c, ...patch } : c)),
+    }));
+  };
+
+  const renderCostEditor = () => (
+    <div>
+      <div className="flex items-center justify-between mb-2">
+        <label className="block text-sm font-medium text-primary">Accident Costs</label>
+        <button
+          type="button"
+          onClick={() => setIncidentForm(prev => ({ ...prev, costTracking: [...(prev.costTracking || []), { category: '', estimated: 0 }] }))}
+          className="flex items-center gap-1 text-sm font-medium text-[var(--accent-navyblue)]"
+        >
+          <FaPlus size={12} /> Add Cost
+        </button>
+      </div>
+      {(incidentForm.costTracking || []).length === 0 && (
+        <p className="text-xs text-secondary">No costs added yet.</p>
+      )}
+      <div className="space-y-2">
+        {(incidentForm.costTracking || []).map((cost, index) => (
+          <div key={index} className="grid grid-cols-2 sm:grid-cols-[2fr_1fr_1fr_2fr_auto] gap-2 items-center">
+            <input
+              type="text"
+              aria-label="Cost category"
+              placeholder="Category (required)"
+              value={cost.category}
+              onChange={(e) => updateCost(index, { category: e.target.value })}
+              className="px-3 py-2 text-sm border border-theme rounded-lg"
+            />
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              aria-label="Estimated cost"
+              placeholder="Estimated"
+              value={cost.estimated}
+              onChange={(e) => updateCost(index, { estimated: Math.max(0, Number(e.target.value) || 0) })}
+              className="px-3 py-2 text-sm border border-theme rounded-lg"
+            />
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              aria-label="Actual cost"
+              placeholder="Actual"
+              value={cost.actual ?? ''}
+              onChange={(e) => updateCost(index, { actual: e.target.value === '' ? undefined : Math.max(0, Number(e.target.value) || 0) })}
+              className="px-3 py-2 text-sm border border-theme rounded-lg"
+            />
+            <input
+              type="text"
+              aria-label="Cost notes"
+              placeholder="Notes"
+              value={cost.notes || ''}
+              onChange={(e) => updateCost(index, { notes: e.target.value })}
+              className="px-3 py-2 text-sm border border-theme rounded-lg"
+            />
+            <button
+              type="button"
+              aria-label="Remove cost"
+              onClick={() => setIncidentForm(prev => ({ ...prev, costTracking: (prev.costTracking || []).filter((_, i) => i !== index) }))}
+              className="p-2"
+            >
+              <FaTrash size={14} className="text-[var(--accent-red)]" />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   const validateForm = () => {
     return !!incidentForm.incidentDateTime &&
       !!incidentForm.location?.city &&
       !!incidentForm.location?.stateProvince &&
       !!incidentForm.incidentType &&
-      !!incidentForm.driver;
+      !!incidentForm.driver &&
+      (incidentForm.costTracking || []).every(c => !!c.category.trim());
   };
 
   const saveNewIncident = async () => {
@@ -632,7 +813,7 @@ const Incidents: React.FC = () => {
       const formData = new FormData();
 
       // Add all form fields
-      formData.append('incidentDateTime', incidentForm.incidentDateTime);
+      formData.append('incidentDateTime', new Date(incidentForm.incidentDateTime).toISOString());
       formData.append('location', JSON.stringify(incidentForm.location));
       formData.append('incidentType', incidentForm.incidentType);
       formData.append('incidentStatus', incidentForm.incidentStatus);
@@ -765,7 +946,7 @@ const Incidents: React.FC = () => {
       const formData = new FormData();
 
       // Add all form fields
-      formData.append('incidentDateTime', incidentForm.incidentDateTime);
+      formData.append('incidentDateTime', new Date(incidentForm.incidentDateTime).toISOString());
       formData.append('location', JSON.stringify(incidentForm.location));
       formData.append('incidentType', incidentForm.incidentType);
       formData.append('incidentStatus', incidentForm.incidentStatus);
@@ -786,9 +967,8 @@ const Incidents: React.FC = () => {
         formData.append('actionTakenLog', JSON.stringify(incidentForm.actionTakenLog));
       }
       if (incidentForm.preventativeMeasures) formData.append('preventativeMeasures', incidentForm.preventativeMeasures);
-      if (incidentForm.costTracking && incidentForm.costTracking.length > 0) {
-        formData.append('costTracking', JSON.stringify(incidentForm.costTracking));
-      }
+      // Always sent on edit so that removing the last cost actually clears the list
+      formData.append('costTracking', JSON.stringify(incidentForm.costTracking || []));
       formData.append('cvsaDotImpact', String(incidentForm.cvsaDotImpact || false));
       formData.append('fmcsaReportable', String(incidentForm.fmcsaReportable || false));
       if (incidentForm.fmcsaNotes) formData.append('fmcsaNotes', incidentForm.fmcsaNotes);
@@ -944,12 +1124,22 @@ const Incidents: React.FC = () => {
                   <span className="text-xs">Manage and track all accidents</span>
                 </div>
               </div>
+              <div className="flex items-center gap-2">
+              <button
+                onClick={handleExportIncidents}
+                disabled={exporting}
+                title="Export to Excel"
+                className="w-10 h-10 !text-white rounded-lg flex items-center justify-center bg-[var(--accent-navyblue)] hover:bg-[var(--accent-navyblue)] transition-colors shadow-md disabled:opacity-60"
+              >
+                <FileDown className={`w-5 h-5 ${exporting ? 'animate-pulse' : ''}`} />
+              </button>
               <button
                 onClick={handleAddIncident}
                 className="flex items-center gap-2 px-4 py-2 text-[rgba(5,150,105,0.15)] rounded-lg hover:bg-card/90 shadow-sm transition-all font-bold text-sm bg-[var(--accent-navyblue)]"
               >
                 <FaPlus /> Report Incident
               </button>
+              </div>
             </div>
           </div>
 
@@ -1002,7 +1192,7 @@ const Incidents: React.FC = () => {
                 : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'
                 }`}
             >
-              All ({incidents.length})
+              All ({countryCounts ? countryCounts.all : incidents.length})
             </button>
             <button
               onClick={() => setCountryFilter('canada')}
@@ -1012,7 +1202,7 @@ const Incidents: React.FC = () => {
                 }`}
             >
               <FaFlag className="text-[#A855F7]" size={14} />
-              Canada ({incidents.filter(i => i.location?.country === 'canada').length})
+              Canada ({countryCounts ? countryCounts.canada : incidents.filter(i => i.location?.country === 'canada').length})
             </button>
             <button
               onClick={() => setCountryFilter('usa')}
@@ -1022,7 +1212,7 @@ const Incidents: React.FC = () => {
                 }`}
             >
               <FaFlagUsa className="text-[#059669]" size={14} />
-              USA ({incidents.filter(i => i.location?.country === 'usa').length})
+              USA ({countryCounts ? countryCounts.usa : incidents.filter(i => i.location?.country === 'usa').length})
             </button>
           </div>
         </div>
@@ -1884,6 +2074,8 @@ const Incidents: React.FC = () => {
                       />
                     </div>
 
+                    <div className="col-span-2">{renderCostEditor()}</div>
+
                     <div className="col-span-2">
                       <label className="block text-sm font-medium text-primary mb-1">Additional Notes</label>
                       <textarea
@@ -2030,7 +2222,7 @@ const Incidents: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                {/* Add other sections similar to Add Modal */}
+                <div className="bg-card rounded-xl p-6">{renderCostEditor()}</div>
               </div>
 
               <div className="sticky bottom-0 bg-card px-6 py-4 flex justify-end gap-3 border-t rounded-b-2xl">

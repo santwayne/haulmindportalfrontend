@@ -396,7 +396,7 @@ const ProfessionalTrailerTracker: React.FC = () => {
             )}
 
             {/* Right Map */}
-            <div className="flex-1 relative" style={{ height: '100vh', minHeight: '100vh' }}>
+            <div className="flex-1 relative" style={{ height: '100%', minHeight: 0 }}>
                 <MapContainer
                     center={mapCenter}
                     zoom={mapZoom}

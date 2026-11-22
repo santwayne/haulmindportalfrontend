@@ -24,6 +24,7 @@ export interface MechanicOrder {
   verificationStatus?: string;
   completionDate?: string;
   completedParts?: CompletedPart[];
+  sourceServiceId?: string | null;
   completionTotalAmount?: number;
   invoiceUploadUrl?: string;
   invoiceSignedUrl?: string;
@@ -72,6 +73,7 @@ export interface MechanicDashboardData {
   avgRepairCost: number;
   recentOrders: Array<{
     id: string;
+    type?: "service" | "order";
     unit?: string;
     description?: string;
     status?: string;

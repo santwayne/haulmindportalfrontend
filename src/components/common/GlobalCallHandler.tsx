@@ -213,22 +213,20 @@ export const GlobalCallHandler: React.FC = () => {
   useEffect(() => {
     const tryConnect = () => {
       const token = localStorage.getItem("token");
-      if (!token) return;
-      if (socketService.isConnected() && socketService.getIsAuthenticated()) return;
+      if (!token) {
+        // Logged out: never keep a live connection for the previous user
+        if (socketService.getSocket()) socketService.disconnect();
+        return;
+      }
+      if (socketService.isConnected() && socketService.getIsAuthenticated() && socketService.token === token) return;
       socketService.connect(token).catch(() => {});
     };
 
     tryConnect(); // immediate attempt on mount
 
-    // Retry every 2 s until authenticated (covers post-login case where token
-    // wasn't in localStorage yet at mount time)
-    const interval = setInterval(() => {
-      if (socketService.isConnected() && socketService.getIsAuthenticated()) {
-        clearInterval(interval);
-        return;
-      }
-      tryConnect();
-    }, 2000);
+    // Keeps running for the whole session: it covers the post-login case, a different
+    // user logging in without a page reload, and a connection that has to be restored.
+    const interval = setInterval(tryConnect, 2000);
 
     return () => clearInterval(interval);
   // eslint-disable-next-line react-hooks/exhaustive-deps

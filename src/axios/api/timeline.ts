@@ -56,7 +56,7 @@ export const getTimeline = async (
 ): Promise<TimelineListResponse> => {
   try {
     const res: AxiosResponse = await apiClient.get(
-      `${entityType}/${entityId}/timeline?page=${page}&limit=${limit}`
+      `timeline/${entityType}/${entityId}?page=${page}&limit=${limit}`
     );
     return res.data;
   } catch (error) {
@@ -71,7 +71,7 @@ export const addTimelineEntry = async (
   note: string
 ): Promise<TimelineMutationResponse> => {
   try {
-    const res: AxiosResponse = await apiClient.post(`${entityType}/${entityId}/timeline`, { note });
+    const res: AxiosResponse = await apiClient.post(`timeline/${entityType}/${entityId}`, { note });
     return res.data;
   } catch (error) {
     console.error('❌ Error adding timeline entry:', error);
@@ -87,7 +87,7 @@ export const updateTimelineEntry = async (
 ): Promise<TimelineMutationResponse> => {
   try {
     const res: AxiosResponse = await apiClient.patch(
-      `${entityType}/${entityId}/timeline/${entryId}`,
+      `timeline/${entityType}/${entityId}/${entryId}`,
       { note }
     );
     return res.data;
@@ -104,7 +104,7 @@ export const deleteTimelineEntry = async (
 ): Promise<TimelineMutationResponse> => {
   try {
     const res: AxiosResponse = await apiClient.delete(
-      `${entityType}/${entityId}/timeline/${entryId}`
+      `timeline/${entityType}/${entityId}/${entryId}`
     );
     return res.data;
   } catch (error) {

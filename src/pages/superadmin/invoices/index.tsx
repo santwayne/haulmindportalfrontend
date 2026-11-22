@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FileText,
@@ -14,12 +14,16 @@ import {
   Eye,
   Copy,
   Search,
-  MoreHorizontal,
+  Plus,
   ExternalLink,
   Receipt,
+  Mail,
 } from 'lucide-react';
 import { Modal, Button, message, Input, Select, Tag } from 'antd';
-import { getSuperAdminInvoices, getSuperAdminSettings } from '../../../axios/api/superadmin';
+import { emailSuperAdminInvoice, getSuperAdminInvoices, getSuperAdminSettings, updateSuperAdminInvoice } from '../../../axios/api/superadmin';
+import RowActionMenu from '../../../components/common/RowActionMenu';
+import CreateInvoiceModal from './CreateInvoiceModal';
+import { invoiceCycleLabel, invoiceEndDate } from './billingCycle';
 import jsPDF from 'jspdf';
 import DocLogo from '../../../assets/doclogo.png';
 
@@ -43,7 +47,7 @@ interface Invoice {
     planName: string;
   };
   planName: string;
-  billingCycle: 'monthly' | 'yearly';
+  billingCycle: 'monthly' | '6-months' | 'yearly' | 'one-time' | 'installment';
   invoiceNumber: string;
   currency: string;
   amount: number;
@@ -54,8 +58,12 @@ interface Invoice {
   paymentMethod?: string;
   transactionId?: string;
   subscriptionStartDate: string;
-  subscriptionEndDate: string;
+  subscriptionEndDate?: string;
+  source?: 'stripe' | 'manual';
+  paidAt?: string;
   invoiceStatus: 'generated' | 'cancelled';
+  emailedAt?: string;
+  emailedTo?: string;
   notes?: string;
   createdAt: string;
   updatedAt: string;
@@ -63,47 +71,25 @@ interface Invoice {
 
 const InvoicesPage = () => {
   const navigate = useNavigate();
+  // antd's static Modal.confirm and message.* don't render on React 19
+  const [modal, modalContextHolder] = Modal.useModal();
+  const [messageApi, messageContextHolder] = message.useMessage();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [paymentStatusFilter, setPaymentStatusFilter] = useState<string>('all');
   const [invoiceStatusFilter, setInvoiceStatusFilter] = useState<string>('all');
-  const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [emailInvoice, setEmailInvoice] = useState<Invoice | null>(null);
+  const [emailTo, setEmailTo] = useState('');
+  const [emailSending, setEmailSending] = useState(false);
 
   useEffect(() => {
     fetchInvoices();
   }, []);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (activeDropdown && dropdownRefs.current[activeDropdown]) {
-        const dropdownElement = dropdownRefs.current[activeDropdown];
-        if (dropdownElement && !dropdownElement.contains(event.target as Node)) {
-          setActiveDropdown(null);
-        }
-      }
-    };
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && activeDropdown) {
-        setActiveDropdown(null);
-      }
-    };
-
-    if (activeDropdown) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('keydown', handleEscape);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-        document.removeEventListener('keydown', handleEscape);
-      };
-    }
-  }, [activeDropdown]);
 
   const fetchInvoices = async () => {
     try {
@@ -162,15 +148,15 @@ const InvoicesPage = () => {
 
   const handleCopyId = (id: string) => {
     navigator.clipboard.writeText(id);
-    message.success('ID copied to clipboard');
+    messageApi.success('ID copied to clipboard');
   };
 
   const handleCopyInvoiceNumber = (invoiceNumber: string) => {
     navigator.clipboard.writeText(invoiceNumber);
-    message.success('Invoice number copied to clipboard');
+    messageApi.success('Invoice number copied to clipboard');
   };
 
-  const handleExport = async (invoice: Invoice) => {
+  const buildInvoicePdf = async (invoice: Invoice) => {
     try {
       // Fetch superadmin settings for company information
       let companyInfo: any = null;
@@ -352,7 +338,7 @@ const InvoicesPage = () => {
       doc.setTextColor(grayR, grayG, grayB);
       doc.text('Billing Cycle:', margin, yPos);
       doc.setTextColor(textR, textG, textB);
-      doc.text(invoice.billingCycle.charAt(0).toUpperCase() + invoice.billingCycle.slice(1), margin + 45, yPos);
+      doc.text(invoiceCycleLabel(invoice), margin + 45, yPos);
       yPos += 6;
 
       // Subscription Period
@@ -360,8 +346,8 @@ const InvoicesPage = () => {
       doc.text('Subscription Period:', margin, yPos);
       doc.setTextColor(textR, textG, textB);
       const startDate = new Date(invoice.subscriptionStartDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      const endDate = new Date(invoice.subscriptionEndDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      doc.text(`${startDate} - ${endDate}`, margin + 45, yPos);
+      const endDate = invoiceEndDate(invoice)?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || '';
+      doc.text(endDate ? `${startDate} - ${endDate}` : `From ${startDate}`, margin + 45, yPos);
       yPos += 15; // Spacing before payment details
 
       // Payment Details Section
@@ -411,7 +397,7 @@ const InvoicesPage = () => {
       // Subscription Item
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(9);
-      doc.text(`${invoice.planName} - ${invoice.billingCycle} subscription`, margin + 3, yPos);
+      doc.text(`${invoice.planName} - ${invoiceCycleLabel(invoice)}`, margin + 3, yPos);
       doc.text(formatCurrency(invoice.amount, invoice.currency), pageWidth - margin - 3, yPos, { align: 'right' });
       yPos += 8;
 
@@ -487,17 +473,80 @@ const InvoicesPage = () => {
 
       // Save PDF
       const fileName = `Invoice_${invoice.invoiceNumber}_${new Date().toISOString().split('T')[0]}.pdf`;
-      doc.save(fileName);
-      message.success('Invoice exported successfully');
-    } catch (error: any) {
-      console.error('Error exporting invoice:', error);
-      message.error('Failed to export invoice. Please try again.');
+      return { doc, fileName };
+    } catch (error) {
+      console.error('Error building invoice PDF:', error);
+      throw error;
     }
   };
 
-  const handleMoreActions = (invoiceId: string, event: React.MouseEvent) => {
-    event.stopPropagation();
-    setActiveDropdown(activeDropdown === invoiceId ? null : invoiceId);
+  const handleExport = async (invoice: Invoice) => {
+    try {
+      const { doc, fileName } = await buildInvoicePdf(invoice);
+      doc.save(fileName);
+      messageApi.success('Invoice exported successfully');
+    } catch (error: any) {
+      console.error('Error exporting invoice:', error);
+      messageApi.error('Failed to export invoice. Please try again.');
+    }
+  };
+
+  const openEmailModal = (invoice: Invoice) => {
+    setEmailTo(invoice.emailedTo || invoice.admin?.email || '');
+    setEmailInvoice(invoice);
+  };
+
+  const handleSendEmail = async () => {
+    if (!emailInvoice || emailSending) return;
+    const to = emailTo.trim();
+    if (!to) {
+      messageApi.error('Enter the email address to send this invoice to');
+      return;
+    }
+    setEmailSending(true);
+    try {
+      const { doc } = await buildInvoicePdf(emailInvoice);
+      const pdfBase64 = String(doc.output('datauristring')).split(',')[1];
+      const response = await emailSuperAdminInvoice(emailInvoice._id, { to, pdfBase64 });
+      if (response?.success) {
+        messageApi.success(response.message || `Invoice emailed to ${to}`);
+        setInvoices(prev => prev.map(i => (i._id === emailInvoice._id ? { ...i, emailedAt: response.data?.emailedAt, emailedTo: response.data?.emailedTo } : i)));
+        setSelectedInvoice(prev => (prev?._id === emailInvoice._id ? { ...prev, emailedAt: response.data?.emailedAt, emailedTo: response.data?.emailedTo } : prev));
+        setEmailInvoice(null);
+      } else {
+        messageApi.error(response?.message || 'The invoice could not be emailed');
+      }
+    } catch (error) {
+      console.error('Error emailing invoice:', error);
+      messageApi.error('The invoice could not be emailed. Please try again.');
+    } finally {
+      setEmailSending(false);
+    }
+  };
+
+  const handleUpdateStatus = async (
+    invoice: Invoice,
+    data: { paymentStatus?: Invoice['paymentStatus']; invoiceStatus?: Invoice['invoiceStatus'] },
+    successText: string
+  ) => {
+    const response = await updateSuperAdminInvoice(invoice._id, data);
+    if (response?.success) {
+      messageApi.success(successText);
+      setInvoices(prev => prev.map(i => (i._id === invoice._id ? { ...i, ...response.data } : i)));
+    } else {
+      messageApi.error(response?.message || 'Failed to update invoice');
+    }
+  };
+
+  const confirmCancel = (invoice: Invoice) => {
+    modal.confirm({
+      title: `Cancel invoice ${invoice.invoiceNumber}?`,
+      content: 'The invoice stays on record but is marked cancelled and no longer counts as owed.',
+      okText: 'Cancel invoice',
+      okButtonProps: { danger: true },
+      cancelText: 'Keep',
+      onOk: () => handleUpdateStatus(invoice, { invoiceStatus: 'cancelled' }, 'Invoice cancelled'),
+    });
   };
 
   // Filter invoices
@@ -529,13 +578,16 @@ const InvoicesPage = () => {
   });
 
   // Calculate statistics
+  // Cancelled invoices stay listed but don't count towards any stat
+  const liveInvoices = invoices.filter(i => i.invoiceStatus !== 'cancelled');
   const stats = {
-    total: invoices.length,
-    paid: invoices.filter(i => i.paymentStatus === 'paid').length,
-    pending: invoices.filter(i => i.paymentStatus === 'pending').length,
-    failed: invoices.filter(i => i.paymentStatus === 'failed').length,
-    totalAmount: invoices.reduce((sum, i) => sum + (i.totalAmount || 0), 0),
-    paidAmount: invoices.filter(i => i.paymentStatus === 'paid').reduce((sum, i) => sum + (i.totalAmount || 0), 0),
+    total: liveInvoices.length,
+    cancelled: invoices.length - liveInvoices.length,
+    paid: liveInvoices.filter(i => i.paymentStatus === 'paid').length,
+    pending: liveInvoices.filter(i => i.paymentStatus === 'pending').length,
+    failed: liveInvoices.filter(i => i.paymentStatus === 'failed').length,
+    totalAmount: liveInvoices.reduce((sum, i) => sum + (i.totalAmount || 0), 0),
+    paidAmount: liveInvoices.filter(i => i.paymentStatus === 'paid').reduce((sum, i) => sum + (i.totalAmount || 0), 0),
   };
 
   if (loading) {
@@ -567,6 +619,8 @@ const InvoicesPage = () => {
 
   return (
     <div className="min-h-screen bg-card">
+      {modalContextHolder}
+      {messageContextHolder}
       {/* Header */}
       <div className="bg-card border-b border-theme px-6 py-4">
         <div className="flex items-center justify-between">
@@ -577,6 +631,13 @@ const InvoicesPage = () => {
             </h1>
             <p className="text-secondary mt-1">View and manage all subscription invoices</p>
           </div>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="px-4 py-2 rounded-lg text-sm font-semibold text-white flex items-center gap-2 transition-colors"
+            style={{ backgroundColor: 'var(--accent-navyblue)' }}
+          >
+            <Plus className="w-4 h-4" /> Create Invoice
+          </button>
         </div>
       </div>
 
@@ -588,6 +649,9 @@ const InvoicesPage = () => {
               <div>
                 <p className="text-sm text-secondary mb-1">Total Invoices</p>
                 <p className="text-2xl font-bold text-primary">{stats.total}</p>
+                {stats.cancelled > 0 && (
+                  <p className="text-xs text-secondary mt-1">{stats.cancelled} cancelled not included</p>
+                )}
               </div>
               <div className="bg-[#ecfdf5] p-3 rounded-lg">
                 <FileText className="w-6 h-6 text-[#059669]" />
@@ -844,7 +908,7 @@ const InvoicesPage = () => {
                               {invoice.invoiceNumber}
                             </div>
                             <div className="text-xs text-secondary">
-                              {invoice.billingCycle === 'monthly' ? 'Monthly' : 'Yearly'}
+                              {invoiceCycleLabel(invoice)}
                             </div>
                           </div>
                         </div>
@@ -857,7 +921,7 @@ const InvoicesPage = () => {
                           </div>
                           <div>
                             <div className="text-sm font-medium text-primary">
-                              {invoice.admin?.name || 'N/A'}
+                              {invoice.admin?.name || invoice.company?.companyName || 'Deleted account'}
                             </div>
                             {invoice.company?.companyName && (
                               <div className="text-xs text-secondary">
@@ -907,6 +971,9 @@ const InvoicesPage = () => {
                             {invoice.paymentStatus.charAt(0).toUpperCase() + invoice.paymentStatus.slice(1)}
                           </span>
                         </div>
+                        {invoice.invoiceStatus === 'cancelled' && (
+                          <div className="text-xs font-medium text-red-400 mt-1">Invoice cancelled</div>
+                        )}
                         {invoice.paymentMethod && (
                           <div className="text-xs text-secondary mt-1">
                             {invoice.paymentMethod}
@@ -919,7 +986,9 @@ const InvoicesPage = () => {
                           {new Date(invoice.subscriptionStartDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                         </div>
                         <div className="text-xs text-secondary">
-                          to {new Date(invoice.subscriptionEndDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          {invoiceEndDate(invoice)
+                            ? `to ${invoiceEndDate(invoice)!.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
+                            : 'No end date'}
                         </div>
                       </td>
 
@@ -930,6 +999,12 @@ const InvoicesPage = () => {
                         <div className="text-xs text-secondary">
                           {new Date(invoice.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                         </div>
+                        {invoice.emailedAt && (
+                          <div className="text-xs text-secondary flex items-center gap-1 mt-0.5" title={`Sent to ${invoice.emailedTo || ''}`}>
+                            <Mail className="w-3 h-3" />
+                            Emailed {new Date(invoice.emailedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          </div>
+                        )}
                       </td>
 
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -941,80 +1016,47 @@ const InvoicesPage = () => {
                           >
                             <Eye className="w-4 h-4" />
                           </button>
-                          <div className="relative" ref={(el) => { dropdownRefs.current[invoice._id] = el; }}>
-                            <button
-                              onClick={(e) => handleMoreActions(invoice._id, e)}
-                              className="text-secondary hover:text-secondary p-1 rounded transition-colors"
-                              title="More Actions"
-                            >
-                              <MoreHorizontal className="w-4 h-4" />
-                            </button>
-                            {activeDropdown === invoice._id && (
-                              <>
-                                <div
-                                  className="fixed inset-0 z-[9998]"
-                                  onClick={() => setActiveDropdown(null)}
-                                />
-                                <div className="absolute right-0 bottom-full mb-2 w-48 bg-card rounded-lg shadow-xl border border-theme z-[9999] py-1 overflow-hidden">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleCopyInvoiceNumber(invoice.invoiceNumber);
-                                      setActiveDropdown(null);
-                                    }}
-                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] flex items-center space-x-2 transition-colors"
-                                  >
-                                    <Copy className="w-4 h-4" />
-                                    <span>Copy Invoice #</span>
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleCopyId(invoice._id);
-                                      setActiveDropdown(null);
-                                    }}
-                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] flex items-center space-x-2 transition-colors"
-                                  >
-                                    <Copy className="w-4 h-4" />
-                                    <span>Copy Invoice ID</span>
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleExport(invoice);
-                                      setActiveDropdown(null);
-                                    }}
-                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] flex items-center space-x-2 transition-colors"
-                                  >
-                                    <Download className="w-4 h-4" />
-                                    <span>Export Invoice</span>
-                                  </button>
-                                  {invoice.admin?._id && (
-                                    <>
-                                      <div className="border-t border-theme my-1"></div>
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setActiveDropdown(null);
-                                          navigate('/superadmin/viewalladmins');
-                                          setTimeout(() => {
-                                            message.info({
-                                              content: `Navigate to Admin Accounts page. Search for admin ID: ${invoice.admin?._id}`,
-                                              duration: 5,
-                                            });
-                                          }, 300);
-                                        }}
-                                        className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] flex items-center space-x-2 transition-colors"
-                                      >
-                                        <ExternalLink className="w-4 h-4" />
-                                        <span>View Admin Profile</span>
-                                      </button>
-                                    </>
-                                  )}
-                                </div>
-                              </>
-                            )}
-                          </div>
+                          <RowActionMenu
+                            actions={[
+                              { label: 'Copy Invoice #', icon: <Copy className="w-4 h-4" />, onClick: () => handleCopyInvoiceNumber(invoice.invoiceNumber) },
+                              { label: 'Copy Invoice ID', icon: <Copy className="w-4 h-4" />, onClick: () => handleCopyId(invoice._id) },
+                              { label: 'Export Invoice', icon: <Download className="w-4 h-4" />, onClick: () => handleExport(invoice) },
+                              {
+                                label: 'Email Invoice',
+                                icon: <Mail className="w-4 h-4" />,
+                                hidden: invoice.invoiceStatus === 'cancelled',
+                                onClick: () => openEmailModal(invoice),
+                              },
+                              {
+                                label: 'Mark as Paid',
+                                icon: <CheckCircle className="w-4 h-4" />,
+                                dividerBefore: true,
+                                hidden: invoice.paymentStatus === 'paid' || invoice.invoiceStatus === 'cancelled',
+                                onClick: () => handleUpdateStatus(invoice, { paymentStatus: 'paid' }, 'Invoice marked as paid'),
+                              },
+                              {
+                                label: 'Mark as Pending',
+                                icon: <Clock className="w-4 h-4" />,
+                                dividerBefore: true,
+                                hidden: invoice.paymentStatus !== 'paid' || invoice.invoiceStatus === 'cancelled',
+                                onClick: () => handleUpdateStatus(invoice, { paymentStatus: 'pending' }, 'Invoice marked as pending'),
+                              },
+                              {
+                                label: 'Cancel Invoice',
+                                icon: <XCircle className="w-4 h-4" />,
+                                danger: true,
+                                hidden: invoice.invoiceStatus === 'cancelled',
+                                onClick: () => confirmCancel(invoice),
+                              },
+                              {
+                                label: 'View Admin Profile',
+                                icon: <ExternalLink className="w-4 h-4" />,
+                                dividerBefore: true,
+                                hidden: !invoice.admin?._id,
+                                onClick: () => navigate(`/superadmin/viewalladmins?search=${encodeURIComponent(invoice.admin?.email || '')}`),
+                              },
+                            ]}
+                          />
                         </div>
                       </td>
                     </tr>
@@ -1033,6 +1075,12 @@ const InvoicesPage = () => {
           </div>
         )}
       </div>
+
+      <CreateInvoiceModal
+        open={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreated={(created) => setInvoices(prev => [created, ...prev])}
+      />
 
       {/* View Invoice Details Modal */}
       <Modal
@@ -1063,6 +1111,21 @@ const InvoicesPage = () => {
           >
             Close
           </Button>,
+          ...(selectedInvoice && selectedInvoice.invoiceStatus !== 'cancelled' ? [
+            <Button
+              key="email"
+              icon={<Mail style={{ width: '16px', height: '16px' }} />}
+              onClick={() => openEmailModal(selectedInvoice)}
+              style={{
+                backgroundColor: 'rgba(15,31,23,0.06)',
+                border: '1px solid rgba(15,31,23,0.12)',
+                color: '#5a7066',
+                borderRadius: '8px',
+              }}
+            >
+              Email
+            </Button>,
+          ] : []),
           <Button
             key="export"
             type="primary"
@@ -1196,7 +1259,7 @@ const InvoicesPage = () => {
                 </div>
                 <div>
                   <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Billing Cycle</p>
-                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066', margin: 0, textTransform: 'capitalize' }}>{selectedInvoice.billingCycle}</p>
+                  <p style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066', margin: 0 }}>{invoiceCycleLabel(selectedInvoice)}</p>
                 </div>
                 <div>
                   <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Subscription Start</p>
@@ -1207,7 +1270,7 @@ const InvoicesPage = () => {
                 <div>
                   <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>Subscription End</p>
                   <p style={{ fontSize: '13px', fontWeight: 500, color: '#5a7066', margin: 0 }}>
-                    {new Date(selectedInvoice.subscriptionEndDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    {invoiceEndDate(selectedInvoice)?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || 'No end date'}
                   </p>
                 </div>
               </div>
@@ -1331,6 +1394,42 @@ const InvoicesPage = () => {
             </div>
 
           </div>
+        )}
+      </Modal>
+
+      {/* Email invoice */}
+      <Modal
+        title={<span style={{ color: '#f1f5f9' }}>Email invoice {emailInvoice?.invoiceNumber}</span>}
+        open={!!emailInvoice}
+        onCancel={() => { if (!emailSending) setEmailInvoice(null); }}
+        onOk={handleSendEmail}
+        okText={emailSending ? 'Sending...' : 'Send email'}
+        okButtonProps={{ disabled: emailSending }}
+        cancelButtonProps={{ disabled: emailSending }}
+        destroyOnHidden
+        styles={{
+          content: { backgroundColor: '#ffffff', border: '1px solid rgba(15,31,23,0.1)', borderRadius: '14px' },
+          header: { backgroundColor: '#ffffff' },
+        }}
+      >
+        <label htmlFor="invoice-email-to" className="block text-sm mb-1.5" style={{ color: '#94a3b8' }}>Send to</label>
+        <input
+          id="invoice-email-to"
+          type="email"
+          autoFocus
+          value={emailTo}
+          onChange={(e) => setEmailTo(e.target.value)}
+          placeholder="customer@example.com"
+          className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none"
+          style={{ backgroundColor: 'rgba(15,31,23,0.05)', border: '1px solid rgba(15,31,23,0.15)', color: '#f1f5f9' }}
+        />
+        <p className="text-xs mt-2" style={{ color: '#94a3b8' }}>
+          The customer gets the invoice as a PDF, the same file as Export Invoice.
+        </p>
+        {emailInvoice?.emailedAt && (
+          <p className="text-xs mt-1" style={{ color: '#d97706' }}>
+            Already sent to {emailInvoice.emailedTo} on {new Date(emailInvoice.emailedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.
+          </p>
         )}
       </Modal>
     </div>

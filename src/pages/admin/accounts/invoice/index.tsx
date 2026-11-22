@@ -1,9 +1,11 @@
+import { todayLocalISO } from '../../../../utils/fuelDate';
 import React, { useState, useEffect } from 'react';
 import {
     FileText, Plus, Eye, Edit, Filter, Calendar, DollarSign, Users, TrendingUp,
-    Trash2, X, CheckCircle, AlertCircle, Building2, Download
+    Trash2, X, CheckCircle, AlertCircle, Building2, Download,
+    Paperclip, Mail,
 } from 'lucide-react';
-import { createInvoice, listInvoices, updateInvoice, deleteInvoice, listTrips } from "../../../../axios/api/account.invoices";
+import { createInvoice, listInvoices, updateInvoice, deleteInvoice, listTrips, downloadInvoicePacket, emailInvoicePacket, getInvoiceSettings, updateInvoiceSettings } from "../../../../axios/api/account.invoices";
 import jsPDF from 'jspdf';
 import DocLogo from '../../../../assets/doclogo.png';
 import { FLEET_COLORS } from '../../fleetMaintenance/colorUtils';
@@ -17,6 +19,7 @@ interface CompanyInfo {
     contactPhone?: string;
     taxNumber?: string;
     logoUrl?: string;
+    invoiceNotes?: string;
 }
 
 interface ServiceBreakdownItem {
@@ -280,383 +283,313 @@ const InvoiceManagement: React.FC = () => {
         }
     };
 
+    // Invoice PDF in the client's layout (their Telerik "InvoiceBatch" sample): company header +
+    // logo, Bill To box with invoice facts, Shipper / Consignee sections with commodity lines,
+    // Charges table and Notes. Truck, trailer and driver details are not on a customer invoice.
+    const buildInvoicePdf = async (invoice: Invoice): Promise<{ doc: jsPDF; fileBase: string }> => {
+        type Party = { name?: string; address?: string; unit?: string; city?: string; province?: string; postalCode?: string; country?: string; contact?: string; phone?: string; primaryPhone?: string };
+        type Stop = { shipper?: string; receiver?: string; address?: string; date?: string; contact?: string; dropOffNumber?: string };
+        type OrderDetails = {
+            orderNumber?: string; customerOrderNo?: string; tripNo?: string;
+            pickupLocation?: { place?: string }; deliveryLocation?: { place?: string };
+            pickupDate?: string; deliveryDate?: string; pickupRefNo?: string; deliveryRefNo?: string; dropOffNumber?: string;
+            commodity?: string; noOfPackages?: number; noOfPackagesType?: string; weight?: number; weightUnit?: string;
+            dimensions?: { length?: number; width?: number; height?: number }; equipment?: string[] | string;
+            shipper?: Party; receiver?: Party; stops?: Stop[]; receiverStops?: Stop[];
+            invoiceNotes?: string; customerAddress?: string; customerCity?: string; customerProvince?: string;
+            customerPostalCode?: string; customerCountry?: string; customerPrimaryPhone?: string; payableEmail?: string;
+        };
+        const order = (invoice.orderId || {}) as unknown as OrderDetails;
+        const company = typeof invoice.company === 'object' ? invoice.company : null;
+        const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+        const W = doc.internal.pageSize.getWidth();
+        const H = doc.internal.pageSize.getHeight();
+        const M = 12;
+        const CW = W - M * 2;
+        const black: [number, number, number] = [0, 0, 0];
+        const headerGray: [number, number, number] = [110, 110, 110];
+        const lightGray: [number, number, number] = [225, 225, 225];
+        const usDate = (v?: string | null) => {
+            if (!v) return '';
+            const d = new Date(v);
+            if (Number.isNaN(d.getTime())) return String(v);
+            return `${String(d.getUTCMonth() + 1).padStart(2, '0')}/${String(d.getUTCDate()).padStart(2, '0')}/${d.getUTCFullYear()}`;
+        };
+        const money = (n: number) => (Number.isFinite(n) ? n : 0).toFixed(2);
+        const join = (...parts: Array<string | undefined>) => parts.map((p) => (p || '').trim()).filter(Boolean).join(', ');
+        const cur = invoice.currency || 'CAD';
+        const total = Number(invoice.amount) || 0;
+        let y = M;
+
+        // ── Header: company left, logo + "Invoice" right ──
+        doc.setTextColor(...black);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(15);
+        doc.text(company?.companyName || '', M, y + 5);
+        doc.setFontSize(9);
+        let hy = y + 11;
+        // Street on the first line (bold), city / province / postal code on the next, like the sample
+        const rawAddress = String(company?.address || '').trim();
+        const addressLines = (rawAddress.includes('\n')
+            ? rawAddress.split('\n')
+            : rawAddress.includes(',') ? [rawAddress.slice(0, rawAddress.indexOf(',')), rawAddress.slice(rawAddress.indexOf(',') + 1)] : [rawAddress]
+        ).map((s) => s.trim()).filter(Boolean);
+        addressLines.forEach((line, i) => {
+            doc.setFont('helvetica', i === 0 ? 'bold' : 'normal');
+            doc.text(doc.splitTextToSize(line, 95), M, hy);
+            hy += 4.6;
+        });
+        doc.setFont('helvetica', 'normal');
+        if (company?.contactEmail) { doc.text(company.contactEmail, M, hy); hy += 4.6; }
+        if (company?.contactPhone) { doc.text(`PH : ${company.contactPhone}`, M, hy); hy += 4.6; }
+
+        const logoSrc = company?.logoUrl || DocLogo;
+        try {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.src = logoSrc;
+            await new Promise<void>((resolve) => { img.onload = () => resolve(); img.onerror = () => resolve(); });
+            if (img.width && img.height) {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width; canvas.height = img.height;
+                canvas.getContext('2d')?.drawImage(img, 0, 0);
+                const logoW = 55;
+                const logoH = Math.min(22, (img.height / img.width) * logoW);
+                doc.addImage(canvas.toDataURL('image/png'), 'PNG', W - M - logoW, y, logoW, logoH);
+            }
+        } catch { /* logo is optional */ }
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(15);
+        doc.text('Invoice', W - M, y + 33, { align: 'right' });
+        y = Math.max(hy, y + 36) + 6;
+
+        // ── Bill To + invoice facts box ──
+        const boxTop = y;
+        const half = CW / 2;
+        const billLines = [
+            invoice.clientCompany || invoice.clientName,
+            ...(invoice.clientAddress || join(order.customerAddress, order.customerCity) ? doc.splitTextToSize(invoice.clientAddress || join(order.customerAddress), half - 8) : []),
+            join(order.customerCity, order.customerProvince, order.customerPostalCode, order.customerCountry),
+            `Tel: ${invoice.clientPhone || order.customerPrimaryPhone || ''}`,
+            `Email: ${invoice.clientEmail || order.payableEmail || ''}`,
+        ].filter((l, i) => i === 0 || l !== '');
+        const facts: Array<[string, string]> = [
+            ['Invoice #', order.orderNumber || invoice._id.slice(-8)],
+            ['Invoice Date', usDate(invoice.invoiceDate)],
+            ['Ship Date', usDate(order.pickupDate)],
+            ['Delivery Date', usDate(order.deliveryDate)],
+            ['Terms', invoice.paymentTerms || ''],
+            ['Amount', `${money(total)} (${cur})`],
+            ['Cust. Order #', order.customerOrderNo || ''],
+            ['Order #', order.orderNumber || ''],
+            ['Container #', ''],
+            ['Scale Ticket #', ''],
+        ];
+        const rowH = 5;
+        const boxH = Math.max(billLines.length * 4.6 + 12, facts.length * rowH + 6);
+        doc.setDrawColor(150); doc.setLineWidth(0.3);
+        doc.rect(M, boxTop, CW, boxH);
+        doc.line(M + half, boxTop, M + half, boxTop + boxH);
+        doc.setFontSize(9.5); doc.setFont('helvetica', 'bold');
+        doc.text('Bill To', M + 3, boxTop + 5);
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+        billLines.forEach((l, i) => doc.text(String(l || ''), M + 3, boxTop + 11 + i * 4.6));
+        facts.forEach(([label, value], i) => {
+            const fy = boxTop + 5 + i * rowH;
+            doc.setFont('helvetica', 'bold'); doc.text(label, M + half + 6, fy);
+            doc.text(':', M + half + 48, fy);
+            doc.setFont('helvetica', 'normal'); doc.text(value, M + half + 52, fy);
+        });
+        y = boxTop + boxH + 5;
+
+        // ── Shipper / Consignee sections ──
+        const cols = [0, 0.27, 0.53, 0.66, 0.84].map((f) => M + f * CW); // name, address, date, contact, phone
+        const cCols = [0, 0.23, 0.33, 0.48, 0.6, 0.73, 0.87].map((f) => M + f * CW); // commodity row
+        const equipment = Array.isArray(order.equipment) ? order.equipment.join(', ') : (order.equipment || '');
+        const dims = order.dimensions || {};
+        const commodityRow = (ref: string) => [
+            order.commodity || '', money(Number(order.noOfPackages) || 0), `${(Number(order.weight) || 0).toFixed(3)}${order.weight && order.weightUnit ? ` ${order.weightUnit}` : ''}`,
+            `${money(Number(dims.length) || 0)}X${money(Number(dims.width) || 0)}X${money(Number(dims.height) || 0)}`, equipment, '', ref,
+        ];
+        const section = (title: string, party: Party | undefined, stop: Stop | undefined, fallbackPlace: string | undefined, date: string | undefined, refLabel: string, ref: string) => {
+            const name = party?.name || stop?.shipper || stop?.receiver || '';
+            const addr = join(party?.address || stop?.address || fallbackPlace, party?.city, party?.province, party?.postalCode, party?.country);
+            const addrLines = doc.splitTextToSize(addr, cols[2] - cols[1] - 2);
+            const nameLines = doc.splitTextToSize(name, cols[1] - cols[0] - 3);
+            const bodyH = Math.max(addrLines.length, nameLines.length, 1) * 3.8 + 3;
+            if (y + bodyH + 24 > H - M) { doc.addPage(); y = M; }
+            // header bar
+            doc.setFillColor(...lightGray); doc.rect(M, y, CW, 5, 'F');
+            doc.setFillColor(...headerGray); doc.rect(M, y, cols[1] - M, 5, 'F');
+            doc.setFontSize(8.5); doc.setFont('helvetica', 'normal');
+            doc.setTextColor(255, 255, 255); doc.text(title, M + 1.5, y + 3.6);
+            doc.setTextColor(...black);
+            ['Address', 'Date', 'Contact Person', 'Phone'].forEach((h, i) => doc.text(h, cols[i + 1] + 1, y + 3.6));
+            y += 5;
+            doc.setFontSize(8);
+            doc.text(nameLines, cols[0] + 1.5, y + bodyH / 2);
+            doc.text(addrLines, cols[1] + 1, y + 3.5);
+            doc.text(usDate(date || stop?.date), cols[2] + 1, y + 3.5);
+            doc.text(party?.contact || stop?.contact || '', cols[3] + 1, y + 3.5);
+            doc.text(party?.phone || party?.primaryPhone || '', cols[4] + 1, y + 3.5);
+            y += bodyH;
+            doc.text('Notes:', M + 1.5, y + 3); y += 4.5;
+            // commodity header + row
+            doc.setFillColor(...lightGray); doc.rect(M, y, CW, 4.6, 'F');
+            doc.setFontSize(8);
+            ['Commodity', 'PKG', 'Weight', 'LxBxH', 'Equipment', 'Rate Method', refLabel].forEach((h, i) => doc.text(h, cCols[i] + 1.5, y + 3.3));
+            y += 4.6;
+            doc.setFontSize(7.5);
+            commodityRow(ref).forEach((v, i) => doc.text(doc.splitTextToSize(String(v), (cCols[i + 1] ?? M + CW) - cCols[i] - 2)[0] || '', cCols[i] + 1.5, y + 3.2));
+            y += 4.6;
+            doc.setDrawColor(170); doc.line(M, y, M + CW, y);
+            y += 1;
+        };
+        section('Shipper', order.shipper, order.stops?.[0], order.pickupLocation?.place, order.pickupDate, 'Pickup#', order.pickupRefNo || '');
+        section('Consignee', order.receiver, order.receiverStops?.[0], order.deliveryLocation?.place, order.deliveryDate, 'Delivery#', order.deliveryRefNo || order.dropOffNumber || order.receiverStops?.[0]?.dropOffNumber || '');
+
+        // ── Charges ──
+        y += 6;
+        const charges: Array<[string, number]> = [];
+        const lines = (invoice.serviceBreakdown || []).filter((s) => s && (s.amount || s.unitPrice));
+        if (lines.length) {
+            lines.forEach((s) => {
+                const qty = Number(s.quantity ?? 1) || 1;
+                charges.push([`${s.description || 'Freight Charge'} - (Flat)(${money(Number(s.unitPrice) || Number(s.amount) || 0)} * ${qty.toFixed(2)})`, Number(s.amount) || (Number(s.unitPrice) || 0) * qty]);
+            });
+        } else {
+            const sub = Number(invoice.subtotal ?? invoice.amount) || 0;
+            charges.push([`Freight Charge - (Flat)(${money(sub)} * 1.00)`, sub]);
+        }
+        const gst = Number(invoice.gst) || 0;
+        const pst = Number(invoice.pst) || 0;
+        if (gst) charges.push([`GST (${money(Number(invoice.gstRate) || 0)} %)`, gst]);
+        if (pst) charges.push([`PST (${money(Number(invoice.pstRate) || 0)} %)`, pst]);
+        if (!gst && !pst) charges.push(['Exempt (0.00 %)', 0]);
+        const cX = M + CW * 0.45;
+        const aX = M + CW * 0.86;
+        const cRow = 5.2;
+        if (y + (charges.length + 2) * cRow + 40 > H - M) { doc.addPage(); y = M; }
+        doc.setDrawColor(120);
+        doc.rect(cX, y, M + CW - cX, (charges.length + 2) * cRow);
+        doc.line(aX, y, aX, y + (charges.length + 2) * cRow);
+        doc.setFontSize(9); doc.setFont('helvetica', 'bold');
+        doc.text('Charges', cX + 2, y + 3.8);
+        doc.text('Amount', M + CW - 1.5, y + 3.8, { align: 'right' });
+        doc.line(cX, y + cRow, M + CW, y + cRow);
+        charges.forEach(([label, amt], i) => {
+            const ry = y + cRow * (i + 1);
+            doc.text(doc.splitTextToSize(label, aX - cX - 3)[0], cX + 2, ry + 3.8);
+            doc.text(money(amt), M + CW - 1.5, ry + 3.8, { align: 'right' });
+            doc.line(cX, ry + cRow, M + CW, ry + cRow);
+        });
+        const ty = y + cRow * (charges.length + 1);
+        doc.text(`Total (${cur})`, cX + 2, ty + 3.8);
+        doc.text(money(total), M + CW - 1.5, ty + 3.8, { align: 'right' });
+        y = ty + cRow + 8;
+
+        // ── Notes (e.g. factoring Notice of Assignment) ──
+        // The invoice's own notes; when it has none, the company's default (e.g. factoring notice)
+        const ownNotes = [invoice.notes, order.invoiceNotes].map((n) => (n || '').trim()).filter(Boolean).join('\n\n');
+        const notesText = ownNotes || (company?.invoiceNotes || defaultInvoiceNotes || '').trim();
+        const noteLines = notesText ? doc.splitTextToSize(notesText, CW / 2 - 6) : [];
+        const notesH = Math.max(30, noteLines.length * 4.2 + 12);
+        if (y + notesH > H - M) { doc.addPage(); y = M; }
+        doc.setDrawColor(150);
+        doc.rect(M, y, CW, notesH);
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5);
+        doc.text('Notes:', M + 3, y + 6);
+        doc.setLineWidth(0.2); doc.line(M + 3, y + 7, M + 15, y + 7);
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+        if (noteLines.length) doc.text(noteLines, M + 3, y + 12);
+
+        return { doc, fileBase: `Invoice_${order.orderNumber || invoice._id.slice(-8)}` };
+    };
+
     const handleDownloadPDF = async (invoice: Invoice) => {
         try {
-            const doc = new jsPDF();
-            const pageWidth = doc.internal.pageSize.width;
-            const pageHeight = doc.internal.pageSize.height;
-
-            const margin = 20;
-            const contentWidth = pageWidth - margin * 2;
-            const bottomMargin = 20;
-
-            let yPos = 15;
-
-            const textColor: [number, number, number] = [31, 41, 55];
-            const grayColor: [number, number, number] = [107, 114, 128];
-
-            /* ---------------- PAGE BREAK ---------------- */
-            const checkPageBreak = (requiredHeight: number) => {
-                if (yPos + requiredHeight > pageHeight - bottomMargin) {
-                    doc.addPage();
-                    yPos = margin;
-                }
-            };
-
-            /* ---------------- TEXT ROW PRINTER ---------------- */
-            const printRow = (
-                label: string,
-                value: string | undefined,
-                labelX: number,
-                valueX: number,
-                maxWidth: number
-            ) => {
-                const lines = doc.splitTextToSize(value || "N/A", maxWidth);
-
-                checkPageBreak(lines.length * 5 + 2);
-
-                doc.setFont("helvetica", "normal");
-                doc.setTextColor(...grayColor);
-                doc.text(label, labelX, yPos);
-
-                doc.setFont("helvetica", "bold");
-                doc.setTextColor(...textColor);
-                doc.text(lines, valueX, yPos);
-
-                yPos += lines.length * 5 + 2;
-            };
-
-            /* ---------------- COMPANY ---------------- */
-            const company =
-                typeof invoice.company === "object" ? invoice.company : null;
-
-            /* ---------------- HEADER ---------------- */
-            if (company?.logoUrl) {
-                try {
-                    const res = await fetch(company.logoUrl);
-                    const blob = await res.blob();
-                    const base64 = await new Promise<string>((resolve) => {
-                        const reader = new FileReader();
-                        reader.onloadend = () => resolve(reader.result as string);
-                        reader.readAsDataURL(blob);
-                    });
-                    doc.addImage(base64, "PNG", margin, yPos, 45, 25);
-                } catch { }
-            } else {
-                try {
-                    const img = new Image();
-                    img.src = DocLogo;
-                    await new Promise<void>((resolve) => {
-                        img.onload = () => {
-                            try {
-                                const canvas = document.createElement('canvas');
-                                canvas.width = img.width;
-                                canvas.height = img.height;
-                                const ctx = canvas.getContext('2d');
-                                if (ctx) {
-                                    ctx.drawImage(img, 0, 0);
-                                    const imgData = canvas.toDataURL('image/png');
-                                    const logoWidth = 45;
-                                    const logoHeight = (img.height / img.width) * logoWidth;
-                                    doc.addImage(imgData, 'PNG', margin, yPos, logoWidth, logoHeight);
-                                }
-                            } catch { }
-                            resolve();
-                        };
-                        img.onerror = () => resolve();
-                    });
-                } catch { }
-            }
-
-            doc.setFontSize(32);
-            doc.setFont("helvetica", "bold");
-            doc.setTextColor(...textColor);
-            doc.text("INVOICE", pageWidth - margin, yPos + 12, { align: "right" });
-
-            /* ---------------- COMPANY & BILL TO ---------------- */
-            yPos = 55;
-
-            const leftCol = margin;
-            const rightCol = pageWidth / 2 + 10;
-            const colWidth = (pageWidth - margin * 2) / 2 - 10;
-
-            if (company) {
-                doc.setFontSize(12);
-                doc.setFont("helvetica", "bold");
-                doc.text(company.companyName || "Company Name", leftCol, yPos);
-                yPos += 7;
-
-                doc.setFontSize(10);
-                doc.setFont("helvetica", "normal");
-
-                if (company.address) {
-                    const lines = doc.splitTextToSize(company.address, colWidth);
-                    doc.text(lines, leftCol, yPos);
-                    yPos += lines.length * 5;
-                }
-
-                if (company.contactPhone) {
-                    doc.text(`Phone: ${company.contactPhone}`, leftCol, yPos);
-                    yPos += 6;
-                }
-
-                if (company.contactEmail) {
-                    doc.text(`Email: ${company.contactEmail}`, leftCol, yPos);
-                    yPos += 6;
-                }
-
-                if (company.taxNumber) {
-                    doc.text(`GST No: ${company.taxNumber}`, leftCol, yPos);
-                    yPos += 6;
-                }
-            }
-
-            /* -------- BILL TO -------- */
-            let rightY = 55;
-
-            doc.setFontSize(12);
-            doc.setFont("helvetica", "bold");
-            doc.text("Bill To:", rightCol, rightY);
-            rightY += 8;
-
-            doc.setFontSize(11);
-            doc.setFont("helvetica", "normal");
-
-            doc.text(invoice.clientName, rightCol, rightY);
-            rightY += 7;
-
-            if (invoice.clientAddress) {
-                const lines = doc.splitTextToSize(invoice.clientAddress, colWidth);
-                doc.text(lines, rightCol, rightY);
-                rightY += lines.length * 5;
-            }
-
-            if (invoice.clientEmail) {
-                doc.text(invoice.clientEmail, rightCol, rightY);
-                rightY += 6;
-            }
-
-            if (invoice.clientPhone) {
-                doc.text(`Phone: ${invoice.clientPhone}`, rightCol, rightY);
-                rightY += 6;
-            }
-
-            yPos = Math.max(yPos, rightY) + 10;
-
-            /* ---------------- LOAD DETAILS ---------------- */
-            const trip = typeof invoice.tripId === "object" ? invoice.tripId : null;
-            const order = invoice.orderId;
-
-            doc.setFontSize(12);
-            doc.setFont("helvetica", "bold");
-            doc.text("Load Details:", margin, yPos);
-            yPos += 8;
-
-            doc.setFontSize(10);
-
-            const pickup =
-                trip?.startLocation?.place || order?.pickupLocation?.place;
-            const dropoff =
-                trip?.endLocation?.place || order?.deliveryLocation?.place;
-
-            if (pickup)
-                printRow(
-                    "Pickup Location:",
-                    pickup,
-                    margin,
-                    margin + 55,
-                    pageWidth - margin - 60
-                );
-
-            if (dropoff)
-                printRow(
-                    "Dropoff Location:",
-                    dropoff,
-                    margin,
-                    margin + 55,
-                    pageWidth - margin - 60
-                );
-
-            /* ---------------- VEHICLE SECTIONS ---------------- */
-            const renderVehicleSection = (title: string, data: any) => {
-                if (!data) return;
-
-                checkPageBreak(25);
-
-                yPos += 3;
-
-                doc.setFontSize(11);
-                doc.setFont("helvetica", "bold");
-                doc.setTextColor(...textColor);
-                doc.text(title, margin, yPos);
-
-                yPos += 7;
-                doc.setFontSize(9);
-
-                const number =
-                    data.plateNumber ||
-                    data.licensePlate ||
-                    data.unitNumber ||
-                    data.internalId ||
-                    (data._id ? data._id.slice(-8) : "N/A");
-
-                printRow("Unit/Plate:", number, margin, margin + 55, 80);
-
-                if (data.make) printRow("Make:", data.make, margin, margin + 55, 80);
-                if (data.model) printRow("Model:", data.model, margin, margin + 55, 80);
-                if (data.type || data.unitType)
-                    printRow("Type:", data.type || data.unitType, margin, margin + 55, 80);
-                if (data.year)
-                    printRow("Year:", String(data.year), margin, margin + 55, 80);
-                if (data.vin) printRow("VIN:", data.vin, margin, margin + 55, 80);
-            };
-
-            renderVehicleSection("TRUCK DETAILS:", trip?.truck || order?.truck);
-            renderVehicleSection("TRAILER DETAILS:", trip?.trailer || order?.trailer);
-
-            /* ---------------- DRIVER SECTION ---------------- */
-            const renderDriverSection = () => {
-                const driver = trip?.driver || order?.driver;
-                const coDriver = trip?.coDriver || order?.coDriver;
-
-                if (!driver && !coDriver) return;
-
-                checkPageBreak(30);
-
-                yPos += 3;
-
-                doc.setFontSize(11);
-                doc.setFont("helvetica", "bold");
-                doc.text("DRIVER INFORMATION:", margin, yPos);
-                yPos += 7;
-
-                doc.setFontSize(9);
-
-                if (driver) {
-                    const driverName = typeof driver === 'object' ? driver.name : driver;
-                    const driverId = typeof driver === 'object'
-                        ? (driver._id?.slice(-8) || (driver as any).internalId || 'N/A')
-                        : (typeof driver === 'string' ? driver.slice(-8) : 'N/A');
-                    printRow("Driver Name:", driverName, margin, margin + 55, 80);
-                    printRow(
-                        "Driver ID:",
-                        driverId,
-                        margin,
-                        margin + 55,
-                        80
-                    );
-                }
-
-                if (coDriver) {
-                    const coDriverName = typeof coDriver === 'object' ? coDriver.name : (typeof coDriver === 'string' ? coDriver : 'N/A');
-                    let coDriverId = 'N/A';
-                    if (typeof coDriver === 'object') {
-                        coDriverId = coDriver._id?.slice(-8) || (coDriver as any).internalId || 'N/A';
-                    } else {
-                        // Handle string case
-                        const coDriverStr = coDriver as string;
-                        coDriverId = coDriverStr.slice(-8);
-                    }
-                    printRow("Co-Driver Name:", coDriverName, margin, margin + 55, 80);
-                    printRow(
-                        "Co-Driver ID:",
-                        coDriverId,
-                        margin,
-                        margin + 55,
-                        80
-                    );
-                }
-            };
-
-            renderDriverSection();
-
-            /* ---------------- TABLE ---------------- */
-            yPos += 10;
-            checkPageBreak(20);
-
-            const colDesc = margin;
-            const colQty = margin + 90;
-            const colPrice = pageWidth - margin - 40;
-            const colAmount = pageWidth - margin;
-
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "bold");
-
-            doc.text("DESCRIPTION", colDesc, yPos);
-            doc.text("QTY", colQty, yPos);
-            doc.text("UNIT PRICE", colPrice, yPos, { align: "right" });
-            doc.text("AMOUNT", colAmount, yPos, { align: "right" });
-
-            doc.line(colDesc, yPos + 3, colAmount, yPos + 3);
-            yPos += 8;
-
-            doc.setFont("helvetica", "normal");
-
-            let subtotal = Number(invoice.subtotal || invoice.amount);
-
-            checkPageBreak(10);
-
-            doc.text("Freight Service", colDesc, yPos);
-            doc.text("1", colQty, yPos);
-            doc.text(`${invoice.currency} ${subtotal.toFixed(2)}`, colPrice, yPos, {
-                align: "right",
-            });
-            doc.text(`${invoice.currency} ${subtotal.toFixed(2)}`, colAmount, yPos, {
-                align: "right",
-            });
-
-            yPos += 10;
-
-            /* ---------------- TAX + TOTAL ---------------- */
-            const gst = invoice.gst || 0;
-            const pst = invoice.pst || 0;
-            const total = Number(invoice.amount);
-
-            checkPageBreak(40);
-
-            doc.setFont("helvetica", "bold");
-            doc.text("Subtotal:", colPrice, yPos, { align: "right" });
-            doc.setFont("helvetica", "normal");
-            doc.text(`${invoice.currency} ${subtotal.toFixed(2)}`, colAmount, yPos, {
-                align: "right",
-            });
-
-            yPos += 7;
-
-            doc.setFont("helvetica", "bold");
-            doc.text("GST:", colPrice, yPos, { align: "right" });
-            doc.setFont("helvetica", "normal");
-            doc.text(`${invoice.currency} ${gst.toFixed(2)}`, colAmount, yPos, {
-                align: "right",
-            });
-
-            yPos += 7;
-
-            doc.setFont("helvetica", "bold");
-            doc.text("PST:", colPrice, yPos, { align: "right" });
-            doc.setFont("helvetica", "normal");
-            doc.text(`${invoice.currency} ${pst.toFixed(2)}`, colAmount, yPos, {
-                align: "right",
-            });
-
-            /* -------- TOTAL BOX -------- */
-            yPos += 12;
-
-            doc.rect(margin, yPos, contentWidth, 20);
-
-            doc.setFontSize(12);
-            doc.setFont("helvetica", "bold");
-            doc.text("TOTAL AMOUNT DUE", margin + 5, yPos + 13);
-
-            doc.setFontSize(18);
-            doc.text(`${invoice.currency} ${total.toFixed(2)}`, pageWidth - margin - 5, yPos + 13, {
-                align: "right",
-            });
-
-            /* ---------------- SAVE ---------------- */
-            doc.save(`Invoice_${invoice._id.slice(-8)}.pdf`);
+            const { doc, fileBase } = await buildInvoicePdf(invoice);
+            doc.save(`${fileBase}.pdf`);
         } catch (err) {
             console.error(err);
+            showNotification('error', 'Could not create the invoice PDF');
+        }
+    };
+
+    // Company default invoice notes (factoring Notice of Assignment etc.)
+    const [defaultInvoiceNotes, setDefaultInvoiceNotes] = useState('');
+    const [notesEditorOpen, setNotesEditorOpen] = useState(false);
+    const [notesDraft, setNotesDraft] = useState('');
+    const [notesSaving, setNotesSaving] = useState(false);
+    useEffect(() => {
+        getInvoiceSettings().then((r) => setDefaultInvoiceNotes(r.invoiceNotes));
+    }, []);
+    const saveDefaultNotes = async () => {
+        setNotesSaving(true);
+        const res = await updateInvoiceSettings(notesDraft);
+        setNotesSaving(false);
+        if (res.success) {
+            setDefaultInvoiceNotes(notesDraft);
+            setNotesEditorOpen(false);
+            showNotification('success', 'Default invoice notes saved');
+        } else {
+            showNotification('error', res.message || 'Could not save');
+        }
+    };
+
+    // Email the invoice + POD & Manifest packet to the customer
+    const [emailBusyId, setEmailBusyId] = useState<string | null>(null);
+    const handleEmailPacket = async (invoice: Invoice) => {
+        const to = window.prompt('Send the invoice with POD & Manifest to:', invoice.clientEmail || '');
+        if (to === null) return;
+        if (!to.trim()) {
+            showNotification('error', 'Enter an email address');
+            return;
+        }
+        setEmailBusyId(invoice._id);
+        try {
+            const { doc } = await buildInvoicePdf(invoice);
+            const res = await emailInvoicePacket(invoice._id, doc.output('blob'), to.trim());
+            if (!res.success) {
+                showNotification('error', res.message || 'Email could not be sent');
+                return;
+            }
+            const notes = (res.notes || []).join(' ');
+            showNotification(notes ? 'error' : 'success', notes ? `Sent, but: ${notes}` : res.message);
+        } catch (err) {
+            console.error(err);
+            showNotification('error', 'Email could not be sent');
+        } finally {
+            setEmailBusyId(null);
+        }
+    };
+
+    // Invoice + the trip's POD and border manifest in one PDF, for the customer / factor
+    const [packetBusyId, setPacketBusyId] = useState<string | null>(null);
+    const handleDownloadPacket = async (invoice: Invoice) => {
+        setPacketBusyId(invoice._id);
+        try {
+            const { doc, fileBase } = await buildInvoicePdf(invoice);
+            const res = await downloadInvoicePacket(invoice._id, doc.output('blob'));
+            if (!res.ok) {
+                showNotification('error', res.message || 'Could not build the invoice packet');
+                return;
+            }
+            const url = URL.createObjectURL(res.blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${fileBase}_with_POD_Manifest.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+            if (res.missing) showNotification('error', `Packet downloaded, but: ${res.missing}`);
+            else showNotification('success', 'Invoice with POD & Manifest downloaded');
+        } catch (err) {
+            console.error(err);
+            showNotification('error', 'Could not build the invoice packet');
+        } finally {
+            setPacketBusyId(null);
         }
     };
 
@@ -1073,6 +1006,9 @@ const InvoiceManagement: React.FC = () => {
                                         </td>
                                         <td className="py-4 px-6">
                                             <span className="font-medium text-secondary">{formatCurrency(Number(invoice.amount))}</span>
+                                            {!(Number(invoice.amount) > 0) && (
+                                                <span className="block text-[10px] text-yellow-500" title="The order has no rate. Set the rate on the order (the invoice updates) or edit this invoice.">No rate on order</span>
+                                            )}
                                         </td>
                                         <td className="py-4 px-6 text-sm text-secondary">
                                             {formatDate(invoice.dueDate)}
@@ -1103,6 +1039,28 @@ const InvoiceManagement: React.FC = () => {
                                                     title="Download PDF"
                                                 >
                                                     <Download className="h-4 w-4" />
+                                                </button>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDownloadPacket(invoice);
+                                                    }}
+                                                    disabled={packetBusyId === invoice._id}
+                                                    className="p-2 text-primary hover:text-[#059669] hover:bg-[rgba(5,150,105,0.08)] rounded-lg transition-all disabled:opacity-50"
+                                                    title="Invoice + POD & Manifest (one PDF)"
+                                                >
+                                                    <Paperclip className="h-4 w-4" />
+                                                </button>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleEmailPacket(invoice);
+                                                    }}
+                                                    disabled={emailBusyId === invoice._id}
+                                                    className="p-2 text-primary hover:text-[#059669] hover:bg-[rgba(5,150,105,0.08)] rounded-lg transition-all disabled:opacity-50"
+                                                    title="Email invoice with POD & Manifest"
+                                                >
+                                                    <Mail className="h-4 w-4" />
                                                 </button>
                                                 <button
                                                     onClick={() => {
@@ -1172,6 +1130,24 @@ const InvoiceManagement: React.FC = () => {
                             >
                                 <Download className="h-4 w-4" />
                                 Download PDF
+                            </button>
+                            <button
+                                onClick={() => handleDownloadPacket(selectedInvoice)}
+                                disabled={packetBusyId === selectedInvoice._id}
+                                className="px-5 py-2.5 border border-theme text-primary rounded-md hover:bg-[rgba(5,150,105,0.08)] transition-all flex items-center gap-2 font-medium disabled:opacity-50"
+                                title="The invoice followed by the driver's POD and border manifest, in one PDF"
+                            >
+                                <Paperclip className="h-4 w-4" />
+                                {packetBusyId === selectedInvoice._id ? 'Preparing...' : 'Invoice + POD & Manifest'}
+                            </button>
+                            <button
+                                onClick={() => handleEmailPacket(selectedInvoice)}
+                                disabled={emailBusyId === selectedInvoice._id}
+                                className="px-5 py-2.5 border border-theme text-primary rounded-md hover:bg-[rgba(5,150,105,0.08)] transition-all flex items-center gap-2 font-medium disabled:opacity-50"
+                                title="Email the invoice with the POD and border manifest attached"
+                            >
+                                <Mail className="h-4 w-4" />
+                                {emailBusyId === selectedInvoice._id ? 'Sending...' : 'Email with POD & Manifest'}
                             </button>
                             <button
                                 onClick={() => setActiveTab('list')}
@@ -2481,7 +2457,7 @@ const InvoiceManagement: React.FC = () => {
                                     onChange={(e) => handleInputChange('dueDate', e.target.value)}
                                     onClick={(e) => (e.currentTarget as HTMLInputElement).showPicker?.()}
                                     className="w-full border border-theme rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
-                                    min={new Date().toISOString().split('T')[0]}
+                                    min={todayLocalISO()}
                                     style={{ colorScheme: 'light', color: 'var(--text-primary, #5a7066)', backgroundColor: 'var(--bg-input, #1e293b)' }}
                                     required
                                 />
@@ -2554,7 +2530,15 @@ const InvoiceManagement: React.FC = () => {
                             <p className="mt-2 text-secondary">Manage invoices, track payments, and monitor revenue</p>
                         </div>
                         {activeTab === 'list' && (
-                            <div className="mt-4 sm:mt-0">
+                            <div className="mt-4 sm:mt-0 flex items-center gap-2">
+                                <button
+                                    onClick={() => { setNotesDraft(defaultInvoiceNotes); setNotesEditorOpen(true); }}
+                                    className="px-4 py-2 rounded-lg border border-theme text-primary hover:bg-[rgba(5,150,105,0.08)] transition-all flex items-center gap-2"
+                                    title="Notes printed on every invoice that has no notes of its own"
+                                >
+                                    <FileText className="h-4 w-4" />
+                                    Default Invoice Notes
+                                </button>
                                 <button
                                     onClick={() => setActiveTab('create')}
                                     className="px-4 py-2 rounded-lg transition-all flex items-center gap-2 hover:shadow-lg hover:scale-105 transform duration-200 !text-white"
@@ -2571,6 +2555,31 @@ const InvoiceManagement: React.FC = () => {
                 </div>
 
                 {renderContent()}
+
+                {notesEditorOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setNotesEditorOpen(false)}>
+                        <div className="w-full max-w-lg rounded-xl bg-card border border-theme p-6" onClick={(e) => e.stopPropagation()}>
+                            <h3 className="text-lg font-semibold text-primary mb-1">Default Invoice Notes</h3>
+                            <p className="text-sm text-secondary mb-3">
+                                Printed in the Notes box of every invoice that has no notes of its own, for example the factoring company's Notice of Assignment.
+                            </p>
+                            <textarea
+                                value={notesDraft}
+                                onChange={(e) => setNotesDraft(e.target.value)}
+                                rows={10}
+                                maxLength={2000}
+                                className="w-full border border-theme rounded-lg p-3 text-sm bg-card text-primary"
+                                placeholder={'Notice of Assignment\nThis invoice has been assigned to\nand must be paid directly to\n...'}
+                            />
+                            <div className="mt-4 flex justify-end gap-2">
+                                <button onClick={() => setNotesEditorOpen(false)} className="px-4 py-2 rounded-lg border border-theme text-primary">Cancel</button>
+                                <button onClick={saveDefaultNotes} disabled={notesSaving} className="px-4 py-2 rounded-lg !text-white disabled:opacity-50" style={{ background: 'var(--accent-navyblue)' }}>
+                                    {notesSaving ? 'Saving...' : 'Save'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div >
     );

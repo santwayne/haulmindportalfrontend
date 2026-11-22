@@ -391,6 +391,39 @@ export const updateInspection = async (id: string, data: any) => {
   }
 };
 
+// Mark an inspection complete. `data` is FormData with completedDate, completedBy, result,
+// completionNotes and any filled-in forms appended as `documents`.
+export const completeInspection = async (id: string, data: FormData) => {
+  try {
+    const res: AxiosResponse = await apiClient.put(`health-safety/inspection/${id}/complete`, data);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return (error as any).response?.data;
+  }
+};
+
+// Attach inspection forms / photos (FormData with `documents`) without changing status
+export const uploadInspectionDocuments = async (id: string, data: FormData) => {
+  try {
+    const res: AxiosResponse = await apiClient.post(`health-safety/inspection/${id}/documents`, data);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return (error as any).response?.data;
+  }
+};
+
+export const deleteInspectionDocument = async (id: string, docId: string) => {
+  try {
+    const res: AxiosResponse = await apiClient.delete(`health-safety/inspection/${id}/documents/${docId}`);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return (error as any).response?.data;
+  }
+};
+
 export const deleteInspection = async (id: string) => {
   try {
     const res: AxiosResponse = await apiClient.delete(`health-safety/inspection/${id}`);

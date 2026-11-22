@@ -1,10 +1,12 @@
+import { todayLocalISO } from '../../../../utils/fuelDate';
 import { useState, useEffect, useRef } from 'react';
-import { Plus, Search, DollarSign, Users, Calendar, TrendingUp, X, AlertCircle, CheckCircle, Edit2, Trash2, Eye, MapPin, Package, Truck, FileText, Download } from 'lucide-react';
-import { createPayroll, listPayrolls, updatePayroll, deletePayroll, getDriverCompletedOrders, generateAIDriverPayroll, bulkAnalyzeAIDriverPayrolls, bulkCreateDriverPayrolls, getPaystubByPayrollId } from '../../../../axios/api/account.payroll';
+import { Plus, Search, DollarSign, Users, Calendar, TrendingUp, X, AlertCircle, CheckCircle, Edit2, Trash2, Eye, MapPin, Package, Truck, FileText, Download, Printer } from 'lucide-react';
+import { createPayroll, listPayrolls, updatePayroll, deletePayroll, getDriverCompletedOrders, generateAIDriverPayroll, bulkAnalyzeAIDriverPayrolls, bulkCreateDriverPayrolls, getPaystubByPayrollId, updatePayrollPaymentStatus } from '../../../../axios/api/account.payroll';
+import PayAdjustments from '../../../../components/accounts/PayAdjustments';
+import { type PayLine, newPayLine, sumPayLines, toApiPayLines, payLinesError } from '../../../../utils/payLines';
+import { outputPayStatement, paystubToStatement } from '../../../../utils/payStatementPdf';
 import { getDeductionAdditions } from '../../../../axios/api/account.settlement';
 import * as driverApi from '../../../../axios/api/driver';
-import jsPDF from 'jspdf';
-import DocLogo from '../../../../assets/doclogo.png';
 
 // Type definitions
 interface Driver {
@@ -24,6 +26,8 @@ interface Driver {
 interface Trip {
   rateTypeLabel: string;
   _id: string;
+  alreadyPaid?: boolean; // already included in another payroll for this driver
+  paidInPayroll?: string | null;
   tripNumber?: string;
   startLocation?: {
     place?: string;
@@ -175,6 +179,11 @@ interface DriverPayroll {
   totalMiles?: number;
   ratePerMile?: number;
   trips?: Trip[];
+  orders?: string[];
+  paymentStatus?: 'pending' | 'paid';
+  applyTaxes?: boolean;
+  additionItems?: { memo: string; amount: number; date?: string; source?: string }[];
+  deductionItems?: { memo: string; amount: number; date?: string; source?: string }[];
   // Tax fields
   country?: string;
   // Canada taxes
@@ -378,6 +387,11 @@ const DriverPayrollManagement = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [payrollData, setPayrollData] = useState<DriverPayroll[]>([]);
   const [driverTrips, setDriverTrips] = useState<Trip[]>([]);
+  // Tax is optional (unticked = no tax deducted); one-off lines need a memo
+  const [applyTaxes, setApplyTaxes] = useState<boolean>(false);
+  const [manualAdditions, setManualAdditions] = useState<PayLine[]>([]);
+  const [manualDeductions, setManualDeductions] = useState<PayLine[]>([]);
+  const [statementBusy, setStatementBusy] = useState<string | null>(null);
   const [driverPayrollSummary, setDriverPayrollSummary] = useState<TripSummary | null>(null);
   const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -397,7 +411,7 @@ const DriverPayrollManagement = () => {
   }>({
     startDate: '',
     endDate: '',
-    payDate: new Date().toISOString().split('T')[0]
+    payDate: todayLocalISO()
   });
   const [aiAnalysis, setAiAnalysis] = useState<{
     recommendedBonus: number;
@@ -503,6 +517,12 @@ const DriverPayrollManagement = () => {
           };
         });
         setDrivers(driverList);
+        // The page opens on Owner Operator; if every driver is a company driver (or the other way round)
+        // the Create Payroll dropdown was empty with no hint why, so open the tab that has drivers
+        const hasCompany = driverList.some((d: { companyFlag: boolean }) => d.companyFlag);
+        const hasOwnerOp = driverList.some((d: { companyFlag: boolean }) => !d.companyFlag);
+        if (hasCompany && !hasOwnerOp) setDriverTypeTab('companyDriver');
+        if (hasOwnerOp && !hasCompany) setDriverTypeTab('ownerOperator');
       } else if (response?.message) {
         showNotification('error', response.message);
       }
@@ -626,7 +646,7 @@ const DriverPayrollManagement = () => {
       if (response?.success) {
         const trips: Trip[] = (response.data || []).map((trip: any) => ({
           ...trip,
-          selected: true // Auto-select all trips
+          selected: !trip.alreadyPaid // loads already in another payroll are not ticked
         }));
 
         setDriverTrips(trips);
@@ -847,8 +867,12 @@ const DriverPayrollManagement = () => {
   };
 
   const calculateAdditionsDeductions = () => {
+    const additionItems: { memo: string; amount: number; source: string }[] = [];
+    const deductionItems: { memo: string; amount: number; source: string }[] = [];
+    const manualAdd = sumPayLines(manualAdditions);
+    const manualDed = sumPayLines(manualDeductions);
     if (!formData.startDate || !formData.endDate) {
-      return { totalAdditions: 0, totalDeductions: 0 };
+      return { totalAdditions: manualAdd, totalDeductions: manualDed, additionItems, deductionItems };
     }
 
     const startDateObj = new Date(formData.startDate);
@@ -907,6 +931,7 @@ const DriverPayrollManagement = () => {
       }
 
       totalAdditions += calculatedAmount;
+      if (calculatedAmount > 0) additionItems.push({ memo: addition.name || addition.description || 'Addition', amount: calculatedAmount, source: 'profile' });
     }
 
     // Calculate applicable deductions
@@ -1067,6 +1092,7 @@ const DriverPayrollManagement = () => {
       });
 
       totalDeductions += calculatedAmount;
+      if (calculatedAmount > 0) deductionItems.push({ memo: deduction.name || deduction.description || 'Deduction', amount: calculatedAmount, source: 'profile' });
     }
 
     console.log('📊 Final totals:', {
@@ -1076,7 +1102,7 @@ const DriverPayrollManagement = () => {
       deductionsCount: driverDeductions.length
     });
 
-    return { totalAdditions, totalDeductions };
+    return { totalAdditions: totalAdditions + manualAdd, totalDeductions: totalDeductions + manualDed, additionItems, deductionItems };
   };
 
   const handleBulkAIGeneration = async () => {
@@ -1096,7 +1122,7 @@ const DriverPayrollManagement = () => {
       const response = await bulkAnalyzeAIDriverPayrolls({
         startDate: bulkDateRange.startDate,
         endDate: bulkDateRange.endDate,
-        payDate: bulkDateRange.payDate || new Date().toISOString().split('T')[0],
+        payDate: bulkDateRange.payDate || todayLocalISO(),
         companyFlag: companyFlag
       });
 
@@ -1143,7 +1169,7 @@ const DriverPayrollManagement = () => {
         payrolls: bulkPayrollSuggestions,
         startDate: bulkDateRange.startDate,
         endDate: bulkDateRange.endDate,
-        payDate: bulkDateRange.payDate || new Date().toISOString().split('T')[0]
+        payDate: bulkDateRange.payDate || todayLocalISO()
       });
 
       if (response?.success) {
@@ -1356,16 +1382,9 @@ const DriverPayrollManagement = () => {
           trips: trips
         });
 
-        // Update form fields with AI recommendations (bonus and deductions only, NOT taxes)
-        // User will manually enter tax information
-        setFormData(prev => ({
-          ...prev,
-          bonus: (analysis.recommendedBonus || 0).toString(),
-          deductions: (analysis.recommendedDeductions || 0).toString()
-          // Note: Taxes are NOT auto-populated - user must enter them manually
-        }));
-
-        showNotification('success', 'AI payroll analysis completed successfully! You can now review and enter tax information.');
+        // The AI bonus / deductions are suggestions only (client). Nothing is filled in
+        // until the accountant presses "Use suggestion" on the analysis card.
+        showNotification('success', 'AI analysis ready. Its bonus and deductions are suggestions; press "Use suggestion" to apply one.');
       } else {
         showNotification('error', response?.message || 'Failed to generate AI analysis');
       }
@@ -1386,6 +1405,11 @@ const DriverPayrollManagement = () => {
     const selectedTrips = driverTrips.filter(t => t.selected);
     if (selectedTrips.length === 0) {
       showNotification('error', 'Please select at least one trip');
+      return;
+    }
+    const linesError = payLinesError(manualAdditions, manualDeductions);
+    if (linesError) {
+      showNotification('error', linesError);
       return;
     }
 
@@ -1446,11 +1470,10 @@ const DriverPayrollManagement = () => {
       }
 
       // Calculate additions and deductions using the helper function (respects edited amounts)
-      const { totalAdditions, totalDeductions } = calculateAdditionsDeductions();
+      const { totalDeductions, additionItems, deductionItems } = calculateAdditionsDeductions();
 
-      // Add calculated additions to bonus (or baseSalary)
+      // Pure bonus; additions (profile + one-off) go as itemised lines with memos
       const calculatedBonus = parseFloat(formData.bonus) || 0;
-      const finalBonus = calculatedBonus + totalAdditions;
 
       // Use only calculated deductions from backend (driver deductions)
       // No manual deductions field - all deductions come from driver deductions
@@ -1460,12 +1483,23 @@ const DriverPayrollManagement = () => {
       const payload: any = {
         userId: formData.userId,
         baseSalary: baseSalary,
-        bonus: finalBonus,
+        bonus: calculatedBonus,
         deductions: finalDeductions,
         payDate: formData.payDate,
         startDate: formData.startDate,
         endDate: formData.endDate,
-        tripIds: selectedTrips.map(trip => trip._id).filter(id => id),
+        // These are delivered orders: the backend builds the pay statement lines from them
+        orderIds: selectedTrips.map(trip => trip._id).filter(id => id),
+        tripLines: selectedTrips.map(trip => ({
+          orderId: trip._id,
+          miles: typeof trip.distanceInMiles === 'string' ? parseFloat(trip.distanceInMiles) : (trip.distanceInMiles || 0),
+          rate: trip.baseRate || 0,
+          amount: typeof trip.earnings === 'string' ? parseFloat(trip.earnings) : (trip.earnings || 0),
+          payType: trip.rateTypeLabel || 'Paid Per Mile'
+        })),
+        additionItems: [...additionItems, ...toApiPayLines(manualAdditions)],
+        deductionItems: [...deductionItems, ...toApiPayLines(manualDeductions)],
+        applyTaxes,
         totalMiles: selectedTotals.totalMiles,
         ratePerMile: parseFloat(((driverPayrollSummary?.ratePerMile || driverPayrollSummary?.baseRate || selectedDriver?.details?.salaryPerMile || 0).toFixed(2))),
         country: formData.country || 'USA',
@@ -1512,24 +1546,31 @@ const DriverPayrollManagement = () => {
       return;
     }
 
+    const linesError = payLinesError(manualAdditions, manualDeductions);
+    if (linesError) {
+      showNotification('error', linesError);
+      return;
+    }
+
     setLoading(true);
 
     try {
       // Calculate additions and deductions from driver profile (same as create, respects edited amounts)
-      const { totalAdditions, totalDeductions: calculatedDeductions } = calculateAdditionsDeductions();
+      const { totalDeductions: calculatedDeductions, additionItems, deductionItems } = calculateAdditionsDeductions();
 
-      // Add calculated additions to bonus (same as create)
       const calculatedBonus = parseFloat(formData.bonus) || 0;
-      const finalBonus = calculatedBonus + totalAdditions;
 
       const payload: any = {
         userId: formData.userId,
         baseSalary: selectedPayroll.baseSalary, // Keep existing baseSalary
-        bonus: finalBonus, // Bonus + edited additions
+        bonus: calculatedBonus, // pure bonus; additions sent as itemised lines
         deductions: calculatedDeductions, // Use calculated deductions from backend (respects edited amounts)
         payDate: formData.payDate,
         startDate: formData.startDate,
         endDate: formData.endDate,
+        additionItems: [...additionItems, ...toApiPayLines(manualAdditions)],
+        deductionItems: [...deductionItems, ...toApiPayLines(manualDeductions)],
+        applyTaxes,
         country: formData.country || 'USA',
         // Canada taxes
         federalIncomeTaxCA: parseFloat(formData.federalIncomeTaxCA || '0'),
@@ -1622,6 +1663,15 @@ const DriverPayrollManagement = () => {
       stateDisabilityInsurance: (payroll.stateDisabilityInsurance || 0).toString(),
       localTax: (payroll.localTax || 0).toString()
     });
+    const taxTotal = (payroll.federalIncomeTaxCA || 0) + (payroll.provincialIncomeTaxCA || 0) + (payroll.cpp || 0) + (payroll.ei || 0) + (payroll.provincialHealthTaxCA || 0)
+      + (payroll.federalIncomeTaxUS || 0) + (payroll.stateIncomeTaxUS || 0) + (payroll.socialSecurityTax || 0) + (payroll.medicareTax || 0) + (payroll.stateDisabilityInsurance || 0) + (payroll.localTax || 0);
+    setApplyTaxes(payroll.applyTaxes ?? taxTotal > 0);
+    setManualAdditions((payroll.additionItems || []).filter(i => (i.source || 'manual') === 'manual').map(i => ({ ...newPayLine(i.memo, i.amount), date: i.date ? String(i.date).slice(0, 10) : undefined })));
+    setManualDeductions((payroll.deductionItems || []).filter(i => (i.source || 'manual') === 'manual').map(i => ({ ...newPayLine(i.memo, i.amount), date: i.date ? String(i.date).slice(0, 10) : undefined })));
+    if (payroll.additionItems || payroll.deductionItems) {
+      const itemsTotal = (payroll.additionItems || []).reduce((sum, i) => sum + (i.amount || 0), 0);
+      setFormData(prev => ({ ...prev, bonus: Math.max(0, (payroll.bonus || 0) - itemsTotal).toFixed(2) }));
+    }
     setShowEditModal(true);
   };
 
@@ -1649,565 +1699,38 @@ const DriverPayrollManagement = () => {
     }
   };
 
-  const handleDownloadPaystubPDF = async (paystub: Paystub) => {
+  // Pay statement in the company's layout (trip lines, memos) - download or print
+  const handleDownloadPaystubPDF = async (paystub: Paystub, mode: 'download' | 'print' = 'download') => {
     try {
-      const doc = new jsPDF('p', 'mm', 'a4');
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const pageHeight = doc.internal.pageSize.getHeight();
-      const margin = 15;
-      const contentWidth = pageWidth - (margin * 2);
-
-      // Helper function to check if we need a new page
-      const checkPageBreak = (requiredSpace: number) => {
-        if (yPos + requiredSpace > pageHeight - margin) {
-          doc.addPage();
-          yPos = margin;
-          return true;
-        }
-        return false;
-      };
-
-      // Color scheme
-      const primaryR = 37, primaryG = 99, primaryB = 235; // Blue-600
-      const textR = 31, textG = 41, textB = 55; // Gray-800
-      const lightGrayR = 243, lightGrayG = 244, lightGrayB = 246; // Gray-100
-      const greenR = 34, greenG = 197, greenB = 94; // Green-500
-      const redR = 239, redG = 68, redB = 68; // Red-500
-
-      let yPos = margin;
-
-      // Pre-load doclogo for header
-      let docLogoBase64 = '';
-      let docLogoW = 22, docLogoH = 11;
-      try {
-        const logoImg = new Image();
-        logoImg.src = DocLogo;
-        await new Promise<void>((resolve) => {
-          logoImg.onload = () => {
-            try {
-              const cv = document.createElement('canvas');
-              cv.width = logoImg.width; cv.height = logoImg.height;
-              const ctx = cv.getContext('2d');
-              if (ctx) {
-                ctx.drawImage(logoImg, 0, 0);
-                docLogoBase64 = cv.toDataURL('image/png');
-                docLogoW = 22;
-                docLogoH = (logoImg.height / logoImg.width) * docLogoW;
-              }
-            } catch { }
-            resolve();
-          };
-          logoImg.onerror = () => resolve();
-        });
-      } catch { }
-
-      // Header with colored background
-      doc.setFillColor(primaryR, primaryG, primaryB);
-      doc.rect(0, 0, pageWidth, 45, 'F');
-
-      // Platform logo in bottom-right of header
-      if (docLogoBase64) {
-        doc.addImage(docLogoBase64, 'PNG', pageWidth - margin - docLogoW, 44 - docLogoH, docLogoW, docLogoH);
-      }
-
-      // Company Details (Left side) - White text on blue background
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(14);
-      doc.setFont('helvetica', 'bold');
-      const companyName = paystub.companyDetails?.companyName || 'Company Name';
-      doc.text(companyName, margin, 12);
-
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'normal');
-      let companyY = 19;
-      if (paystub.companyDetails?.companyAddress) {
-        const addressLines = doc.splitTextToSize(paystub.companyDetails.companyAddress, 70);
-        doc.text(addressLines, margin, companyY);
-        companyY += addressLines.length * 4;
-      }
-      if (paystub.companyDetails?.companyPhone) {
-        doc.text(paystub.companyDetails.companyPhone, margin, companyY);
-        companyY += 4;
-      }
-
-      // Employee info on right side of header (for owner operator format)
-      if (paystub.workType === 'Owner-Operator' || paystub.workType === 'Driver') {
-        const employeeInfoX = pageWidth - margin - 70;
-        doc.setFontSize(8);
-        if (paystub.employeeId) {
-          doc.text(paystub.employeeId, employeeInfoX, 12);
-        }
-        if (paystub.employeeName) {
-          const nameLines = doc.splitTextToSize(paystub.employeeName, 65);
-          doc.text(nameLines, employeeInfoX, 16);
-          companyY = Math.max(companyY, 16 + nameLines.length * 4);
-        }
-        if (paystub.employeeAddress) {
-          const addrLines = doc.splitTextToSize(paystub.employeeAddress, 65);
-          doc.text(addrLines, employeeInfoX, companyY + 2);
-        }
-      }
-
-      // Pay Stub Title (Right side) - White text on blue background
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'bold');
-      if (paystub.workType === 'Owner-Operator') {
-        doc.text('OWNER OPERATOR PAY STATEMENT', pageWidth - margin, 12, { align: 'right' });
-      } else {
-        doc.text('PAY STUB', pageWidth - margin, 12, { align: 'right' });
-      }
-
-      // Additional info below title
-      doc.setFontSize(7);
-      doc.setFont('helvetica', 'normal');
-      let rightY = 16;
-      if (paystub.companyDetails?.gstNumber) {
-        doc.text(`GST No. ${paystub.companyDetails.gstNumber}`, pageWidth - margin, rightY, { align: 'right' });
-        rightY += 4;
-      }
-
-      // Pay Period
-      const periodStart = new Date(paystub.payPeriod.startDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
-      const periodEnd = new Date(paystub.payPeriod.endDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
-      doc.text(`PAY PERIOD ${periodStart} - ${periodEnd}`, pageWidth - margin, rightY, { align: 'right' });
-      rightY += 4;
-
-      const payDate = new Date(paystub.payPeriod.payDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
-      doc.text(`PAYROLL DUE: ${payDate}`, pageWidth - margin, rightY, { align: 'right' });
-      rightY += 4;
-
-      if (paystub.payment?.mode === 'Cheque' && paystub.payment?.accountNumber) {
-        doc.text(`CHEQUE #: ${paystub.payment.accountNumber}`, pageWidth - margin, rightY, { align: 'right' });
-      }
-
-      // Reset text color and move to content area
-      doc.setTextColor(textR, textG, textB);
-      yPos = 55;
-
-      // Pay Period Box
-      const boxWidth = 75;
-      const boxHeight = 25;
-      doc.setFillColor(lightGrayR, lightGrayG, lightGrayB);
-      doc.roundedRect(pageWidth - margin - boxWidth, yPos, boxWidth, boxHeight, 2, 2, 'F');
-
-      doc.setFontSize(7);
-      doc.setTextColor(107, 114, 128);
-      doc.text('Pay Period Start', pageWidth - margin - boxWidth + 3, yPos + 6);
-      doc.text('Pay Period End', pageWidth - margin - boxWidth + 3, yPos + 12);
-      doc.text('Pay Date', pageWidth - margin - boxWidth + 3, yPos + 18);
-
-      doc.setFontSize(8);
-      doc.setTextColor(textR, textG, textB);
-      doc.setFont('helvetica', 'bold');
-      const startDate = new Date(paystub.payPeriod.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      const endDate = new Date(paystub.payPeriod.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      const payDateFormatted = new Date(paystub.payPeriod.payDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      doc.text(startDate, pageWidth - margin - 3, yPos + 6, { align: 'right' });
-      doc.text(endDate, pageWidth - margin - 3, yPos + 12, { align: 'right' });
-      doc.text(payDateFormatted, pageWidth - margin - 3, yPos + 18, { align: 'right' });
-
-      yPos += boxHeight + 8;
-
-      // Employee Information Section
-      checkPageBreak(25);
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Employee Information', margin, yPos);
-      yPos += 7;
-      doc.setDrawColor(200, 200, 200);
-      doc.line(margin, yPos, pageWidth - margin, yPos);
-      yPos += 6;
-
-      doc.setFontSize(9);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Name: ${paystub.employeeName}`, margin, yPos);
-      yPos += 6;
-      if (paystub.employeeId) {
-        doc.text(`Employee ID: ${paystub.employeeId}`, margin, yPos);
-        yPos += 6;
-      }
-      doc.text(`Role: ${paystub.employeeRole || 'N/A'}`, margin, yPos);
-      yPos += 6;
-      doc.text(`Work Type: ${paystub.workType || 'Employee'}`, margin, yPos);
-      yPos += 6;
-      if (paystub.employeeAddress) {
-        const addrLines = doc.splitTextToSize(`Address: ${paystub.employeeAddress}`, contentWidth);
-        doc.text(addrLines, margin, yPos);
-        yPos += addrLines.length * 5;
-      }
-      yPos += 8;
-
-      // Trip Details Section (for drivers/owner-operators)
-      if (paystub.tripDetails && paystub.tripDetails.length > 0) {
-        checkPageBreak(30);
-
-        // Trip Details Table Header
-        doc.setFillColor(lightGrayR, lightGrayG, lightGrayB);
-        doc.rect(margin, yPos, contentWidth, 6, 'F');
-        doc.setFontSize(6);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(textR, textG, textB);
-
-        // Column positions (adjusted for smaller font to fit all columns)
-        const col1 = margin + 1; // Truck #
-        const col2 = margin + 15; // Pay Type
-        const col3 = margin + 30; // Load #
-        const col4 = margin + 42; // Type
-        const col5 = margin + 50; // Period From
-        const col6 = margin + 65; // To
-        const col7 = margin + 80; // Pay Rate
-        const col8 = margin + 92; // Miles/Hours
-        const col9 = margin + 108; // CAD
-        const col10 = margin + 125; // USD
-
-        doc.text('Truck #', col1, yPos + 4);
-        doc.text('Pay Type', col2, yPos + 4);
-        doc.text('Load #', col3, yPos + 4);
-        doc.text('Type', col4, yPos + 4);
-        doc.text('Period', col5, yPos + 4);
-        doc.text('From', col5, yPos + 5.5);
-        doc.text('To', col6, yPos + 4);
-        doc.text('Pay Rate', col7, yPos + 4);
-        doc.text('Miles/', col8, yPos + 4);
-        doc.text('Hours', col8, yPos + 5.5);
-        doc.text('CAD', col9, yPos + 4);
-        doc.text('USD', col10, yPos + 4);
-
-        yPos += 7;
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(6);
-
-        let totalMiles = 0;
-        let totalCAD = 0;
-        let totalUSD = 0;
-
-        // Trip Details Rows
-        for (const trip of paystub.tripDetails) {
-          checkPageBreak(8);
-
-          const truckNum = trip.truckNumber || 'N/A';
-          const payType = trip.payType || 'Paid Per Mile';
-          const loadNum = trip.loadNumber || 'N/A';
-          const tripType = trip.tripType || 'N/A';
-
-          // Format dates
-          const fromDate = trip.periodFrom ? new Date(trip.periodFrom).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) : 'N/A';
-          const toDate = trip.periodTo ? new Date(trip.periodTo).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) : 'N/A';
-
-          const origin = trip.origin || 'N/A';
-          const destination = trip.destination || 'N/A';
-
-          // Split long locations for display
-          const originLines = doc.splitTextToSize(origin, 12);
-          const destLines = doc.splitTextToSize(destination, 12);
-
-          const payRate = trip.payRate || 0;
-          const miles = trip.miles || 0;
-          const hours = trip.hours || 0;
-          const amountCAD = trip.amountCAD || 0;
-          const amountUSD = trip.amountUSD || 0;
-
-          totalMiles += miles;
-          totalCAD += amountCAD;
-          totalUSD += amountUSD;
-
-          // Calculate row height based on location text
-          const maxLines = Math.max(originLines.length, destLines.length);
-          const rowHeight = Math.max(6, maxLines * 3.5);
-
-          // Truck #
-          doc.text(truckNum, col1, yPos + 3);
-
-          // Pay Type
-          doc.text(payType, col2, yPos + 3);
-
-          // Load #
-          doc.text(loadNum, col3, yPos + 3);
-
-          // Type
-          doc.text(tripType, col4, yPos + 3);
-
-          // Period From - show date on first line, origin below
-          doc.text(fromDate, col5, yPos + 3);
-          if (origin !== 'N/A' && originLines.length > 0) {
-            doc.setFontSize(5);
-            doc.setTextColor(107, 114, 128);
-            doc.text(originLines[0] || origin.substring(0, 15), col5, yPos + 5.5);
-            doc.setFontSize(6);
-            doc.setTextColor(textR, textG, textB);
-          }
-
-          // To - show date on first line, destination below
-          doc.text(toDate, col6, yPos + 3);
-          if (destination !== 'N/A' && destLines.length > 0) {
-            doc.setFontSize(5);
-            doc.setTextColor(107, 114, 128);
-            doc.text(destLines[0] || destination.substring(0, 15), col6, yPos + 5.5);
-            doc.setFontSize(6);
-            doc.setTextColor(textR, textG, textB);
-          }
-
-          // Pay Rate
-          doc.text(`$${payRate.toFixed(2)}`, col7, yPos + 3);
-
-          // Miles/Hours
-          if (miles > 0) {
-            doc.text(miles.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), col8, yPos + 3);
-          } else if (hours > 0) {
-            doc.text(hours.toFixed(2), col8, yPos + 3);
-          } else {
-            doc.text('-', col8, yPos + 3);
-          }
-
-          // CAD
-          doc.text(`$${amountCAD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, col9, yPos + 3);
-
-          // USD
-          doc.text(`$${amountUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, col10, yPos + 3);
-
-          yPos += rowHeight;
-        }
-
-        // Total Miles row
-        yPos += 2;
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 5;
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(7);
-        doc.text(`Total Miles: ${totalMiles.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, margin, yPos);
-        yPos += 8;
-      } else {
-        // Fallback to regular earnings section if no trip details
-        checkPageBreak(40);
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Earnings', margin, yPos);
-        yPos += 7;
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 5;
-
-        // Earnings Table Header
-        doc.setFillColor(lightGrayR, lightGrayG, lightGrayB);
-        doc.rect(margin, yPos - 2, contentWidth, 7, 'F');
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Earning Type', margin + 2, yPos + 4);
-        doc.text('Units', margin + 70, yPos + 4);
-        doc.text('Rate', margin + 100, yPos + 4);
-        doc.text('Amount', pageWidth - margin - 2, yPos + 4, { align: 'right' });
-        yPos += 9;
-
-        // Earnings Rows
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'normal');
-        if (paystub.earnings.earningsBreakdown && paystub.earnings.earningsBreakdown.length > 0) {
-          paystub.earnings.earningsBreakdown.forEach((earning: any) => {
-            checkPageBreak(6);
-            const typeText = doc.splitTextToSize(earning.type || 'N/A', 60);
-            doc.text(typeText, margin + 2, yPos + 4);
-            doc.text(earning.units || '-', margin + 70, yPos + 4);
-            doc.text(earning.rate > 0 ? `$${earning.rate.toFixed(2)}` : '-', margin + 100, yPos + 4);
-            doc.text(`$${earning.amount.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            yPos += Math.max(6, typeText.length * 5);
-          });
-        } else {
-          // Fallback if no breakdown
-          checkPageBreak(6);
-          doc.text('Basic Pay', margin + 2, yPos + 4);
-          doc.text(`$${paystub.earnings.baseSalary.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-          yPos += 6;
-          if (paystub.earnings.bonus > 0) {
-            checkPageBreak(6);
-            doc.text('Bonus', margin + 2, yPos + 4);
-            doc.text(`$${paystub.earnings.bonus.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            yPos += 6;
-          }
-          if (paystub.earnings.mileageEarnings > 0) {
-            checkPageBreak(6);
-            doc.text('Trip Pay / Mileage', margin + 2, yPos + 4);
-            doc.text(`$${paystub.earnings.mileageEarnings.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            yPos += 6;
-          }
-        }
-
-        // Total Earnings
-        yPos += 3;
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 6;
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(9);
-        doc.text('Total Earnings', margin + 2, yPos + 4);
-        doc.setTextColor(greenR, greenG, greenB);
-        doc.text(`$${paystub.earnings.totalEarnings.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-        doc.setTextColor(textR, textG, textB);
-        yPos += 10;
-      }
-
-      // Deductions Section
-      checkPageBreak(40);
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Deductions', margin, yPos);
-      yPos += 7;
-      doc.setDrawColor(200, 200, 200);
-      doc.line(margin, yPos, pageWidth - margin, yPos);
-      yPos += 5;
-
-      // Deductions Table Header
-      doc.setFillColor(lightGrayR, lightGrayG, lightGrayB);
-      doc.rect(margin, yPos - 2, contentWidth, 7, 'F');
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Deduction Type', margin + 2, yPos + 4);
-      doc.text('Amount', pageWidth - margin - 2, yPos + 4, { align: 'right' });
-      yPos += 9;
-
-      // Deductions Rows
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'normal');
-      if (paystub.deductions.deductionsBreakdown && paystub.deductions.deductionsBreakdown.length > 0) {
-        paystub.deductions.deductionsBreakdown.forEach((deduction: any) => {
-          checkPageBreak(6);
-          const typeText = doc.splitTextToSize(deduction.type || 'N/A', 120);
-          doc.text(typeText, margin + 2, yPos + 4);
-          doc.setTextColor(redR, redG, redB);
-          doc.text(`$${deduction.amount.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-          doc.setTextColor(textR, textG, textB);
-          yPos += Math.max(6, typeText.length * 5);
-        });
-      } else {
-        // Fallback
-        if (paystub.deductions.otherDeductions > 0) {
-          checkPageBreak(6);
-          doc.text('Other Deductions', margin + 2, yPos + 4);
-          doc.setTextColor(redR, redG, redB);
-          doc.text(`$${paystub.deductions.otherDeductions.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-          doc.setTextColor(textR, textG, textB);
-          yPos += 6;
-        }
-        checkPageBreak(6);
-        doc.text('Taxes', margin + 2, yPos + 4);
-        doc.setTextColor(redR, redG, redB);
-        doc.text(`$${paystub.summary.totalTaxes.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-        doc.setTextColor(textR, textG, textB);
-        yPos += 6;
-      }
-
-      // Total Deductions
-      yPos += 3;
-      doc.setDrawColor(200, 200, 200);
-      doc.line(margin, yPos, pageWidth - margin, yPos);
-      yPos += 6;
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(9);
-      doc.text('Total Deductions', margin + 2, yPos + 4);
-      doc.setTextColor(redR, redG, redB);
-      doc.text(`$${paystub.deductions.totalDeductions.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-      doc.setTextColor(textR, textG, textB);
-      yPos += 12;
-
-      // Summary Section (Highlighted)
-      checkPageBreak(40);
-      doc.setFillColor(primaryR, primaryG, primaryB);
-      doc.roundedRect(margin, yPos, contentWidth, 32, 2, 2, 'F');
-      yPos += 8;
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Pay Summary', margin + 3, yPos);
-      yPos += 9;
-
-      doc.setFontSize(9);
-      doc.setFont('helvetica', 'normal');
-      doc.text('Gross Pay', margin + 3, yPos);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`$${paystub.summary.grossPay.toFixed(2)}`, pageWidth - margin - 3, yPos, { align: 'right' });
-      yPos += 7;
-
-      // Additions in summary if exists
-      if (paystub.additions && paystub.additions.length > 0) {
-        const totalAdditions = paystub.additions.reduce((sum: number, add: any) => sum + (add.totalCAD || add.amount || 0), 0);
-        doc.setFont('helvetica', 'normal');
-        doc.text('Additions (+)', margin + 3, yPos);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`$${totalAdditions.toFixed(2)}`, pageWidth - margin - 3, yPos, { align: 'right' });
-        yPos += 7;
-      }
-
-      doc.setFont('helvetica', 'normal');
-      doc.text('Total Deductions:', margin + 3, yPos);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`$${paystub.summary.totalDeductions.toFixed(2)}`, pageWidth - margin - 3, yPos, { align: 'right' });
-      yPos += 6;
-
-      doc.setDrawColor(255, 255, 255);
-      doc.line(margin + 3, yPos, pageWidth - margin - 3, yPos);
-      yPos += 6;
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Net Pay', margin + 3, yPos);
-      doc.setFontSize(13);
-      doc.text(`$${paystub.summary.netPay.toFixed(2)}`, pageWidth - margin - 3, yPos, { align: 'right' });
-      doc.setTextColor(textR, textG, textB);
-      yPos += 15;
-
-      // YTD Summary (if available)
-      if (paystub.ytd) {
-        checkPageBreak(25);
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Year-to-Date (YTD) Summary', margin, yPos);
-        yPos += 7;
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 7;
-
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'normal');
-        doc.text('YTD Earnings:', margin, yPos);
-        doc.text(`$${paystub.ytd.earnings.toFixed(2)}`, margin + 70, yPos);
-        yPos += 6;
-        doc.text('YTD Deductions:', margin, yPos);
-        doc.text(`$${paystub.ytd.deductions.toFixed(2)}`, margin + 70, yPos);
-        yPos += 6;
-        doc.text('YTD Net Pay:', margin, yPos);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`$${paystub.ytd.netPay.toFixed(2)}`, margin + 70, yPos);
-        yPos += 10;
-      }
-
-      // Footer
-      const footerY = pageHeight - 20;
-      doc.setDrawColor(200, 200, 200);
-      doc.line(margin, footerY, pageWidth - margin, footerY);
-
-      doc.setFontSize(7);
-      doc.setTextColor(107, 114, 128);
-      let footerTextY = footerY + 5;
-
-      if (paystub.notes) {
-        const notesLines = doc.splitTextToSize(`Notes: ${paystub.notes}`, contentWidth);
-        doc.text(notesLines, margin, footerTextY);
-        footerTextY += notesLines.length * 4;
-      }
-      if (paystub.hrName) {
-        doc.text(`HR Signature: ${paystub.hrName}`, margin, footerTextY);
-        footerTextY += 4;
-      }
-      doc.text(`Status: ${paystub.status.charAt(0).toUpperCase() + paystub.status.slice(1)}`, margin, footerTextY);
-      doc.text(`Generated: ${new Date(paystub.createdAt).toLocaleString()}`, pageWidth - margin, footerTextY, { align: 'right' });
-
-      // Generate filename
-      const fileName = `Paystub_${paystub.employeeName.replace(/\s+/g, '_')}_${paystub.paystubId || paystub._id.slice(-8)}.pdf`;
-
-      // Save PDF
-      doc.save(fileName);
+      await outputPayStatement(paystubToStatement(paystub), mode);
     } catch (error) {
       console.error('Error generating PDF:', error);
-      alert('Error generating PDF. Please try again.');
+      showNotification('error', 'Error generating the pay statement. Please try again.');
+    }
+  };
+
+  const handlePayrollStatement = async (payroll: DriverPayroll, mode: 'download' | 'print') => {
+    setStatementBusy(`${payroll._id}-${mode}`);
+    try {
+      const response = await getPaystubByPayrollId(payroll._id);
+      if (response?.success && response.data) {
+        await handleDownloadPaystubPDF(response.data, mode);
+      } else {
+        showNotification('error', response?.message || 'Pay statement not found for this payroll');
+      }
+    } finally {
+      setStatementBusy(null);
+    }
+  };
+
+  const togglePaymentStatus = async (payroll: DriverPayroll) => {
+    const next = payroll.paymentStatus === 'paid' ? 'pending' : 'paid';
+    const response = await updatePayrollPaymentStatus(payroll._id, { paymentStatus: next });
+    if (response?.success) {
+      showNotification('success', response.message || (next === 'paid' ? 'Marked as paid' : 'Marked as pending'));
+      fetchPayrolls();
+    } else {
+      showNotification('error', response?.message || 'Could not update payment status');
     }
   };
 
@@ -2237,6 +1760,9 @@ const DriverPayrollManagement = () => {
     setSelectedDriver(null);
     setDriverTrips([]);
     setDriverPayrollSummary(null);
+    setApplyTaxes(false);
+    setManualAdditions([]);
+    setManualDeductions([]);
   };
 
   // Count payroll records per driver type (for tab badges)
@@ -2360,7 +1886,7 @@ const DriverPayrollManagement = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-[var(--accent-navyblue)]">Active Drivers</p>
-                <p className="text-2xl font-bold text-[var(--accent-navyblue)] mt-1">{filteredPayrolls.length}</p>
+                <p className="text-2xl font-bold text-[var(--accent-navyblue)] mt-1">{filteredDriversByType.length}</p>
               </div>
               <div className="p-3 rounded-full bg-card">
                 <Users className="text-[var(--accent-navyblue)]" size={24} />
@@ -2524,6 +2050,7 @@ const DriverPayrollManagement = () => {
                       <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase">Deductions</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase">Total Pay</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase">Pay Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase">Status</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase">Actions</th>
                     </tr>
                   </thead>
@@ -2545,7 +2072,7 @@ const DriverPayrollManagement = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-secondary">
-                          {payroll.trips?.length || 0}
+                          {(payroll.trips?.length || 0) + (payroll.orders?.length || 0)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-secondary">
                           {payroll.totalMiles?.toLocaleString() || 0} mi
@@ -2568,8 +2095,33 @@ const DriverPayrollManagement = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">
                           {new Date(payroll.payDate).toLocaleDateString()}
                         </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
+                          <button
+                            onClick={() => togglePaymentStatus(payroll)}
+                            className={`px-3 py-1 text-xs font-medium rounded-full ${payroll.paymentStatus === 'paid' ? 'bg-green-500/15 text-green-500' : 'bg-yellow-500/15 text-yellow-500'}`}
+                            title={payroll.paymentStatus === 'paid' ? 'Click to mark as pending' : 'Click to mark as paid'}
+                          >
+                            {payroll.paymentStatus === 'paid' ? 'Paid' : 'Pending'}
+                          </button>
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center justify-end gap-1">
+                            <button
+                              onClick={() => handlePayrollStatement(payroll, 'print')}
+                              disabled={statementBusy !== null}
+                              className="p-2 hover:bg-[var(--accent-blue)]/20 rounded-lg disabled:opacity-50"
+                              title="Print Pay Statement"
+                            >
+                              <Printer size={18} className="text-[var(--accent-blue)]" />
+                            </button>
+                            <button
+                              onClick={() => handlePayrollStatement(payroll, 'download')}
+                              disabled={statementBusy !== null}
+                              className="p-2 hover:bg-[var(--accent-blue)]/20 rounded-lg disabled:opacity-50"
+                              title="Download Pay Statement (PDF)"
+                            >
+                              <Download size={18} className="text-[var(--accent-blue)]" />
+                            </button>
                             <button
                               onClick={() => openViewModal(payroll)}
                               className="text-green-600 hover:text-green-900 p-2 hover:bg-[var(--accent-green)]/20 rounded-lg"
@@ -2666,6 +2218,16 @@ const DriverPayrollManagement = () => {
                             </option>
                           ))}
                         </select>
+                        {filteredDriversByType.length === 0 && (
+                          <p className="mt-2 text-sm text-[#d97706]">
+                            {drivers.length === 0
+                              ? 'No drivers found. Add drivers in Settings > Drivers first.'
+                              : <>No {driverTypeTab === 'companyDriver' ? 'company' : 'owner-operator'} drivers. {drivers.length} driver{drivers.length !== 1 ? 's are' : ' is'} under the other tab.{' '}
+                                <button type="button" className="underline font-medium" onClick={() => setDriverTypeTab(driverTypeTab === 'companyDriver' ? 'ownerOperator' : 'companyDriver')}>
+                                  Switch to {driverTypeTab === 'companyDriver' ? 'Owner Operator' : 'Company Driver'}
+                                </button></>}
+                          </p>
+                        )}
                       </div>
 
                       <div className="bg-[var(--accent-green)]/10 p-4 rounded-lg border border-[var(--accent-green)]/30">
@@ -2980,6 +2542,9 @@ const DriverPayrollManagement = () => {
                                     </td>
                                     <td className="px-3 py-2 text-sm font-medium text-primary">
                                       {trip.tripNumber || trip._id?.slice(-6).toUpperCase()}
+                                      {trip.alreadyPaid && (
+                                        <span className="ml-2 px-2 py-0.5 text-[10px] rounded-full bg-yellow-500/15 text-yellow-500" title="This load is already in another payroll">Already paid</span>
+                                      )}
                                     </td>
                                     <td className="px-3 py-2 text-sm text-secondary">
                                       <div className="flex items-center gap-1">
@@ -3150,12 +2715,30 @@ const DriverPayrollManagement = () => {
 
                       <div className="grid grid-cols-2 gap-4 mb-4">
                         <div className="bg-card rounded-lg p-4 border border-[var(--accent-green)]/30">
-                          <div className="text-sm text-secondary mb-1">Recommended Bonus</div>
+                          <div className="text-sm text-secondary mb-1">Suggested Bonus</div>
                           <div className="text-2xl font-bold text-[var(--accent-green)]">${aiAnalysis.recommendedBonus.toFixed(2)}</div>
+                          {aiAnalysis.recommendedBonus > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setFormData(prev => ({ ...prev, bonus: aiAnalysis.recommendedBonus.toFixed(2) }))}
+                              className="mt-2 text-xs font-medium text-[var(--accent-green)] underline"
+                            >
+                              {parseFloat(formData.bonus || '0') === Number(aiAnalysis.recommendedBonus.toFixed(2)) ? 'Applied' : 'Use suggestion'}
+                            </button>
+                          )}
                         </div>
                         <div className="bg-card rounded-lg p-4 border border-red-500/30">
-                          <div className="text-sm text-secondary mb-1">Recommended Deductions</div>
+                          <div className="text-sm text-secondary mb-1">Suggested Deductions</div>
                           <div className="text-2xl font-bold text-[var(--accent-purple)]">${aiAnalysis.recommendedDeductions.toFixed(2)}</div>
+                          {aiAnalysis.recommendedDeductions > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setFormData(prev => ({ ...prev, deductions: aiAnalysis.recommendedDeductions.toFixed(2) }))}
+                              className="mt-2 text-xs font-medium text-[var(--accent-purple)] underline"
+                            >
+                              {parseFloat(formData.deductions || '0') === Number(aiAnalysis.recommendedDeductions.toFixed(2)) ? 'Applied' : 'Use suggestion'}
+                            </button>
+                          )}
                         </div>
                       </div>
 
@@ -3355,12 +2938,35 @@ const DriverPayrollManagement = () => {
                     </p>
                   </div>
 
+                  {/* One-off additions / deductions - each needs a memo */}
+                  {formData.userId && (
+                    <PayAdjustments
+                      title="Other Additions & Deductions (this payroll only)"
+                      additions={manualAdditions}
+                      deductions={manualDeductions}
+                      onChange={(add, ded) => { setManualAdditions(add); setManualDeductions(ded); }}
+                    />
+                  )}
+
                   {/* Tax Section */}
                   <div className="bg-card  p-6 rounded-lg border border-theme">
                     <h5 className="text-lg font-semibold text-[var(--accent-navyblue)] mb-4 flex items-center gap-2">
                       <DollarSign size={20} className="text-[var(--accent-navyblue)]" />
                       Tax Information
                     </h5>
+
+                    <label className="flex items-start gap-3 mb-4 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={applyTaxes}
+                        onChange={(e) => setApplyTaxes(e.target.checked)}
+                        className="mt-1 h-4 w-4"
+                      />
+                      <span>
+                        <span className="text-sm font-medium text-primary">Deduct taxes on this payroll</span>
+                        <span className="block text-xs text-secondary">Leave unticked to pay miles and amounts only, with no tax deducted.</span>
+                      </span>
+                    </label>
 
                     <div className="mb-4">
                       <label className="block text-sm font-medium text-primary mb-2">
@@ -3377,7 +2983,7 @@ const DriverPayrollManagement = () => {
                       </select>
                     </div>
 
-                    {formData.country === 'Canada' && (
+                    {applyTaxes && formData.country === 'Canada' && (
                       <div className="space-y-4">
                         <h6 className="text-sm font-semibold text-primary mb-3">Canada Taxes</h6>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -3475,7 +3081,7 @@ const DriverPayrollManagement = () => {
                       </div>
                     )}
 
-                    {formData.country === 'USA' && (
+                    {applyTaxes && formData.country === 'USA' && (
                       <div className="space-y-4">
                         <h6 className="text-sm font-semibold text-primary mb-3">United States Taxes</h6>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -3598,7 +3204,9 @@ const DriverPayrollManagement = () => {
                         <div className="text-2xl font-bold text-purple-600">
                           ${(() => {
                             let totalTax = 0;
-                            if (formData.country === 'Canada') {
+                            if (!applyTaxes) {
+                              totalTax = 0;
+                            } else if (formData.country === 'Canada') {
                               totalTax =
                                 parseFloat(formData.federalIncomeTaxCA || '0') +
                                 parseFloat(formData.provincialIncomeTaxCA || '0') +
@@ -3648,7 +3256,9 @@ const DriverPayrollManagement = () => {
 
                     // Calculate taxes
                     let totalTax = 0;
-                    if (formData.country === 'Canada') {
+                    if (!applyTaxes) {
+                      totalTax = 0;
+                    } else if (formData.country === 'Canada') {
                       totalTax =
                         parseFloat(formData.federalIncomeTaxCA || '0') +
                         parseFloat(formData.provincialIncomeTaxCA || '0') +
@@ -4558,6 +4168,13 @@ const DriverPayrollManagement = () => {
                       <Download size={18} />
                       Download PDF
                     </button>
+<button
+                      onClick={() => handleDownloadPaystubPDF(selectedPaystub, 'print')}
+                      className="px-6 py-3 bg-[var(--accent-navyblue)] text-primary rounded-lg font-medium transition-colors flex items-center gap-2"
+                    >
+                      <Printer size={18} />
+                      Print
+                    </button>
                     <button
                       onClick={() => {
                         setShowPaystubModal(false);
@@ -4813,6 +4430,16 @@ const DriverPayrollManagement = () => {
                             step="0.01"
                             className="w-full px-2 py-1 text-sm border border-theme rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                           />
+                          {Number(suggestion.recommendedBonus) > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => updateBulkSuggestion(index, 'bonus', String(suggestion.recommendedBonus))}
+                              className="mt-1 text-[11px] text-[var(--accent-green)] underline"
+                              title="The AI only suggests a bonus; it is not added unless you apply it"
+                            >
+                              AI suggests ${Number(suggestion.recommendedBonus).toFixed(2)} · Use
+                            </button>
+                          )}
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-primary mb-1">Deductions ($)</label>

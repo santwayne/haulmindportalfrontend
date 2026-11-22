@@ -176,8 +176,11 @@ const exportToExcel = async (manifests: Manifest[]) => {
   const a = document.createElement("a");
   a.href = url;
   a.download = `manifests_${new Date().toISOString().split("T")[0]}.xlsx`;
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  a.remove();
+  // Revoking straight away can cancel the download before it starts
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
 };
 
 // ─── Detail Row helpers ───────────────────────────────────────────────────────

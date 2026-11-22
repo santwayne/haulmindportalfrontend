@@ -807,6 +807,17 @@ export const approveOrderDocuments = async (id: string, approveWithoutDocuments:
   }
 };
 
+// Status-only change (Dispatch -> Delivered, Accounts -> Completed). Accounts can use this
+// without full order edit rights.
+export const updateOrderStatus = async (id: string, status: string) => {
+  try {
+    const res: AxiosResponse = await apiClient.patch(`dispatcher/order/${id}/status`, { status });
+    return res.data;
+  } catch (error) {
+    return (error as Error).response?.data;
+  }
+};
+
 export const updateOrder = async (id: string, data: FormData | any) => {
   try {
     const res: AxiosResponse = await apiClient.put(`dispatcher/order/${id}`, data, {
@@ -1138,5 +1149,18 @@ export const importTrailersFromFile = async (file: File, fieldMap: Record<string
     return res.data;
   } catch (error: any) {
     return error?.response?.data || { success: false, message: error?.message };
+  }
+};
+
+// Dispatch uploads a document (BOL, POD, rate confirmation, manifest, other) to an order
+export const uploadOrderDocumentByDispatch = async (orderId: string, file: File, documentType: string) => {
+  try {
+    const formData = new FormData();
+    formData.append('document', file);
+    formData.append('documentType', documentType);
+    const res: AxiosResponse = await apiClient.post(`dispatcher/order/${orderId}/documents`, formData);
+    return res.data;
+  } catch (error) {
+    return (error as { response?: { data?: unknown } })?.response?.data || { success: false, message: 'Upload failed' };
   }
 };

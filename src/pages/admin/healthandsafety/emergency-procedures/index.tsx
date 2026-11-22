@@ -29,7 +29,10 @@ import {
   FaTimesCircle,
   FaInfoCircle,
   FaMapMarkerAlt,
+  FaDownload,
 } from 'react-icons/fa';
+import AddressSearch from '../../../../components/common/AddressSearch';
+import { downloadExcel, fmtDate } from '../../../../utils/excelExport';
 import {
   createEmergencyContact,
   getEmergencyContacts,
@@ -79,6 +82,8 @@ interface FirstAidLog {
   date: string;
   time: string;
   location: string;
+  latitude?: number | null;
+  longitude?: number | null;
   injuredPerson: string;
   injuryDescription: string;
   firstAidProvided: string;
@@ -175,6 +180,8 @@ const EmergencyProcedures: React.FC = () => {
     date: new Date().toISOString().split('T')[0],
     time: new Date().toTimeString().slice(0, 5),
     location: '',
+    latitude: null as number | null,
+    longitude: null as number | null,
     injuredPerson: '',
     injuryDescription: '',
     firstAidProvided: '',
@@ -848,6 +855,31 @@ const EmergencyProcedures: React.FC = () => {
     </div>
   );
 
+  // Google Maps link: the pinned position when there is one, otherwise a search for the typed location
+  const googleMapsUrl = (log: { location?: string; latitude?: number | null; longitude?: number | null }) =>
+    log.latitude != null && log.longitude != null
+      ? `https://www.google.com/maps/search/?api=1&query=${log.latitude},${log.longitude}`
+      : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(log.location || '')}`;
+
+  const downloadFirstAidLogs = async () => {
+    await downloadExcel(`First-Aid-Logs-${new Date().toISOString().slice(0, 10)}`, [{
+      name: 'First Aid Logs',
+      rows: firstAidLogs,
+      columns: [
+        { header: 'Date', value: (l: FirstAidLog) => fmtDate(l.date) },
+        { header: 'Time', value: (l: FirstAidLog) => l.time },
+        { header: 'Location', value: (l: FirstAidLog) => l.location, width: 34 },
+        { header: 'Google Maps', value: (l: FirstAidLog) => googleMapsUrl(l), width: 40 },
+        { header: 'Injured Person', value: (l: FirstAidLog) => l.injuredPerson, width: 22 },
+        { header: 'Injury Description', value: (l: FirstAidLog) => l.injuryDescription, width: 36 },
+        { header: 'First Aid Provided', value: (l: FirstAidLog) => l.firstAidProvided, width: 36 },
+        { header: 'Treated By', value: (l: FirstAidLog) => l.treatedBy, width: 22 },
+        { header: 'Follow-up Required', value: (l: FirstAidLog) => (l.followUpRequired ? 'Yes' : 'No') },
+        { header: 'Related Incident', value: (l: FirstAidLog) => l.relatedIncident || '' },
+      ],
+    }]);
+  };
+
   const renderFirstAidLogs = () => (
     <div className="space-y-6">
       <div className="bg-card rounded-2xl p-8 shadow-lg">
@@ -856,12 +888,22 @@ const EmergencyProcedures: React.FC = () => {
             <FaAmbulance className="" />
             First Aid Logs
           </h2>
-          <button
-            onClick={() => setShowFirstAidForm(true)}
-            className="px-6 py-3 bg-[var(--accent-navyblue)] !text-white rounded-xl font-semibold hover:bg-[var(--accent-navyblue)]/80  transition-colors flex items-center gap-2"
-          >
-            <FaPlus /> New First Aid Log
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => downloadFirstAidLogs()}
+              disabled={firstAidLogs.length === 0}
+              className="px-5 py-3 border border-theme text-primary rounded-xl font-semibold hover:bg-[rgba(15,31,23,0.05)] transition-colors flex items-center gap-2 disabled:opacity-50"
+              title="Download the first aid logs as Excel"
+            >
+              <FaDownload /> Download
+            </button>
+            <button
+              onClick={() => setShowFirstAidForm(true)}
+              className="px-6 py-3 bg-[var(--accent-navyblue)] !text-white rounded-xl font-semibold hover:bg-[var(--accent-navyblue)]/80  transition-colors flex items-center gap-2"
+            >
+              <FaPlus /> New First Aid Log
+            </button>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -893,10 +935,17 @@ const EmergencyProcedures: React.FC = () => {
                     <div className="text-secondary text-xs">{log.time}</div>
                   </td>
                   <td className="px-6 py-4 text-sm text-primary">
-                    <div className="flex items-center gap-2">
-                      <FaMapMarkerAlt className="text-secondary" size={12} />
+                    <a
+                      href={googleMapsUrl(log)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-2 hover:underline"
+                      title="Open in Google Maps"
+                    >
+                      <FaMapMarkerAlt className="text-[#059669]" size={12} />
                       {log.location}
-                    </div>
+                    </a>
                   </td>
                   <td className="px-6 py-4 text-sm font-medium text-primary">{log.injuredPerson}</td>
                   <td className="px-6 py-4 text-sm text-primary">{log.injuryDescription}</td>
@@ -920,9 +969,11 @@ const EmergencyProcedures: React.FC = () => {
                           e.stopPropagation();
                           setEditingFirstAid(log);
                           setNewFirstAidLog({
-                            date: log.date,
+                            date: String(log.date || '').slice(0, 10),
                             time: log.time,
                             location: log.location,
+                            latitude: log.latitude ?? null,
+                            longitude: log.longitude ?? null,
                             injuredPerson: log.injuredPerson,
                             injuryDescription: log.injuryDescription,
                             firstAidProvided: log.firstAidProvided,
@@ -981,6 +1032,8 @@ const EmergencyProcedures: React.FC = () => {
                     date: newFirstAidLog.date,
                     time: newFirstAidLog.time,
                     location: newFirstAidLog.location,
+                    latitude: newFirstAidLog.latitude ?? null,
+                    longitude: newFirstAidLog.longitude ?? null,
                     injuredPerson: newFirstAidLog.injuredPerson,
                     injuryDescription: newFirstAidLog.injuryDescription,
                     firstAidProvided: newFirstAidLog.firstAidProvided,
@@ -1007,6 +1060,8 @@ const EmergencyProcedures: React.FC = () => {
                       date: new Date().toISOString().split('T')[0],
                       time: new Date().toTimeString().slice(0, 5),
                       location: '',
+                      latitude: null,
+                      longitude: null,
                       injuredPerson: '',
                       injuryDescription: '',
                       firstAidProvided: '',
@@ -1051,14 +1106,27 @@ const EmergencyProcedures: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-semibold text-headings mb-2">Location *</label>
+                <AddressSearch
+                  label=""
+                  placeholder="Search the address on the map..."
+                  onAddressSelect={(addr) => setNewFirstAidLog((prev) => ({
+                    ...prev,
+                    location: addr.fullAddress || prev.location,
+                    latitude: Number(addr.latitude) || null,
+                    longitude: Number(addr.longitude) || null,
+                  }))}
+                />
                 <input
                   type="text"
                   required
                   value={newFirstAidLog.location}
-                  onChange={(e) => setNewFirstAidLog({ ...newFirstAidLog, location: e.target.value })}
-                  className="w-full border-2 border-theme p-3 rounded-xl focus:ring-2 focus:ring-red-500"
-                  placeholder="Location where incident occurred"
+                  onChange={(e) => setNewFirstAidLog({ ...newFirstAidLog, location: e.target.value, latitude: null, longitude: null })}
+                  className="mt-2 w-full border-2 border-theme p-3 rounded-xl focus:ring-2 focus:ring-red-500"
+                  placeholder="Or type the location (e.g. Yard bay 3, Winnipeg terminal)"
                 />
+                {newFirstAidLog.latitude != null && newFirstAidLog.longitude != null && (
+                  <p className="mt-1 text-xs text-secondary">Pinned on the map ({newFirstAidLog.latitude.toFixed(5)}, {newFirstAidLog.longitude.toFixed(5)})</p>
+                )}
               </div>
 
               <div>
@@ -1305,7 +1373,19 @@ const EmergencyProcedures: React.FC = () => {
                 <div className="mt-1 text-base text-primary flex items-center gap-2">
                   <FaMapMarkerAlt className="text-secondary" />
                   {selectedFirstAidLog.location}
+                  <a href={googleMapsUrl(selectedFirstAidLog)} target="_blank" rel="noopener noreferrer" className="text-xs text-[#059669] hover:underline ml-2">
+                    Open in Google Maps
+                  </a>
                 </div>
+                {selectedFirstAidLog.latitude != null && selectedFirstAidLog.longitude != null && (
+                  <iframe
+                    title="First aid location map"
+                    className="mt-3 w-full h-56 rounded-lg border border-theme"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src={`https://maps.google.com/maps?q=${selectedFirstAidLog.latitude},${selectedFirstAidLog.longitude}&z=15&output=embed`}
+                  />
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-6">

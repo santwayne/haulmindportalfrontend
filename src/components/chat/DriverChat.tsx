@@ -720,11 +720,29 @@ const DriverChat: React.FC<DriverChatProps> = ({ onClose }) => {
         // Send via socket for real-time
         // The backend will emit the message back via socket, which will be caught by handleNewMessage
         // The real message will replace the optimistic one (or we'll remove the optimistic one if it matches)
-        console.log("📤 Sending message via socket to driver:", selectedDriver._id);
-        socketService.sendDriverChatMessage({
-          driverId: selectedDriver._id,
-          message: messageText,
-        });
+        if (socketService.isConnected() && socketService.getIsAuthenticated()) {
+          socketService.sendDriverChatMessage({
+            driverId: selectedDriver._id,
+            message: messageText,
+          });
+        } else {
+          // Live connection down: the socket send used to drop the message without a word.
+          // The HTTP endpoint saves it and still pushes it to the driver and other staff.
+          const response = await sendDriverChatMessageAPI(selectedDriver._id, messageText);
+          const tempId = optimisticMessage._id;
+          if (response?.success && response.data) {
+            setMessages((prev) => {
+              const withoutTemp = prev.filter((m) => m._id !== tempId);
+              const updated = withoutTemp.some((m) => m._id === response.data!._id) ? withoutTemp : [...withoutTemp, response.data!];
+              messagesRef.current = updated;
+              return updated;
+            });
+          } else {
+            setMessages((prev) => prev.filter((m) => m._id !== tempId));
+            setNewMessage(messageText);
+            alert(response?.message || "Message not sent. Please check your connection and try again.");
+          }
+        }
       }
     } catch (error) {
       console.error("Error sending message:", error);

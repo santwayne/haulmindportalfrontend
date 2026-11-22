@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     DollarSign,
@@ -6,7 +6,6 @@ import {
     Users,
     Calendar,
     Eye,
-    MoreHorizontal,
     Building2,
     CreditCard,
     AlertCircle,
@@ -18,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Modal, Button, message } from 'antd';
 import { getSuperAdminRevenue } from '../../../axios/api/superadmin';
+import RowActionMenu from '../../../components/common/RowActionMenu';
 
 const RevenueDashboard = () => {
     const navigate = useNavigate();
@@ -30,39 +30,10 @@ const RevenueDashboard = () => {
     const [limit] = useState(50);
     const [showViewModal, setShowViewModal] = useState(false);
     const [selectedRevenue, setSelectedRevenue] = useState<any>(null);
-    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-    const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
     useEffect(() => {
         fetchRevenueData();
     }, [revenueFilter, currentPage]);
-
-    // Close dropdown when clicking outside or pressing Escape
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (activeDropdown && dropdownRefs.current[activeDropdown]) {
-                const dropdownElement = dropdownRefs.current[activeDropdown];
-                if (dropdownElement && !dropdownElement.contains(event.target as Node)) {
-                    setActiveDropdown(null);
-                }
-            }
-        };
-
-        const handleEscape = (event: KeyboardEvent) => {
-            if (event.key === 'Escape' && activeDropdown) {
-                setActiveDropdown(null);
-            }
-        };
-
-        if (activeDropdown) {
-            document.addEventListener('mousedown', handleClickOutside);
-            document.addEventListener('keydown', handleEscape);
-            return () => {
-                document.removeEventListener('mousedown', handleClickOutside);
-                document.removeEventListener('keydown', handleEscape);
-            };
-        }
-    }, [activeDropdown]);
 
     const fetchRevenueData = async () => {
         try {
@@ -144,12 +115,15 @@ const RevenueDashboard = () => {
     const trialRevenuePotential = typeof metrics.trialRevenuePotential === 'number'
         ? metrics.trialRevenuePotential
         : (metrics.trialRevenuePotential != null ? parseFloat(String(metrics.trialRevenuePotential)) : 0);
-    const revenueGrowth = typeof metrics.revenueGrowth === 'number'
-        ? metrics.revenueGrowth
-        : (metrics.revenueGrowth != null ? parseFloat(String(metrics.revenueGrowth)) : 0);
-    const monthlyRecurringGrowth = typeof metrics.monthlyRecurringGrowth === 'number'
-        ? metrics.monthlyRecurringGrowth
-        : (metrics.monthlyRecurringGrowth != null ? parseFloat(String(metrics.monthlyRecurringGrowth)) : 0);
+    // null means "nothing to compare against" — hide the badge instead of showing a fake %
+    const revenueGrowth: number | null = metrics.revenueGrowth == null || isNaN(Number(metrics.revenueGrowth))
+        ? null
+        : Number(metrics.revenueGrowth);
+    const monthlyRecurringGrowth: number | null = metrics.monthlyRecurringGrowth == null || isNaN(Number(metrics.monthlyRecurringGrowth))
+        ? null
+        : Number(metrics.monthlyRecurringGrowth);
+    const cycleLabel = (entry: any) =>
+        entry?.billingCycleLabel || (entry?.recurring ? 'Monthly' : 'One-time');
 
     console.log('Metrics object:', metrics);
     console.log('Total Revenue:', totalRevenue, typeof totalRevenue, 'Raw:', metrics.totalRevenue);
@@ -161,6 +135,8 @@ const RevenueDashboard = () => {
             case 'Overdue': return 'bg-red-100 text-red-800';
             case 'Trial': return 'bg-blue-100 text-blue-800';
             case 'Pending': return 'bg-yellow-100 text-yellow-800';
+            case 'Cancelled': return 'bg-gray-200 text-gray-700';
+            case 'Failed': return 'bg-red-100 text-red-800';
             default: return 'bg-card text-primary';
         }
     };
@@ -191,10 +167,6 @@ const RevenueDashboard = () => {
         message.success('ID copied to clipboard');
     };
 
-    const handleMoreActions = (revenueId: string, event: React.MouseEvent) => {
-        event.stopPropagation();
-        setActiveDropdown(activeDropdown === revenueId ? null : revenueId);
-    };
 
     return (
         <div className="min-h-screen bg-card">
@@ -223,12 +195,16 @@ const RevenueDashboard = () => {
                                 <p className="text-2xl font-bold text-primary">
                                     ${typeof totalRevenue === 'number' && !isNaN(totalRevenue) ? totalRevenue.toLocaleString('en-CA', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '0'}
                                 </p>
-                                <div className="flex items-center mt-2">
-                                    <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-                                    <span className="text-sm text-green-600">
-                                        {revenueGrowth >= 0 ? '+' : ''}{revenueGrowth}% from last month
-                                    </span>
-                                </div>
+                                {revenueGrowth !== null ? (
+                                    <div className="flex items-center mt-2">
+                                        <TrendingUp className={`w-4 h-4 mr-1 ${revenueGrowth >= 0 ? 'text-green-500' : 'text-red-500'}`} />
+                                        <span className={`text-sm ${revenueGrowth >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                                            {revenueGrowth >= 0 ? '+' : ''}{revenueGrowth}% vs last month
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <p className="text-xs text-secondary mt-2">Paid invoices, all time</p>
+                                )}
                             </div>
                             <div className="bg-green-100 p-3 rounded-lg">
                                 <DollarSign className="w-6 h-6 text-green-600" />
@@ -244,12 +220,16 @@ const RevenueDashboard = () => {
                                 <p className="text-2xl font-bold text-primary">
                                     ${typeof monthlyRecurring === 'number' && !isNaN(monthlyRecurring) ? monthlyRecurring.toLocaleString('en-CA', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '0'}
                                 </p>
-                                <div className="flex items-center mt-2">
-                                    <TrendingUp className="w-4 h-4 text-blue-500 mr-1" />
-                                    <span className="text-sm text-[#059669]">
-                                        {monthlyRecurringGrowth >= 0 ? '+' : ''}{monthlyRecurringGrowth}% growth
-                                    </span>
-                                </div>
+                                {monthlyRecurringGrowth !== null ? (
+                                    <div className="flex items-center mt-2">
+                                        <TrendingUp className="w-4 h-4 text-blue-500 mr-1" />
+                                        <span className="text-sm text-[#059669]">
+                                            {monthlyRecurringGrowth >= 0 ? '+' : ''}{monthlyRecurringGrowth}% growth
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <p className="text-xs text-secondary mt-2">6-month and yearly plans counted per month</p>
+                                )}
                             </div>
                             <div className="bg-blue-100 p-3 rounded-lg">
                                 <Calendar className="w-6 h-6 text-[#059669]" />
@@ -393,7 +373,7 @@ const RevenueDashboard = () => {
                                                 ${typeof revenue.amount === 'number' && !isNaN(revenue.amount) ? revenue.amount.toLocaleString('en-CA', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '0'}
                                             </div>
                                             <div className="text-xs text-secondary">
-                                                {revenue.recurring ? 'Monthly' : 'One-time'}
+                                                {cycleLabel(revenue)}
                                             </div>
                                         </td>
 
@@ -408,6 +388,9 @@ const RevenueDashboard = () => {
                                                     {revenue.status}
                                                 </span>
                                             </div>
+                                            {revenue.statusReason && (
+                                                <div className="text-xs text-secondary mt-1">{revenue.statusReason}</div>
+                                            )}
                                         </td>
 
                                         <td className="px-6 py-4 whitespace-nowrap w-32">
@@ -419,70 +402,18 @@ const RevenueDashboard = () => {
                                                 >
                                                     <Eye className="w-4 h-4" />
                                                 </button>
-                                                <div className="relative" ref={(el) => { dropdownRefs.current[revenue.id] = el; }}>
-                                                    <button
-                                                        onClick={(e) => handleMoreActions(revenue.id, e)}
-                                                        className="text-secondary hover:text-secondary p-1 rounded transition-colors"
-                                                        title="More Actions"
-                                                    >
-                                                        <MoreHorizontal className="w-4 h-4" />
-                                                    </button>
-                                                    {activeDropdown === revenue.id && (
-                                                        <>
-                                                            {/* Backdrop to close on click outside */}
-                                                            <div
-                                                                className="fixed inset-0 z-[9998]"
-                                                                onClick={() => setActiveDropdown(null)}
-                                                            />
-                                                            {/* Dropdown menu */}
-                                                            <div className="absolute right-0 bottom-full mb-2 w-48 bg-card rounded-lg shadow-xl border border-theme z-[9999] py-1 overflow-hidden">
-                                                                <button
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        handleCopyId(revenue.id);
-                                                                        setActiveDropdown(null);
-                                                                    }}
-                                                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] flex items-center space-x-2 transition-colors"
-                                                                >
-                                                                    <Copy className="w-4 h-4" />
-                                                                    <span>Copy Revenue ID</span>
-                                                                </button>
-                                                               
-                                                                <button
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        handleCopyId(revenue.customerId);
-                                                                        setActiveDropdown(null);
-                                                                    }}
-                                                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] flex items-center space-x-2 transition-colors"
-                                                                >
-                                                                    <Copy className="w-4 h-4" />
-                                                                    <span>Copy Customer ID</span>
-                                                                </button>
-                                                                <div className="border-t border-theme my-1"></div>
-                                                                <button
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        setActiveDropdown(null);
-                                                                        // Navigate to viewalladmins page
-                                                                        navigate('/superadmin/viewalladmins');
-                                                                        // Show message with customer ID for easy searching
-                                                                        setTimeout(() => {
-                                                                            message.info({
-                                                                                content: `Navigate to Admin Accounts page. Search for customer ID: ${revenue.customerId}`,
-                                                                                duration: 5,
-                                                                            });
-                                                                        }, 300);
-                                                                    }}
-                                                                    className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-[rgba(15,31,23,0.03)] flex items-center space-x-2 transition-colors"
-                                                                >
-                                                                    <ExternalLink className="w-4 h-4" />
-                                                                    <span>View Customer Profile</span>
-                                                                </button>
-                                                            </div>
-                                                        </>
-                                                    )}
-                                                </div>
+                                                <RowActionMenu
+                                                    actions={[
+                                                        { label: 'Copy Revenue ID', icon: <Copy className="w-4 h-4" />, onClick: () => handleCopyId(revenue.id) },
+                                                        { label: 'Copy Customer ID', icon: <Copy className="w-4 h-4" />, onClick: () => handleCopyId(revenue.customerId) },
+                                                        {
+                                                            label: 'View Customer Profile',
+                                                            icon: <ExternalLink className="w-4 h-4" />,
+                                                            dividerBefore: true,
+                                                            onClick: () => navigate(`/superadmin/viewalladmins?search=${encodeURIComponent(revenue.customerId || '')}`),
+                                                        },
+                                                    ]}
+                                                />
                                             </div>
                                         </td>
                                     </tr>
@@ -639,7 +570,7 @@ const RevenueDashboard = () => {
                                 <div>
                                     <p className="text-xs text-slate-400 mb-1">Payment Type</p>
                                     <p className="text-sm font-medium text-slate-700">
-                                        {selectedRevenue.recurring ? 'Monthly Recurring' : 'One-time'}
+                                        {selectedRevenue.recurring ? `${cycleLabel(selectedRevenue)} (recurring)` : cycleLabel(selectedRevenue)}
                                     </p>
                                 </div>
 
@@ -669,14 +600,14 @@ const RevenueDashboard = () => {
                                     <div className="flex items-center gap-2">
                                         {getStatusIcon(selectedRevenue.status)}
                                         <span
-                                            className={`px-2 py-1 rounded text-xs font-medium ${selectedRevenue.status === "active"
-                                                    ? "bg-green-900 text-green-400"
-                                                    : "bg-slate-700 text-slate-600"
-                                                }`}
+                                            className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(selectedRevenue.status)}`}
                                         >
                                             {selectedRevenue.status}
                                         </span>
                                     </div>
+                                    {selectedRevenue.statusReason && (
+                                        <p className="text-xs text-slate-400 mt-1">{selectedRevenue.statusReason}</p>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -699,7 +630,7 @@ const RevenueDashboard = () => {
                                 <div>
                                     <p className="text-xs text-slate-400 mb-1">Plan Type</p>
                                     <p className="text-sm font-medium text-slate-700">
-                                        {selectedRevenue.recurring ? 'Monthly' : 'Lifetime'}
+                                        {cycleLabel(selectedRevenue)}
                                     </p>
                                 </div>
                             </div>

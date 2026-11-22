@@ -16,6 +16,7 @@ const SafetyOfficerRoute = lazy(() => import("./SafetyOfficerRoute"));
 const MechanicsRoute = lazy(() => import("./MechanicsRoute"));
 const GpsDashboardRoute = lazy(() => import("./GpsDashboardRoute"));
 const InvoicePayment = lazy(() => import("../pages/customer/InvoicePayment"));
+const NotFound = lazy(() => import("../pages/NotFound"));
 
 const Login = lazy(() => import("../pages/admin/auth/Login"));
 const Register = lazy(() => import("../pages/admin/auth/Register"));
@@ -93,6 +94,9 @@ const AppRoutes = () => {
 
         {/* Public customer routes */}
         <Route path='/invoice/:invoiceId' element={<InvoicePayment />} />
+
+        {/* Anything else gets a real 404 instead of a blank page */}
+        <Route path='*' element={<NotFound />} />
       </Routes>
     </Suspense>
   );

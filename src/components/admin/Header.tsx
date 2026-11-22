@@ -5,6 +5,7 @@ import { Search, X, LogOut, ArrowRight, ArrowLeft } from "lucide-react";
 import { useLogout } from "../../hooks/useLogout";
 import { useNavigate } from "react-router-dom";
 import { useQuickActions } from "../common/QuickAction";
+import DriverMessagesButton from '../chat/DriverMessagesButton';
 
 interface HeaderProps {
     isSidebarCollapsed?: boolean;
@@ -193,6 +194,7 @@ const Header: React.FC<HeaderProps> = ({ isSidebarCollapsed = false, onToggleSid
                     >
                         <FaCog size={18} />
                     </button>
+                    <DriverMessagesButton className="p-2 rounded-lg hover-accent text-primary transition" />
                     <button
                         onClick={handleLogout}
                         className="p-2 rounded-lg hover-accent text-primary transition"

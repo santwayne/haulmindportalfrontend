@@ -1,7 +1,7 @@
 import apiClient from '../apiClient';
 
 // Maintenance Expense Summary
-export const getMaintenanceExpenseSummary = async (params?: { search?: string }) => {
+export const getMaintenanceExpenseSummary = async (params?: { search?: string; startDate?: string; endDate?: string; unitType?: string }) => {
   try {
     const response = await apiClient.get('/hr/fleet-maintenance/expense-summary', { params });
     return response.data;
@@ -195,3 +195,9 @@ export const getFleetMaintenanceStats = async () => {
   }
 };
 
+
+// What a truck / trailer was bought for
+export const setUnitPurchasePrice = async (data: { unitId: string; purchasePrice: number; purchaseDate?: string }) => {
+  const response = await apiClient.patch('/hr/fleet-maintenance/unit-purchase-price', data);
+  return response.data;
+};
