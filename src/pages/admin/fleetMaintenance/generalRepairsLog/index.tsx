@@ -170,7 +170,9 @@ const GeneralRepairsLog: React.FC = () => {
     setServiceProvidersLoading(true);
     setServiceProvidersError(null);
     try {
-      const response = await getAllEmployees();
+      // Ask for mechanics directly (same as the Scheduled Services Log). Without a role filter the
+      // API only returns the first page of employees, so mechanics further down were never found.
+      const response = await getAllEmployees(1, 1000, undefined, 'Maintenance Crew (Mechanics)', 'active');
       if (response?.success) {
         const mechanics =
           response.data
@@ -403,6 +405,7 @@ const GeneralRepairsLog: React.FC = () => {
       .sort(([, a], [, b]) => b - a)[0];
 
     return {
+      totalOrders: repairs.length, // all orders on file, not just the last 30 days
       incomingMaintenance,
       urgentRepairs,
       unitsWithRecentRepairs,
@@ -795,7 +798,7 @@ const GeneralRepairsLog: React.FC = () => {
                 )}
                 <div className="flex items-center justify-between text-sm pt-1.5 border-t border-theme">
                   <span className="text-secondary">Total Maintenance Orders</span>
-                  <span className="font-semibold text-headings">{summaryStats.recentActivity}</span>
+                  <span className="font-semibold text-headings">{summaryStats.totalOrders}</span>
                 </div>
               </div>
             </div>

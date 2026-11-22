@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ExcelJS from 'exceljs';
+import AddressSearch from '../../../../components/common/AddressSearch';
 import {
   FaClipboardCheck, FaCheckCircle, FaPlus, FaEye,
   FaSearch, FaMapMarkerAlt, FaUser,
@@ -11,7 +12,10 @@ import {
   createInspection,
   getInspections,
   updateInspection,
-  deleteInspection
+  deleteInspection,
+  completeInspection,
+  uploadInspectionDocuments,
+  deleteInspectionDocument
 } from '../../../../axios/api/healthSafety';
 
 
@@ -47,6 +51,9 @@ interface Inspection {
   priority: 'low' | 'medium' | 'high' | 'critical';
   scheduledDate: string;
   completedDate?: string;
+  completedBy?: string;
+  result?: 'pass' | 'fail' | 'action-required' | null;
+  completionNotes?: string;
   dueDate: string;
   location: string;
   locationType: 'warehouse' | 'yard' | 'shop' | 'office' | 'vehicle' | 'other';
@@ -66,6 +73,7 @@ interface Inspection {
   notes?: string;
   documentUrl?: string;
   photoEvidence: Array<{
+    _id?: string;
     fileUrl: string;
     fileName: string;
     uploadedAt: string;
@@ -196,6 +204,336 @@ const ToastNotificationComponent = ({ notification, onClose }: { notification: T
   );
 };
 
+// Defined outside the page component so it keeps its own state: when it was
+// declared inside the page, every page re-render (a toast appearing or
+// disappearing, a list refresh) created a new component and wiped what the user
+// had typed — including the location.
+interface NewInspectionModalProps {
+  editing?: Inspection | null;
+  onClose: () => void;
+  onCreate: (data: any) => Promise<void>;
+  onUpdate: (id: string, data: any) => Promise<void>;
+  onValidationError: (message: string) => void;
+}
+
+const NewInspectionModal = ({ editing, onClose, onCreate, onUpdate, onValidationError }: NewInspectionModalProps) => {
+  const [selectedType, setSelectedType] = useState(editing?.type || '');
+  const [selectedLocation, setSelectedLocation] = useState(editing?.location || '');
+  const [selectedInspector, setSelectedInspector] = useState(editing?.inspector || '');
+  const [scheduledDate, setScheduledDate] = useState(
+    editing?.scheduledDate || ''
+  );
+  const [dueDate, setDueDate] = useState(
+    editing?.dueDate || editing?.scheduledDate || ''
+  );
+  const [priority, setPriority] = useState(editing?.priority || 'medium');
+  const [notes, setNotes] = useState(editing?.notes || '');
+  const [saving, setSaving] = useState(false);
+
+  // Update form when editing changes
+  useEffect(() => {
+    if (editing) {
+      setSelectedType(editing.type || '');
+      setSelectedLocation(editing.location || '');
+      setSelectedInspector(editing.inspector || '');
+      setScheduledDate(editing.scheduledDate || '');
+      setDueDate(editing.dueDate || editing.scheduledDate || '');
+      setPriority(editing.priority || 'medium');
+      setNotes(editing.notes || '');
+    } else {
+      // Reset form when not editing
+      setSelectedType('');
+      setSelectedLocation('');
+      setSelectedInspector('');
+      setScheduledDate('');
+      setDueDate('');
+      setPriority('medium');
+      setNotes('');
+    }
+  }, [editing]);
+
+  return (
+    <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-card rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6 border-b flex justify-between items-center sticky top-0 bg-card">
+          <h2 className="text-2xl font-bold text-primary">
+            {editing ? 'Edit Inspection' : 'Schedule New Inspection'}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-secondary hover:text-primary"
+          >
+            <FaTimes size={24} />
+          </button>
+        </div>
+
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-primary">Inspection Type *</label>
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                className="w-full px-4 py-3 border border-theme rounded-lg focus:ring-2 focus:ring-indigo-500"
+              >
+                <option className='form-option' value="">Select Type...</option>
+                {INSPECTION_TYPES.map(type => (
+                  <option className='form-option' key={type.value} value={type.value}>
+                    {type.icon} {type.value} - {type.description}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-primary">Location *</label>
+              <AddressSearch
+                label=""
+                placeholder="Search address, or type e.g. Warehouse A, Trailer #4587"
+                value={selectedLocation}
+                onAddressSelect={(addr) => setSelectedLocation(addr.fullAddress)}
+                onChange={(val) => setSelectedLocation(val)}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-primary">Scheduled Date *</label>
+              <input
+                type="date"
+                value={scheduledDate}
+                onChange={(e) => setScheduledDate(e.target.value)}
+                className="w-full px-4 py-3 border border-theme rounded-lg focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-primary">Due Date *</label>
+              <input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className="w-full px-4 py-3 border border-theme rounded-lg focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-primary">Inspector *</label>
+              <input
+                type="text"
+                value={selectedInspector}
+                onChange={(e) => setSelectedInspector(e.target.value)}
+                placeholder="Enter inspector name"
+                className="w-full px-4 py-3 border border-theme rounded-lg focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-primary">Priority</label>
+              <select
+                value={priority}
+                onChange={(e) => setPriority(e.target.value as any)}
+                className="w-full px-4 py-3 border border-theme rounded-lg focus:ring-2 focus:ring-indigo-500"
+              >
+                <option className='form-option' value="low">Low</option>
+                <option className='form-option' value="medium">Medium</option>
+                <option className='form-option' value="high">High</option>
+                <option className='form-option' value="critical">Critical</option>
+              </select>
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-semibold mb-2 text-primary">Notes</label>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={3}
+                placeholder="Additional notes..."
+                className="w-full px-4 py-3 border border-theme rounded-lg focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+
+          {selectedType && CHECKLIST_TEMPLATES[selectedType as ChecklistTemplateKey] && (
+            <div className="bg-card border border-blue-200 rounded-lg p-4 mb-6">
+              <h3 className="font-semibold text-blue-900 mb-3">📋 Standard Checklist Preview</h3>
+              <div className="space-y-2">
+                {CHECKLIST_TEMPLATES[selectedType as ChecklistTemplateKey].slice(0, 3).map((item: ChecklistTemplateItem, idx: number) => (
+                  <div key={idx} className="flex items-center gap-2 text-sm text-blue-800">
+                    <FaCheckCircle className="text-[#059669]" />
+                    <span>{item.question}</span>
+                    {item.photoRequired && <FaCamera className="text-blue-400" size={12} />}
+                  </div>
+                ))}
+                <p className="text-xs text-[#059669] mt-2">
+                  + {CHECKLIST_TEMPLATES[selectedType as ChecklistTemplateKey].length - 3} more items
+                </p>
+              </div>
+            </div>
+          )}
+
+          <div className="flex gap-4">
+            <button
+              onClick={async () => {
+                if (!selectedType || !selectedLocation || !selectedInspector || !scheduledDate) {
+                  onValidationError('Please fill in all required fields');
+                  return;
+                }
+
+                setSaving(true);
+                try {
+                  if (editing) {
+                    // Update existing inspection
+                    await onUpdate(editing._id, {
+                      type: selectedType,
+                      location: selectedLocation,
+                      inspector: selectedInspector,
+                      date: scheduledDate,
+                      scheduledDate: scheduledDate,
+                      notes: notes,
+                      status: editing.status
+                    });
+                  } else {
+                    // Create new inspection
+                    await onCreate({
+                      type: selectedType,
+                      location: selectedLocation,
+                      inspector: selectedInspector,
+                      date: scheduledDate,
+                      scheduledDate: scheduledDate,
+                      dueDate: dueDate || scheduledDate,
+                      priority: priority,
+                      notes: notes,
+                      status: 'scheduled'
+                    });
+                  }
+                } catch (error) {
+                  console.error('Error in save inspection:', error);
+                } finally {
+                  setSaving(false);
+                }
+              }}
+              disabled={saving || !selectedType || !selectedLocation || !selectedInspector || !scheduledDate}
+              className="bg-[var(--accent-navyblue)] flex-1 px-6 py-3 !text-white rounded-lg font-semibold hover:opacity-90 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              
+            >
+              {saving ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  {editing ? 'Updating...' : 'Creating...'}
+                </>
+              ) : (
+                <>
+                  <FaPlus /> {editing ? 'Update Inspection' : 'Schedule Inspection'}
+                </>
+              )}
+            </button>
+            <button
+              onClick={onClose}
+              className="px-6 py-3 bg-gray-200 !text-black rounded-lg font-semibold hover:bg-gray-300 transition"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+// ─── Mark inspection complete ────────────────────────────────────────────────
+interface CompleteInspectionModalProps {
+  inspection: Inspection;
+  onClose: () => void;
+  onSubmit: (data: FormData) => Promise<void>;
+}
+
+const CompleteInspectionModal = ({ inspection, onClose, onSubmit }: CompleteInspectionModalProps) => {
+  const [completedDate, setCompletedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [completedBy, setCompletedBy] = useState(inspection.inspector || '');
+  const [result, setResult] = useState<'pass' | 'fail' | 'action-required'>('pass');
+  const [completionNotes, setCompletionNotes] = useState('');
+  const [files, setFiles] = useState<File[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  const submit = async () => {
+    const fd = new FormData();
+    fd.append('completedDate', completedDate);
+    fd.append('completedBy', completedBy);
+    fd.append('result', result);
+    fd.append('completionNotes', completionNotes);
+    files.forEach((f) => fd.append('documents', f));
+    setSaving(true);
+    try {
+      await onSubmit(fd);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+      <div className="bg-card rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6 border-b flex justify-between items-center">
+          <div>
+            <h2 className="text-xl font-bold text-primary">Mark Inspection Complete</h2>
+            <p className="text-sm text-secondary">{inspection.inspectionNumber} · {inspection.type}</p>
+          </div>
+          <button onClick={onClose} className="text-secondary hover:text-primary"><FaTimes size={20} /></button>
+        </div>
+        <div className="p-6 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold mb-1 text-primary">Completed Date *</label>
+              <input type="date" value={completedDate} onChange={(e) => setCompletedDate(e.target.value)}
+                className="w-full px-3 py-2 border border-theme rounded-lg" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-1 text-primary">Completed By</label>
+              <input type="text" value={completedBy} onChange={(e) => setCompletedBy(e.target.value)}
+                className="w-full px-3 py-2 border border-theme rounded-lg" />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold mb-1 text-primary">Result *</label>
+            <select value={result} onChange={(e) => setResult(e.target.value as 'pass' | 'fail' | 'action-required')}
+              className="w-full px-3 py-2 border border-theme rounded-lg">
+              <option className="form-option" value="pass">Pass</option>
+              <option className="form-option" value="fail">Fail</option>
+              <option className="form-option" value="action-required">Action Required</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold mb-1 text-primary">Notes</label>
+            <textarea value={completionNotes} onChange={(e) => setCompletionNotes(e.target.value)} rows={3}
+              placeholder="What was checked, issues found, follow-up needed..."
+              className="w-full px-3 py-2 border border-theme rounded-lg" />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold mb-1 text-primary">Inspection Form(s)</label>
+            <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"
+              onChange={(e) => setFiles(Array.from(e.target.files || []))}
+              className="w-full text-sm text-primary" />
+            <p className="text-xs text-secondary mt-1">Upload the filled-in inspection form or photos (PDF, image, Word, Excel — up to 10 files).</p>
+            {files.length > 0 && (
+              <ul className="mt-2 text-xs text-secondary list-disc pl-5">
+                {files.map((f) => <li key={f.name}>{f.name}</li>)}
+              </ul>
+            )}
+          </div>
+        </div>
+        <div className="p-6 border-t flex justify-end gap-3">
+          <button onClick={onClose} className="px-5 py-2 border border-theme text-primary rounded-lg font-semibold">Cancel</button>
+          <button onClick={submit} disabled={saving || !completedDate}
+            className="px-5 py-2 bg-green-600 !text-white rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 flex items-center gap-2">
+            <FaCheckCircle /> {saving ? 'Saving...' : 'Mark Complete'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const SafetyInspections: React.FC = () => {
   const [inspections, setInspections] = useState<Inspection[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -211,6 +549,8 @@ const SafetyInspections: React.FC = () => {
   // Delete Confirmation State
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [inspectionToDelete, setInspectionToDelete] = useState<Inspection | null>(null);
+  const [inspectionToComplete, setInspectionToComplete] = useState<Inspection | null>(null);
+  const [uploadingDocs, setUploadingDocs] = useState(false);
 
   // Toast notification helpers
   const addNotification = (type: 'success' | 'error' | 'info' | 'warning', message: string) => {
@@ -243,6 +583,55 @@ const SafetyInspections: React.FC = () => {
     }, 500);
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
+
+  // Mark complete (with result, notes and uploaded forms)
+  const handleCompleteInspection = async (data: FormData) => {
+    if (!inspectionToComplete) return;
+    const response = await completeInspection(inspectionToComplete._id, data);
+    if (response?.success) {
+      addNotification('success', 'Inspection marked as complete');
+      setInspectionToComplete(null);
+      setShowDetailModal(false);
+      setSelectedInspection(null);
+      await fetchInspections(false);
+    } else {
+      addNotification('error', response?.message || 'Failed to complete inspection');
+    }
+  };
+
+  // Attach more forms / photos to an inspection from the detail view
+  const handleUploadDocuments = async (inspection: Inspection, files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const fd = new FormData();
+    Array.from(files).forEach((f) => fd.append('documents', f));
+    setUploadingDocs(true);
+    try {
+      const response = await uploadInspectionDocuments(inspection._id, fd);
+      if (response?.success) {
+        addNotification('success', response.message || 'Files uploaded');
+        setShowDetailModal(false);
+        setSelectedInspection(null);
+        await fetchInspections(false);
+      } else {
+        addNotification('error', response?.message || 'Failed to upload files');
+      }
+    } finally {
+      setUploadingDocs(false);
+    }
+  };
+
+  const handleDeleteDocument = async (inspection: Inspection, docId?: string) => {
+    if (!docId || !window.confirm('Remove this file from the inspection?')) return;
+    const response = await deleteInspectionDocument(inspection._id, docId);
+    if (response?.success) {
+      addNotification('success', 'File removed');
+      setShowDetailModal(false);
+      setSelectedInspection(null);
+      await fetchInspections(false);
+    } else {
+      addNotification('error', response?.message || 'Failed to remove file');
+    }
+  };
 
   const fetchInspections = async (applyFilters = true) => {
     setLoading(true);
@@ -303,6 +692,9 @@ const SafetyInspections: React.FC = () => {
               inspection.date ? new Date(inspection.date).toISOString().split('T')[0] :
                 new Date().toISOString().split('T')[0],
             completedDate: inspection.completedDate ? new Date(inspection.completedDate).toISOString().split('T')[0] : undefined,
+            completedBy: inspection.completedBy || undefined,
+            result: inspection.result || null,
+            completionNotes: inspection.completionNotes || '',
             dueDate: inspection.scheduledDate ? new Date(inspection.scheduledDate).toISOString().split('T')[0] :
               inspection.date ? new Date(inspection.date).toISOString().split('T')[0] :
                 new Date().toISOString().split('T')[0],
@@ -319,7 +711,17 @@ const SafetyInspections: React.FC = () => {
             correctiveActions: [], // Backend doesn't have this structure
             notes: inspection.notes || '',
             documentUrl: undefined,
-            photoEvidence: [],
+            // Uploaded inspection forms / photos
+            photoEvidence: Array.isArray(inspection.documents)
+              ? inspection.documents.map((d: { _id?: string; url?: string; viewUrl?: string; name?: string; uploadedAt?: string; uploadedBy?: string }) => ({
+                  _id: d._id,
+                  // The bucket is private: open the signed link the backend adds, not the raw S3 URL
+                  fileUrl: d.viewUrl || d.url || '',
+                  fileName: d.name || 'Document',
+                  uploadedAt: d.uploadedAt || '',
+                  uploadedBy: d.uploadedBy || ''
+                }))
+              : [],
             relatedIncidentId: undefined,
             auditTrail: [
               {
@@ -514,244 +916,6 @@ const SafetyInspections: React.FC = () => {
     }
   };
 
-  const NewInspectionModal = ({ editing }: { editing?: Inspection | null }) => {
-    const [selectedType, setSelectedType] = useState(editing?.type || '');
-    const [selectedLocation, setSelectedLocation] = useState(editing?.location || '');
-    const [selectedInspector, setSelectedInspector] = useState(editing?.inspector || '');
-    const [scheduledDate, setScheduledDate] = useState(
-      editing?.scheduledDate || ''
-    );
-    const [dueDate, setDueDate] = useState(
-      editing?.dueDate || editing?.scheduledDate || ''
-    );
-    const [priority, setPriority] = useState(editing?.priority || 'medium');
-    const [notes, setNotes] = useState(editing?.notes || '');
-    const [saving, setSaving] = useState(false);
-
-    // Update form when editing changes
-    useEffect(() => {
-      if (editing) {
-        setSelectedType(editing.type || '');
-        setSelectedLocation(editing.location || '');
-        setSelectedInspector(editing.inspector || '');
-        setScheduledDate(editing.scheduledDate || '');
-        setDueDate(editing.dueDate || editing.scheduledDate || '');
-        setPriority(editing.priority || 'medium');
-        setNotes(editing.notes || '');
-      } else {
-        // Reset form when not editing
-        setSelectedType('');
-        setSelectedLocation('');
-        setSelectedInspector('');
-        setScheduledDate('');
-        setDueDate('');
-        setPriority('medium');
-        setNotes('');
-      }
-    }, [editing]);
-
-    return (
-      <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div className="bg-card rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-          <div className="p-6 border-b flex justify-between items-center sticky top-0 bg-card">
-            <h2 className="text-2xl font-bold text-primary">
-              {editing ? 'Edit Inspection' : 'Schedule New Inspection'}
-            </h2>
-            <button
-              onClick={() => {
-                setShowNewInspectionModal(false);
-                setEditingInspection(null);
-              }}
-              className="text-secondary hover:text-primary"
-            >
-              <FaTimes size={24} />
-            </button>
-          </div>
-
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div>
-                <label className="block text-sm font-semibold mb-2 text-primary">Inspection Type *</label>
-                <select
-                  value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-full px-4 py-3 border border-theme rounded-lg focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option className='form-option' value="">Select Type...</option>
-                  {INSPECTION_TYPES.map(type => (
-                    <option className='form-option' key={type.value} value={type.value}>
-                      {type.icon} {type.value} - {type.description}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-2 text-primary">Location *</label>
-                <input
-                  type="text"
-                  value={selectedLocation}
-                  onChange={(e) => setSelectedLocation(e.target.value)}
-                  placeholder="e.g., Warehouse A, Trailer #4587"
-                  className="w-full px-4 py-3 border border-theme rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-2 text-primary">Scheduled Date *</label>
-                <input
-                  type="date"
-                  value={scheduledDate}
-                  onChange={(e) => setScheduledDate(e.target.value)}
-                  className="w-full px-4 py-3 border border-theme rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-2 text-primary">Due Date *</label>
-                <input
-                  type="date"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full px-4 py-3 border border-theme rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-2 text-primary">Inspector *</label>
-                <input
-                  type="text"
-                  value={selectedInspector}
-                  onChange={(e) => setSelectedInspector(e.target.value)}
-                  placeholder="Enter inspector name"
-                  className="w-full px-4 py-3 border border-theme rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-2 text-primary">Priority</label>
-                <select
-                  value={priority}
-                  onChange={(e) => setPriority(e.target.value as any)}
-                  className="w-full px-4 py-3 border border-theme rounded-lg focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option className='form-option' value="low">Low</option>
-                  <option className='form-option' value="medium">Medium</option>
-                  <option className='form-option' value="high">High</option>
-                  <option className='form-option' value="critical">Critical</option>
-                </select>
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold mb-2 text-primary">Notes</label>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={3}
-                  placeholder="Additional notes..."
-                  className="w-full px-4 py-3 border border-theme rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-            </div>
-
-            {selectedType && CHECKLIST_TEMPLATES[selectedType as ChecklistTemplateKey] && (
-              <div className="bg-card border border-blue-200 rounded-lg p-4 mb-6">
-                <h3 className="font-semibold text-blue-900 mb-3">📋 Standard Checklist Preview</h3>
-                <div className="space-y-2">
-                  {CHECKLIST_TEMPLATES[selectedType as ChecklistTemplateKey].slice(0, 3).map((item: ChecklistTemplateItem, idx: number) => (
-                    <div key={idx} className="flex items-center gap-2 text-sm text-blue-800">
-                      <FaCheckCircle className="text-[#059669]" />
-                      <span>{item.question}</span>
-                      {item.photoRequired && <FaCamera className="text-blue-400" size={12} />}
-                    </div>
-                  ))}
-                  <p className="text-xs text-[#059669] mt-2">
-                    + {CHECKLIST_TEMPLATES[selectedType as ChecklistTemplateKey].length - 3} more items
-                  </p>
-                </div>
-              </div>
-            )}
-
-            <div className="flex gap-4">
-              <button
-                onClick={async () => {
-                  if (!selectedType || !selectedLocation || !selectedInspector || !scheduledDate) {
-                    addNotification('error', 'Please fill in all required fields');
-                    return;
-                  }
-
-                  setSaving(true);
-                  try {
-                    if (editing) {
-                      // Update existing inspection
-                      await handleUpdateInspection(editing._id, {
-                        type: selectedType,
-                        location: selectedLocation,
-                        inspector: selectedInspector,
-                        date: scheduledDate,
-                        scheduledDate: scheduledDate,
-                        notes: notes,
-                        status: editing.status
-                      });
-                    } else {
-                      // Create new inspection
-                      await handleCreateInspection({
-                        type: selectedType,
-                        location: selectedLocation,
-                        inspector: selectedInspector,
-                        date: scheduledDate,
-                        scheduledDate: scheduledDate,
-                        dueDate: dueDate || scheduledDate,
-                        priority: priority,
-                        notes: notes,
-                        status: 'scheduled'
-                      });
-                    }
-                  } catch (error) {
-                    console.error('Error in save inspection:', error);
-                  } finally {
-                    setSaving(false);
-                  }
-                }}
-                disabled={saving || !selectedType || !selectedLocation || !selectedInspector || !scheduledDate}
-                className="bg-[var(--accent-navyblue)] flex-1 px-6 py-3 !text-white rounded-lg font-semibold hover:opacity-90 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                
-              >
-                {saving ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    {editing ? 'Updating...' : 'Creating...'}
-                  </>
-                ) : (
-                  <>
-                    <FaPlus /> {editing ? 'Update Inspection' : 'Schedule Inspection'}
-                  </>
-                )}
-              </button>
-              <button
-                onClick={() => {
-                  setShowNewInspectionModal(false);
-                  setEditingInspection(null);
-                  // Reset form
-                  setSelectedType('');
-                  setSelectedLocation('');
-                  setSelectedInspector('');
-                  setScheduledDate('');
-                  setDueDate('');
-                  setPriority('medium');
-                  setNotes('');
-                }}
-                className="px-6 py-3 bg-gray-200 !text-black rounded-lg font-semibold hover:bg-gray-300 transition"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   const InspectionDetailModal = () => {
     if (!selectedInspection) return null;
 
@@ -857,24 +1021,64 @@ const SafetyInspections: React.FC = () => {
             )}
 
             {/* Photo Evidence */}
-            {selectedInspection.photoEvidence.length > 0 && (
-              <div className="mb-6">
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                  <FaCamera /> Photo Evidence ({selectedInspection.photoEvidence.length})
+            {/* Completion details */}
+            {selectedInspection.status === 'completed' && (
+              <div className="mb-6 grid grid-cols-3 gap-4">
+                <div className="bg-card p-4 rounded-lg border border-theme">
+                  <div className="text-sm text-secondary mb-1">Completed</div>
+                  <div className="font-semibold">{selectedInspection.completedDate ? new Date(selectedInspection.completedDate).toLocaleDateString() : '—'}</div>
+                </div>
+                <div className="bg-card p-4 rounded-lg border border-theme">
+                  <div className="text-sm text-secondary mb-1">Completed By</div>
+                  <div className="font-semibold">{selectedInspection.completedBy || '—'}</div>
+                </div>
+                <div className="bg-card p-4 rounded-lg border border-theme">
+                  <div className="text-sm text-secondary mb-1">Result</div>
+                  <div className="font-semibold capitalize">{selectedInspection.result ? selectedInspection.result.replace('-', ' ') : '—'}</div>
+                </div>
+                {selectedInspection.completionNotes && (
+                  <div className="col-span-3 bg-card p-4 rounded-lg border border-theme">
+                    <div className="text-sm text-secondary mb-1">Completion Notes</div>
+                    <p className="text-primary">{selectedInspection.completionNotes}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Inspection forms / photos */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold flex items-center gap-2">
+                  <FaCamera /> Inspection Forms & Photos ({selectedInspection.photoEvidence.length})
                 </h3>
-                <div className="grid grid-cols-3 gap-4">
+                <label className={`px-4 py-2 rounded-lg text-sm font-semibold border border-theme cursor-pointer flex items-center gap-2 ${uploadingDocs ? 'opacity-50 pointer-events-none' : ''}`}>
+                  <FaDownload className="rotate-180" /> {uploadingDocs ? 'Uploading...' : 'Upload Form'}
+                  <input type="file" multiple className="hidden" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"
+                    onChange={(e) => handleUploadDocuments(selectedInspection, e.target.files)} />
+                </label>
+              </div>
+              {selectedInspection.photoEvidence.length === 0 ? (
+                <p className="text-sm text-secondary">No forms uploaded yet.</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {selectedInspection.photoEvidence.map((photo, idx) => (
-                    <div key={idx} className="bg-card p-3 rounded-lg">
-                      <div className="aspect-video bg-gray-300 rounded mb-2 flex items-center justify-center">
-                        <FaCamera size={32} className="text-secondary" />
+                    <div key={photo._id || idx} className="bg-card p-3 rounded-lg border border-theme flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <a href={photo.fileUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-[var(--accent-blue)] hover:underline truncate block">
+                          {photo.fileName}
+                        </a>
+                        <p className="text-xs text-secondary">
+                          {photo.uploadedBy}{photo.uploadedAt ? ` · ${new Date(photo.uploadedAt).toLocaleDateString()}` : ''}
+                        </p>
                       </div>
-                      <p className="text-xs text-secondary truncate">{photo.fileName}</p>
-                      <p className="text-xs text-secondary">{photo.uploadedBy}</p>
+                      <button onClick={() => handleDeleteDocument(selectedInspection, photo._id)} className="text-red-500 hover:text-red-700" title="Remove file">
+                        <FaTrash size={14} />
+                      </button>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
 
             {/* Audit Trail */}
             <div className="mb-6 ">
@@ -912,7 +1116,14 @@ const SafetyInspections: React.FC = () => {
           </div>
 
           <div className="p-6 border-t bg-card flex gap-3">
-
+            {selectedInspection.status !== 'completed' && (
+              <button
+                onClick={() => setInspectionToComplete(selectedInspection)}
+                className="px-6 py-3 bg-indigo-600 !text-white rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center gap-2"
+              >
+                <FaCheckCircle /> Mark Complete
+              </button>
+            )}
             <button
               onClick={() => {
                 setEditingInspection(selectedInspection);
@@ -1151,6 +1362,17 @@ const SafetyInspections: React.FC = () => {
                       >
                         <FaEye /> View
                       </button>
+                      {inspection.status !== 'completed' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setInspectionToComplete(inspection);
+                          }}
+                          className="mt-1 text-green-600 hover:text-green-800 font-semibold text-sm flex items-center gap-1"
+                        >
+                          <FaCheckCircle /> Complete
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))
@@ -1161,8 +1383,27 @@ const SafetyInspections: React.FC = () => {
       </div>
 
       {/* Modals */}
-      {showNewInspectionModal && <NewInspectionModal editing={editingInspection} />}
+      {showNewInspectionModal && (
+        <NewInspectionModal
+          editing={editingInspection}
+          onClose={() => {
+            setShowNewInspectionModal(false);
+            setEditingInspection(null);
+          }}
+          onCreate={handleCreateInspection}
+          onUpdate={handleUpdateInspection}
+          onValidationError={(message) => addNotification('error', message)}
+        />
+      )}
       {showDetailModal && <InspectionDetailModal />}
+
+      {inspectionToComplete && (
+        <CompleteInspectionModal
+          inspection={inspectionToComplete}
+          onClose={() => setInspectionToComplete(null)}
+          onSubmit={handleCompleteInspection}
+        />
+      )}
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && inspectionToDelete && (

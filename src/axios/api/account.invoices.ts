@@ -157,3 +157,65 @@ export const testStripeConnection = async () => {
         return (error as Error).response?.data;
     }
 }
+// Invoice + POD + border manifest in one PDF. The invoice PDF is drawn in the browser and the
+// server appends the trip's documents (it can read them from S3; the browser can't).
+export const downloadInvoicePacket = async (
+    invoiceId: string,
+    invoicePdf: Blob
+): Promise<{ ok: true; blob: Blob; missing: string } | { ok: false; message: string }> => {
+    try {
+        const formData = new FormData();
+        formData.append('invoicePdf', new File([invoicePdf], 'invoice.pdf', { type: 'application/pdf' }));
+        const res: AxiosResponse<Blob> = await apiClient.post(`hr/invoice/${invoiceId}/packet`, formData, {
+            responseType: 'blob',
+            timeout: 120000,
+        });
+        const missing = decodeURIComponent(String(res.headers['x-packet-missing'] || ''));
+        return { ok: true, blob: res.data, missing };
+    } catch (error: unknown) {
+        const data = (error as { response?: { data?: Blob } })?.response?.data;
+        let message = 'Could not build the invoice packet';
+        if (data instanceof Blob) {
+            try { message = JSON.parse(await data.text())?.message || message; } catch { /* keep default */ }
+        }
+        return { ok: false, message };
+    }
+};
+
+// Email the invoice with the POD and border manifest attached (one PDF)
+export const emailInvoicePacket = async (
+    invoiceId: string,
+    invoicePdf: Blob,
+    to?: string
+): Promise<{ success: boolean; message: string; notes?: string[] }> => {
+    try {
+        const formData = new FormData();
+        formData.append('invoicePdf', new File([invoicePdf], 'invoice.pdf', { type: 'application/pdf' }));
+        if (to) formData.append('to', to);
+        const res: AxiosResponse = await apiClient.post(`hr/invoice/${invoiceId}/email-packet`, formData, { timeout: 120000 });
+        return res.data;
+    } catch (error: unknown) {
+        const data = (error as { response?: { data?: { message?: string } } })?.response?.data;
+        return { success: false, message: data?.message || 'Email could not be sent' };
+    }
+};
+
+// Default notes printed on every invoice without its own notes (e.g. factoring Notice of Assignment)
+export const getInvoiceSettings = async (): Promise<{ invoiceNotes: string }> => {
+    try {
+        const res: AxiosResponse = await apiClient.get('hr/invoice-settings');
+        return { invoiceNotes: res.data?.data?.invoiceNotes || '' };
+    } catch {
+        return { invoiceNotes: '' };
+    }
+};
+
+export const updateInvoiceSettings = async (invoiceNotes: string): Promise<{ success: boolean; message: string }> => {
+    try {
+        const res: AxiosResponse = await apiClient.put('hr/invoice-settings', { invoiceNotes });
+        return res.data;
+    } catch (error: unknown) {
+        const data = (error as { response?: { data?: { message?: string } } })?.response?.data;
+        return { success: false, message: data?.message || 'Could not save' };
+    }
+};

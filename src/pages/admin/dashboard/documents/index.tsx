@@ -1682,7 +1682,7 @@ const DocumentManagement: React.FC = () => {
             </div>
             <div className="p-4 flex items-center justify-end gap-3">
               <button onClick={() => setConfirmDelete({ open: false, id: null })} className="px-4 py-2 border border-theme rounded-lg hover:bg-[rgba(15,31,23,0.03)] transition-colors font-medium">Cancel</button>
-              <button onClick={handleConfirmDelete} className="px-4 py-2  !text-white rounded-lg bg-[var(--hover:accent-red)] hover:bg-[var(--accent-red)] transition-colors font-medium">Delete</button>
+              <button onClick={handleConfirmDelete} className="px-4 py-2  !text-white rounded-lg bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 transition-colors font-medium">Delete</button>
             </div>
           </div>
         </div>

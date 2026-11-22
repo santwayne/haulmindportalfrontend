@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Plus, Upload, ChevronUp, ChevronDown, Clock, X, Image as ImageIcon, Calendar, ChevronLeft, ChevronRight, Edit, Trash2, FileText, Check, FileDown } from 'lucide-react';
 import ExcelJS from 'exceljs';
@@ -13,8 +13,10 @@ import { getAllYards, type Yard } from '../../../../axios/api/fleet.yards';
 import apiClient from '../../../../axios/apiClient';
 import ConfirmationModal from '../../../../components/common/ConfirmationModal';
 import { useAutoSaveDraft } from '../../../../customHooks/useAutoSaveDraft';
+import { toDraftSafe } from '../../../../utils/draftSnapshot';
 import DraftRestoreBanner from '../../../../components/common/DraftRestoreBanner';
 import AutoSaveIndicator from '../../../../components/common/AutoSaveIndicator';
+import { COUNTRIES } from '../../../../utils/countries';
 
 
 
@@ -47,13 +49,6 @@ interface Truck {
     lastDispatchDate?: string | Date;
     lastDropLocation?: string;
     yard?: string | { _id: string; yardName: string; yardCode: string };
-}
-
-interface Country {
-    name: string;
-    code: string;
-    flag: string;
-    dialCode: string;
 }
 
 // Static truck data - removed, now using API
@@ -388,7 +383,25 @@ const Trucks: React.FC = () => {
         subType: '' as '' | 'HIGHWAY USE' | 'CITY USE' | 'STORAGE USE' | 'RENTAL' | 'OTHER'
     });
 
-    // Auto-save draft protection (crash/power-loss safety net for the create/edit form)
+    // Auto-save draft protection (crash/power-loss safety net for the create/edit form).
+    // Snapshot covers every step's state so a restore brings back the whole form.
+    const truckDraftSnapshot = useMemo(
+        () =>
+            toDraftSafe({
+                formData,
+                oneTimeInspections,
+                recurringInspections,
+                documents,
+                invoices,
+                notes,
+                paymentMethod,
+                payrollForm,
+                deductions,
+                additions,
+                activeStep,
+            }),
+        [formData, oneTimeInspections, recurringInspections, documents, invoices, notes, paymentMethod, payrollForm, deductions, additions, activeStep]
+    );
     const {
         status: draftStatus,
         lastSavedAt: draftLastSavedAt,
@@ -399,14 +412,29 @@ const Trucks: React.FC = () => {
     } = useAutoSaveDraft({
         entityType: 'trucks',
         entityId: editingId || 'new',
-        formData,
+        formData: truckDraftSnapshot,
         enabled: showSidebar,
     });
 
     const handleRestoreTruckDraft = () => {
-        const draft = restoreTruckDraft();
+        const draft = restoreTruckDraft() as any;
         if (!draft) return;
-        setFormData((prev) => ({ ...prev, ...draft }));
+        // Older drafts only stored the Details step as a flat object
+        if (!draft.formData) {
+            setFormData((prev) => ({ ...prev, ...draft }));
+            return;
+        }
+        setFormData((prev) => ({ ...prev, ...draft.formData }));
+        if (Array.isArray(draft.oneTimeInspections)) setOneTimeInspections(draft.oneTimeInspections);
+        if (Array.isArray(draft.recurringInspections)) setRecurringInspections(draft.recurringInspections);
+        if (Array.isArray(draft.documents)) setDocuments(draft.documents);
+        if (Array.isArray(draft.invoices)) setInvoices(draft.invoices);
+        if (Array.isArray(draft.notes)) setNotes(draft.notes);
+        if (draft.paymentMethod) setPaymentMethod(draft.paymentMethod);
+        if (draft.payrollForm) setPayrollForm((prev) => ({ ...prev, ...draft.payrollForm }));
+        if (Array.isArray(draft.deductions)) setDeductions(draft.deductions);
+        if (Array.isArray(draft.additions)) setAdditions(draft.additions);
+        if (draft.activeStep) setActiveStep(draft.activeStep);
     };
 
     // Update activeTab when route changes
@@ -433,36 +461,7 @@ const Trucks: React.FC = () => {
     });
 
     // Countries data
-    const [countries, setCountries] = useState<Country[]>([]);
-
-    // Fetch countries data
-    useEffect(() => {
-        fetch('https://restcountries.com/v3.1/all?fields=name,flag,idd,cca2')
-            .then(res => res.json())
-            .then(data => {
-                const sortedCountries = data
-                    .filter((c: any) => c.idd && c.idd.root)
-                    .map((c: any) => ({
-                        name: c.name.common,
-                        code: c.cca2,
-                        flag: c.flag,
-                        dialCode: c.idd.root + (c.idd.suffixes ? c.idd.suffixes[0] : ''),
-                    }))
-                    .sort((a: Country, b: Country) => a.name.localeCompare(b.name));
-
-                setCountries(sortedCountries);
-            })
-            .catch(() => {
-                const fallback = [
-                    { name: 'United States', code: 'US', flag: '🇺🇸', dialCode: '+1' },
-                    { name: 'Canada', code: 'CA', flag: '🇨🇦', dialCode: '+1' },
-                    { name: 'India', code: 'IN', flag: '🇮🇳', dialCode: '+91' },
-                    { name: 'United Kingdom', code: 'GB', flag: '🇬🇧', dialCode: '+44' },
-                    { name: 'Australia', code: 'AU', flag: '🇦🇺', dialCode: '+61' },
-                ];
-                setCountries(fallback);
-            });
-    }, []);
+    const countries = COUNTRIES;
 
     // Fetch yards from API
     useEffect(() => {

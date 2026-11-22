@@ -77,7 +77,12 @@ interface SparePartOption {
   stockQty?: number;
 }
 
-const Services: React.FC = () => {
+interface ServicesProps {
+  /** Rendered inside the Assign Tasks page (no page header / padding) */
+  embedded?: boolean;
+}
+
+const Services: React.FC<ServicesProps> = ({ embedded = false }) => {
   const currentUserId = getUserId();
 
   const [allServicesData, setAllServicesData] = useState<VehicleServiceResponse[]>([]);
@@ -153,6 +158,9 @@ const Services: React.FC = () => {
 
       if (response?.success && response?.data) {
         let filteredServices = Array.isArray(response.data) ? response.data : [];
+
+        // Completed work moves to Completed Orders — only open tasks are listed here
+        filteredServices = filteredServices.filter((service: VehicleServiceResponse) => service.status !== "completed");
 
         console.log(`✅ Received ${filteredServices.length} services from API`);
 
@@ -302,7 +310,7 @@ const Services: React.FC = () => {
 
       const response = await updateVehicleService(completeModal._id, updateData);
       if (response?.success) {
-        setNotification({ type: "success", message: "Service marked as completed" });
+        setNotification({ type: "success", message: "Task completed — moved to Completed Orders" });
         setCompleteModal(null);
         setCompleteForm({ parts: [] });
         await loadServices(page);
@@ -358,7 +366,7 @@ const Services: React.FC = () => {
 
   if (loading && services.length === 0) {
     return (
-      <div className="p-6 min-h-screen bg-main">
+      <div className={embedded ? "" : "p-6 min-h-screen bg-main"}>
         <div className="flex items-center justify-center py-16">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[var(--accent-blue)]" />
         </div>
@@ -367,11 +375,13 @@ const Services: React.FC = () => {
   }
 
   return (
-    <div className="p-6 bg-main min-h-screen">
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-headings">Assigned Services</h1>
-        <p className="text-sm text-secondary mt-1">Services assigned to you</p>
-      </div>
+    <div className={embedded ? "" : "p-6 bg-main min-h-screen"}>
+      {!embedded && (
+        <div className="mb-6">
+          <h1 className="text-xl font-bold text-headings">Assigned Services</h1>
+          <p className="text-sm text-secondary mt-1">Services assigned to you</p>
+        </div>
+      )}
 
       {notification && (
         <div
@@ -470,7 +480,6 @@ const Services: React.FC = () => {
               <option className='form-option' value="all">All Status</option>
               <option className='form-option' value="pending">Pending</option>
               <option className='form-option' value="in-progress">In Progress</option>
-              <option className='form-option' value="completed">Completed</option>
             </select>
             <select
               value={priorityFilter}
@@ -526,7 +535,7 @@ const Services: React.FC = () => {
               {services.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="px-6 py-12 text-center text-secondary">
-                    No services assigned to you
+                    No open services assigned to you
                   </td>
                 </tr>
               ) : (

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bot, Send, X, Minimize2, Maximize2, Loader2 } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { sendAIChatMessage, type AIChatMessage } from '../../axios/api/aiChat';
 
 interface AIChatAssistantProps {
@@ -8,6 +9,9 @@ interface AIChatAssistantProps {
 
 const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ className = '' }) => {
   const [isOpen, setIsOpen] = useState(false);
+  // On chat pages the round button sat on top of the message Send button, so lift it above the input bar there
+  const { pathname } = useLocation();
+  const onChatPage = /\/chat(\/|$)/.test(pathname);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<AIChatMessage[]>([
     {
@@ -108,7 +112,7 @@ const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ className = '' }) => 
   };
 
   return (
-    <div className={`fixed bottom-6 right-4 sm:right-6 z-50 ${className}`}>
+    <div className={`fixed ${onChatPage && !isOpen ? 'bottom-28' : 'bottom-6'} right-4 sm:right-6 z-50 ${className}`}>
       {/* Chat Button (when closed) */}
       {!isOpen && (
         <button

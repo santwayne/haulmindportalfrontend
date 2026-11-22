@@ -1,13 +1,19 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { X, ChevronDown, ChevronUp, Search, ArrowLeft, ArrowRight, GripVertical, Edit, Trash2 } from "lucide-react";
+import { X, ChevronDown, ChevronUp, Search, ArrowLeft, ArrowRight, GripVertical, Trash2, Eye, Download } from "lucide-react";
 import { FaCheckCircle, FaExclamationCircle, FaTimes } from "react-icons/fa";
-import { listCustomer, createOrder, updateOrder, getAuditTrail } from "../../../../../axios/api/distapcher";
+import { listCustomer, createOrder, updateOrder, getAuditTrail, getOrderAttachmentSignedUrl } from "../../../../../axios/api/distapcher";
 import { listTrucks } from "../../../../../axios/api/truckTracking";
 import { listTrailers } from "../../../../../axios/api/trailerTracking";
 import { getAllDrivers, getDriverOnboardingStatus, getDrugTests } from "../../../../../axios/api/driver";
 import { getAllEmployees } from "../../../../../axios/api/employee";
+import { listCarriers, createCarrier } from "../../../../../axios/api/account.payables";
+import { getAllCustomers as listDirectory } from "../../../../../axios/api/customer";
 import { getUserInfo } from "../../../../../utils/auth";
 import AddressSearch from "../../../../../components/common/AddressSearch";
+import { useAutoSaveDraft } from "../../../../../customHooks/useAutoSaveDraft";
+import { toDraftSafe } from "../../../../../utils/draftSnapshot";
+import DraftRestoreBanner from "../../../../../components/common/DraftRestoreBanner";
+import AutoSaveIndicator from "../../../../../components/common/AutoSaveIndicator";
 
 // Color constants
 const PRIMARY_GRADIENT = 'linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 40%, rgba(5,150,105,0.15) 100%)';
@@ -153,7 +159,16 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
     const [customerOrderNo, setCustomerOrderNo] = useState("");
     const [loadType, setLoadType] = useState("FTL");
     const [freightOn, setFreightOn] = useState("Order");
-    const [selectedSalesman, setSelectedSalesman] = useState("");
+    // Salesman = the logged-in user who creates the order (client request, Nov 2026).
+    // Only admins/superadmins can change it to someone else.
+    const currentUserInfo = getUserInfo();
+    const currentUserId: string = currentUserInfo?.userData?._id || currentUserInfo?.userData?.id || "";
+    const currentUserName: string = currentUserInfo?.userData?.name
+        || `${currentUserInfo?.userData?.firstName || ''} ${currentUserInfo?.userData?.lastName || ''}`.trim()
+        || currentUserInfo?.userData?.email || 'Me';
+    const currentUserRole: string = currentUserInfo?.userData?.role || '';
+    const canChangeSalesman = currentUserRole === 'admin' || currentUserRole === 'superadmin';
+    const [selectedSalesman, setSelectedSalesman] = useState(currentUserId);
     const [salespersons, setSalespersons] = useState<Array<{ _id: string; name: string }>>([]);
     const [loadingSalespersons, setLoadingSalespersons] = useState(false);
     const [orderNotes, setOrderNotes] = useState("");
@@ -266,7 +281,24 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
     const [commercialValue, setCommercialValue] = useState("");
     const [countryOfOrigin, setCountryOfOrigin] = useState("");
 
-    // Custom Brokers List (Mock for now as per "Pre-saved brokers")
+    // Saved customs brokers (Customer page, category "Customs Broker"): pick one and its
+    // phone / email are filled in; typing a new name still works
+    const [customsBrokers, setCustomsBrokers] = useState<any[]>([]);
+    useEffect(() => {
+        listDirectory(1, 1000, undefined, undefined, 'Customs Broker').then(res => {
+            if (res?.success && Array.isArray(res.data)) setCustomsBrokers(res.data);
+        });
+    }, []);
+    const pickCustomsBroker = (name: string) => {
+        setBrokerName(name);
+        const b = customsBrokers.find(x => String(x.name || '').trim().toLowerCase() === name.trim().toLowerCase());
+        if (b) {
+            const phone = b.customerDetails?.phonePrimary || b.phone || '';
+            const email = b.customerDetails?.emailPrimary || b.email || '';
+            if (phone) setBrokerPhone(phone);
+            if (email) setBrokerEmail(email);
+        }
+    };
 
 
     // Multi-step form state
@@ -315,6 +347,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
         endDate: string;
         appointment: string;
         pickUpNumber: string;
+        notes?: string;
         contact: string;
         skids: string;
         cases: string;
@@ -356,6 +389,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
         endDate: string;
         appointment: string;
         dropOffNumber: string;
+        notes?: string;
         contact: string;
         skids: string;
         cases: string;
@@ -403,7 +437,39 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
     const [selectedCarrier, setSelectedCarrier] = useState<any>(null);
     const [carrierSearch, setCarrierSearch] = useState("");
     const [carrierDropdownOpen, setCarrierDropdownOpen] = useState(false);
-    const [carriers] = useState<any[]>([]);
+    // Other trucking companies we sell (book) loads to. Was a constant empty list, so
+    // "No carriers found" every time and nothing was saved.
+    const [carriers, setCarriers] = useState<any[]>([]);
+    const [carrierRate, setCarrierRate] = useState<string>('');
+    const [carrierCurrency, setCarrierCurrency] = useState<string>('CAD');
+    const [addingCarrier, setAddingCarrier] = useState(false);
+    useEffect(() => {
+        if (assignmentType !== "CARRIER" || carriers.length > 0) return;
+        listCarriers().then(res => { if (res?.success) setCarriers(res.data || []); });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [assignmentType]);
+    const [showNewCarrierForm, setShowNewCarrierForm] = useState(false);
+    const [newCarrierForm, setNewCarrierForm] = useState({ name: '', phone: '', email: '', address: '' });
+    const addCarrierByName = async (name: string, extra: { phone?: string; email?: string; address?: string } = {}) => {
+        const clean = name.trim();
+        if (!clean) return false;
+        setAddingCarrier(true);
+        try {
+            const res = await createCarrier({ name: clean, phone: extra.phone || '', email: extra.email || '', address: extra.address || '' });
+            if (res?.success && res.data) {
+                setCarriers(prev => (prev.some(c => c._id === res.data._id) ? prev : [...prev, res.data].sort((a, b) => (a.name || '').localeCompare(b.name || ''))));
+                setSelectedCarrier(res.data);
+                setCarrierSearch(res.data.name);
+                setCarrierDropdownOpen(false);
+                addNotification('success', res.message === 'Carrier already exists' ? `${res.data.name} is already a carrier - selected it` : `Carrier ${res.data.name} added`);
+                return true;
+            }
+            addNotification('error', res?.message || 'Could not add the carrier');
+            return false;
+        } finally {
+            setAddingCarrier(false);
+        }
+    };
 
     // Pay section states
     const [selectedPayDriver, setSelectedPayDriver] = useState<any>(null);
@@ -445,6 +511,8 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
         locked: boolean;
     }>>([]);
     const [totalMiles, setTotalMiles] = useState(0);
+    // Miles typed in by dispatch on the Assignment step (sent to the backend only when changed)
+    const [milesEdited, setMilesEdited] = useState(false);
     // const [emptyMiles, setEmptyMiles] = useState(0);
     // const [milesDate, setMilesDate] = useState("");
     // const [emptyMilesCheck, setEmptyMilesCheck] = useState(false);
@@ -494,7 +562,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
     }>>([]);
     const [auditTrailLoading, setAuditTrailLoading] = useState(false);
     const [attachments, setAttachments] = useState<Array<{
-        id: number;
+        id: number | string;
         name: string;
         file: File | null;
         url?: string;
@@ -503,9 +571,258 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
         shareWithDriver: boolean;
     }>>([]);
     const [isDragging, setIsDragging] = useState(false);
+    const [attachmentBusy, setAttachmentBusy] = useState<string | null>(null);
+    // Open (inline - print from the browser's viewer) or download an attachment. A file
+    // added in this session opens from memory; a saved one gets a signed link from the backend.
+    const openAttachment = async (
+        attachment: { id: number | string; name: string; file: File | null; url?: string },
+        disposition: 'inline' | 'attachment'
+    ) => {
+        if (attachment.file) {
+            const blobUrl = URL.createObjectURL(attachment.file);
+            if (disposition === 'attachment') {
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = attachment.name || 'document';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } else {
+                window.open(blobUrl, '_blank');
+            }
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+            return;
+        }
+        const orderId = order?._id || order?.id;
+        // Open the tab now, while we still have the click, so the popup blocker allows it
+        const win = disposition === 'inline' ? window.open('', '_blank') : null;
+        setAttachmentBusy(`${attachment.id}:${disposition}`);
+        try {
+            let url = '';
+            if (orderId && attachment.id !== undefined && attachment.id !== null && attachment.id !== '') {
+                const res = await getOrderAttachmentSignedUrl(String(orderId), String(attachment.id), disposition);
+                url = res?.data?.signedUrl || res?.data?.url || res?.signedUrl || res?.url || '';
+            }
+            if (!url) url = attachment.url || '';
+            if (!url) throw new Error('Document link not available - save the order first');
+            if (win) win.location.href = url;
+            else window.location.assign(url);
+        } catch (err) {
+            if (win) win.close();
+            addNotification('error', (err as Error)?.message || 'Could not open the document');
+        } finally {
+            setAttachmentBusy(null);
+        }
+    };
 
     const [podFile, setPodFile] = useState<File | null>(null);
     const [stampedManifestFile, setStampedManifestFile] = useState<File | null>(null);
+
+    // Draft protection for NEW trips (power-loss / portal-close safety net). Every wizard
+    // field plus the current step is saved, so "Save & Next" / auto-save can be restored later.
+    // Files can't be stored in a draft and must be re-attached; the fetched dropdown lists,
+    // search boxes and open/closed flags are intentionally excluded.
+    const draftRestoredRef = useRef(false);
+    const tripDraftSnapshot = useMemo(
+        () => toDraftSafe({ selectedCustomer, selectedShipperCustomer, selectedReceiverCustomer, pickupLocationAddress, deliveryLocationAddress, customerOrderNo, loadType, freightOn, selectedSalesman, orderNotes, commodity, valueOfGoods, valueOfGoodsCurrency, selectedEquipment, noOfPackages, noOfPackagesType, weight, weightUnit, temperature, temperatureUnit, weatherConditions, dimensionL, dimensionB, dimensionH, dimensionUnit, pickupRefNo, pickupDate, pickupTime, pickupAppointment, pickupNote, deliveryRefNo, deliveryDate, deliveryTime, deliveryAppointment, deliveryNote, distance, additionalInfo, customerUnit, customerPostalCode, customerPrimaryPhone, customerSecondaryPhone, customerContact, payableEmail, secondaryPayableEmail, billingDate, rate, rateCurrency, dispatcher, dispatcherEmail, bookedForCarrier, sendToFactor, taxCode, taxAmount, pars, paps, trailerSealNo, csaFastApproved, bondedShipmentCA, bondedShipmentUS, highPriority, cityDriver, teamLoad, roundTrip, oversized, empty, otherCharges, newChargeCategory, newChargePercent, newChargeAmount, newChargeDescription, newChargeGst, invoiceInstructions, invoiceNotes, borderRequired, borderDirection, portOfEntry, cargoDescription, hsCode, brokerName, brokerPhone, brokerEmail, commercialValue, countryOfOrigin, currentStep, shipperName, shipperPhone, shipperEmail, shipperAddress, shipperUnit, shipperCountry, shipperProvince, shipperCity, shipperPostalCode, shipperPrimaryPhone, shipperSecondaryPhone, shipperContact, shipperStore, shipperType, pickupAppointmentType, pickupAppointmentDate, pickupAppointmentTime, pickupStartDate, pickupStartTime, pickupEndDate, pickupEndTime, pickupSpecialInstructions, pickupGatePass, goods, pickUpNotes, pickUpNumber, pickupSkids, pickupCases, pickupUoM, pickupTempUnits, stops, receiverName, receiverPhone, receiverAddress, deliveryAppointmentType, deliveryAppointmentDate, deliveryAppointmentTime, deliveryStartDate, deliveryStartTime, deliveryEndDate, deliveryEndTime, deliveryUnloadingInstructions, deliveryGoods, dropOffNotes, dropOffNumber, deliverySkids, deliveryCases, deliveryUoM, deliveryTempUnits, receiverStops, internalNotes, customerNotes, assignmentType, selectedTruck, selectedTrailer, selectedDriver, selectedCoDriver, selectedCarrier, selectedPayDriver, payType, payCurrency, payRateUnit, payRate, payHours, payAmount, payDate, payMemo, payGst, presetMemo, payItems, deductionItems, deductionAmount, deductionDate, deductionMemo, deductionGst, deductionPresetMemo, routeSegments, totalMiles, jobStops, selectedStopIndex, noteType, noteText, notes }),
+        [selectedCustomer, selectedShipperCustomer, selectedReceiverCustomer, pickupLocationAddress, deliveryLocationAddress, customerOrderNo, loadType, freightOn, selectedSalesman, orderNotes, commodity, valueOfGoods, valueOfGoodsCurrency, selectedEquipment, noOfPackages, noOfPackagesType, weight, weightUnit, temperature, temperatureUnit, weatherConditions, dimensionL, dimensionB, dimensionH, dimensionUnit, pickupRefNo, pickupDate, pickupTime, pickupAppointment, pickupNote, deliveryRefNo, deliveryDate, deliveryTime, deliveryAppointment, deliveryNote, distance, additionalInfo, customerUnit, customerPostalCode, customerPrimaryPhone, customerSecondaryPhone, customerContact, payableEmail, secondaryPayableEmail, billingDate, rate, rateCurrency, dispatcher, dispatcherEmail, bookedForCarrier, sendToFactor, taxCode, taxAmount, pars, paps, trailerSealNo, csaFastApproved, bondedShipmentCA, bondedShipmentUS, highPriority, cityDriver, teamLoad, roundTrip, oversized, empty, otherCharges, newChargeCategory, newChargePercent, newChargeAmount, newChargeDescription, newChargeGst, invoiceInstructions, invoiceNotes, borderRequired, borderDirection, portOfEntry, cargoDescription, hsCode, brokerName, brokerPhone, brokerEmail, commercialValue, countryOfOrigin, currentStep, shipperName, shipperPhone, shipperEmail, shipperAddress, shipperUnit, shipperCountry, shipperProvince, shipperCity, shipperPostalCode, shipperPrimaryPhone, shipperSecondaryPhone, shipperContact, shipperStore, shipperType, pickupAppointmentType, pickupAppointmentDate, pickupAppointmentTime, pickupStartDate, pickupStartTime, pickupEndDate, pickupEndTime, pickupSpecialInstructions, pickupGatePass, goods, pickUpNotes, pickUpNumber, pickupSkids, pickupCases, pickupUoM, pickupTempUnits, stops, receiverName, receiverPhone, receiverAddress, deliveryAppointmentType, deliveryAppointmentDate, deliveryAppointmentTime, deliveryStartDate, deliveryStartTime, deliveryEndDate, deliveryEndTime, deliveryUnloadingInstructions, deliveryGoods, dropOffNotes, dropOffNumber, deliverySkids, deliveryCases, deliveryUoM, deliveryTempUnits, receiverStops, internalNotes, customerNotes, assignmentType, selectedTruck, selectedTrailer, selectedDriver, selectedCoDriver, selectedCarrier, selectedPayDriver, payType, payCurrency, payRateUnit, payRate, payHours, payAmount, payDate, payMemo, payGst, presetMemo, payItems, deductionItems, deductionAmount, deductionDate, deductionMemo, deductionGst, deductionPresetMemo, routeSegments, totalMiles, jobStops, selectedStopIndex, noteType, noteText, notes]
+    );
+    const tripDraftSetters: Record<string, (value: any) => void> = {
+        selectedCustomer: setSelectedCustomer,
+        selectedShipperCustomer: setSelectedShipperCustomer,
+        selectedReceiverCustomer: setSelectedReceiverCustomer,
+        pickupLocationAddress: setPickupLocationAddress,
+        deliveryLocationAddress: setDeliveryLocationAddress,
+        customerOrderNo: setCustomerOrderNo,
+        loadType: setLoadType,
+        freightOn: setFreightOn,
+        selectedSalesman: setSelectedSalesman,
+        orderNotes: setOrderNotes,
+        commodity: setCommodity,
+        valueOfGoods: setValueOfGoods,
+        valueOfGoodsCurrency: setValueOfGoodsCurrency,
+        selectedEquipment: setSelectedEquipment,
+        noOfPackages: setNoOfPackages,
+        noOfPackagesType: setNoOfPackagesType,
+        weight: setWeight,
+        weightUnit: setWeightUnit,
+        temperature: setTemperature,
+        temperatureUnit: setTemperatureUnit,
+        weatherConditions: setWeatherConditions,
+        dimensionL: setDimensionL,
+        dimensionB: setDimensionB,
+        dimensionH: setDimensionH,
+        dimensionUnit: setDimensionUnit,
+        pickupRefNo: setPickupRefNo,
+        pickupDate: setPickupDate,
+        pickupTime: setPickupTime,
+        pickupAppointment: setPickupAppointment,
+        pickupNote: setPickupNote,
+        deliveryRefNo: setDeliveryRefNo,
+        deliveryDate: setDeliveryDate,
+        deliveryTime: setDeliveryTime,
+        deliveryAppointment: setDeliveryAppointment,
+        deliveryNote: setDeliveryNote,
+        distance: setDistance,
+        additionalInfo: setAdditionalInfo,
+        customerUnit: setCustomerUnit,
+        customerPostalCode: setCustomerPostalCode,
+        customerPrimaryPhone: setCustomerPrimaryPhone,
+        customerSecondaryPhone: setCustomerSecondaryPhone,
+        customerContact: setCustomerContact,
+        payableEmail: setPayableEmail,
+        secondaryPayableEmail: setSecondaryPayableEmail,
+        billingDate: setBillingDate,
+        rate: setRate,
+        rateCurrency: setRateCurrency,
+        dispatcher: setDispatcher,
+        dispatcherEmail: setDispatcherEmail,
+        bookedForCarrier: setBookedForCarrier,
+        sendToFactor: setSendToFactor,
+        taxCode: setTaxCode,
+        taxAmount: setTaxAmount,
+        pars: setPars,
+        paps: setPaps,
+        trailerSealNo: setTrailerSealNo,
+        csaFastApproved: setCsaFastApproved,
+        bondedShipmentCA: setBondedShipmentCA,
+        bondedShipmentUS: setBondedShipmentUS,
+        highPriority: setHighPriority,
+        cityDriver: setCityDriver,
+        teamLoad: setTeamLoad,
+        roundTrip: setRoundTrip,
+        oversized: setOversized,
+        empty: setEmpty,
+        otherCharges: setOtherCharges,
+        newChargeCategory: setNewChargeCategory,
+        newChargePercent: setNewChargePercent,
+        newChargeAmount: setNewChargeAmount,
+        newChargeDescription: setNewChargeDescription,
+        newChargeGst: setNewChargeGst,
+        invoiceInstructions: setInvoiceInstructions,
+        invoiceNotes: setInvoiceNotes,
+        borderRequired: setBorderRequired,
+        borderDirection: setBorderDirection,
+        portOfEntry: setPortOfEntry,
+        cargoDescription: setCargoDescription,
+        hsCode: setHsCode,
+        brokerName: setBrokerName,
+        brokerPhone: setBrokerPhone,
+        brokerEmail: setBrokerEmail,
+        commercialValue: setCommercialValue,
+        countryOfOrigin: setCountryOfOrigin,
+        currentStep: setCurrentStep,
+        shipperName: setShipperName,
+        shipperPhone: setShipperPhone,
+        shipperEmail: setShipperEmail,
+        shipperAddress: setShipperAddress,
+        shipperUnit: setShipperUnit,
+        shipperCountry: setShipperCountry,
+        shipperProvince: setShipperProvince,
+        shipperCity: setShipperCity,
+        shipperPostalCode: setShipperPostalCode,
+        shipperPrimaryPhone: setShipperPrimaryPhone,
+        shipperSecondaryPhone: setShipperSecondaryPhone,
+        shipperContact: setShipperContact,
+        shipperStore: setShipperStore,
+        shipperType: setShipperType,
+        pickupAppointmentType: setPickupAppointmentType,
+        pickupAppointmentDate: setPickupAppointmentDate,
+        pickupAppointmentTime: setPickupAppointmentTime,
+        pickupStartDate: setPickupStartDate,
+        pickupStartTime: setPickupStartTime,
+        pickupEndDate: setPickupEndDate,
+        pickupEndTime: setPickupEndTime,
+        pickupSpecialInstructions: setPickupSpecialInstructions,
+        pickupGatePass: setPickupGatePass,
+        goods: setGoods,
+        pickUpNotes: setPickUpNotes,
+        pickUpNumber: setPickUpNumber,
+        pickupSkids: setPickupSkids,
+        pickupCases: setPickupCases,
+        pickupUoM: setPickupUoM,
+        pickupTempUnits: setPickupTempUnits,
+        stops: setStops,
+        receiverName: setReceiverName,
+        receiverPhone: setReceiverPhone,
+        receiverAddress: setReceiverAddress,
+        deliveryAppointmentType: setDeliveryAppointmentType,
+        deliveryAppointmentDate: setDeliveryAppointmentDate,
+        deliveryAppointmentTime: setDeliveryAppointmentTime,
+        deliveryStartDate: setDeliveryStartDate,
+        deliveryStartTime: setDeliveryStartTime,
+        deliveryEndDate: setDeliveryEndDate,
+        deliveryEndTime: setDeliveryEndTime,
+        deliveryUnloadingInstructions: setDeliveryUnloadingInstructions,
+        deliveryGoods: setDeliveryGoods,
+        dropOffNotes: setDropOffNotes,
+        dropOffNumber: setDropOffNumber,
+        deliverySkids: setDeliverySkids,
+        deliveryCases: setDeliveryCases,
+        deliveryUoM: setDeliveryUoM,
+        deliveryTempUnits: setDeliveryTempUnits,
+        receiverStops: setReceiverStops,
+        internalNotes: setInternalNotes,
+        customerNotes: setCustomerNotes,
+        assignmentType: setAssignmentType,
+        selectedTruck: setSelectedTruck,
+        selectedTrailer: setSelectedTrailer,
+        selectedDriver: setSelectedDriver,
+        selectedCoDriver: setSelectedCoDriver,
+        selectedCarrier: setSelectedCarrier,
+        selectedPayDriver: setSelectedPayDriver,
+        payType: setPayType,
+        payCurrency: setPayCurrency,
+        payRateUnit: setPayRateUnit,
+        payRate: setPayRate,
+        payHours: setPayHours,
+        payAmount: setPayAmount,
+        payDate: setPayDate,
+        payMemo: setPayMemo,
+        payGst: setPayGst,
+        presetMemo: setPresetMemo,
+        payItems: setPayItems,
+        deductionItems: setDeductionItems,
+        deductionAmount: setDeductionAmount,
+        deductionDate: setDeductionDate,
+        deductionMemo: setDeductionMemo,
+        deductionGst: setDeductionGst,
+        deductionPresetMemo: setDeductionPresetMemo,
+        routeSegments: setRouteSegments,
+        totalMiles: setTotalMiles,
+        jobStops: setJobStops,
+        selectedStopIndex: setSelectedStopIndex,
+        noteType: setNoteType,
+        noteText: setNoteText,
+        notes: setNotes,
+    };
+    const {
+        status: draftStatus,
+        lastSavedAt: draftLastSavedAt,
+        pendingRestore: draftPendingRestore,
+        restoreDraft: restoreTripDraft,
+        discardDraft: discardTripDraft,
+        clearDraft: clearTripDraft,
+        saveNow: saveTripDraftNow,
+    } = useAutoSaveDraft({
+        entityType: 'trips',
+        entityId: 'new',
+        formData: tripDraftSnapshot,
+        enabled: !order?._id,
+    });
+
+    const handleRestoreTripDraft = () => {
+        const draft = restoreTripDraft();
+        if (!draft) return;
+        draftRestoredRef.current = true;
+        Object.entries(draft).forEach(([key, value]) => {
+            if (value !== undefined) tripDraftSetters[key]?.(value);
+        });
+    };
+
+    const handleDiscardTripDraft = () => {
+        discardTripDraft();
+    };
 
     // Existing document URLs (from database when editing)
     const [, setExistingDocuments] = useState<{
@@ -542,7 +859,13 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                         _id: emp._id,
                         name: emp.name || `${emp.firstName || ''} ${emp.lastName || ''}`.trim() || 'Unnamed'
                     }));
+                // Always include the logged-in user so the auto-filled salesman resolves to a name
+                if (currentUserId && !salespersonList.some((s: { _id: string }) => s._id === currentUserId)) {
+                    salespersonList.unshift({ _id: currentUserId, name: currentUserName });
+                }
                 setSalespersons(salespersonList);
+            } else if (currentUserId) {
+                setSalespersons([{ _id: currentUserId, name: currentUserName }]);
             }
         } catch (error) {
             console.error('Error fetching salespersons:', error);
@@ -557,8 +880,8 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
         if (order) {
             // Customer
             if (order.customer) {
-                const customerId = typeof order.customer === 'string' ? order.customer : order.customer._id;
-                const foundCustomer = customers.find(c => c._id === customerId);
+                const customerId = String(typeof order.customer === 'string' ? order.customer : (order.customer as any)._id || order.customer);
+                const foundCustomer = customers.find(c => String(c._id) === customerId);
                 if (foundCustomer) {
                     setSelectedCustomer(foundCustomer);
                     setCustomerSearch(foundCustomer.name || '');
@@ -595,7 +918,9 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
             setDimensionB(order.dimensions?.width?.toString() || '');
             setDimensionH(order.dimensions?.height?.toString() || '');
             setDimensionUnit(order.dimensions?.unit || 'cm');
-            setDistance(order.distance?.toString() || '');
+            // order.distance is stored in km; this form works in miles
+            setDistance(Number(order.distance) > 0 ? (Number(order.distance) * 0.621371).toFixed(2) : '');
+            setMilesEdited(false);
 
             // Additional info
             if (order.additionalInfo) {
@@ -856,7 +1181,8 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
             // Load attachments array
             if (order.attachments && Array.isArray(order.attachments)) {
                 setAttachments(order.attachments.map((att: any) => ({
-                    id: att.id || Date.now() + Math.random(),
+                    // Keep the server's id: Open/Print and Download ask the backend for a link by it
+                    id: att.id || att._id || Date.now() + Math.random(),
                     name: att.name || '',
                     file: null, // Files are loaded from URLs
                     url: att.url || '',
@@ -885,6 +1211,17 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
             setDispatcherEmail(order.dispatcherEmail || '');
             setBookedForCarrier(order.bookedForCarrier || false);
             setSendToFactor(order.sendToFactor || false);
+            // Load sold to another carrier
+            if (order.carrier || order.carrierName) {
+                setAssignmentType("CARRIER");
+                const carrierObj = typeof order.carrier === 'object' && order.carrier
+                    ? order.carrier
+                    : { _id: order.carrier || '', name: order.carrierName || '' };
+                setSelectedCarrier({ ...carrierObj, name: carrierObj.name || order.carrierName || '' });
+                setCarrierSearch(order.carrierName || carrierObj.name || '');
+            }
+            setCarrierRate(order.carrierRate ? String(order.carrierRate) : '');
+            setCarrierCurrency(order.carrierCurrency || order.rateCurrency || 'CAD');
 
             // Tax Configuration
             const loadedTaxCode = order.taxCode || 'No Tax';
@@ -1026,14 +1363,14 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
 
             // Load assignment data
             loadAssignmentData();
-        } else {
+        } else if (!draftRestoredRef.current) {
             // Reset all fields when creating new order
             setSelectedCustomer(null);
             setCustomerSearch('');
             setCustomerOrderNo('');
             setLoadType('FTL');
             setFreightOn('Order');
-            setSelectedSalesman('');
+            setSelectedSalesman(currentUserId);
             setOrderNotes('');
             setCommodity('');
             setValueOfGoods('');
@@ -1139,6 +1476,8 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
             setDispatcherEmail('');
             setBookedForCarrier(false);
             setSendToFactor(false);
+            setCarrierRate('');
+            setCarrierCurrency('CAD');
             setTaxCode('No Tax');
             setTaxAmount('');
             setPars('');
@@ -1433,6 +1772,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
             endDate: 'N/A',
             appointment: pickupAppointmentType || 'EXACT',
             pickUpNumber: pickUpNumber || '',
+            notes: pickUpNotes || '',
             contact: shipperContact || '',
             skids: pickupSkids || '',
             cases: pickupCases || '',
@@ -1456,6 +1796,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
 
     // Helper functions for receiver stops table
     const addReceiverStop = () => {
+        if (!validateDropOffDetails()) return;
         const newStop = {
             stop: receiverStops.length + 1,
             receiver: receiverName || '',
@@ -1463,6 +1804,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
             endDate: deliveryAppointmentType === "WINDOW" && deliveryEndDate ? deliveryEndDate : 'N/A',
             appointment: deliveryAppointmentType || 'EXACT',
             dropOffNumber: dropOffNumber || '',
+            notes: dropOffNotes || '',
             contact: receiverContact || '',
             skids: deliverySkids || '',
             cases: deliveryCases || '',
@@ -1701,6 +2043,23 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
         }
     };
 
+    // Pick Up Number / Pick Up Notes / Drop Off Number / Drop Off Notes are mandatory (client request, Nov 2026)
+    const isBlank = (v: unknown) => !String(v ?? '').trim();
+    const validatePickupDetails = (): boolean => {
+        if (isBlank(pickUpNumber)) { addNotification('error', "Pick Up Number is required"); return false; }
+        if (isBlank(pickUpNotes)) { addNotification('error', "Pick Up Notes are required"); return false; }
+        const badStop = stops.find((s: any) => isBlank(s.pickUpNumber));
+        if (badStop) { addNotification('error', `Pick Up Number is required for stop ${badStop.stop} (fill it in the Stop Information table)`); return false; }
+        return true;
+    };
+    const validateDropOffDetails = (): boolean => {
+        if (isBlank(dropOffNumber)) { addNotification('error', "Drop Off Number is required"); return false; }
+        if (isBlank(dropOffNotes)) { addNotification('error', "Drop Off Notes are required"); return false; }
+        const badStop = receiverStops.find((s: any) => isBlank(s.dropOffNumber));
+        if (badStop) { addNotification('error', `Drop Off Number is required for receiver stop ${badStop.stop} (fill it in the Stop Information table)`); return false; }
+        return true;
+    };
+
     // Validation for each step
     const validateStep = (step: number): boolean => {
         if (step === 1) {
@@ -1735,11 +2094,13 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                 addNotification('error', "Please select a shipper customer to set pickup location");
                 return false;
             }
+            if (!validatePickupDetails()) return false;
         } else if (step === 3) {
             if (!receiverName) {
                 addNotification('error', "Please enter receiver name");
                 return false;
             }
+            if (!validateDropOffDetails()) return false;
             // Receiver phone is now optional - not all customers have phone numbers
             // if (!receiverPhone) {
             //     addNotification('error', "Please enter receiver phone");
@@ -1753,6 +2114,8 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
 
     const handleNextStep = () => {
         if (validateStep(currentStep)) {
+            // New trips: persist the draft (pointing at the next step) before moving on
+            if (!order?._id) saveTripDraftNow({ currentStep: currentStep + 1 });
             nextStep();
         }
     };
@@ -1788,6 +2151,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
             return;
         }
         // Receiver phone is also optional
+        if (!validatePickupDetails() || !validateDropOffDetails()) return;
 
 
         setLoading(true);
@@ -1898,6 +2262,8 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                     unit: dimensionUnit || 'cm'
                 },
                 distance: distance ? parseFloat(distance) : 0,
+                // Miles dispatch corrected on the Assignment step (backend saves them on the load)
+                distanceMiles: milesEdited ? (parseFloat(distance) || 0) : undefined,
                 additionalInfo: additionalInfo,
                 status: 'QUOTED',
                 accountingStatus: 'pending',
@@ -1994,7 +2360,11 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                 rateCurrency: rateCurrency,
                 dispatcher: dispatcher,
                 dispatcherEmail: dispatcherEmail,
-                bookedForCarrier: bookedForCarrier,
+                bookedForCarrier: assignmentType === "CARRIER" ? true : bookedForCarrier,
+                carrier: assignmentType === "CARRIER" ? (selectedCarrier?._id || '') : '',
+                carrierName: assignmentType === "CARRIER" ? (selectedCarrier?.name || selectedCarrier?.companyName || carrierSearch || '') : '',
+                carrierRate: assignmentType === "CARRIER" ? (parseFloat(carrierRate) || 0) : 0,
+                carrierCurrency: carrierCurrency || rateCurrency,
                 sendToFactor: sendToFactor,
 
                 // Tax Configuration
@@ -2027,11 +2397,12 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                 // Stop Information
                 stops: stops,
 
-                // Assignment Information
-                truck: selectedTruck?._id || selectedTruck?.id || null,
-                trailer: selectedTrailer?._id || selectedTrailer?.id || null,
-                driver: selectedDriver?._id || selectedDriver?.id || null,
-                coDriver: selectedCoDriver?._id || selectedCoDriver?.id || null
+                // Assignment Information (a load sold to another carrier has no truck / driver of ours,
+                // so it never shows up in our driver payroll or truck settlements)
+                truck: assignmentType === "CARRIER" ? null : (selectedTruck?._id || selectedTruck?.id || null),
+                trailer: assignmentType === "CARRIER" ? null : (selectedTrailer?._id || selectedTrailer?.id || null),
+                driver: assignmentType === "CARRIER" ? null : (selectedDriver?._id || selectedDriver?.id || null),
+                coDriver: assignmentType === "CARRIER" ? null : (selectedCoDriver?._id || selectedCoDriver?.id || null)
             };
 
             // Append all order data fields to FormData
@@ -2143,6 +2514,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                     }
 
                     addNotification('success', message);
+                    clearTripDraft();
                     if (onSave) {
                         onSave();
                     }
@@ -2169,6 +2541,49 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
         }
     };
 
+
+    // Driver pay preview for the Assignment step. Mirrors payroll: the load's miles x the
+    // primary driver's profile rate (team rate when there's a co-driver - each driver is paid
+    // it, so the team costs both rates combined; empty rates for empty loads).
+    const payEstimate = useMemo(() => {
+        const num = (v: any) => Number(v) || 0;
+        const d: any = selectedPayDriver || selectedDriver;
+        const det = d?.details || {};
+        const soloRate = num(det.salaryPerMile || det.mileRate || d?.salaryPerMile || d?.mileRate);
+        const isTeam = assignmentType === "DRIVER" && !!selectedCoDriver;
+        let profileRate = isTeam ? (num(det.mileRateTeam || d?.mileRateTeam) || soloRate) : soloRate;
+        if (empty) {
+            profileRate = isTeam
+                ? (num(det.emptyMileRateTeam) || num(det.emptyMileRate) || profileRate)
+                : (num(det.emptyMileRate) || profileRate);
+        }
+        const rateFromForm = !(profileRate > 0);
+        const perDriverRate = rateFromForm ? num(payRate) : profileRate;
+        const miles = num(distance);
+        const combinedRate = isTeam ? perDriverRate * 2 : perDriverRate;
+        let base = 0;
+        if (payRateUnit === "/MILE") base = miles * combinedRate;
+        else if (payRateUnit === "/HR") base = num(payRate) * num(payHours);
+        else if (payRateUnit === "/%") base = num(rate) * num(payRate) / 100;
+        else base = num(payRate);
+        const additions = payItems.reduce((sum, i) => sum + num(i.amount), 0);
+        const deductions = deductionItems.reduce((sum, i) => sum + num(i.amount), 0);
+        const round = (n: number) => Math.round(n * 100) / 100;
+        return {
+            isTeam,
+            miles,
+            rateFromForm,
+            combinedRate: round(combinedRate),
+            teamLines: isTeam ? [
+                { name: d?.name || 'Driver', rate: perDriverRate },
+                { name: selectedCoDriver?.name || 'Co-driver', rate: perDriverRate },
+            ] : [],
+            base: round(base),
+            additions: round(additions),
+            deductions: round(deductions),
+            total: round(base + additions - deductions),
+        };
+    }, [selectedPayDriver, selectedDriver, selectedCoDriver, assignmentType, empty, payRate, payRateUnit, payHours, distance, rate, payItems, deductionItems]);
 
     // Calculate distance between shipper and receiver addresses
     const [calculatingDistance, setCalculatingDistance] = useState(false);
@@ -2555,13 +2970,12 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                 let previousLocation = origin;
                 destinations.forEach((dest, index) => {
                     if (dest.address) {
-                        // For now, use a placeholder distance calculation
-                        // In production, you'd use a mapping service API
-                        const estimatedMiles = 100 * (index + 1); // Placeholder
+                        // Real miles only: the load's distance for a single drop. This used to
+                        // be a placeholder (100 mi, 200 mi, ...) that nothing else used.
                         segments.push({
                             from: previousLocation.split(',')[0] || previousLocation,
                             to: dest.address.split(',')[0] || dest.address,
-                            miles: estimatedMiles,
+                            miles: destinations.length === 1 && index === 0 ? (parseFloat(distance) || 0) : 0,
                             locked: false
                         });
                         previousLocation = dest.address;
@@ -2571,11 +2985,10 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
 
             setRouteSegments(segments);
 
-            // Calculate total miles
-            const total = segments.reduce((sum, seg) => sum + seg.miles, 0);
-            setTotalMiles(total);
+            // Total miles = the load's miles (what payroll and settlements pay on)
+            setTotalMiles(parseFloat(distance) || 0);
         }
-    }, [currentStep, shipperAddress, pickupLocationAddress, receiverAddress, deliveryLocationAddress, receiverStops, shipperCity, shipperProvince, receiverName]);
+    }, [currentStep, shipperAddress, pickupLocationAddress, receiverAddress, deliveryLocationAddress, receiverStops, shipperCity, shipperProvince, receiverName, distance]);
 
     // Close dropdowns when clicking outside
     useEffect(() => {
@@ -2685,6 +3098,13 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
 
             {/* Scrollable Content */}
             <div ref={scrollableContentRef} className="flex-1 overflow-auto px-4 py-4">
+                {draftPendingRestore && !order?._id && (
+                    <DraftRestoreBanner
+                        updatedAt={draftPendingRestore.updatedAt}
+                        onRestore={handleRestoreTripDraft}
+                        onDiscard={handleDiscardTripDraft}
+                    />
+                )}
                 <div className="w-full mx-auto space-y-6 min-w-0">
                     {/* Step 1: Details Section */}
                     {currentStep === 1 && (
@@ -2942,11 +3362,15 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                             <div className="flex gap-1">
                                                 <input
                                                     type="text"
+                                                    list="saved-customs-brokers"
                                                     value={brokerName}
-                                                    onChange={(e) => setBrokerName(e.target.value)}
+                                                    onChange={(e) => pickCustomsBroker(e.target.value)}
                                                     className="flex-1 p-2 border border-theme rounded focus:outline-none focus:ring-2 text-sm"
-                                                    placeholder="Enter customs broker"
+                                                    placeholder={customsBrokers.length ? 'Pick a saved customs broker or type a name' : 'Enter customs broker'}
                                                 />
+                                                <datalist id="saved-customs-brokers">
+                                                    {customsBrokers.map(b => <option key={b._id} value={b.name} />)}
+                                                </datalist>
                                                 <button className="p-2 border border-theme rounded hover:bg-[rgba(15,31,23,0.03)]">
                                                     <Search className="w-4 h-4 text-secondary" />
                                                 </button>
@@ -3184,7 +3608,8 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                     <select
                                                         value={selectedSalesman}
                                                         onChange={(e) => setSelectedSalesman(e.target.value)}
-                                                        disabled={loadingSalespersons}
+                                                        disabled={loadingSalespersons || !canChangeSalesman}
+                                                        title={canChangeSalesman ? undefined : 'Set automatically to the user creating the order'}
                                                         className="flex-1 p-2 border border-theme rounded focus:outline-none focus:ring-2 text-sm disabled:bg-card disabled:cursor-not-allowed"
                                                     >
                                                         <option value="">Select</option>
@@ -3536,7 +3961,20 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                 <td className="p-2 border-r border-theme">{stop.date || '-'}</td>
                                                                 <td className="p-2 border-r border-theme">{stop.endDate || 'N/A'}</td>
                                                                 <td className="p-2 border-r border-theme">{stop.appointment || '-'}</td>
-                                                                <td className="p-2 border-r border-theme">{stop.pickUpNumber || '-'}</td>
+                                                                <td className="p-2 border-r border-theme">
+                                                                    {/* Editable so stops saved before Pick Up # became required (Nov 2026) can be filled in */}
+                                                                    <input
+                                                                        type="text"
+                                                                        value={stop.pickUpNumber || ''}
+                                                                        onChange={(e) => {
+                                                                            const value = e.target.value;
+                                                                            setStops((prev) => prev.map((s, i) => (i === index ? { ...s, pickUpNumber: value } : s)));
+                                                                        }}
+                                                                        placeholder="Required"
+                                                                        aria-label={`Pick Up Number for stop ${stop.stop}`}
+                                                                        className={`w-24 p-1 border rounded text-xs bg-card ${String(stop.pickUpNumber || '').trim() ? 'border-theme' : 'border-red-500'}`}
+                                                                    />
+                                                                </td>
                                                                 <td className="p-2 border-r border-theme">{stop.contact || '-'}</td>
                                                                 <td className="p-2 border-r border-theme">{stop.skids || '-'}</td>
                                                                 <td className="p-2 border-r border-theme">{stop.cases || '-'}</td>
@@ -3874,7 +4312,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-xs font-medium text-primary mb-1">Pick Up Notes</label>
+                                                        <label className="block text-xs font-medium text-primary mb-1">Pick Up Notes <span className="text-red-500">*</span></label>
                                                         <textarea
                                                             rows={4}
                                                             value={pickUpNotes}
@@ -3883,13 +4321,48 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-xs font-medium text-primary mb-1">Pick Up Number</label>
+                                                        <label className="block text-xs font-medium text-primary mb-1">Pick Up Number <span className="text-red-500">*</span></label>
                                                         <input
                                                             type="text"
                                                             value={pickUpNumber}
                                                             onChange={(e) => setPickUpNumber(e.target.value)}
                                                             className="w-full p-2 border border-theme rounded focus:outline-none focus:ring-2 text-sm"
                                                         />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-xs font-medium text-primary mb-1">BOL (Bill of Lading)</label>
+                                                        <label className="flex items-center justify-between gap-2 w-full p-2 border border-dashed border-theme rounded text-sm cursor-pointer hover:border-[var(--accent-blue)]">
+                                                            <span className={bolFile ? 'text-primary truncate' : 'text-secondary'}>
+                                                                {bolFile ? bolFile.name : 'Upload BOL (PDF or image)'}
+                                                            </span>
+                                                            {bolFile ? (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={(e) => { e.preventDefault(); setBolFile(null); }}
+                                                                    className="text-xs text-red-500 hover:underline flex-shrink-0"
+                                                                >
+                                                                    Remove
+                                                                </button>
+                                                            ) : (
+                                                                <span className="text-xs text-[var(--accent-blue)] flex-shrink-0">Browse</span>
+                                                            )}
+                                                            <input
+                                                                type="file"
+                                                                accept=".pdf,image/*"
+                                                                className="hidden"
+                                                                onChange={(e) => {
+                                                                    const f = e.target.files?.[0];
+                                                                    if (f) {
+                                                                        setBolFile(f);
+                                                                        addAuditTrailEntry(`BOL Added: ${f.name}`);
+                                                                    }
+                                                                    e.target.value = '';
+                                                                }}
+                                                            />
+                                                        </label>
+                                                        {order?.documents?.bol && !bolFile && (
+                                                            <p className="text-xs text-green-500 mt-1">BOL already uploaded — choose a file to replace it</p>
+                                                        )}
                                                     </div>
                                                     <div className="grid grid-cols-2 gap-4">
                                                         <div>
@@ -4157,7 +4630,20 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                 <td className="p-2 border-r border-theme">{stop.date || '-'}</td>
                                                                 <td className="p-2 border-r border-theme">{stop.endDate || 'N/A'}</td>
                                                                 <td className="p-2 border-r border-theme">{stop.appointment || '-'}</td>
-                                                                <td className="p-2 border-r border-theme">{stop.dropOffNumber || '-'}</td>
+                                                                <td className="p-2 border-r border-theme">
+                                                                    {/* Editable so stops saved before Drop Off # became required (Nov 2026) can be filled in */}
+                                                                    <input
+                                                                        type="text"
+                                                                        value={stop.dropOffNumber || ''}
+                                                                        onChange={(e) => {
+                                                                            const value = e.target.value;
+                                                                            setReceiverStops((prev) => prev.map((s, i) => (i === index ? { ...s, dropOffNumber: value } : s)));
+                                                                        }}
+                                                                        placeholder="Required"
+                                                                        aria-label={`Drop Off Number for receiver stop ${stop.stop}`}
+                                                                        className={`w-24 p-1 border rounded text-xs bg-card ${String(stop.dropOffNumber || '').trim() ? 'border-theme' : 'border-red-500'}`}
+                                                                    />
+                                                                </td>
                                                                 <td className="p-2 border-r border-theme">{stop.contact || '-'}</td>
                                                                 <td className="p-2 border-r border-theme">{stop.skids || '-'}</td>
                                                                 <td className="p-2 border-r border-theme">{stop.cases || '-'}</td>
@@ -4387,7 +4873,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-xs font-medium text-primary mb-1">Drop Off Notes</label>
+                                                <label className="block text-xs font-medium text-primary mb-1">Drop Off Notes <span className="text-red-500">*</span></label>
                                                 <textarea
                                                     rows={4}
                                                     value={dropOffNotes}
@@ -4397,7 +4883,7 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                             </div>
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div>
-                                                    <label className="block text-xs font-medium text-primary mb-1">Drop Off Number</label>
+                                                    <label className="block text-xs font-medium text-primary mb-1">Drop Off Number <span className="text-red-500">*</span></label>
                                                     <input
                                                         type="text"
                                                         value={dropOffNumber}
@@ -4661,6 +5147,46 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                             </div>
                                         );
                                     })}
+
+                                    {/* BOL upload in Review so it's accessible at the end of order creation */}
+                                    <div className="bg-card rounded-lg border border-theme p-4">
+                                        <div className="flex items-center gap-2 mb-3 pb-2 border-b border-theme">
+                                            <div className="w-3 h-3 rounded-full bg-green-600"></div>
+                                            <h4 className="text-sm font-semibold text-primary">BOL (Bill of Lading)</h4>
+                                        </div>
+                                        <label className="flex items-center justify-between gap-2 w-full p-2 border border-dashed border-theme rounded text-sm cursor-pointer hover:border-[var(--accent-blue)]">
+                                            <span className={bolFile ? 'text-primary truncate' : 'text-secondary'}>
+                                                {bolFile ? bolFile.name : 'Upload BOL (PDF or image)'}
+                                            </span>
+                                            {bolFile ? (
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.preventDefault(); setBolFile(null); }}
+                                                    className="text-xs text-red-500 hover:underline flex-shrink-0"
+                                                >
+                                                    Remove
+                                                </button>
+                                            ) : (
+                                                <span className="text-xs text-[var(--accent-blue)] flex-shrink-0">Browse</span>
+                                            )}
+                                            <input
+                                                type="file"
+                                                accept=".pdf,image/*"
+                                                className="hidden"
+                                                onChange={(e) => {
+                                                    const f = e.target.files?.[0];
+                                                    if (f) {
+                                                        setBolFile(f);
+                                                        addAuditTrailEntry(`BOL Added: ${f.name}`);
+                                                    }
+                                                    e.target.value = '';
+                                                }}
+                                            />
+                                        </label>
+                                        {order?.documents?.bol && !bolFile && (
+                                            <p className="text-xs text-green-500 mt-1">BOL already uploaded — choose a file to replace it</p>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         )
@@ -5146,15 +5672,24 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                                         {carrier.name || carrier.companyName || 'N/A'}
                                                                                     </div>
                                                                                 ))}
-                                                                            {carriers.length === 0 && (
-                                                                                <div className="p-2 text-sm text-secondary">No carriers found</div>
+                                                                            {carrierSearch.trim() && !carriers.some(c => (c.name || '').toLowerCase() === carrierSearch.trim().toLowerCase()) && (
+                                                                                <div
+                                                                                    onClick={() => addCarrierByName(carrierSearch)}
+                                                                                    className="p-2 hover:bg-[rgba(15,31,23,0.03)] cursor-pointer text-sm text-[var(--accent-blue)] border-t border-theme"
+                                                                                >
+                                                                                    {addingCarrier ? 'Adding...' : `+ Add "${carrierSearch.trim()}" as a new carrier`}
+                                                                                </div>
+                                                                            )}
+                                                                            {carriers.length === 0 && !carrierSearch.trim() && (
+                                                                                <div className="p-2 text-sm text-secondary">No carriers yet - type a name to add one</div>
                                                                             )}
                                                                         </div>
                                                                     </div>
                                                                 )}
                                                             </div>
-                                                            <div className="mt-1 flex items-center gap-2 text-xs text-secondary">
+                                                            <div className="mt-1 flex items-center gap-3 text-xs text-secondary">
                                                                 <button
+                                                                    type="button"
                                                                     onClick={() => {
                                                                         setSelectedCarrier(null);
                                                                         setCarrierSearch('');
@@ -5163,8 +5698,108 @@ const NewOrderSidebar = ({ order, onClose, onSave }: NewOrderSidebarProps) => {
                                                                 >
                                                                     Clear
                                                                 </button>
-                                                                <span>Clear All</span>
+                                                                {/* Adding a carrier was only offered inside the search list after typing a
+                                                                    name nobody had used yet, so dispatch couldn't find it (client 19 Nov) */}
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setShowNewCarrierForm(v => !v)}
+                                                                    className="text-[var(--accent-blue)] hover:underline"
+                                                                >
+                                                                    + Add new carrier
+                                                                </button>
                                                             </div>
+                                                            {showNewCarrierForm && (
+                                                                <div className="mt-2 p-3 border border-theme rounded space-y-2">
+                                                                    <div className="text-xs font-medium text-primary">New carrier</div>
+                                                                    <input
+                                                                        type="text"
+                                                                        value={newCarrierForm.name}
+                                                                        onChange={(e) => setNewCarrierForm({ ...newCarrierForm, name: e.target.value })}
+                                                                        placeholder="Carrier name *"
+                                                                        className="w-full p-2 border border-theme rounded text-sm focus:outline-none focus:ring-2"
+                                                                    />
+                                                                    <div className="grid grid-cols-2 gap-2">
+                                                                        <input
+                                                                            type="text"
+                                                                            value={newCarrierForm.phone}
+                                                                            onChange={(e) => setNewCarrierForm({ ...newCarrierForm, phone: e.target.value })}
+                                                                            placeholder="Phone"
+                                                                            className="w-full p-2 border border-theme rounded text-sm focus:outline-none focus:ring-2"
+                                                                        />
+                                                                        <input
+                                                                            type="email"
+                                                                            value={newCarrierForm.email}
+                                                                            onChange={(e) => setNewCarrierForm({ ...newCarrierForm, email: e.target.value })}
+                                                                            placeholder="Email"
+                                                                            className="w-full p-2 border border-theme rounded text-sm focus:outline-none focus:ring-2"
+                                                                        />
+                                                                    </div>
+                                                                    <input
+                                                                        type="text"
+                                                                        value={newCarrierForm.address}
+                                                                        onChange={(e) => setNewCarrierForm({ ...newCarrierForm, address: e.target.value })}
+                                                                        placeholder="Address"
+                                                                        className="w-full p-2 border border-theme rounded text-sm focus:outline-none focus:ring-2"
+                                                                    />
+                                                                    <div className="flex justify-end gap-2">
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => setShowNewCarrierForm(false)}
+                                                                            className="px-3 py-1.5 text-xs border border-theme rounded"
+                                                                        >
+                                                                            Cancel
+                                                                        </button>
+                                                                        <button
+                                                                            type="button"
+                                                                            disabled={addingCarrier || !newCarrierForm.name.trim()}
+                                                                            onClick={async () => {
+                                                                                const ok = await addCarrierByName(newCarrierForm.name, newCarrierForm);
+                                                                                if (ok) {
+                                                                                    setShowNewCarrierForm(false);
+                                                                                    setNewCarrierForm({ name: '', phone: '', email: '', address: '' });
+                                                                                }
+                                                                            }}
+                                                                            className="px-3 py-1.5 text-xs rounded bg-gradient-to-r from-[#059669] to-[#059669] text-white disabled:opacity-60"
+                                                                        >
+                                                                            {addingCarrier ? 'Saving…' : 'Save carrier'}
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            <div className="mt-3 grid grid-cols-2 gap-2">
+                                                                <div>
+                                                                    <label className="block text-xs font-medium text-primary mb-1">Carrier rate (we pay)</label>
+                                                                    <input
+                                                                        type="number"
+                                                                        min="0"
+                                                                        step="0.01"
+                                                                        value={carrierRate}
+                                                                        onChange={(e) => setCarrierRate(e.target.value)}
+                                                                        placeholder="0.00"
+                                                                        className="w-full p-2 border border-theme rounded focus:outline-none focus:ring-2 text-sm"
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <label className="block text-xs font-medium text-primary mb-1">Currency</label>
+                                                                    <select
+                                                                        value={carrierCurrency}
+                                                                        onChange={(e) => setCarrierCurrency(e.target.value)}
+                                                                        className="w-full p-2 border border-theme rounded focus:outline-none focus:ring-2 text-sm bg-card"
+                                                                    >
+                                                                        <option value="CAD">CAD</option>
+                                                                        <option value="USD">USD</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            {!(parseFloat(carrierRate) > 0) && (
+                                                                <p className="mt-2 text-xs text-[#d97706]">
+                                                                    No carrier rate yet. The bill still goes to Accounts Payable, at $0, until a rate is entered here or on the bill.
+                                                                </p>
+                                                            )}
+                                                            <p className="mt-2 text-xs text-secondary">
+                                                                The customer is still invoiced at the order rate. The carrier rate goes to Accounts &gt; Accounts Payable as a bill.
+                                                                {rate && parseFloat(carrierRate) > 0 ? ` Margin: ${(parseFloat(rate) - parseFloat(carrierRate)).toFixed(2)} ${rateCurrency}.` : ''}
+                                                            </p>
                                                         </div>
                                                     )}
 
@@ -6195,17 +6830,63 @@ focus:outline-none focus:ring-2 focus:ring-[#059669]"
                                                 )}
 
                                                 {payType === "TOTAL" && (
+                                                    // Was hard-coded to "0.00 mi x rate = $0.00". Now: the load's miles x the
+                                                    // driver's profile rate (what payroll pays), and for a team load both
+                                                    // drivers' rates added together (client 19 Nov).
                                                     <div className=" border border-theme rounded p-3 text-sm">
                                                         <div className="flex items-center justify-between mb-2">
-                                                            <span className="text-secondary">Base Pay ({payRateUnit})</span>
-                                                            <span className="font-medium">$0.00</span>
+                                                            <span className="text-secondary">
+                                                                Base Pay ({payRateUnit}){payEstimate.isTeam ? ' - TEAM' : ''}{empty ? ' - EMPTY' : ''}
+                                                            </span>
+                                                            <span className="font-medium">${payEstimate.base.toFixed(2)}</span>
                                                         </div>
-                                                        <div className="text-xs text-secondary mb-2">
-                                                            0.00 mi x ${payRate}
-                                                        </div>
+                                                        {payRateUnit === "/MILE" ? (
+                                                            payEstimate.isTeam ? (
+                                                                <div className="text-xs text-secondary mb-2 space-y-0.5">
+                                                                    {payEstimate.teamLines.map((l, i) => (
+                                                                        <div key={i} className="flex justify-between gap-2">
+                                                                            <span>{l.name}</span>
+                                                                            <span>{payEstimate.miles.toFixed(2)} mi x ${l.rate.toFixed(2)}</span>
+                                                                        </div>
+                                                                    ))}
+                                                                    <div className="flex justify-between font-medium text-primary">
+                                                                        <span>Team combined rate</span>
+                                                                        <span>${payEstimate.combinedRate.toFixed(2)}/mi</span>
+                                                                    </div>
+                                                                </div>
+                                                            ) : (
+                                                                <div className="text-xs text-secondary mb-2">
+                                                                    {payEstimate.miles.toFixed(2)} mi x ${payEstimate.combinedRate.toFixed(2)}
+                                                                </div>
+                                                            )
+                                                        ) : (
+                                                            <div className="text-xs text-secondary mb-2">Rate ${(parseFloat(payRate) || 0).toFixed(2)} {payRateUnit}</div>
+                                                        )}
+                                                        {payEstimate.rateFromForm && payRateUnit === "/MILE" && (
+                                                            <div className="text-xs text-[#d97706] mb-2">
+                                                                No mile rate on the driver's profile - using the rate from BASE.
+                                                            </div>
+                                                        )}
+                                                        {payEstimate.miles <= 0 && payRateUnit === "/MILE" && (
+                                                            <div className="text-xs text-[#d97706] mb-2">
+                                                                This load has 0 miles. Enter the miles under Miles.
+                                                            </div>
+                                                        )}
+                                                        {payEstimate.additions > 0 && (
+                                                            <div className="flex items-center justify-between text-xs mb-1">
+                                                                <span className="text-secondary">Additions</span>
+                                                                <span>+${payEstimate.additions.toFixed(2)}</span>
+                                                            </div>
+                                                        )}
+                                                        {payEstimate.deductions > 0 && (
+                                                            <div className="flex items-center justify-between text-xs mb-1">
+                                                                <span className="text-secondary">Deductions</span>
+                                                                <span>-${payEstimate.deductions.toFixed(2)}</span>
+                                                            </div>
+                                                        )}
                                                         <div className="border-t border-theme pt-2 flex items-center justify-between">
                                                             <span className="font-semibold">TOTAL</span>
-                                                            <span className="font-semibold">$0.00</span>
+                                                            <span className="font-semibold">${payEstimate.total.toFixed(2)}</span>
                                                         </div>
                                                     </div>
                                                 )}
@@ -6358,7 +7039,7 @@ focus:outline-none focus:ring-2 focus:ring-[#059669]"
                                                                 <div className="font-medium text-primary">
                                                                     {segment.from} → {segment.to}
                                                                 </div>
-                                                                <div className="text-secondary mt-1">{segment.miles.toFixed(2)} miles</div>
+                                                                <div className="text-secondary mt-1">{segment.miles > 0 ? `${segment.miles.toFixed(2)} miles` : '-'}</div>
                                                             </div>
                                                             <div className="flex items-center gap-2 mt-2 justify-end">
                                                                 <button className="text-secondary hover:text-secondary">
@@ -6379,12 +7060,40 @@ focus:outline-none focus:ring-2 focus:ring-[#059669]"
                                                     )}
                                                 </div>
 
-                                                {/* Total Miles */}
-                                                <div className="pt-2">
-                                                    <div className="flex justify-between items-center text-sm font-semibold text-primary">
+                                                {/* Total Miles - editable, so a load whose address wasn't found on the
+                                                    map (0 miles) can be corrected (client 19 Nov) */}
+                                                <div className="pt-2 space-y-1">
+                                                    <div className="flex justify-between items-center gap-2 text-sm font-semibold text-primary">
                                                         <span>Total Miles</span>
-                                                        <span>{totalMiles.toFixed(2)}</span>
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            step="0.01"
+                                                            value={distance}
+                                                            onChange={(e) => {
+                                                                setDistance(e.target.value);
+                                                                setMilesEdited(true);
+                                                            }}
+                                                            placeholder="0.00"
+                                                            className="w-28 p-1.5 border border-theme rounded text-right text-sm focus:outline-none focus:ring-2"
+                                                        />
                                                     </div>
+                                                    <div className="flex justify-end">
+                                                        <button
+                                                            type="button"
+                                                            disabled={calculatingDistance}
+                                                            onClick={async () => {
+                                                                const miles = await calculateDistance();
+                                                                if (miles) setMilesEdited(true);
+                                                            }}
+                                                            className="text-xs text-[var(--accent-blue)] hover:underline disabled:opacity-60"
+                                                        >
+                                                            {calculatingDistance ? 'Calculating…' : 'Calculate from addresses'}
+                                                        </button>
+                                                    </div>
+                                                    {milesEdited && (
+                                                        <div className="text-xs text-secondary">Saved on the load when you save the order.</div>
+                                                    )}
                                                 </div>
 
                                             </div>
@@ -6560,15 +7269,34 @@ focus:outline-none focus:ring-2 focus:ring-[#059669]"
                                                     <div key={attachment.id} className="flex items-center gap-3 p-3 bg-card border border-theme rounded">
                                                         <GripVertical className="w-4 h-4 text-secondary cursor-move" />
                                                         <button
-                                                            onClick={() => {
-                                                                if (attachment.file) {
-                                                                    const url = URL.createObjectURL(attachment.file);
-                                                                    window.open(url, '_blank');
-                                                                }
-                                                            }}
+                                                            type="button"
+                                                            onClick={() => openAttachment(attachment, 'inline')}
                                                             className="flex-1 text-sm text-[#059669] hover:text-blue-800 hover:underline text-left"
+                                                            title="Open / Print"
                                                         >
                                                             {attachment.name}
+                                                        </button>
+                                                        {/* Dispatch reviews BOL/POD here: open (print from the viewer) or download.
+                                                            Saved attachments did nothing when clicked (client 19 Nov). */}
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => openAttachment(attachment, 'inline')}
+                                                            disabled={attachmentBusy === `${attachment.id}:inline`}
+                                                            className="px-2 py-1 text-xs text-[#059669] border border-theme rounded hover:bg-[rgba(15,31,23,0.03)] flex items-center gap-1 disabled:opacity-60"
+                                                            title="Open the document - print it from the viewer"
+                                                        >
+                                                            <Eye className="w-3 h-3" />
+                                                            {attachmentBusy === `${attachment.id}:inline` ? 'Opening…' : 'Open / Print'}
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => openAttachment(attachment, 'attachment')}
+                                                            disabled={attachmentBusy === `${attachment.id}:attachment`}
+                                                            className="px-2 py-1 text-xs text-[#059669] border border-theme rounded hover:bg-[rgba(15,31,23,0.03)] flex items-center gap-1 disabled:opacity-60"
+                                                            title="Download"
+                                                        >
+                                                            <Download className="w-3 h-3" />
+                                                            {attachmentBusy === `${attachment.id}:attachment` ? 'Preparing…' : 'Download'}
                                                         </button>
                                                         <label className="flex items-center gap-1 text-xs text-primary">
                                                             <input
@@ -6598,14 +7326,6 @@ focus:outline-none focus:ring-2 focus:ring-[#059669]"
                                                             />
                                                             Share w/ Driver
                                                         </label>
-                                                        <button
-                                                            onClick={() => {
-                                                                // Edit functionality
-                                                            }}
-                                                            className="p-1 text-[#059669] hover:text-blue-800"
-                                                        >
-                                                            <Edit className="w-4 h-4" />
-                                                        </button>
                                                         <button
                                                             onClick={() => {
                                                                 setAttachments(attachments.filter(a => a.id !== attachment.id));
@@ -6692,7 +7412,8 @@ focus:outline-none focus:ring-2 focus:ring-[#059669]"
             {/* Fixed Footer */}
             < div className="border-t border-theme p-4 bg-card flex-shrink-0 shadow-lg" >
                 <div className="flex gap-3 justify-between">
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 items-center">
+                        {!order?._id && <AutoSaveIndicator status={draftStatus} lastSavedAt={draftLastSavedAt} />}
                         {currentStep > 1 && (
                             <button
                                 onClick={prevStep}
@@ -6744,7 +7465,7 @@ focus:outline-none focus:ring-2 focus:ring-[#059669]"
                                 className="px-6 py-2.5 !text-white font-medium rounded-lg transition-opacity flex items-center gap-2 shadow-md hover:shadow-lg hover:opacity-90"
                                 style={{ background: PRIMARY_GRADIENT }}
                             >
-                                Next
+                                {order?._id ? 'Next' : 'Save & Next'}
                                 <ArrowRight className="w-4 h-4" />
                             </button>
                         ) : (

@@ -3,10 +3,10 @@ import apiClient from '../apiClient';
 import type { AxiosResponse } from 'axios';
 
 // Form auto-save draft APIs
-// entityType is one of: drivers | trucks | trailers | employees
+// entityType is one of: drivers | trucks | trailers | employees | trips
 // entityId is the record's id, or the literal string "new" for a creation-form draft
 
-export type DraftEntityType = 'drivers' | 'trucks' | 'trailers' | 'employees';
+export type DraftEntityType = 'drivers' | 'trucks' | 'trailers' | 'employees' | 'trips';
 
 export interface DraftRecord {
   formData: Record<string, unknown>;
@@ -32,7 +32,8 @@ export const getDraft = async (
 ): Promise<DraftResponse> => {
   try {
     const res: AxiosResponse = await apiClient.get(`drafts/${entityType}/${entityId}`);
-    return res.data;
+    // Backend returns the draft under `data`; normalise to `draft` for callers.
+    return { ...res.data, draft: res.data?.draft ?? res.data?.data ?? null };
   } catch (error) {
     // A missing draft is a normal "nothing saved yet" state, not an error worth surfacing.
     if (axios.isAxiosError(error) && error.response?.status === 404) {

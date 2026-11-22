@@ -4,6 +4,7 @@ import { LogOut, Search, X, ArrowRight, ArrowLeft, LayoutDashboard, Truck, Packa
 import { useLogout } from "../../hooks/useLogout";
 import { useNavigate } from "react-router-dom";
 import { usePageTitle } from "../../hooks/usePageTitle";
+import DriverMessagesButton from '../chat/DriverMessagesButton';
 
 interface ManifestHeaderProps {
   isSidebarCollapsed?: boolean;
@@ -169,6 +170,7 @@ const ManifestHeader: React.FC<ManifestHeaderProps> = ({
           </button>
 
           {/* Logout */}
+          <DriverMessagesButton className="header-btn" />
           <button onClick={handleLogoutClick} className="header-btn" title="Logout">
             <FaSignOutAlt size={18} />
           </button>

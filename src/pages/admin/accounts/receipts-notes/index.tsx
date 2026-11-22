@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { todayLocalISO } from '../../../../utils/fuelDate';
+import { useState, useEffect, useRef } from 'react';
 import { Search, Plus, Edit, Trash2, Download, Upload, Filter, Receipt, FileText, Eye, Calendar, DollarSign, User, Tag, Paperclip, Image as ImageIcon, X } from 'lucide-react';
 import {
   listReceipts,
@@ -55,6 +56,8 @@ export default function ReceiptsFinancialNotes() {
 
   // Receipts Archive Data
   const [receipts, setReceipts] = useState<ReceiptData[]>([]);
+  const [savingReceipt, setSavingReceipt] = useState(false);
+  const savingReceiptRef = useRef(false);
 
   // Financial Notes Data
   const [financialNotes, setFinancialNotes] = useState<FinancialNoteData[]>([]);
@@ -91,7 +94,7 @@ export default function ReceiptsFinancialNotes() {
 
   // Form data
   const [receiptFormData, setReceiptFormData] = useState({
-    date: new Date().toISOString().split('T')[0],
+    date: todayLocalISO(),
     amount: '',
     payeeVendor: '',
     expenseType: 'Other' as 'Fuel' | 'Repair' | 'Permit Fees' | 'Scales' | 'Other',
@@ -390,7 +393,7 @@ export default function ReceiptsFinancialNotes() {
   const handleCreateReceipt = () => {
     setEditingReceipt(null);
     setReceiptFormData({
-      date: new Date().toISOString().split('T')[0],
+      date: todayLocalISO(),
       amount: '',
       payeeVendor: '',
       expenseType: 'Other',
@@ -420,6 +423,9 @@ export default function ReceiptsFinancialNotes() {
 
   const handleSubmitReceipt = async (e: React.FormEvent) => {
     e.preventDefault();
+    // One save per click: a second click while the file was still uploading saved the
+    // receipt twice (client 19 Nov)
+    if (savingReceiptRef.current) return;
     if (!receiptFormData.file && !editingReceipt) {
       alert('Please upload a receipt file');
       return;
@@ -433,6 +439,8 @@ export default function ReceiptsFinancialNotes() {
     if (receiptFormData.description) formData.append('description', receiptFormData.description);
     if (receiptFormData.file) formData.append('file', receiptFormData.file);
 
+    savingReceiptRef.current = true;
+    setSavingReceipt(true);
     try {
       let response;
       if (editingReceipt) {
@@ -447,10 +455,15 @@ export default function ReceiptsFinancialNotes() {
         if (activeTab === 'receipts-archive') {
           await fetchReceipts();
         }
+      } else {
+        alert(response?.message || 'Failed to save receipt');
       }
     } catch (error: any) {
       console.error('Error saving receipt:', error);
       alert('Failed to save receipt');
+    } finally {
+      savingReceiptRef.current = false;
+      setSavingReceipt(false);
     }
   };
 
@@ -1033,13 +1046,14 @@ export default function ReceiptsFinancialNotes() {
                 <div className="flex gap-3 pt-4">
                   <button
                     type="submit"
+                    disabled={savingReceipt}
                     style={{
                       background: 'var(--accent-navyblue)'
 
                     }}
-                    className="px-4 py-2  !text-white rounded-lg"
+                    className="px-4 py-2  !text-white rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    {editingReceipt ? 'Update' : 'Upload'}
+                    {savingReceipt ? 'Saving…' : editingReceipt ? 'Update' : 'Upload'}
                   </button>
                   <button
                     type="button"

@@ -14,6 +14,7 @@ const Billing = lazy(() => import("../pages/superadmin/billing/index"))
 const SystemSetting = lazy(() => import("../pages/superadmin/setting/index"))
 const Revenue = lazy(() => import("../pages/superadmin/revenue/index"))
 const Invoices = lazy(() => import("../pages/superadmin/invoices/index"))
+const Inquiries = lazy(() => import("../pages/superadmin/inquiries/index"))
 
 
 function SuperAdminRoute() {
@@ -48,6 +49,7 @@ function SuperAdminRoute() {
                     <Route path="revenue" element={<Revenue />} />
                     <Route path="billing" element={<Billing />} />
                     <Route path="invoices" element={<Invoices />} />
+                    <Route path="inquiries" element={<Inquiries />} />
                     <Route path="systemsetting" element={<SystemSetting />} />
                     {/* Redirect root to dashboard */}
                     <Route index element={<Dashboard />} />

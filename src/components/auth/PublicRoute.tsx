@@ -1,6 +1,7 @@
 import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { type RootState } from '../../redux/store';
+import { getDashboardRoute } from '../../utils/auth';
 
 interface PublicRouteProps {
   children: React.ReactNode;
@@ -81,8 +82,11 @@ const PublicRoute = ({
       }
     }
 
-    // Determine redirect path based on authentication type
-    let defaultRedirect = '/admin/dashboard';
+    // Determine redirect path based on authentication type. Staff go to their own panel
+    // (e.g. mechanics to /mechanics/dashboard) instead of /admin, which would bounce them
+    // somewhere else (S7: mechanics landed on /mechanics/orders after login).
+    const roleRoute = getDashboardRoute();
+    let defaultRedirect = roleRoute === '/admin' ? '/admin/dashboard' : roleRoute;
     if (isSuperAdminAuthenticated && !isAdminAuthenticated) {
       defaultRedirect = '/superadmin/dashboard';
     }

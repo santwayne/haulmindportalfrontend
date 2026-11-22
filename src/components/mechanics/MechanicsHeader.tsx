@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { FaSignOutAlt, FaBars, FaUser } from "react-icons/fa";
-import { Search, X, LogOut, ArrowRight, ArrowLeft, LayoutDashboard, ClipboardList, UserCheck } from "lucide-react";
+import { Search, X, LogOut, ArrowRight, ArrowLeft, LayoutDashboard, ClipboardList, Package, Receipt } from "lucide-react";
 import { useLogout } from "../../hooks/useLogout";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "../../redux/store";
 import { usePageTitle } from "../../hooks/usePageTitle";
+import DriverMessagesButton from '../chat/DriverMessagesButton';
 
 interface MechanicsHeaderProps {
   isSidebarCollapsed?: boolean;
@@ -24,30 +25,39 @@ const MECHANICS_QUICK_ACTIONS = [
     type: "navigation",
   },
   {
-    id: "orders",
-    title: "Orders",
-    description: "View maintenance orders",
-    path: "/orders",
+    id: "assign-tasks",
+    title: "Assign Tasks",
+    description: "Services and repair orders assigned to you",
+    path: "/assign-tasks",
     icon: <ClipboardList size={16} />,
-    keywords: ["orders", "maintenance", "repairs", "work"],
+    keywords: ["tasks", "assign", "orders", "services", "maintenance", "repairs", "work"],
     type: "navigation",
   },
   {
     id: "completed-orders",
     title: "Completed Orders",
-    description: "View completed maintenance orders only",
+    description: "View completed work",
     path: "/completed-orders",
     icon: <ClipboardList size={16} />,
     keywords: ["completed", "orders", "done", "finished"],
     type: "navigation",
   },
   {
-    id: "profile",
-    title: "Profile",
-    description: "View and edit your profile",
-    path: "/profile",
-    icon: <UserCheck size={16} />,
-    keywords: ["profile", "account", "settings", "user"],
+    id: "parts",
+    title: "Parts",
+    description: "Spare parts inventory",
+    path: "/parts",
+    icon: <Package size={16} />,
+    keywords: ["parts", "spare", "inventory", "stock"],
+    type: "navigation",
+  },
+  {
+    id: "invoices",
+    title: "Invoices",
+    description: "Create and view invoices",
+    path: "/invoices",
+    icon: <Receipt size={16} />,
+    keywords: ["invoice", "invoices", "billing", "bill"],
     type: "navigation",
   },
 ];
@@ -192,19 +202,19 @@ const MechanicsHeader: React.FC<MechanicsHeaderProps> = ({
             </kbd>
           </button>
 
-          {/* Profile */}
-          <button
-            onClick={() => navigate(`${basePath}/profile`)}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg-card)] border border-[rgba(15,31,23,0.08)] hover:border-[#10b981]/40 text-secondary hover:text-primary transition-all"
-            title="Profile"
+          {/* Signed-in user */}
+          <div
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg-card)] border border-[rgba(15,31,23,0.08)] text-secondary"
+            title={userInfo?.userData?.name || "Mechanic"}
           >
             <FaUser size={14} />
             <span className="text-sm hidden sm:block">
-              {userInfo?.userData?.name?.split(" ")[0] || "Profile"}
+              {userInfo?.userData?.name?.split(" ")[0] || "Mechanic"}
             </span>
-          </button>
+          </div>
 
           {/* Logout */}
+          <DriverMessagesButton className="header-btn" />
           <button onClick={handleLogoutClick} className="header-btn" title="Logout">
             <FaSignOutAlt size={18} />
           </button>

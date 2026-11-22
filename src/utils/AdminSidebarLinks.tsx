@@ -9,7 +9,7 @@ import {
 import { BsPersonVcard } from "react-icons/bs";
 import { RiBillLine } from "react-icons/ri";
 import { RiFoldersLine } from "react-icons/ri";
-import { FaTruck,FaUsers, FaGraduationCap } from "react-icons/fa";
+import { FaTruck,FaUsers, FaGraduationCap, FaSatelliteDish, FaTruckLoading, FaPassport } from "react-icons/fa";
 
 export type AdminSidebarLink = {
     key: string;
@@ -24,6 +24,11 @@ export const AdminSidebarLinks: AdminSidebarLink[] = [
         key: "dashboard",
         icon: <MdDashboard />,
         label: "Home",
+    },
+    {
+        key: "/gps-dashboard",
+        icon: <FaSatelliteDish />,
+        label: "GPS Dashboard",
     },
     {
         key: "quick-stats",
@@ -80,6 +85,16 @@ export const AdminSidebarLinks: AdminSidebarLink[] = [
                 key: "customers",
                 icon: <FaUsers />,
                 label: "Customers",
+            },
+            {
+                key: "carriers",
+                icon: <FaTruckLoading />,
+                label: "Carriers",
+            },
+            {
+                key: "customs-brokers",
+                icon: <FaPassport />,
+                label: "Customs Brokers",
             },
             {
                 key: "drivers",

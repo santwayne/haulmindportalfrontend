@@ -11,7 +11,7 @@ interface Error {
 
 
 
-export const listFuelReport = async (params?: { page?: number; limit?: number; search?: string; status?: string; sortBy?: string; sortOrder?: string }) => {
+export const listFuelReport = async (params?: { page?: number; limit?: number; search?: string; status?: string; sortBy?: string; sortOrder?: string; includeTrip?: boolean }) => {
     try {
     const queryParams = new URLSearchParams();
     if (params?.page) queryParams.append('page', params.page.toString());
@@ -20,6 +20,7 @@ export const listFuelReport = async (params?: { page?: number; limit?: number; s
     if (params?.status) queryParams.append('status', params.status);
     if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
     if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+    if (params?.includeTrip === false) queryParams.append('includeTrip', 'false');
     
     const url = `dispatcher/fuel-report${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
     const res: AxiosResponse = await apiClient.get(url);
@@ -146,7 +147,7 @@ export const parseCsvHeaders = async (file: File) => {
   }
 }
 
-export const importFuelReportsFromCsv = async (file: File, columnMapping: Record<string, string>, defaultUnit?: string, defaultCurrency?: string, defaultProduct?: string) => {
+export const importFuelReportsFromCsv = async (file: File, columnMapping: Record<string, string>, defaultUnit?: string, defaultCurrency?: string, defaultProduct?: string, dateFormat?: 'MDY' | 'DMY') => {
   try {
     const formData = new FormData();
     formData.append('csv', file);
@@ -154,7 +155,8 @@ export const importFuelReportsFromCsv = async (file: File, columnMapping: Record
     if (defaultUnit) formData.append('defaultUnit', defaultUnit);
     if (defaultCurrency) formData.append('defaultCurrency', defaultCurrency);
     if (defaultProduct) formData.append('defaultProduct', defaultProduct);
-    
+    if (dateFormat) formData.append('dateFormat', dateFormat);
+
     const res: AxiosResponse = await apiClient.post(`dispatcher/fuel-report/import-csv`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -166,3 +168,56 @@ export const importFuelReportsFromCsv = async (file: File, columnMapping: Record
     return err.response?.data;
   }
 }
+
+export const parseFuelCardPdf = async (file: File) => {
+  try {
+    const formData = new FormData();
+    formData.append('pdf', file);
+    const res: AxiosResponse = await apiClient.post(`dispatcher/fuel-report/parse-fuel-card`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res.data;
+  } catch (error: any) {
+    return (error as Error).response?.data;
+  }
+}
+
+export const confirmFuelCardImport = async (rows: any[]) => {
+  try {
+    const res: AxiosResponse = await apiClient.post(`dispatcher/fuel-report/confirm-fuel-card`, { rows });
+    return res.data;
+  } catch (error: any) {
+    return (error as Error).response?.data;
+  }
+}
+// Receipt / documents for a saved fuel report (stored on the report, opened via signed links)
+export const uploadFuelReportAttachments = async (id: string, files: File[]) => {
+  try {
+    const formData = new FormData();
+    files.forEach(f => formData.append('files', f));
+    const res: AxiosResponse = await apiClient.post(`dispatcher/fuel-report/${id}/attachments`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res.data;
+  } catch (error) {
+    return (error as Error).response?.data || { success: false, message: 'Upload failed' };
+  }
+};
+
+export const getFuelReportAttachments = async (id: string) => {
+  try {
+    const res: AxiosResponse = await apiClient.get(`dispatcher/fuel-report/${id}/attachments`);
+    return res.data;
+  } catch (error) {
+    return (error as Error).response?.data || { success: false, message: 'Could not load attachments' };
+  }
+};
+
+export const deleteFuelReportAttachment = async (id: string, attachmentId: string) => {
+  try {
+    const res: AxiosResponse = await apiClient.delete(`dispatcher/fuel-report/${id}/attachments/${attachmentId}`);
+    return res.data;
+  } catch (error) {
+    return (error as Error).response?.data || { success: false, message: 'Could not remove the file' };
+  }
+};

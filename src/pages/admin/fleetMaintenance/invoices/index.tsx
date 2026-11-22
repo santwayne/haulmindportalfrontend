@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import jsPDF from 'jspdf';
-import DocLogo from '../../../../assets/doclogo.png';
 import {
   FaFileInvoice,
   FaPlus,
@@ -21,6 +20,9 @@ import { getFleetCustomers, createFleetCustomer, type FleetCustomer } from '../.
 import { listVehicleServices, type VehicleServiceResponse } from '../../../../axios/api/vehicleService';
 import { listGeneralRepairs, type GeneralRepairDto } from '../../../../axios/api/generalRepairs';
 import { getCompany } from '../../../../axios/api/admin';
+import { getAllSpareParts } from '../../../../axios/api/fleet.spareparts';
+import { getAllVehicles } from '../../../../axios/api/vehicle';
+import { getUserRole } from '../../../../utils/auth';
 import {
   getFleetInvoices,
   getFleetInvoiceSummary,
@@ -32,6 +34,9 @@ import {
   updateFleetInvoiceStatus,
   uploadExtractFleetInvoice,
 } from '../../../../axios/api/fleet.invoices';
+
+// Money in cents precision, rounded half-up (matches the backend)
+const toCents = (n: number): number => Math.round((Number(n) + Number.EPSILON) * 100) / 100;
 
 const TERMS_OPTIONS = [
   { value: 'Net 15', days: 15 },
@@ -87,7 +92,16 @@ interface LineItem {
   rate: number;
   amount: number;
   salesTax: string;
+  // Rosser-style invoices: several parts and several labour lines, each with its own description
+  itemType?: LineType;
+  productName?: string;
 }
+
+type LineType = 'part' | 'labour' | 'service';
+const LINE_TYPE_LABEL: Record<LineType, string> = { part: 'Part', labour: 'Labour', service: 'Service' };
+/** Line type for an older item saved before itemType existed */
+const lineTypeFromProduct = (ps?: string | null): LineType =>
+  ps?.startsWith('service:') || ps?.startsWith('repair:') ? 'service' : 'part';
 
 interface ProductOption {
   id: string; // unique key used in <select> value
@@ -96,6 +110,7 @@ interface ProductOption {
   defaultRate?: number;
   defaultQty?: number;
   defaultServiceDate?: string; // YYYY-MM-DD
+  productName?: string; // short name for the invoice's Product column
 }
 
 /** Invoice row for the table */
@@ -142,6 +157,7 @@ function formatDisplayDate(isoDate: string): string {
 }
 
 const FleetInvoicesPage = () => {
+  const isMechanic = getUserRole() === 'Maintenance Crew (Mechanics)';
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editingInvoiceId, setEditingInvoiceId] = useState<string | null>(null);
   const [invoices, setInvoices] = useState<InvoiceRow[]>([]);
@@ -256,6 +272,33 @@ const FleetInvoicesPage = () => {
   const [labourHours, setLabourHours] = useState<number>(0);
   const [labourRate, setLabourRate] = useState<number>(0);
   const [labourTax, setLabourTax] = useState<string>('gst');
+  // Unit printed on the invoice (Rosser style: UNIT, MAKE/MODEL, VIN NO, CURRENT KM/HOURS)
+  const [unitNumber, setUnitNumber] = useState('');
+  const [unitMakeModel, setUnitMakeModel] = useState('');
+  const [unitVin, setUnitVin] = useState('');
+  const [unitOdometer, setUnitOdometer] = useState('');
+  const [fleetUnits, setFleetUnits] = useState<{ _id: string; unit: string; makeModel: string; vin: string }[]>([]);
+  useEffect(() => {
+    getAllVehicles(1, 500)
+      .then((res) => {
+        const list = Array.isArray(res?.data) ? res.data : Array.isArray(res?.data?.vehicles) ? res.data.vehicles : [];
+        setFleetUnits(list.map((v: { _id: string; unitNumber?: string; internalId?: string; plateNumber?: string; make?: string; model?: string; vinNumber?: string }) => ({
+          _id: v._id,
+          unit: v.unitNumber || v.internalId || v.plateNumber || '',
+          makeModel: [v.make, v.model].filter(Boolean).join(' '),
+          vin: v.vinNumber || ''
+        })).filter((u: { unit: string }) => u.unit));
+      })
+      .catch(() => setFleetUnits([]));
+  }, []);
+  // When a service / maintenance order on the invoice tells us the unit, fill the unit fields (unless typed already)
+  useEffect(() => {
+    const v = vehicleInfo[0];
+    if (!v) return;
+    setUnitNumber((prev) => prev || v.unitNumber || '');
+    setUnitMakeModel((prev) => prev || v.makeModel || '');
+    setUnitVin((prev) => prev || v.vinNumber || '');
+  }, [vehicleInfo]);
 
   const selectedCustomer = customers.find((c) => c._id === customerId);
 
@@ -298,10 +341,12 @@ const FleetInvoicesPage = () => {
     const loadProductOptions = async () => {
       setProductOptionsLoading(true);
       try {
-        const [companyRes, servicesRes, repairsRes] = await Promise.all([
+        const [companyRes, servicesRes, repairsRes, partsRes] = await Promise.all([
           getCompany(),
           listVehicleServices({ status: 'completed' }),
           listGeneralRepairs(),
+          // Parts are optional here: if the parts list can't load, services/orders still work
+          getAllSpareParts().catch(() => null),
         ]);
 
         const companyCustomServices: CustomServiceDef[] =
@@ -342,6 +387,7 @@ const FleetInvoicesPage = () => {
           return {
             id: `service:${s._id}`,
             label,
+            productName: labelBase,
             defaultDescription: defaultDescriptionParts.join(' - '),
             defaultRate: s.amount ?? undefined,
             defaultQty: 1,
@@ -365,6 +411,7 @@ const FleetInvoicesPage = () => {
           return {
             id: `repair:${r._id}`,
             label,
+            productName: 'Maintenance',
             defaultDescription: defaultDescriptionParts.join(' - '),
             defaultRate: (r as any).completionTotalAmount ?? undefined,
             defaultQty: 1,
@@ -372,7 +419,27 @@ const FleetInvoicesPage = () => {
           };
         });
 
-        setProductOptions([...serviceOptions, ...repairOptions]);
+        // Parts from the Parts module, priced at their selling price (falls back to buying price),
+        // so picking a part fills the rate and the amount becomes qty × rate.
+        const partsList: Array<{ _id: string; partName?: string; partNumber?: string; description?: string; sellingPrice?: number; buyingPrice?: number }> =
+          Array.isArray(partsRes?.data) ? partsRes.data
+            : Array.isArray(partsRes?.data?.spareParts) ? partsRes.data.spareParts
+              : Array.isArray(partsRes) ? partsRes : [];
+        const partOptions: ProductOption[] = partsList
+          .filter((p) => p && p._id && p.partName)
+          .map((p) => {
+            const price = Number(p.sellingPrice) > 0 ? Number(p.sellingPrice) : Number(p.buyingPrice) || 0;
+            return {
+              id: `part:${p._id}`,
+            productName: p.partName,
+              label: `Part: ${p.partName}${p.partNumber ? ` (#${p.partNumber})` : ''}${price ? ` — $${price.toFixed(2)}` : ''}`,
+              defaultDescription: [p.partName, p.partNumber ? `Part # ${p.partNumber}` : ''].filter(Boolean).join(' - '),
+              defaultRate: price || undefined,
+              defaultQty: 1,
+            };
+          });
+
+        setProductOptions([...partOptions, ...serviceOptions, ...repairOptions]);
       } catch (err) {
         console.error('Failed to load invoice product/service options', err);
       } finally {
@@ -445,10 +512,11 @@ const FleetInvoicesPage = () => {
     }
   };
 
-  // Auto-hide notification after 4 seconds
+  // Auto-hide notification (4 s, errors 10 s)
   useEffect(() => {
     if (notification) {
-      const timer = setTimeout(() => setNotification(null), 4000);
+      // Errors stay longer so they can be read and fixed
+      const timer = setTimeout(() => setNotification(null), notification.type === 'error' ? 10000 : 4000);
       return () => clearTimeout(timer);
     }
   }, [notification]);
@@ -530,6 +598,8 @@ const FleetInvoicesPage = () => {
           } else {
             const selectedOption = productOptions.find((opt) => opt.id === updates.productService);
             if (selectedOption) {
+              next.productName = selectedOption.productName || selectedOption.label;
+              if (next.itemType !== 'labour') next.itemType = lineTypeFromProduct(selectedOption.id);
               // Always update all fields when a product/service is selected
               if (selectedOption.defaultDescription) {
                 next.description = selectedOption.defaultDescription;
@@ -549,7 +619,7 @@ const FleetInvoicesPage = () => {
 
         // Always recalculate amount when qty or rate changes (including auto-filled values)
         if ('qty' in updates || 'rate' in updates || updates.productService !== undefined) {
-          next.amount = (next.qty ?? 1) * (next.rate ?? 0);
+          next.amount = toCents((next.qty ?? 1) * (next.rate ?? 0));
         }
         return next;
       })
@@ -559,8 +629,20 @@ const FleetInvoicesPage = () => {
   const addLineItem = () => {
     setLineItems((prev) => [
       ...prev,
-      { id: String(Date.now()), serviceDate: '', productService: '', description: '', qty: 1, rate: 0, amount: 0, salesTax: 'gst' },
+      { id: String(Date.now()), serviceDate: '', productService: '', description: '', qty: 1, rate: 0, amount: 0, salesTax: 'gst', itemType: 'part' },
     ]);
+  };
+
+  // Labour as its own line (any number of them), e.g. "Changed the brake chamber and repaired the air leak"
+  const addLabourLine = () => {
+    setLineItems((prev) => {
+      const lastLabour = [...prev].reverse().find((i) => i.itemType === 'labour');
+      const rate = lastLabour?.rate || 0;
+      return [
+        ...prev,
+        { id: String(Date.now()), serviceDate: prev[0]?.serviceDate || '', productService: '', description: '', qty: 1, rate, amount: rate, salesTax: lastLabour?.salesTax || 'gst', itemType: 'labour', productName: 'Labour' },
+      ];
+    });
   };
 
   const removeLineItem = (id: string) => {
@@ -568,28 +650,29 @@ const FleetInvoicesPage = () => {
     setLineItems((prev) => prev.filter((i) => i.id !== id));
   };
 
-  // Calculate items subtotal and tax
-  const itemsSubtotal = useMemo(() => lineItems.reduce((sum, i) => sum + i.amount, 0), [lineItems]);
+  // Calculate items subtotal and tax. Every line amount and line tax is rounded to cents
+  // (half-up), the same way the backend stores it, so the form, PDF and list agree.
+  const itemsSubtotal = useMemo(() => toCents(lineItems.reduce((sum, i) => sum + toCents(i.amount), 0)), [lineItems]);
   const itemsTax = useMemo(() => {
-    return lineItems.reduce((sum, item) => {
+    return toCents(lineItems.reduce((sum, item) => {
       const tax = allTaxes.find((t) => t.id === item.salesTax);
       const rate = tax ? tax.percent / 100 : 0;
-      return sum + item.amount * rate;
-    }, 0);
+      return sum + toCents(toCents(item.amount) * rate);
+    }, 0));
   }, [lineItems, allTaxes]);
 
   // Calculate labour amount and tax
-  const labourAmount = useMemo(() => labourHours * labourRate, [labourHours, labourRate]);
+  const labourAmount = useMemo(() => toCents(labourHours * labourRate), [labourHours, labourRate]);
   const labourTaxAmount = useMemo(() => {
     const tax = allTaxes.find((t) => t.id === labourTax);
     const rate = tax ? tax.percent / 100 : 0;
-    return labourAmount * rate;
+    return toCents(labourAmount * rate);
   }, [labourAmount, labourTax, allTaxes]);
 
   // Final totals
-  const subtotal = itemsSubtotal + labourAmount; // Items + Labour
-  const totalTax = itemsTax + labourTaxAmount; // Items tax + Labour tax
-  const totalBalance = subtotal + totalTax;
+  const subtotal = toCents(itemsSubtotal + labourAmount); // Items + Labour
+  const totalTax = toCents(itemsTax + labourTaxAmount); // Items tax + Labour tax
+  const totalBalance = toCents(subtotal + totalTax);
 
   const handleSaveAndClose = async () => {
     // Validation
@@ -597,8 +680,20 @@ const FleetInvoicesPage = () => {
       setNotification({ type: 'error', message: 'Please select a customer or upload an invoice to extract vendor details' });
       return;
     }
-    if (lineItems.length === 0 || lineItems.some(item => !item.description || item.rate === 0)) {
-      setNotification({ type: 'error', message: 'Please add at least one valid line item with description and rate' });
+    // Parts may have no description (Rosser style) as long as the line has a name; every line needs a rate
+    if (lineItems.length === 0) {
+      setNotification({ type: 'error', message: 'Please add at least one line item' });
+      return;
+    }
+    const badLines = lineItems
+      .map((item, idx) => {
+        const hasName = !!(item.description?.trim() || item.productName?.trim() || item.productService);
+        const problems = [!hasName && 'a product or description', !item.rate && 'a rate'].filter(Boolean);
+        return problems.length ? `line ${idx + 1} needs ${problems.join(' and ')}` : null;
+      })
+      .filter(Boolean);
+    if (badLines.length) {
+      setNotification({ type: 'error', message: `Please fix the line items: ${badLines.join('; ')}.` });
       return;
     }
 
@@ -611,6 +706,8 @@ const FleetInvoicesPage = () => {
           serviceDate: item.serviceDate || null,
           productService: item.productService || null,
           description: item.description,
+          itemType: item.itemType || lineTypeFromProduct(item.productService),
+          productName: item.itemType === 'labour' ? (item.productName || 'Labour') : (item.productName || null),
           quantity: item.qty,
           unitPrice: item.rate,
           totalPrice: item.amount,
@@ -651,6 +748,7 @@ const FleetInvoicesPage = () => {
         customerId: customerId || undefined,
         terms: terms || null,
         items: invoiceItems,
+        // Labour is now entered as labour lines; the old single labour box is kept only for older invoices
         labourHours: labourHours || 0,
         labourRate: labourRate || 0,
         labourTaxId: labourTaxOption?.id || null,
@@ -659,6 +757,10 @@ const FleetInvoicesPage = () => {
         dueDate: dueDate || invoiceDate, // Use dueDate if set, otherwise invoiceDate
         messageOnInvoice: messageOnInvoice || null,
         notes: null,
+        unitNumber: unitNumber || null,
+        unitMakeModel: unitMakeModel || null,
+        unitVin: unitVin || null,
+        unitOdometer: unitOdometer || null,
         status: 'draft',
       };
 
@@ -863,12 +965,20 @@ const FleetInvoicesPage = () => {
               serviceDate: item.serviceDate || '',
               productService: item.productService || '',
               description: item.description || '',
-              qty: item.quantity || 1,
+              qty: item.quantity ?? 1,
               rate: item.unitPrice || 0,
               amount: item.totalPrice || 0,
               salesTax: taxId,
+              itemType: (item.itemType && item.itemType !== 'item' ? item.itemType : lineTypeFromProduct(item.productService)) as LineType,
+              productName: item.productName || '',
             };
           });
+          // Older invoices kept labour in a single box: show it as a labour line so it can be edited
+          if (Number(invoice.labourHours) > 0) {
+            const hrs = Number(invoice.labourHours) || 0;
+            const rate = Number(invoice.labourRate) || 0;
+            items.push({ id: String(items.length + 1), serviceDate: items[0]?.serviceDate || '', productService: '', description: 'Labour Charges', qty: hrs, rate, amount: hrs * rate, salesTax: invoice.labourTaxId || 'gst', itemType: 'labour', productName: 'Labour' });
+          }
           setLineItems(items);
 
           // Fetch vehicle info when items are loaded
@@ -876,13 +986,21 @@ const FleetInvoicesPage = () => {
             setVehicleInfo(vehicles);
           });
         } else {
-          setLineItems([{ id: '1', serviceDate: '', productService: '', description: '', qty: 1, rate: 0, amount: 0, salesTax: 'gst' }]);
+          const hrs = Number(invoice.labourHours) || 0;
+          const rate = Number(invoice.labourRate) || 0;
+          setLineItems(hrs > 0
+            ? [{ id: '1', serviceDate: '', productService: '', description: 'Labour Charges', qty: hrs, rate, amount: hrs * rate, salesTax: invoice.labourTaxId || 'gst', itemType: 'labour', productName: 'Labour' }]
+            : [{ id: '1', serviceDate: '', productService: '', description: '', qty: 1, rate: 0, amount: 0, salesTax: 'gst', itemType: 'part' }]);
           setVehicleInfo([]);
         }
 
-        // Load labour charges
-        setLabourHours(Number(invoice.labourHours) || 0);
-        setLabourRate(Number(invoice.labourRate) || 0);
+        // Old single labour box: already turned into a labour line above
+        setLabourHours(0);
+        setLabourRate(0);
+        setUnitNumber(invoice.unitNumber || '');
+        setUnitMakeModel(invoice.unitMakeModel || '');
+        setUnitVin(invoice.unitVin || '');
+        setUnitOdometer(invoice.unitOdometer || '');
         if (invoice.labourTaxId) {
           setLabourTax(invoice.labourTaxId);
         } else {
@@ -1029,7 +1147,9 @@ const FleetInvoicesPage = () => {
     doc.setFillColor(...blue);
     doc.rect(0, 0, pageWidth, 36, 'F');
 
-    // Logo
+    // Logo: the company's own logo only. Before, companies without a logo got the Logistiq logo,
+    // dark blue on the blue bar and partly under the company name; uploaded logos were also
+    // stretched to 24x14 mm. Now: own logo on a white tile, aspect ratio kept; otherwise name only.
     let logoEndX = margin;
     if (companyData?.logoUrl) {
       try {
@@ -1040,34 +1160,21 @@ const FleetInvoicesPage = () => {
           reader.onloadend = () => resolve(reader.result as string);
           reader.readAsDataURL(blob);
         });
-        doc.addImage(base64, 'PNG', margin, 5, 24, 14);
-        logoEndX = margin + 28;
-      } catch { /* skip */ }
-    } else {
-      try {
-        const img = new Image();
-        img.src = DocLogo;
-        await new Promise<void>((resolve) => {
-          img.onload = () => {
-            try {
-              const canvas = document.createElement('canvas');
-              canvas.width = img.width;
-              canvas.height = img.height;
-              const ctx = canvas.getContext('2d');
-              if (ctx) {
-                ctx.drawImage(img, 0, 0);
-                const imgData = canvas.toDataURL('image/png');
-                const logoWidth = 24;
-                const logoHeight = (img.height / img.width) * logoWidth;
-                doc.addImage(imgData, 'PNG', margin, 5, logoWidth, logoHeight);
-                logoEndX = margin + logoWidth + 4;
-              }
-            } catch { /* skip */ }
-            resolve();
-          };
-          img.onerror = () => resolve();
+        const dims = await new Promise<{ w: number; h: number }>((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve({ w: img.width || 1, h: img.height || 1 });
+          img.onerror = () => resolve({ w: 24, h: 14 });
+          img.src = base64;
         });
-      } catch { /* skip */ }
+        const boxW = 26, boxH = 26;
+        const scale = Math.min((boxW - 4) / dims.w, (boxH - 4) / dims.h);
+        const w = dims.w * scale, h = dims.h * scale;
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(margin, 5, boxW, boxH, 2, 2, 'F');
+        const fmt = base64.startsWith('data:image/jpeg') || base64.startsWith('data:image/jpg') ? 'JPEG' : 'PNG';
+        doc.addImage(base64, fmt, margin + (boxW - w) / 2, 5 + (boxH - h) / 2, w, h);
+        logoEndX = margin + boxW + 5;
+      } catch { /* name only */ }
     }
 
     // Company name + contact in header
@@ -1081,8 +1188,23 @@ const FleetInvoicesPage = () => {
     if (companyData?.address) contactParts.push(companyData.address);
     if (companyData?.contactPhone) contactParts.push(companyData.contactPhone);
     if (companyData?.contactEmail) contactParts.push(companyData.contactEmail);
-    if (contactParts.length) doc.text(contactParts.join('  |  '), logoEndX, 21);
-    if (companyData?.taxNumber) doc.text(`GST/Tax No: ${companyData.taxNumber}`, logoEndX, 27);
+    // Keep the contact line clear of the "INVOICE" title on the right: wrap it to the space
+    // left of the title instead of letting a long address/email run underneath it.
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(22);
+    const invoiceLabelWidth = doc.getTextWidth('INVOICE');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    const contactMaxWidth = Math.max(40, pageWidth - margin - invoiceLabelWidth - 8 - logoEndX);
+    let contactY = 21;
+    if (contactParts.length) {
+      const contactLines: string[] = doc.splitTextToSize(contactParts.join('  |  '), contactMaxWidth);
+      contactLines.slice(0, 3).forEach((line) => {
+        doc.text(line, logoEndX, contactY);
+        contactY += 3.6;
+      });
+    }
+    if (companyData?.taxNumber) doc.text(`GST/Tax No: ${companyData.taxNumber}`, logoEndX, Math.max(27, contactY + 1.5));
 
     // "INVOICE" label right-aligned
     doc.setFont('helvetica', 'bold');
@@ -1162,7 +1284,14 @@ const FleetInvoicesPage = () => {
 
     // Build vehicle rows
     const vehRows: InfoRow[] = [];
-    if (vehicleInfoForPDF.length > 0) {
+    if (invoice.unitNumber || invoice.unitVin || invoice.unitMakeModel || invoice.unitOdometer) {
+      // Unit entered on the invoice (Rosser style)
+      if (invoice.unitNumber) vehRows.push(['Unit', invoice.unitNumber]);
+      if (invoice.unitMakeModel) vehRows.push(['Make/Model', invoice.unitMakeModel]);
+      const vin = invoice.unitVin || vehicleInfoForPDF[0]?.vinNumber;
+      if (vin) vehRows.push(['VIN', vin]);
+      if (invoice.unitOdometer) vehRows.push(['KM/Hours', invoice.unitOdometer]);
+    } else if (vehicleInfoForPDF.length > 0) {
       const v = vehicleInfoForPDF[0];
       if (v.makeModel) {
         const parts = v.makeModel.split(' ');
@@ -1199,58 +1328,39 @@ const FleetInvoicesPage = () => {
           doc.text(`${lbl}:`, midX, ry);
         }
         doc.setFont('helvetica', 'normal');
-        doc.text(val, midX + 15, ry);
+        doc.text(val, midX + 23, ry); // room for "Make/Model:" and "KM/Hours:"
       }
     }
     yPos = infoStartY + maxRows * rowH + 6;
     hRule(yPos - 3);
     yPos += 4;
 
-    // ── JOB DETAILS ─────────────────────────────────────────────
-    checkPageBreak(22);
-    sectionHeader('JOB DETAILS', yPos);
-    yPos += 6;
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(9);
-    doc.setTextColor(...dark);
-    doc.text('Job ID:', margin, yPos);
-    doc.setFont('helvetica', 'normal');
-    doc.text(invoice.invoiceNumber || '—', margin + 17, yPos);
-    yPos += 6;
-
-    // First item description as the main job description
+    // (The old JOB DETAILS block only repeated the invoice number as "Job ID" and the line
+    // descriptions, which are already in the items table; the client asked for it to go.)
     const items = Array.isArray(invoice.items) ? invoice.items : [];
-    const allDescriptions = items.map((it: any) => it.description).filter(Boolean);
-    if (allDescriptions.length > 0) {
-      doc.setFont('helvetica', 'bold');
-      doc.text('Description:', margin, yPos);
-      doc.setFont('helvetica', 'normal');
-      const dLines: string[] = doc.splitTextToSize(allDescriptions.join('; '), contentWidth - 26);
-      doc.text(dLines, margin + 26, yPos);
-      yPos += dLines.length * 5 + 3;
-    }
-    yPos += 2;
-    hRule(yPos - 2);
-    yPos += 5;
 
     // ── ITEMS TABLE ─────────────────────────────────────────────
     checkPageBreak(22);
     sectionHeader('ITEMS', yPos);
     yPos += 5;
 
-    // Column layout: Type | Description | Qty/Hrs | Rate | Amount
+    // Column layout: Date | Product | Description | Qty/Hrs | Rate | GST (tax) | Amount
+    // The client asked for the tax right after Rate instead of a note under the description.
     const tRight = pageWidth - margin;
-    const typeW = 20;
-    const qtyW = 18;
-    const rateW = 24;
-    const amtW = 24;
-    const descW = contentWidth - typeW - qtyW - rateW - amtW;
+    const dateW = 19;
+    const typeW = 34; // "Product" column
+    const qtyW = 15;
+    const rateW = 21;
+    const taxW = 24;
+    const amtW = 22;
+    const descW = contentWidth - dateW - typeW - qtyW - rateW - taxW - amtW;
 
-    const xType = margin;
-    const xDesc = margin + typeW;
+    const xDate = margin;
+    const xType = margin + dateW;
+    const xDesc = xType + typeW;
     const xQty = xDesc + descW + qtyW / 2;
     const xRate = xDesc + descW + qtyW + rateW;
+    const xTax = xRate + taxW;
     const xAmt = tRight;
 
     // Table header row
@@ -1259,10 +1369,12 @@ const FleetInvoicesPage = () => {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8.5);
     doc.setTextColor(...blue);
-    doc.text('Type', xType + 1, yPos);
+    doc.text('Date', xDate + 1, yPos);
+    doc.text('Product', xType + 1, yPos);
     doc.text('Description', xDesc + 1, yPos);
     doc.text('Qty/Hrs', xQty, yPos, { align: 'center' });
     doc.text('Rate', xRate, yPos, { align: 'right' });
+    doc.text('GST/Tax', xTax, yPos, { align: 'right' });
     doc.text('Amount', xAmt, yPos, { align: 'right' });
     yPos += 2;
     hRule(yPos, blue, 0.4);
@@ -1274,9 +1386,17 @@ const FleetInvoicesPage = () => {
 
     let rowIdx = 0;
     for (const item of items) {
-      const desc = (item.description || '—').toString().trim();
+      const desc = (item.description || '').toString().trim(); // parts often have no description (blank, like the Rosser sample)
+      const ps = item.productService || '';
+      const lineType: string = item.itemType && item.itemType !== 'item' ? item.itemType : (ps.startsWith('service:') || ps.startsWith('repair:') ? 'service' : 'part');
+      const isLabour = lineType === 'labour';
+      const productText = (item.productName || item.partName || (isLabour ? 'Labour' : lineType === 'service' ? 'Service' : 'Part')).toString();
       const dLines: string[] = doc.splitTextToSize(desc, descW - 3);
-      const rh = Math.max(dLines.length * 5.5, 7);
+      const pLines: string[] = doc.splitTextToSize(productText, typeW - 3);
+      const lineH = 3.8; // matches 9pt text at lineHeightFactor 1.15
+      const hasTax = !!(item.taxName && Number(item.taxPercent) > 0);
+      const textLines = Math.max(dLines.length, pLines.length, 1);
+      const rh = Math.max(textLines, hasTax ? 2 : 1) * lineH + 1.5;
       checkPageBreak(rh + 3);
 
       // Alternating row background
@@ -1285,29 +1405,38 @@ const FleetInvoicesPage = () => {
         doc.rect(margin, yPos - 3.5, contentWidth, rh + 2, 'F');
       }
 
-      const qty = Number(item.quantity) || 1;
+      const qty = Number(item.quantity ?? 1);
       const rate = Number(item.unitPrice) || 0;
       const amt = Number(item.totalPrice) || rate * qty;
-      const ps = item.productService || '';
-      const itemType = ps.startsWith('service:') ? 'Labor' : ps.startsWith('repair:') ? 'Part' : 'Item';
+      const dateText = item.serviceDate ? String(item.serviceDate).slice(0, 10) : '';
 
       doc.setTextColor(...gray);
       doc.setFont('helvetica', 'normal');
-      doc.text(itemType, xType + 1, yPos);
+      doc.setFontSize(8);
+      if (dateText) doc.text(dateText, xDate + 1, yPos);
+      doc.setFontSize(9);
       doc.setTextColor(...dark);
-      doc.text(dLines, xDesc + 1, yPos);
-      doc.text(String(qty), xQty, yPos, { align: 'center' });
-      doc.text(`$${rate.toFixed(2)}`, xRate, yPos, { align: 'right' });
-      doc.text(`$${amt.toFixed(2)}`, xAmt, yPos, { align: 'right' });
-
-      // Tax badge on second line if applicable
-      if (item.taxName && Number(item.taxPercent) > 0) {
-        doc.setFontSize(7);
+      doc.setFont('helvetica', 'bold');
+      doc.text(pLines, xType + 1, yPos, { lineHeightFactor: 1.15 });
+      doc.setFont('helvetica', 'normal');
+      if (desc) doc.text(dLines, xDesc + 1, yPos, { lineHeightFactor: 1.15 });
+      doc.text(isLabour ? `${qty} hrs` : String(qty), xQty, yPos, { align: 'center' });
+      doc.text(isLabour ? `$${rate.toFixed(2)}/hr` : `$${rate.toFixed(2)}`, xRate, yPos, { align: 'right' });
+      // Tax column: name and % on the first line, tax amount under it
+      if (hasTax) {
+        const lineTax = (rate * qty * Number(item.taxPercent)) / 100;
+        doc.setFontSize(8);
+        doc.text(`${item.taxName} ${item.taxPercent}%`, xTax, yPos, { align: 'right' });
         doc.setTextColor(...gray);
-        doc.text(`${item.taxName} ${item.taxPercent}%`, xDesc + 1, yPos + dLines.length * 5.5 - 1);
+        doc.text(`$${lineTax.toFixed(2)}`, xTax, yPos + lineH, { align: 'right' });
         doc.setFontSize(9);
-        yPos += 4;
+        doc.setTextColor(...dark);
+      } else {
+        doc.setTextColor(...gray);
+        doc.text('-', xTax, yPos, { align: 'right' });
+        doc.setTextColor(...dark);
       }
+      doc.text(`$${amt.toFixed(2)}`, xAmt, yPos, { align: 'right' });
 
       yPos += rh + 1;
       rowIdx++;
@@ -1332,6 +1461,9 @@ const FleetInvoicesPage = () => {
       doc.text('Labour Charges', xDesc + 1, yPos);
       doc.text(`${labourHrs.toFixed(1)} hrs`, xQty, yPos, { align: 'center' });
       doc.text(`$${labourRate.toFixed(2)}/hr`, xRate, yPos, { align: 'right' });
+      doc.setFontSize(8);
+      doc.text(labourTaxPct > 0 ? `${invoice.labourTaxName || 'Tax'} ${labourTaxPct}%` : '-', xTax, yPos, { align: 'right' });
+      doc.setFontSize(9);
       doc.text(`$${labourAmount.toFixed(2)}`, xAmt, yPos, { align: 'right' });
       yPos += 8;
     }
@@ -1343,9 +1475,9 @@ const FleetInvoicesPage = () => {
     // ── SUMMARY ─────────────────────────────────────────────────
     checkPageBreak(32);
     const itemsSubtotal = items.reduce((sum: number, it: any) =>
-      sum + (Number(it.quantity) || 1) * (Number(it.unitPrice) || 0), 0);
+      sum + Number(it.quantity ?? 1) * (Number(it.unitPrice) || 0), 0);
     const itemsTax = items.reduce((sum: number, it: any) => {
-      const base = (Number(it.quantity) || 1) * (Number(it.unitPrice) || 0);
+      const base = Number(it.quantity ?? 1) * (Number(it.unitPrice) || 0);
       return sum + base * (Number(it.taxPercent) || 0) / 100;
     }, 0);
     const subtotal = Number(invoice.subtotal) || (itemsSubtotal + labourAmount);
@@ -1475,6 +1607,21 @@ const FleetInvoicesPage = () => {
       }
       // Map line items
       if (Array.isArray(d.items) && d.items.length > 0) {
+        // Tax from the invoice: match by name AND rate. A rate that differs from ours
+        // (e.g. HST 15%, or PST 8%) becomes a custom tax instead of silently using our default %.
+        const taxName = String(d.taxName || '').trim();
+        const taxRate = Number(d.taxRate);
+        let extractedTaxId = 'none';
+        if (taxName || taxRate > 0) {
+          const byName = DEFAULT_TAXES.find((t) => t.id !== 'none' && taxName.toLowerCase().includes(t.id));
+          if (byName && (!(taxRate > 0) || Math.abs(byName.percent - taxRate) < 0.01)) {
+            extractedTaxId = byName.id;
+          } else if (taxRate > 0) {
+            extractedTaxId = `custom-extracted-${Date.now()}`;
+            const label = taxName || 'Tax';
+            setCustomTaxes((prev) => [...prev, { id: extractedTaxId, name: label, percent: taxRate }]);
+          }
+        }
         const mapped: LineItem[] = d.items.map((item: any, i: number) => ({
           id: String(i + 1),
           serviceDate: item.serviceDate || '',
@@ -1483,10 +1630,7 @@ const FleetInvoicesPage = () => {
           qty: Number(item.quantity) || 1,
           rate: Number(item.unitPrice) || 0,
           amount: Number(item.totalPrice) || (Number(item.quantity) || 1) * (Number(item.unitPrice) || 0),
-          salesTax: d.taxName?.toLowerCase().includes('gst') ? 'gst'
-            : d.taxName?.toLowerCase().includes('hst') ? 'hst'
-              : d.taxName?.toLowerCase().includes('pst') ? 'pst'
-                : 'none',
+          salesTax: extractedTaxId,
         }));
         setLineItems(mapped);
       }
@@ -1519,7 +1663,7 @@ const FleetInvoicesPage = () => {
     setInvoiceDate(new Date().toISOString().split('T')[0]);
     setDueDate('');
     setInvoiceNo('');
-    setLineItems([{ id: '1', serviceDate: '', productService: '', description: '', qty: 1, rate: 0, amount: 0, salesTax: 'gst' }]);
+    setLineItems([{ id: '1', serviceDate: '', productService: '', description: '', qty: 1, rate: 0, amount: 0, salesTax: 'gst', itemType: 'part' }]);
     setMessageOnInvoice('');
     setCustomTaxes([]);
     setAddingTaxForLineId(null);
@@ -1527,6 +1671,10 @@ const FleetInvoicesPage = () => {
     setLabourRate(0);
     setLabourTax('gst');
     setVehicleInfo([]);
+    setUnitNumber('');
+    setUnitMakeModel('');
+    setUnitVin('');
+    setUnitOdometer('');
     setExtractedVendorName('');
     setShowAddCustomer(false);
     setNewCustomerName('');
@@ -1631,7 +1779,7 @@ const FleetInvoicesPage = () => {
                   <p className="mt-1 text-xl font-bold text-secondary">—</p>
                 ) : (
                   <p className="mt-1 text-2xl font-bold text-[var(--accent-green)]">
-                    ${(summary?.paidAmount ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    ${(summary?.paidAmount ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
                 )}
                 {!summaryLoading && summary && (
@@ -1652,7 +1800,7 @@ const FleetInvoicesPage = () => {
                   <p className="mt-1 text-xl font-bold text-secondary">—</p>
                 ) : (
                   <p className="mt-1 text-2xl font-bold text-[var(--accent-orange)]">
-                    ${(summary?.unpaidAmount ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    ${(summary?.unpaidAmount ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
                 )}
                 {!summaryLoading && summary && (
@@ -1673,7 +1821,7 @@ const FleetInvoicesPage = () => {
                   <p className="mt-1 text-xl font-bold text-secondary">—</p>
                 ) : (
                   <p className="mt-1 text-2xl font-bold text-[var(--accent-orange)]">
-                    ${(summary?.overdueAmount ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    ${(summary?.overdueAmount ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
                 )}
                 {!summaryLoading && summary && (
@@ -1694,7 +1842,7 @@ const FleetInvoicesPage = () => {
                   <p className="mt-1 text-xl font-bold text-secondary">—</p>
                 ) : (
                   <p className="mt-1 text-2xl font-bold text-[var(--accent-blue)]">
-                    ${(summary?.totalAmount ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    ${(summary?.totalAmount ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
                 )}
                 {!summaryLoading && summary && (
@@ -1839,7 +1987,8 @@ const FleetInvoicesPage = () => {
                                 : <FaEnvelope size={14} />}
                             </button>
 
-                            {/* Delete */}
+                            {/* Delete (not available to mechanics) */}
+                            {!isMechanic && (
                             <button
                               type="button"
                               onClick={() => handleDeleteInvoice(row._id)}
@@ -1849,6 +1998,7 @@ const FleetInvoicesPage = () => {
                             >
                               <FaTrash size={14} />
                             </button>
+                            )}
 
                             {/* PDF */}
                             <button
@@ -1893,42 +2043,48 @@ const FleetInvoicesPage = () => {
                   {notification.message}
                 </div>
               )}
-              {/* Vehicle Information */}
-              {vehicleInfo.length > 0 && (
-                <section>
-                  <h3 className="text-sm font-semibold text-secondary uppercase tracking-wide mb-4">Vehicle Information</h3>
-                  <div className="space-y-3">
-                    {vehicleInfo.map((vehicle, idx) => (
-                      <div key={idx} className="rounded-lg  p-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                          <div>
-                            <p className="text-xs text-secondary mb-1">Unit Number</p>
-                            <p className="text-sm font-semibold text-headings">{vehicle.unitNumber || '—'}</p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-secondary mb-1">Unit Type</p>
-                            <p className="text-sm font-semibold text-headings">{vehicle.unitType || '—'}</p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-secondary mb-1">Make / Model</p>
-                            <p className="text-sm font-semibold text-headings">{vehicle.makeModel || '—'}</p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-secondary mb-1">Plate Number</p>
-                            <p className="text-sm font-semibold text-headings">{vehicle.plateNumber || '—'}</p>
-                          </div>
-                          {vehicle.vinNumber && (
-                            <div>
-                              <p className="text-xs text-secondary mb-1">VIN Number</p>
-                              <p className="text-sm font-semibold text-headings">{vehicle.vinNumber}</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
+              {/* Unit (printed on the invoice: UNIT, MAKE/MODEL, VIN NO, CURRENT KM/HOURS) */}
+              <section>
+                <h3 className="text-sm font-semibold text-secondary uppercase tracking-wide mb-4">Unit</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-headings mb-1">Unit #</label>
+                    <input
+                      list="invoice-fleet-units"
+                      value={unitNumber}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setUnitNumber(value);
+                        const match = fleetUnits.find((u) => u.unit.toLowerCase() === value.trim().toLowerCase());
+                        if (match) {
+                          setUnitMakeModel(match.makeModel);
+                          setUnitVin(match.vin);
+                        }
+                      }}
+                      placeholder="Pick or type a unit"
+                      className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                    <datalist id="invoice-fleet-units">
+                      {fleetUnits.map((u) => <option key={u._id} value={u.unit}>{u.makeModel}</option>)}
+                    </datalist>
                   </div>
-                </section>
-              )}
+                  <div>
+                    <label className="block text-sm font-medium text-headings mb-1">Make / Model</label>
+                    <input value={unitMakeModel} onChange={(e) => setUnitMakeModel(e.target.value)} placeholder="e.g. Volvo VNL 2020"
+                      className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-headings mb-1">VIN No.</label>
+                    <input value={unitVin} onChange={(e) => setUnitVin(e.target.value.toUpperCase())} placeholder="17 characters"
+                      className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-headings mb-1">Current KM / Hours</label>
+                    <input value={unitOdometer} onChange={(e) => setUnitOdometer(e.target.value)} placeholder="e.g. 1,845,906 km"
+                      className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" />
+                  </div>
+                </div>
+              </section>
 
               {/* Header Information */}
               <section>
@@ -2120,6 +2276,20 @@ const FleetInvoicesPage = () => {
                 <div className="space-y-4">
                   {lineItems.map((item) => (
                     <div key={item.id} className="rounded-lg border border-theme bg-card p-4 space-y-4">
+                      {/* Line type: Part / Labour / Service */}
+                      <div className="flex flex-wrap items-center gap-2">
+                        {(['part', 'labour', 'service'] as LineType[]).map((t) => (
+                          <button
+                            key={t}
+                            type="button"
+                            onClick={() => updateLineItem(item.id, { itemType: t, ...(t === 'labour' && !item.productName ? { productName: 'Labour' } : {}) })}
+                            className={`px-3 py-1 rounded-full text-xs font-semibold border ${(item.itemType || lineTypeFromProduct(item.productService)) === t ? 'border-blue-500 bg-blue-500/15 text-blue-400' : 'border-theme text-secondary'}`}
+                          >
+                            {LINE_TYPE_LABEL[t]}
+                          </button>
+                        ))}
+                        {item.itemType === 'labour' && <span className="text-xs text-secondary">Qty is hours; rate is per hour</span>}
+                      </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-headings mb-1">Service Date</label>
@@ -2204,6 +2374,13 @@ const FleetInvoicesPage = () => {
                           {productOptionsLoading && (
                             <p className="mt-1 text-xs text-secondary">Loading services and maintenance orders...</p>
                           )}
+                          <input
+                            type="text"
+                            value={item.productName || ''}
+                            onChange={(e) => updateLineItem(item.id, { productName: e.target.value })}
+                            placeholder={item.itemType === 'labour' ? 'Labour' : 'Name on invoice, e.g. Rotella engine oil'}
+                            className="mt-2 w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                          />
                         </div>
                       </div>
                       <div>
@@ -2213,17 +2390,18 @@ const FleetInvoicesPage = () => {
                           onChange={(e) => updateLineItem(item.id, { description: e.target.value })}
                           rows={2}
                           className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-blue-500 text-sm resize-none"
-                          placeholder="e.g. Checked lights, brakes, steering..."
+                          placeholder={item.itemType === 'labour' ? 'e.g. Changed the brake chamber and repaired the air leak' : 'e.g. Checked lights, brakes, steering...'}
                         />
                       </div>
                       <div className="grid grid-cols-4 gap-4 items-end">
                         <div>
-                          <label className="block text-sm font-medium text-headings mb-1">QTY</label>
+                          <label className="block text-sm font-medium text-headings mb-1">{item.itemType === 'labour' ? 'Hours' : 'QTY'}</label>
                           <input
                             type="number"
-                            min={1}
+                            min={0}
+                            step={item.itemType === 'labour' ? 0.25 : 1}
                             value={item.qty}
-                            onChange={(e) => updateLineItem(item.id, { qty: Number(e.target.value) || 1 })}
+                            onChange={(e) => updateLineItem(item.id, { qty: Math.max(0, Number(e.target.value) || 0) })}
                             className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                           />
                         </div>
@@ -2238,10 +2416,6 @@ const FleetInvoicesPage = () => {
                             className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                             placeholder="0"
                           />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-headings mb-1">Amount</label>
-                          <div className="px-3 py-2 bg-card border border-theme rounded-lg text-sm font-medium text-headings">${item.amount.toFixed(2)}</div>
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-headings mb-1">Tax</label>
@@ -2260,6 +2434,10 @@ const FleetInvoicesPage = () => {
                             <option className='form-option' value="__add__">+ Add custom tax...</option>
                           </select>
                         </div>
+                        <div>
+                          <label className="block text-sm font-medium text-headings mb-1">Amount</label>
+                          <div className="px-3 py-2 bg-card border border-theme rounded-lg text-sm font-medium text-headings">${item.amount.toFixed(2)}</div>
+                        </div>
                       </div>
                       {lineItems.length > 1 && (
                         <button type="button" onClick={() => removeLineItem(item.id)} className="text-sm text-[#A855F7] hover:text-red-700 font-medium">
@@ -2268,9 +2446,14 @@ const FleetInvoicesPage = () => {
                       )}
                     </div>
                   ))}
-                  <button type="button" onClick={addLineItem} className="text-sm font-medium text-[#059669] hover:text-blue-700">
-                    + Add line item
-                  </button>
+                  <div className="flex flex-wrap gap-4">
+                    <button type="button" onClick={addLineItem} className="text-sm font-medium text-[#059669] hover:text-blue-700">
+                      + Add part / item
+                    </button>
+                    <button type="button" onClick={addLabourLine} className="text-sm font-medium text-[#059669] hover:text-blue-700">
+                      + Add labour line
+                    </button>
+                  </div>
                 </div>
               </section>
 
@@ -2342,72 +2525,7 @@ const FleetInvoicesPage = () => {
                 )}
               </section>
 
-              {/* Labour Charges */}
-              <section>
-                <h3 className="text-sm font-semibold text-secondary uppercase tracking-wide mb-4">Labour Charges</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-headings mb-1">
-                      Hours <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.5"
-                      value={labourHours || ''}
-                      onChange={(e) => setLabourHours(Number(e.target.value) || 0)}
-                      className="w-full px-3 py-2.5 border border-theme rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="0.0"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-headings mb-1">
-                      Hourly Rate ($) <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={labourRate || ''}
-                      onChange={(e) => setLabourRate(Number(e.target.value) || 0)}
-                      className="w-full px-3 py-2.5 border border-theme rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="0.00"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-headings mb-1">Tax</label>
-                    <select
-                      value={labourTax}
-                      onChange={(e) => setLabourTax(e.target.value)}
-                      className="w-full px-3 py-2.5 border border-theme rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    >
-                      {allTaxes.map((tax) => (
-                        <option className='form-option' key={tax.id} value={tax.id}>
-                          {tax.name} {tax.percent > 0 ? `(${tax.percent}%)` : ''}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                {labourAmount > 0 && (
-                  <div className="mt-3 p-3 bg-card rounded-lg border border-blue-200">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-headings">Labour Amount:</span>
-                      <span className="text-lg font-semibold text-[#059669]">
-                        ${labourAmount.toFixed(2)}
-                      </span>
-                    </div>
-                    {labourTaxAmount > 0 && (
-                      <div className="flex justify-between items-center mt-1">
-                        <span className="text-sm text-secondary">Labour Tax:</span>
-                        <span className="text-sm font-medium text-headings">
-                          ${labourTaxAmount.toFixed(2)}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </section>
+              {/* Labour is entered as labour lines above (several lines, each with its own description) */}
 
               {/* Message & Totals */}
               <section>
@@ -2465,6 +2583,9 @@ const FleetInvoicesPage = () => {
               </section>
             </div>
             <div className="flex-shrink-0 px-8 py-4 border-t border-theme bg-card flex items-center justify-end gap-3">
+              {notification?.type === 'error' && (
+                <p role="alert" className="mr-auto text-sm text-red-400">{notification.message}</p>
+              )}
               <button
                 type="button"
                 onClick={() => {

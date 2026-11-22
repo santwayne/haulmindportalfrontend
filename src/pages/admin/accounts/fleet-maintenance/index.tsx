@@ -1,3 +1,4 @@
+import { todayLocalISO } from '../../../../utils/fuelDate';
 import { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, Download, Filter, Wrench, DollarSign, Package, TrendingUp, Calendar, FileText, AlertCircle, X } from 'lucide-react';
 import { FaCheckCircle, FaExclamationCircle, FaInfoCircle, FaTimes } from 'react-icons/fa';
@@ -18,6 +19,7 @@ import {
   getFleetMaintenanceStats
 } from '../../../../axios/api/account.fleetMaintenance';
 import { listFleetUnits } from '../../../../axios/api/fleet.units';
+import FleetSpendReport from '../../../../components/accounts/FleetSpendReport';
 
 interface ToastNotification {
   id: number;
@@ -149,7 +151,7 @@ export default function FleetMaintenanceFinance() {
     description: '',
     unitCost: '',
     quantity: '',
-    dateOfUse: new Date().toISOString().split('T')[0],
+    dateOfUse: todayLocalISO(),
     vehicle: '',
     vehicleId: ''
   });
@@ -421,7 +423,7 @@ export default function FleetMaintenanceFinance() {
       description: '',
       unitCost: '',
       quantity: '',
-      dateOfUse: new Date().toISOString().split('T')[0],
+      dateOfUse: todayLocalISO(),
       vehicle: '',
       vehicleId: ''
     });
@@ -609,10 +611,15 @@ export default function FleetMaintenanceFinance() {
 
 
   // Summary Cards Data
+  // fetchStats() and the expense summary load in parallel; if the stats API answers last it
+  // overwrote the calculated total with 0. Read the total straight from the summary rows instead.
+  const summaryTotalCost = expenseSummary.length > 0
+    ? Math.round(expenseSummary.reduce((sum, exp) => sum + (exp.totalExpense || 0), 0) * 100) / 100
+    : stats.totalMaintenanceCost;
   const summaryCards = [
     {
       title: 'Total Maintenance Cost',
-      value: `$${stats.totalMaintenanceCost.toLocaleString()}`,
+      value: `$${summaryTotalCost.toLocaleString()}`,
       change: stats.percentChange !== 0
         ? `${stats.percentChange > 0 ? '+' : ''}${stats.percentChange.toFixed(1)}% vs last month`
         : 'No previous data',
@@ -799,71 +806,15 @@ export default function FleetMaintenanceFinance() {
           </div>
 
           {
-            loading && (
+            loading && activeTab !== 'expense-summary' && (
               <div className="p-8 text-center text-secondary">Loading...</div>
             )
           }
 
-          {/* Maintenance Expense Summary */}
+          {/* Maintenance spend per truck / trailer / month, custom date range */}
           {
-            activeTab === 'expense-summary' && !loading && (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-card border-b border-theme">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase tracking-wider">Vehicle</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase tracking-wider">Total Maintenance Expense</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase tracking-wider">Cost per Mile/KM</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase tracking-wider">Breakdown by Type</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase tracking-wider">Top 5 Expense Types</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-card divide-y divide-theme">
-                    {expenseSummary.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} className="px-6 py-4 text-center text-secondary">No data available</td>
-                      </tr>
-                    ) : (
-                      expenseSummary.map((expense, idx) => (
-                        <tr
-                          key={idx}
-                          className="hover:bg-[rgba(15,31,23,0.03)] cursor-pointer transition-colors"
-                          onClick={() => {
-                            setSelectedItem(expense);
-                            setSelectedItemType('expense');
-                            setShowDetailModal(true);
-                          }}
-                        >
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#059669]">{expense.vehicle}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-primary">${expense.totalExpense.toLocaleString()}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">${expense.costPerMile.toFixed(2)}/mi</td>
-                          <td className="px-6 py-4 text-sm text-secondary max-w-xs">{expense.breakdown}</td>
-                          <td className="px-6 py-4 text-sm">
-                            <div className="flex flex-wrap gap-1">
-                              {expense.topExpenses.map((type, idx) => (
-                                <span key={idx} className="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
-                                  {type}
-                                </span>
-                              ))}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex items-center gap-2">
-                              <button className="p-1 text-[#059669] hover:text-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/15 rounded transition-colors" title="View Details">
-                                <FileText className="w-4 h-4" />
-                              </button>
-                              <button className="p-1 text-green-400 hover:text-[var(--accent-green)] hover:bg-[var(--accent-green)]/15 rounded transition-colors" title="Download Report">
-                                <Download className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+            activeTab === 'expense-summary' && (
+              <FleetSpendReport search={searchTerm} onError={(msg) => showNotification('error', msg)} />
             )
           }
 

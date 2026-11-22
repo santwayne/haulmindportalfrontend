@@ -1,15 +1,36 @@
 import { useState, useEffect, useRef } from 'react';
 import { Plus, Trash2, ChevronUp, ChevronDown, X, HelpCircle, Edit, FileDown } from 'lucide-react';
-import ExcelJS from 'exceljs';
+import { exportFullRecords, formatExportDate } from '../../../../utils/fullRecordExport';
 import { FaTimes, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import * as customerApi from '../../../../axios/api/customer';
 import ImportButton from '../../../../components/common/ImportButton';
 import AddressSearch from '../../../../components/common/AddressSearch';
+import { COUNTRIES, sortByDialCodeMatch, type Country } from '../../../../utils/countries';
+
+// Categories on the Customer page (client 19 Nov: "customs brokers, receivers, shippers,
+// customers, brokers, vendors, others" - carriers too). The value is what the backend stores;
+// old "Shipper-Receiver" records keep working.
+const CUSTOMER_CATEGORIES: { value: string; label: string; plural: string }[] = [
+  { value: 'Customer', label: 'Customer', plural: 'Customers' },
+  { value: 'Shipper', label: 'Shipper', plural: 'Shippers' },
+  { value: 'Receiver', label: 'Receiver', plural: 'Receivers' },
+  { value: 'Shipper-Receiver', label: 'Shipper & Receiver', plural: 'Shipper & Receivers' },
+  { value: 'Broker', label: 'Broker', plural: 'Brokers' },
+  { value: 'Customs Broker', label: 'Customs Broker', plural: 'Customs Brokers' },
+  { value: 'Carrier', label: 'Carrier', plural: 'Carriers' },
+  { value: 'Vendor', label: 'Vendor', plural: 'Vendors' },
+  { value: 'Other', label: 'Other', plural: 'Others' },
+];
+const categoryLabel = (v?: string) => CUSTOMER_CATEGORIES.find(c => c.value === v)?.label || v || 'Customer';
+// Customers and brokers are billed (credit limit, invoice net, factoring);
+// shippers / receivers get the pickup / drop-off settings
+const isBilledCategory = (v: string) => v === 'Customer' || v === 'Broker';
+const isLocationCategory = (v: string) => v === 'Shipper' || v === 'Receiver' || v === 'Shipper-Receiver';
 
 interface Customer {
   _id?: string;
   name: string;
-  type: 'Customer' | 'Shipper-Receiver';
+  type: string;
   address: string;
   city: string;
   lastLoadDate?: string;
@@ -65,13 +86,16 @@ const ToastNotificationComponent = ({ notification, onClose }: { notification: T
   );
 };
 
-const CustomersPage = () => {
+// lockedCategory: the same page opened as its own list (client 20 Nov: "separate kerna c custom
+// broker list, carrier list") - Carriers / Customs Brokers get their own menu item and page.
+const CustomersPage = ({ lockedCategory }: { lockedCategory?: string } = {}) => {
+  const lockedMeta = lockedCategory ? CUSTOMER_CATEGORIES.find(c => c.value === lockedCategory) : undefined;
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [customerIdSearch, setCustomerIdSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
-  const [typeFilter, setTypeFilter] = useState('All');
+  const [typeFilter, setTypeFilter] = useState(lockedCategory || 'All');
   const [sortBy, setSortBy] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [sortConfig, setSortConfig] = useState<{ key: keyof Customer | null; direction: 'asc' | 'desc' }>({
@@ -82,19 +106,12 @@ const CustomersPage = () => {
   // Modal state
   const [showNewCustomerModal, setShowNewCustomerModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [customerType, setCustomerType] = useState<'CUSTOMER' | 'SHIPPER AND RECEIVER'>('CUSTOMER');
+  const [customerType, setCustomerType] = useState<string>('Customer');
   const [showBatchBilling, setShowBatchBilling] = useState(false);
   const [billingType, setBillingType] = useState<'DEFAULT / LOAD' | 'BATCH WEEKLY' | 'BATCH MONTHLY'>('DEFAULT / LOAD');
 
   // Country selector state for phones
-  interface Country {
-    name: string;
-    code: string;
-    flag: string;
-    dialCode: string;
-  }
-
-  const [countries, setCountries] = useState<Country[]>([]);
+  const countries = COUNTRIES;
   const [primaryPhoneCountry, setPrimaryPhoneCountry] = useState<string>('US');
   const [secondaryPhoneCountry, setSecondaryPhoneCountry] = useState<string>('US');
   const [primaryCountryDropdownOpen, setPrimaryCountryDropdownOpen] = useState(false);
@@ -109,7 +126,7 @@ const CustomersPage = () => {
     if (!phone) return { countryCode: 'US', phoneNumber: '' };
 
     const cleanPhone = phone.trim();
-    const sortedCountries = [...countriesList].sort((a, b) => b.dialCode.length - a.dialCode.length);
+    const sortedCountries = sortByDialCodeMatch(countriesList);
 
     for (const country of sortedCountries) {
       if (cleanPhone.startsWith(country.dialCode)) {
@@ -122,42 +139,6 @@ const CustomersPage = () => {
 
     return { countryCode: 'US', phoneNumber: cleanPhone.replace(/^\+1/, '').trim() };
   };
-
-  // Fetch countries data
-  useEffect(() => {
-    fetch('https://restcountries.com/v3.1/all?fields=name,flag,idd,cca2')
-      .then(res => res.json())
-      .then(data => {
-        const sortedCountries = data
-          .filter((c: any) => c.idd && c.idd.root)
-          .map((c: any) => ({
-            name: c.name.common,
-            code: c.cca2,
-            flag: c.flag,
-            dialCode: c.idd.root + (c.idd.suffixes ? c.idd.suffixes[0] : ''),
-          }))
-          .sort((a: Country, b: Country) => a.name.localeCompare(b.name));
-
-        setCountries(sortedCountries);
-        const defaultCountry = sortedCountries.find((c: Country) => c.code === 'US');
-        if (defaultCountry) {
-          setPrimaryPhoneCountry('US');
-          setSecondaryPhoneCountry('US');
-        }
-      })
-      .catch(() => {
-        const fallback = [
-          { name: 'United States', code: 'US', flag: '🇺🇸', dialCode: '+1' },
-          { name: 'Canada', code: 'CA', flag: '🇨🇦', dialCode: '+1' },
-          { name: 'India', code: 'IN', flag: '🇮🇳', dialCode: '+91' },
-          { name: 'United Kingdom', code: 'GB', flag: '🇬🇧', dialCode: '+44' },
-          { name: 'Australia', code: 'AU', flag: '🇦🇺', dialCode: '+61' },
-        ];
-        setCountries(fallback);
-        setPrimaryPhoneCountry('US');
-        setSecondaryPhoneCountry('US');
-      });
-  }, []);
 
   // Toast notifications state
   const [notifications, setNotifications] = useState<ToastNotification[]>([]);
@@ -269,12 +250,13 @@ const CustomersPage = () => {
         const mappedCustomers = response.data.map((cust: any) => ({
           _id: cust._id,
           name: cust.name || '',
-          type: (cust.customerDetails?.customerType || 'Customer') as 'Customer' | 'Shipper-Receiver',
+          type: cust.customerDetails?.customerType || 'Customer',
           address: cust.customerDetails?.address || cust.location?.address || '',
           city: cust.city || '',
           status: cust.status || 'active',
           lastLoadDate: cust.updatedAt ? new Date(cust.updatedAt).toLocaleDateString() : undefined,
-          customerDetails: cust.customerDetails
+          customerDetails: cust.customerDetails,
+          raw: cust // full record, used by the Excel report
         }));
         setCustomers(mappedCustomers);
       }
@@ -288,57 +270,27 @@ const CustomersPage = () => {
   const filteredCustomers = customers;
 
   const handleExportCustomers = async () => {
-    const workbook = new ExcelJS.Workbook();
-    workbook.creator = 'Logistiq Innovation';
-    workbook.created = new Date();
-    const sheet = workbook.addWorksheet('Customers', { views: [{ state: 'frozen', ySplit: 1 }] });
-
-    sheet.columns = [
-      { header: 'Customer Name', key: 'name', width: 28 },
-      { header: 'Type', key: 'type', width: 18 },
-      { header: 'Address', key: 'address', width: 30 },
-      { header: 'City', key: 'city', width: 16 },
-      { header: 'Email', key: 'email', width: 28 },
-      { header: 'Phone', key: 'phone', width: 18 },
-      { header: 'Status', key: 'status', width: 14 },
-      { header: 'Last Load Date', key: 'lastLoadDate', width: 18 },
-    ];
-
-    const headerRow = sheet.getRow(1);
-    headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
-    headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF00D1FF' } };
-    headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
-    headerRow.height = 22;
-
-    filteredCustomers.forEach((c: any) => {
-      const row = sheet.addRow({
-        name: c.name || '',
-        type: c.type || '',
-        address: c.address || c.customerDetails?.address || '',
-        city: c.city || '',
-        email: c.customerDetails?.emailPrimary || '',
-        phone: c.customerDetails?.phonePrimary || '',
-        status: c.status || '',
-        lastLoadDate: c.lastLoadDate ? new Date(c.lastLoadDate).toLocaleDateString() : '',
-      });
-      row.alignment = { vertical: 'middle' };
+    // Every field on the customer record (IDs, contacts, billing, credit terms...), main ones first
+    const cd = (c: any) => c.customerDetails || {};
+    await exportFullRecords({
+      records: (filteredCustomers as any[]).map((c) => ({ ...(c.raw || {}), ...c })),
+      sheetName: 'Customers',
+      fileName: `Customers-${new Date().toISOString().split('T')[0]}.xlsx`,
+      headerColor: 'FF00D1FF',
+      preferred: [
+        { header: 'Customer Name', get: (c) => c.name, width: 28 },
+        { header: 'Customer ID', get: (c) => cd(c).customerId || c.customerId || c.internalId },
+        { header: 'Type', get: (c) => c.type || cd(c).customerType },
+        { header: 'Contact', get: (c) => cd(c).contact },
+        { header: 'Email', get: (c) => cd(c).emailPrimary || c.email, width: 28 },
+        { header: 'Phone', get: (c) => cd(c).phonePrimary || c.phone },
+        { header: 'Address', get: (c) => c.address || cd(c).address, width: 30 },
+        { header: 'City', get: (c) => c.city || cd(c).city },
+        { header: 'Status', get: (c) => c.status },
+        { header: 'Created / Added', get: (c) => formatExportDate(c.createdAt || cd(c).createdAt) },
+        { header: 'Last Load Date', get: (c) => formatExportDate(c.lastLoadDate) },
+      ],
     });
-
-    sheet.eachRow((row, i) => {
-      if (i > 1) row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: i % 2 === 0 ? 'FFF0F9FF' : 'FFFFFFFF' } };
-      row.eachCell(cell => { cell.border = { bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } } }; });
-    });
-
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Customers-${new Date().toISOString().split('T')[0]}.xlsx`;
-    document.body.appendChild(a);
-    a.click();
-    URL.revokeObjectURL(url);
-    document.body.removeChild(a);
   };
 
   const handleSort = (key: keyof Customer) => {
@@ -482,7 +434,7 @@ const CustomersPage = () => {
       const customerData = {
         customer: formData.customer,
         customerId: formData.customerId,
-        customerType: customerType === 'CUSTOMER' ? 'Customer' : 'Shipper-Receiver',
+        customerType: customerType,
         emailPrimary: formData.emailAddress,
         emailSecondary: formData.secondaryEmail,
         trackingEmail: formData.trackingEmail,
@@ -539,7 +491,7 @@ const CustomersPage = () => {
         const customer = response.data.find((c: any) => c._id === customerId);
         if (customer) {
           setEditingId(customerId);
-          setCustomerType(customer.customerDetails?.customerType === 'Shipper-Receiver' ? 'SHIPPER AND RECEIVER' : 'CUSTOMER');
+          setCustomerType(customer.customerDetails?.customerType || 'Customer');
           setBillingType(customer.customerDetails?.billingType || 'DEFAULT / LOAD');
           setFormData({
             customer: customer.name || '',
@@ -619,7 +571,8 @@ const CustomersPage = () => {
       defaultDropType: ''
     });
     setEditingId(null);
-    setCustomerType('CUSTOMER');
+    // New entry starts in the category being viewed
+    setCustomerType(typeFilter !== 'All' ? typeFilter : 'Customer');
     setBillingType('DEFAULT / LOAD');
     setShowBatchBilling(false);
   };
@@ -689,7 +642,7 @@ const CustomersPage = () => {
         {/* Header Section */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold text-primary">Customers</h1>
+            <h1 className="text-3xl font-bold text-primary">{lockedMeta?.plural || 'Customers'}</h1>
             <div className="flex items-center gap-3 print-hide">
               <span className="text-2xl font-bold text-primary">({filteredCustomers.length})</span>
               <button
@@ -744,6 +697,22 @@ const CustomersPage = () => {
 
         {/* Search and Filter Section */}
         <div className="mb-6 space-y-4 print-hide">
+          {/* Category tabs - same filter as the Type dropdown (hidden on a single-category list) */}
+          {!lockedCategory && <div className="flex flex-wrap gap-2">
+            {[{ value: 'All', plural: 'All' }, ...CUSTOMER_CATEGORIES.filter(c => c.value !== 'Shipper-Receiver')].map(c => (
+              <button
+                key={c.value}
+                type="button"
+                onClick={() => setTypeFilter(c.value)}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium border border-theme transition-colors ${typeFilter === c.value
+                  ? 'bg-[var(--accent-navyblue)] !text-white'
+                  : 'bg-card text-secondary hover:bg-[rgba(15,31,23,0.05)]'
+                  }`}
+              >
+                {c.plural}
+              </button>
+            ))}
+          </div>}
           {/* First Row - General Search and Customer ID Search */}
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2 flex-1 min-w-[300px]">
@@ -786,7 +755,7 @@ const CustomersPage = () => {
               </select>
             </div>
 
-            <div className="flex items-center gap-2">
+            {!lockedCategory && <div className="flex items-center gap-2">
               <label className="text-sm font-medium text-primary">Type:</label>
               <select
                 value={typeFilter}
@@ -794,10 +763,11 @@ const CustomersPage = () => {
                 className="px-3 py-2 bg-card text-primary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-green)]/30 focus:border-transparent"
               >
                 <option value="All">All</option>
-                <option value="Customer">Customer</option>
-                <option value="Shipper-Receiver">Shipper-Receiver</option>
+                {CUSTOMER_CATEGORIES.map(c => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
               </select>
-            </div>
+            </div>}
 
             <div className="flex items-center gap-2">
               <label className="text-sm font-medium text-primary">Sort By:</label>
@@ -904,7 +874,7 @@ const CustomersPage = () => {
                       }}
                     >
                       <td className="px-4 py-3 text-sm text-primary">{customer.name}</td>
-                      <td className="px-4 py-3 text-sm text-primary">{customer.type}</td>
+                      <td className="px-4 py-3 text-sm text-primary">{categoryLabel(customer.type)}</td>
                       <td className="px-4 py-3 text-sm text-primary">{customer.address}</td>
                       <td className="px-4 py-3 text-sm text-primary">{customer.city}</td>
                       <td className="px-4 py-3 text-sm text-primary">{customer.lastLoadDate || '-'}</td>
@@ -967,8 +937,8 @@ const CustomersPage = () => {
               <div className="flex items-center justify-between p-6 border-b border-theme bg-card">
                 <h2 className="text-2xl font-bold text-primary">
                   {editingId
-                    ? (customerType === 'CUSTOMER' ? 'Edit Customer' : 'Edit Shipper Receiver')
-                    : (customerType === 'CUSTOMER' ? 'New Customer' : 'New Shipper Receiver')
+                    ? `Edit ${categoryLabel(customerType)}`
+                    : `New ${categoryLabel(customerType)}`
                   }
                 </h2>
                 <button
@@ -995,31 +965,27 @@ const CustomersPage = () => {
                     <div>
                       <h3 className="text-lg font-semibold text-primary mb-4">Basic Information</h3>
 
-                      {/* Customer Type Toggle */}
+                      {/* Category */}
                       <div className="mb-4">
-                        <label className="block text-sm font-medium text-primary mb-2">Customer Type</label>
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => setCustomerType('CUSTOMER')}
-                            className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${customerType === 'CUSTOMER'
-                              ? 'bg-[var(--accent-navyblue)] !text-white shadow-sm'
-                              : 'bg-card text-secondary hover:bg-[rgba(15,31,23,0.05)]'
-                              }`}
-                          >
-                            CUSTOMER
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setCustomerType('SHIPPER AND RECEIVER')}
-                            className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${customerType === 'SHIPPER AND RECEIVER'
-                              ? 'bg-[var(--accent-navyblue)] !text-white shadow-sm'
-                              : 'bg-card text-secondary hover:bg-[rgba(15,31,23,0.05)]'
-                              }`}
-                          >
-                            SHIPPER AND RECEIVER
-                          </button>
+                        <label className="block text-sm font-medium text-primary mb-2">Category</label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {CUSTOMER_CATEGORIES.map(c => (
+                            <button
+                              key={c.value}
+                              type="button"
+                              onClick={() => setCustomerType(c.value)}
+                              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border border-theme ${customerType === c.value
+                                ? 'bg-[var(--accent-navyblue)] !text-white shadow-sm'
+                                : 'bg-card text-secondary hover:bg-[rgba(15,31,23,0.05)]'
+                                }`}
+                            >
+                              {c.label}
+                            </button>
+                          ))}
                         </div>
+                        {customerType === 'Carrier' && (
+                          <p className="mt-2 text-xs text-secondary">Carriers saved here also show in the order form when a load is sold to a carrier.</p>
+                        )}
                         <button
                           onClick={() => setShowBatchBilling(!showBatchBilling)}
                           className="mt-2 text-sm text-[var(--accent-green)] hover:underline"
@@ -1498,7 +1464,7 @@ const CustomersPage = () => {
                     </div>
 
                     {/* Finance Section - Only for CUSTOMER type */}
-                    {customerType === 'CUSTOMER' && (
+                    {isBilledCategory(customerType) && (
                       <div>
                         <h3 className="text-lg font-semibold text-primary mb-4">Finance</h3>
 
@@ -1539,10 +1505,10 @@ const CustomersPage = () => {
                     {/* Additional Settings Section */}
                     <div>
                       <h3 className="text-lg font-semibold text-primary mb-4">
-                        {customerType === 'CUSTOMER' ? 'Additional Settings' : 'Additional Settings'}
+                        Additional Settings
                       </h3>
 
-                      {customerType === 'CUSTOMER' && (
+                      {isBilledCategory(customerType) && (
                         <div className="mb-4">
                           <label className="flex items-center gap-2 cursor-pointer">
                             <input
@@ -1568,7 +1534,7 @@ const CustomersPage = () => {
                         </label>
                       </div>
 
-                      {customerType === 'SHIPPER AND RECEIVER' && (
+                      {isLocationCategory(customerType) && (
                         <>
                           <div className="mb-4">
                             <label className="block text-sm font-medium text-primary mb-1">

@@ -1,10 +1,12 @@
+import { todayLocalISO } from '../../../../utils/fuelDate';
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Search, DollarSign, Users, Calendar, TrendingUp, X, AlertCircle, CheckCircle, Edit2, Trash2, Eye, Building2, Sparkles, Clock, CalendarCheck, FileText, Download } from 'lucide-react';
-import { getEmployees, createPayroll, listPayrolls, updatePayroll, deletePayroll, deleteAllPayrolls, generateAutomatedPayroll, bulkAIGenerateAllPayrolls, getPaystubByPayrollId } from "../../../../axios/api/account.payroll";
+import { Plus, Search, DollarSign, Users, Calendar, TrendingUp, X, AlertCircle, CheckCircle, Edit2, Trash2, Eye, Building2, Sparkles, Clock, CalendarCheck, FileText, Download, Printer } from 'lucide-react';
+import { getEmployees, createPayroll, listPayrolls, updatePayroll, deletePayroll, deleteAllPayrolls, generateAutomatedPayroll, bulkAIGenerateAllPayrolls, getPaystubByPayrollId, updatePayrollPaymentStatus } from "../../../../axios/api/account.payroll";
+import PayAdjustments from "../../../../components/accounts/PayAdjustments";
+import { type PayLine, newPayLine, sumPayLines, toApiPayLines, payLinesError } from "../../../../utils/payLines";
+import { outputPayStatement, paystubToStatement } from "../../../../utils/payStatementPdf";
 import { listAttendance } from "../../../../axios/api/attendance";
 import { getDeductionAdditions } from "../../../../axios/api/account.settlement";
-import jsPDF from 'jspdf';
-import DocLogo from '../../../../assets/doclogo.png';
 
 interface Employee {
     _id: string;
@@ -36,6 +38,11 @@ interface Payroll {
     deductions: number;
     totalSalary: number;
     payDate: string;
+    paymentStatus?: 'pending' | 'paid';
+    paidAt?: string;
+    applyTaxes?: boolean;
+    additionItems?: { memo: string; amount: number; date?: string; source?: string }[];
+    deductionItems?: { memo: string; amount: number; date?: string; source?: string }[];
     startDate: string;
     endDate: string;
     createdAt: string;
@@ -289,7 +296,7 @@ const PayrollManagement = () => {
     const [bulkAIDateRange, setBulkAIDateRange] = useState({
         startDate: '',
         endDate: '',
-        payDate: new Date().toISOString().split('T')[0]
+        payDate: todayLocalISO()
     });
     const [selectedPayroll, setSelectedPayroll] = useState<Payroll | null>(null);
     const [employees, setEmployees] = useState<Employee[]>([]);
@@ -337,6 +344,13 @@ const PayrollManagement = () => {
 
     // Employee additions and deductions state
     const [employeeAdditions, setEmployeeAdditions] = useState<any[]>([]);
+    // Tax is optional (unticked = no tax deducted) and one-off lines need a memo
+    const [applyTaxes, setApplyTaxes] = useState<boolean>(false);
+    const [manualAdditions, setManualAdditions] = useState<PayLine[]>([]);
+    const [manualDeductions, setManualDeductions] = useState<PayLine[]>([]);
+    const [statementBusy, setStatementBusy] = useState<string | null>(null);
+    const attendanceRequestRef = useRef(0);
+    const autoBaseSalaryRef = useRef<string>('');
     const [employeeDeductions, setEmployeeDeductions] = useState<any[]>([]);
     const [loadingAdditionsDeductions, setLoadingAdditionsDeductions] = useState<boolean>(false);
     // Track edited amounts for additions and deductions
@@ -557,8 +571,12 @@ const PayrollManagement = () => {
 
     // Calculate additions and deductions for the payroll period
     const calculateAdditionsDeductions = () => {
+        const additionItems: { memo: string; amount: number; source: string }[] = [];
+        const deductionItems: { memo: string; amount: number; source: string }[] = [];
+        const manualAdd = sumPayLines(manualAdditions);
+        const manualDed = sumPayLines(manualDeductions);
         if (!formData.startDate || !formData.endDate) {
-            return { totalAdditions: 0, totalDeductions: 0 };
+            return { totalAdditions: manualAdd, totalDeductions: manualDed, additionItems, deductionItems };
         }
 
         const startDateObj = new Date(formData.startDate);
@@ -602,6 +620,7 @@ const PayrollManagement = () => {
             }
 
             totalAdditions += calculatedAmount;
+            if (calculatedAmount > 0) additionItems.push({ memo: addition.name || addition.description || 'Addition', amount: calculatedAmount, source: 'profile' });
         }
 
         // Calculate applicable deductions
@@ -656,70 +675,73 @@ const PayrollManagement = () => {
             }
 
             totalDeductions += calculatedAmount;
+            if (calculatedAmount > 0) deductionItems.push({ memo: deduction.name || deduction.description || 'Deduction', amount: calculatedAmount, source: 'profile' });
         }
 
-        return { totalAdditions, totalDeductions };
+        return { totalAdditions: totalAdditions + manualAdd, totalDeductions: totalDeductions + manualDed, additionItems, deductionItems };
     };
 
     // Fetch attendance data for selected employee and date range
+    // Attendance for the exact pay period (it can span months). Manual days and login/logout
+    // days both count; a present day with no tracked hours counts as 8 hours (same as payroll).
     const fetchAttendance = async (employeeId: string, startDate: string, endDate: string) => {
+        // Only the latest request may update the summary: when the dates change quickly, an
+        // older (slower) response used to overwrite the new range's numbers.
+        const requestId = ++attendanceRequestRef.current;
         if (!employeeId || !startDate || !endDate) {
             setAttendanceSummary(null);
             return;
         }
 
         setLoadingAttendance(true);
+        setAttendanceSummary(null);
         try {
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-            const month = start.getMonth() + 1;
-            const year = start.getFullYear();
-
             const response = await listAttendance({
                 employee: employeeId,
-                month,
-                year
+                startDate,
+                endDate,
+                includeActiveSessions: false
             });
 
-            if (response?.success && response.data) {
-                // Filter attendance records within the date range
-                const filteredData = response.data.filter((record: any) => {
-                    const recordDate = new Date(record.date);
-                    return recordDate >= start && recordDate <= end;
-                });
-
-                // Calculate summary - treat late as present, no overtime calculation
-                const summary = {
-                    presentDays: 0,
-                    absentDays: 0,
-                    leaveDays: 0,
-                    totalHours: 0,
-                    regularHours: 0
-                };
-
-                filteredData.forEach((record: any) => {
+            if (requestId !== attendanceRequestRef.current) return; // a newer range was asked for
+            if (response?.success && Array.isArray(response.data)) {
+                const summary = { presentDays: 0, absentDays: 0, leaveDays: 0, totalHours: 0, regularHours: 0 };
+                response.data.forEach((record: any) => {
                     if (record.status === 'present' || record.status === 'late') {
-                        // Treat late as present
                         summary.presentDays++;
-                        const hours = record.totalHours || 0;
+                        const tracked = Math.min(Number(record.totalHours) || 0, 24);
+                        const hours = tracked > 0 ? tracked : 8;
                         summary.totalHours += hours;
-                        summary.regularHours += hours; // All hours are regular, no overtime
+                        summary.regularHours += hours;
                     } else if (record.status === 'absent') {
                         summary.absentDays++;
                     } else if (record.status === 'leave') {
                         summary.leaveDays++;
                     }
                 });
-
                 setAttendanceSummary(summary);
+
+                // Fill Base Salary from hours x Pay Rate so the form doesn't ask for it
+                const emp = employees.find(e => e._id === employeeId);
+                const rate = Number(emp?.details?.hourlyRate) || Number(emp?.details?.payRate) || 0;
+                if (rate > 0 && summary.totalHours > 0) {
+                    const suggested = (summary.totalHours * rate).toFixed(2);
+                    // Fill when empty, and refresh it when the dates change, unless the user typed their own amount
+                    setFormData(prev => {
+                        const untouched = !prev.baseSalary || prev.baseSalary === '0' || prev.baseSalary === autoBaseSalaryRef.current;
+                        if (prev.userId !== employeeId || !untouched) return prev;
+                        autoBaseSalaryRef.current = suggested;
+                        return { ...prev, baseSalary: suggested };
+                    });
+                }
             } else {
                 setAttendanceSummary(null);
             }
         } catch (error) {
             console.error('Error fetching attendance:', error);
-            setAttendanceSummary(null);
+            if (requestId === attendanceRequestRef.current) setAttendanceSummary(null);
         } finally {
-            setLoadingAttendance(false);
+            if (requestId === attendanceRequestRef.current) setLoadingAttendance(false);
         }
     };
 
@@ -790,6 +812,12 @@ const PayrollManagement = () => {
             return;
         }
 
+        const linesError = payLinesError(manualAdditions, manualDeductions);
+        if (linesError) {
+            showNotification('error', linesError);
+            return;
+        }
+
         // Validate baseSalary is a valid number
         const baseSalaryNum = parseFloat(formData.baseSalary);
         if (isNaN(baseSalaryNum) || baseSalaryNum < 0) {
@@ -801,11 +829,10 @@ const PayrollManagement = () => {
 
         try {
             // Calculate additions and deductions using the helper function (respects edited amounts)
-            const { totalAdditions, totalDeductions } = calculateAdditionsDeductions();
+            const { totalDeductions, additionItems, deductionItems } = calculateAdditionsDeductions();
 
-            // Add calculated additions to bonus (same as driver payroll)
+            // Pure bonus; additions (profile + one-off) go as itemised lines with memos
             const calculatedBonus = parseFloat(formData.bonus) || 0;
-            const finalBonus = calculatedBonus + totalAdditions;
 
             // Use calculated deductions from employee profile (respects edited amounts)
             const finalDeductions = totalDeductions;
@@ -813,11 +840,14 @@ const PayrollManagement = () => {
             const payload: any = {
                 userId: formData.userId,
                 baseSalary: parseFloat(formData.baseSalary),
-                bonus: finalBonus, // Bonus + edited additions
+                bonus: calculatedBonus, // pure bonus; additions are sent as itemised lines below
                 deductions: finalDeductions, // Calculated deductions from employee profile
                 payDate: formData.payDate,
                 startDate: formData.startDate,
                 endDate: formData.endDate,
+                additionItems: [...additionItems, ...toApiPayLines(manualAdditions)],
+                deductionItems: [...deductionItems, ...toApiPayLines(manualDeductions)],
+                applyTaxes,
                 country: formData.country || 'USA',
                 // Canada taxes
                 federalIncomeTaxCA: parseFloat(formData.federalIncomeTaxCA || '0'),
@@ -867,15 +897,20 @@ const PayrollManagement = () => {
             return;
         }
 
+        const linesError = payLinesError(manualAdditions, manualDeductions);
+        if (linesError) {
+            showNotification('error', linesError);
+            return;
+        }
+
         setLoading(true);
 
         try {
             // Calculate additions and deductions using the helper function (respects edited amounts)
-            const { totalAdditions, totalDeductions } = calculateAdditionsDeductions();
+            const { totalDeductions, additionItems, deductionItems } = calculateAdditionsDeductions();
 
-            // Add calculated additions to bonus (same as driver payroll)
+            // Pure bonus; additions (profile + one-off) go as itemised lines with memos
             const calculatedBonus = parseFloat(formData.bonus) || 0;
-            const finalBonus = calculatedBonus + totalAdditions;
 
             // Use calculated deductions from employee profile (respects edited amounts)
             const finalDeductions = totalDeductions;
@@ -883,11 +918,14 @@ const PayrollManagement = () => {
             const payload: any = {
                 userId: formData.userId,
                 baseSalary: parseFloat(formData.baseSalary),
-                bonus: finalBonus, // Bonus + edited additions
+                bonus: calculatedBonus, // pure bonus; additions are sent as itemised lines below
                 deductions: finalDeductions, // Calculated deductions from employee profile
                 payDate: formData.payDate,
                 startDate: formData.startDate,
                 endDate: formData.endDate,
+                additionItems: [...additionItems, ...toApiPayLines(manualAdditions)],
+                deductionItems: [...deductionItems, ...toApiPayLines(manualDeductions)],
+                applyTaxes,
                 country: formData.country || 'USA',
                 // Canada taxes
                 federalIncomeTaxCA: parseFloat(formData.federalIncomeTaxCA || '0'),
@@ -1082,6 +1120,16 @@ const PayrollManagement = () => {
             stateDisabilityInsurance: (payroll.stateDisabilityInsurance || 0).toString(),
             localTax: (payroll.localTax || 0).toString()
         });
+        const taxTotal = (payroll.federalIncomeTaxCA || 0) + (payroll.provincialIncomeTaxCA || 0) + (payroll.cpp || 0) + (payroll.ei || 0) + (payroll.provincialHealthTaxCA || 0)
+            + (payroll.federalIncomeTaxUS || 0) + (payroll.stateIncomeTaxUS || 0) + (payroll.socialSecurityTax || 0) + (payroll.medicareTax || 0) + (payroll.stateDisabilityInsurance || 0) + (payroll.localTax || 0);
+        setApplyTaxes(payroll.applyTaxes ?? taxTotal > 0);
+        setManualAdditions((payroll.additionItems || []).filter(i => (i.source || 'manual') === 'manual').map(i => ({ ...newPayLine(i.memo, i.amount), date: i.date ? String(i.date).slice(0, 10) : undefined })));
+        setManualDeductions((payroll.deductionItems || []).filter(i => (i.source || 'manual') === 'manual').map(i => ({ ...newPayLine(i.memo, i.amount), date: i.date ? String(i.date).slice(0, 10) : undefined })));
+        if (payroll.additionItems || payroll.deductionItems) {
+            // Itemised payroll: bonus field holds only the pure bonus
+            const itemsTotal = (payroll.additionItems || []).reduce((s2, i) => s2 + (i.amount || 0), 0);
+            setFormData(prev => ({ ...prev, bonus: Math.max(0, (payroll.bonus || 0) - itemsTotal).toFixed(2) }));
+        }
         setShowEditModal(true);
     };
 
@@ -1090,378 +1138,39 @@ const PayrollManagement = () => {
         setShowDeleteModal(true);
     };
 
-    const handleDownloadPaystubPDF = async (paystub: Paystub) => {
+    // Pay statement in the company's layout (same generator for download and print)
+    const handleDownloadPaystubPDF = async (paystub: Paystub, mode: 'download' | 'print' = 'download') => {
         try {
-            const doc = new jsPDF('p', 'mm', 'a4');
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
-            const margin = 15;
-            const contentWidth = pageWidth - (margin * 2);
-
-            // Helper function to check if we need a new page
-            const checkPageBreak = (requiredSpace: number) => {
-                if (yPos + requiredSpace > pageHeight - margin) {
-                    doc.addPage();
-                    yPos = margin;
-                    return true;
-                }
-                return false;
-            };
-
-            // Color scheme
-            const primaryR = 37, primaryG = 99, primaryB = 235; // Blue-600
-            const textR = 31, textG = 41, textB = 55; // Gray-800
-            const lightGrayR = 243, lightGrayG = 244, lightGrayB = 246; // Gray-100
-            const greenR = 34, greenG = 197, greenB = 94; // Green-500
-            const redR = 239, redG = 68, redB = 68; // Red-500
-
-            let yPos = margin;
-
-            // Pre-load doclogo for header
-            let docLogoBase64 = '';
-            let docLogoW = 22, docLogoH = 11;
-            try {
-                const logoImg = new Image();
-                logoImg.src = DocLogo;
-                await new Promise<void>((resolve) => {
-                    logoImg.onload = () => {
-                        try {
-                            const cv = document.createElement('canvas');
-                            cv.width = logoImg.width; cv.height = logoImg.height;
-                            const ctx = cv.getContext('2d');
-                            if (ctx) {
-                                ctx.drawImage(logoImg, 0, 0);
-                                docLogoBase64 = cv.toDataURL('image/png');
-                                docLogoW = 22;
-                                docLogoH = (logoImg.height / logoImg.width) * docLogoW;
-                            }
-                        } catch { }
-                        resolve();
-                    };
-                    logoImg.onerror = () => resolve();
-                });
-            } catch { }
-
-            // Header with colored background
-            doc.setFillColor(primaryR, primaryG, primaryB);
-            doc.rect(0, 0, pageWidth, 45, 'F');
-
-            // Platform logo in bottom-right of header
-            if (docLogoBase64) {
-                doc.addImage(docLogoBase64, 'PNG', pageWidth - margin - docLogoW, 44 - docLogoH, docLogoW, docLogoH);
-            }
-
-            // Company Details (Left side) - White text on blue background
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            const companyName = paystub.companyDetails?.companyName || 'Company Name';
-            doc.text(companyName, margin, 18);
-
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'normal');
-            let companyY = 25;
-            if (paystub.companyDetails?.companyAddress) {
-                const addressLines = doc.splitTextToSize(paystub.companyDetails.companyAddress, 70);
-                doc.text(addressLines, margin, companyY);
-                companyY += addressLines.length * 4.5;
-            }
-            if (paystub.companyDetails?.companyPhone) {
-                doc.text(`Phone: ${paystub.companyDetails.companyPhone}`, margin, companyY);
-                companyY += 4.5;
-            }
-            if (paystub.companyDetails?.companyEmail) {
-                doc.text(`Email: ${paystub.companyDetails.companyEmail}`, margin, companyY);
-            }
-
-            // Pay Stub Title (Right side) - White text on blue background
-            doc.setFontSize(22);
-            doc.setFont('helvetica', 'bold');
-            doc.text('PAY STUB', pageWidth - margin, 18, { align: 'right' });
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'normal');
-            doc.text('EARNINGS STATEMENT', pageWidth - margin, 25, { align: 'right' });
-            if (paystub.paystubId) {
-                doc.setFontSize(7);
-                doc.text(`ID: ${paystub.paystubId}`, pageWidth - margin, 32, { align: 'right' });
-            }
-
-            // Reset text color and move to content area
-            doc.setTextColor(textR, textG, textB);
-            yPos = 55;
-
-            // Pay Period Box
-            const boxWidth = 75;
-            const boxHeight = 25;
-            doc.setFillColor(lightGrayR, lightGrayG, lightGrayB);
-            doc.roundedRect(pageWidth - margin - boxWidth, yPos, boxWidth, boxHeight, 2, 2, 'F');
-
-            doc.setFontSize(7);
-            doc.setTextColor(107, 114, 128);
-            doc.text('Pay Period Start', pageWidth - margin - boxWidth + 3, yPos + 6);
-            doc.text('Pay Period End', pageWidth - margin - boxWidth + 3, yPos + 12);
-            doc.text('Pay Date', pageWidth - margin - boxWidth + 3, yPos + 18);
-
-            doc.setFontSize(8);
-            doc.setTextColor(textR, textG, textB);
-            doc.setFont('helvetica', 'bold');
-            const startDate = new Date(paystub.payPeriod.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            const endDate = new Date(paystub.payPeriod.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            const payDate = new Date(paystub.payPeriod.payDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            doc.text(startDate, pageWidth - margin - 3, yPos + 6, { align: 'right' });
-            doc.text(endDate, pageWidth - margin - 3, yPos + 12, { align: 'right' });
-            doc.text(payDate, pageWidth - margin - 3, yPos + 18, { align: 'right' });
-
-            yPos += boxHeight + 8;
-
-            // Employee Information Section
-            checkPageBreak(25);
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Employee Information', margin, yPos);
-            yPos += 7;
-            doc.setDrawColor(200, 200, 200);
-            doc.line(margin, yPos, pageWidth - margin, yPos);
-            yPos += 6;
-
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Name: ${paystub.employeeName}`, margin, yPos);
-            yPos += 6;
-            if (paystub.employeeId) {
-                doc.text(`Employee ID: ${paystub.employeeId}`, margin, yPos);
-                yPos += 6;
-            }
-            doc.text(`Role: ${paystub.employeeRole || 'N/A'}`, margin, yPos);
-            yPos += 6;
-            doc.text(`Work Type: ${paystub.workType || 'Employee'}`, margin, yPos);
-            yPos += 6;
-            if (paystub.employeeAddress) {
-                const addrLines = doc.splitTextToSize(`Address: ${paystub.employeeAddress}`, contentWidth);
-                doc.text(addrLines, margin, yPos);
-                yPos += addrLines.length * 5;
-            }
-            yPos += 8;
-
-            // Earnings Section
-            checkPageBreak(40);
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Earnings', margin, yPos);
-            yPos += 7;
-            doc.setDrawColor(200, 200, 200);
-            doc.line(margin, yPos, pageWidth - margin, yPos);
-            yPos += 5;
-
-            // Earnings Table Header
-            doc.setFillColor(lightGrayR, lightGrayG, lightGrayB);
-            doc.rect(margin, yPos - 2, contentWidth, 7, 'F');
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Earning Type', margin + 2, yPos + 4);
-            doc.text('Units', margin + 70, yPos + 4);
-            doc.text('Rate', margin + 100, yPos + 4);
-            doc.text('Amount', pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            yPos += 9;
-
-            // Earnings Rows
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'normal');
-            if (paystub.earnings.earningsBreakdown && paystub.earnings.earningsBreakdown.length > 0) {
-                paystub.earnings.earningsBreakdown.forEach((earning: any) => {
-                    checkPageBreak(6);
-                    const typeText = doc.splitTextToSize(earning.type || 'N/A', 60);
-                    doc.text(typeText, margin + 2, yPos + 4);
-                    doc.text(earning.units || '-', margin + 70, yPos + 4);
-                    doc.text(earning.rate > 0 ? `$${earning.rate.toFixed(2)}` : '-', margin + 100, yPos + 4);
-                    doc.text(`$${earning.amount.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-                    yPos += Math.max(6, typeText.length * 5);
-                });
-            } else {
-                // Fallback if no breakdown
-                checkPageBreak(6);
-                doc.text('Basic Pay', margin + 2, yPos + 4);
-                doc.text(`$${paystub.earnings.baseSalary.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-                yPos += 6;
-                if (paystub.earnings.bonus > 0) {
-                    checkPageBreak(6);
-                    doc.text('Bonus', margin + 2, yPos + 4);
-                    doc.text(`$${paystub.earnings.bonus.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-                    yPos += 6;
-                }
-                if (paystub.earnings.mileageEarnings > 0) {
-                    checkPageBreak(6);
-                    doc.text('Trip Pay / Mileage', margin + 2, yPos + 4);
-                    doc.text(`$${paystub.earnings.mileageEarnings.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-                    yPos += 6;
-                }
-            }
-
-            // Total Earnings
-            yPos += 3;
-            doc.setDrawColor(200, 200, 200);
-            doc.line(margin, yPos, pageWidth - margin, yPos);
-            yPos += 6;
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(9);
-            doc.text('Total Earnings', margin + 2, yPos + 4);
-            doc.setTextColor(greenR, greenG, greenB);
-            doc.text(`$${paystub.earnings.totalEarnings.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            doc.setTextColor(textR, textG, textB);
-            yPos += 10;
-
-            // Deductions Section
-            checkPageBreak(40);
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Deductions', margin, yPos);
-            yPos += 7;
-            doc.setDrawColor(200, 200, 200);
-            doc.line(margin, yPos, pageWidth - margin, yPos);
-            yPos += 5;
-
-            // Deductions Table Header
-            doc.setFillColor(lightGrayR, lightGrayG, lightGrayB);
-            doc.rect(margin, yPos - 2, contentWidth, 7, 'F');
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Deduction Type', margin + 2, yPos + 4);
-            doc.text('Amount', pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            yPos += 9;
-
-            // Deductions Rows
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'normal');
-            if (paystub.deductions.deductionsBreakdown && paystub.deductions.deductionsBreakdown.length > 0) {
-                paystub.deductions.deductionsBreakdown.forEach((deduction: any) => {
-                    checkPageBreak(6);
-                    const typeText = doc.splitTextToSize(deduction.type || 'N/A', 120);
-                    doc.text(typeText, margin + 2, yPos + 4);
-                    doc.setTextColor(redR, redG, redB);
-                    doc.text(`$${deduction.amount.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-                    doc.setTextColor(textR, textG, textB);
-                    yPos += Math.max(6, typeText.length * 5);
-                });
-            } else {
-                // Fallback
-                if (paystub.deductions.otherDeductions > 0) {
-                    checkPageBreak(6);
-                    doc.text('Other Deductions', margin + 2, yPos + 4);
-                    doc.setTextColor(redR, redG, redB);
-                    doc.text(`$${paystub.deductions.otherDeductions.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-                    doc.setTextColor(textR, textG, textB);
-                    yPos += 6;
-                }
-                checkPageBreak(6);
-                doc.text('Taxes', margin + 2, yPos + 4);
-                doc.setTextColor(redR, redG, redB);
-                doc.text(`$${paystub.summary.totalTaxes.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-                doc.setTextColor(textR, textG, textB);
-                yPos += 6;
-            }
-
-            // Total Deductions
-            yPos += 3;
-            doc.setDrawColor(200, 200, 200);
-            doc.line(margin, yPos, pageWidth - margin, yPos);
-            yPos += 6;
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(9);
-            doc.text('Total Deductions', margin + 2, yPos + 4);
-            doc.setTextColor(redR, redG, redB);
-            doc.text(`$${paystub.deductions.totalDeductions.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            doc.setTextColor(textR, textG, textB);
-            yPos += 12;
-
-            // Summary Section (Highlighted)
-            checkPageBreak(40);
-            doc.setFillColor(primaryR, primaryG, primaryB);
-            doc.roundedRect(margin, yPos, contentWidth, 32, 2, 2, 'F');
-            yPos += 8;
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Pay Summary', margin + 3, yPos);
-            yPos += 9;
-
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'normal');
-            doc.text('Gross Earnings:', margin + 3, yPos);
-            doc.setFont('helvetica', 'bold');
-            doc.text(`$${paystub.summary.grossPay.toFixed(2)}`, pageWidth - margin - 3, yPos, { align: 'right' });
-            yPos += 7;
-
-            doc.setFont('helvetica', 'normal');
-            doc.text('Total Deductions:', margin + 3, yPos);
-            doc.setFont('helvetica', 'bold');
-            doc.text(`$${paystub.summary.totalDeductions.toFixed(2)}`, pageWidth - margin - 3, yPos, { align: 'right' });
-            yPos += 6;
-
-            doc.setDrawColor(255, 255, 255);
-            doc.line(margin + 3, yPos, pageWidth - margin - 3, yPos);
-            yPos += 6;
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Net Pay', margin + 3, yPos);
-            doc.setFontSize(13);
-            doc.text(`$${paystub.summary.netPay.toFixed(2)}`, pageWidth - margin - 3, yPos, { align: 'right' });
-            doc.setTextColor(textR, textG, textB);
-            yPos += 15;
-
-            // YTD Summary (if available)
-            if (paystub.ytd) {
-                checkPageBreak(25);
-                doc.setFontSize(10);
-                doc.setFont('helvetica', 'bold');
-                doc.text('Year-to-Date (YTD) Summary', margin, yPos);
-                yPos += 7;
-                doc.setDrawColor(200, 200, 200);
-                doc.line(margin, yPos, pageWidth - margin, yPos);
-                yPos += 7;
-
-                doc.setFontSize(8);
-                doc.setFont('helvetica', 'normal');
-                doc.text('YTD Earnings:', margin, yPos);
-                doc.text(`$${paystub.ytd.earnings.toFixed(2)}`, margin + 70, yPos);
-                yPos += 6;
-                doc.text('YTD Deductions:', margin, yPos);
-                doc.text(`$${paystub.ytd.deductions.toFixed(2)}`, margin + 70, yPos);
-                yPos += 6;
-                doc.text('YTD Net Pay:', margin, yPos);
-                doc.setFont('helvetica', 'bold');
-                doc.text(`$${paystub.ytd.netPay.toFixed(2)}`, margin + 70, yPos);
-                yPos += 10;
-            }
-
-            // Footer
-            const footerY = pageHeight - 20;
-            doc.setDrawColor(200, 200, 200);
-            doc.line(margin, footerY, pageWidth - margin, footerY);
-
-            doc.setFontSize(7);
-            doc.setTextColor(107, 114, 128);
-            let footerTextY = footerY + 5;
-
-            if (paystub.notes) {
-                const notesLines = doc.splitTextToSize(`Notes: ${paystub.notes}`, contentWidth);
-                doc.text(notesLines, margin, footerTextY);
-                footerTextY += notesLines.length * 4;
-            }
-            if (paystub.hrName) {
-                doc.text(`HR Signature: ${paystub.hrName}`, margin, footerTextY);
-                footerTextY += 4;
-            }
-            doc.text(`Status: ${paystub.status.charAt(0).toUpperCase() + paystub.status.slice(1)}`, margin, footerTextY);
-            doc.text(`Generated: ${new Date(paystub.createdAt).toLocaleString()}`, pageWidth - margin, footerTextY, { align: 'right' });
-
-            // Generate filename
-            const fileName = `Paystub_${paystub.employeeName.replace(/\s+/g, '_')}_${paystub.paystubId || paystub._id.slice(-8)}.pdf`;
-
-            // Save PDF
-            doc.save(fileName);
+            await outputPayStatement(paystubToStatement(paystub), mode);
         } catch (error) {
             console.error('Error generating PDF:', error);
-            alert('Error generating PDF. Please try again.');
+            showNotification('error', 'Error generating the pay statement. Please try again.');
+        }
+    };
+
+    // Print / download straight from the payroll list
+    const handlePayrollStatement = async (payroll: Payroll, mode: 'download' | 'print') => {
+        setStatementBusy(`${payroll._id}-${mode}`);
+        try {
+            const response = await getPaystubByPayrollId(payroll._id);
+            if (response?.success && response.data) {
+                await handleDownloadPaystubPDF(response.data, mode);
+            } else {
+                showNotification('error', response?.message || 'Pay statement not found for this payroll');
+            }
+        } finally {
+            setStatementBusy(null);
+        }
+    };
+
+    const togglePaymentStatus = async (payroll: Payroll) => {
+        const next = payroll.paymentStatus === 'paid' ? 'pending' : 'paid';
+        const response = await updatePayrollPaymentStatus(payroll._id, { paymentStatus: next });
+        if (response?.success) {
+            showNotification('success', response.message || (next === 'paid' ? 'Marked as paid' : 'Marked as pending'));
+            fetchPayrolls();
+        } else {
+            showNotification('error', response?.message || 'Could not update payment status');
         }
     };
 
@@ -1494,6 +1203,9 @@ const PayrollManagement = () => {
         });
         // Clear attendance data when form is reset
         setAttendanceSummary(null);
+        setApplyTaxes(false);
+        setManualAdditions([]);
+        setManualDeductions([]);
     };
 
     const handleAutoGenerate = async () => {
@@ -1522,7 +1234,7 @@ const PayrollManagement = () => {
                     ...prev,
                     baseSalary: response.data.payroll.baseSalary.toString(),
                     bonus: response.data.payroll.bonus.toString(),
-                    payDate: new Date().toISOString().split('T')[0]
+                    payDate: todayLocalISO()
                 }));
                 showNotification('success', 'AI-generated payroll recommendations ready! Review and create.');
             } else {
@@ -1623,7 +1335,7 @@ const PayrollManagement = () => {
             const response = await bulkAIGenerateAllPayrolls({
                 startDate: startDate,
                 endDate: endDate.toISOString(),
-                payDate: bulkAIDateRange.payDate || new Date().toISOString().split('T')[0]
+                payDate: bulkAIDateRange.payDate || todayLocalISO()
             });
 
             if (response?.success) {
@@ -1753,7 +1465,7 @@ const PayrollManagement = () => {
             setBulkAIDateRange({
                 startDate: '',
                 endDate: '',
-                payDate: new Date().toISOString().split('T')[0]
+                payDate: todayLocalISO()
             });
             fetchPayrolls();
         } catch (error: any) {
@@ -2078,6 +1790,9 @@ const PayrollManagement = () => {
                                                 Pay Date
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase tracking-wider">
+                                                Status
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-headings uppercase tracking-wider">
                                                 Actions
                                             </th>
                                         </tr>
@@ -2127,8 +1842,33 @@ const PayrollManagement = () => {
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">
                                                         {new Date(payroll.payDate).toLocaleDateString()}
                                                     </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
+                                                        <button
+                                                            onClick={() => togglePaymentStatus(payroll)}
+                                                            className={`px-3 py-1 text-xs font-medium rounded-full ${payroll.paymentStatus === 'paid' ? 'bg-green-500/15 text-green-500' : 'bg-yellow-500/15 text-yellow-500'}`}
+                                                            title={payroll.paymentStatus === 'paid' ? 'Click to mark as pending' : 'Click to mark as paid'}
+                                                        >
+                                                            {payroll.paymentStatus === 'paid' ? 'Paid' : 'Pending'}
+                                                        </button>
+                                                    </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium" onClick={(e) => e.stopPropagation()}>
                                                         <div className="flex items-center justify-end gap-1">
+                                                            <button
+                                                                onClick={() => handlePayrollStatement(payroll, 'print')}
+                                                                disabled={statementBusy !== null}
+                                                                className="p-2 hover:bg-[var(--accent-blue)]/10 rounded-lg transition-colors disabled:opacity-50"
+                                                                title="Print Pay Statement"
+                                                            >
+                                                                <Printer size={18} className='text-[var(--accent-blue)]' />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handlePayrollStatement(payroll, 'download')}
+                                                                disabled={statementBusy !== null}
+                                                                className="p-2 hover:bg-[var(--accent-blue)]/10 rounded-lg transition-colors disabled:opacity-50"
+                                                                title="Download Pay Statement (PDF)"
+                                                            >
+                                                                <Download size={18} className='text-[var(--accent-blue)]' />
+                                                            </button>
                                                             <button
                                                                 onClick={() => openViewModal(payroll)}
                                                                 className="text-green-600 hover:text-green-900 p-2 hover:bg-[var(--accent-blue)]/10 rounded-lg transition-colors"
@@ -2316,7 +2056,7 @@ const PayrollManagement = () => {
                                                     {/* Auto-calculate salary suggestion if employee has hourly rate */}
                                                     {(() => {
                                                         const selectedEmployee = employees.find(emp => emp._id === formData.userId);
-                                                        const hourlyRate = selectedEmployee?.details?.hourlyRate;
+                                                        const hourlyRate = Number(selectedEmployee?.details?.hourlyRate) || Number(selectedEmployee?.details?.payRate) || 0;
 
                                                         if (hourlyRate && attendanceSummary.totalHours > 0) {
                                                             const suggestedSalary = attendanceSummary.regularHours * hourlyRate;
@@ -2621,12 +2361,35 @@ const PayrollManagement = () => {
                                         </div>
                                     )}
 
+                                    {/* One-off additions / deductions - each needs a memo */}
+                                    {formData.userId && (
+                                        <PayAdjustments
+                                            title="Other Additions & Deductions (this payroll only)"
+                                            additions={manualAdditions}
+                                            deductions={manualDeductions}
+                                            onChange={(add, ded) => { setManualAdditions(add); setManualDeductions(ded); }}
+                                        />
+                                    )}
+
                                     {/* Tax Section */}
                                     <div className="bg-card p-6 rounded-lg border border-theme">
                                         <h5 className="text-lg font-semibold text-headings mb-4 flex items-center gap-2">
                                             <DollarSign size={20} className="text-[var(--accent-navyblue)]" />
                                             Tax Information
                                         </h5>
+
+                                        <label className="flex items-start gap-3 mb-4 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={applyTaxes}
+                                                onChange={(e) => setApplyTaxes(e.target.checked)}
+                                                className="mt-1 h-4 w-4"
+                                            />
+                                            <span>
+                                                <span className="text-sm font-medium text-headings">Deduct taxes on this payroll</span>
+                                                <span className="block text-xs text-secondary">Leave unticked to pay without any tax deduction. Tick only if you remit these taxes to the government.</span>
+                                            </span>
+                                        </label>
 
                                         <div className="mb-4">
                                             <label className="block text-sm font-medium text-headings mb-2">
@@ -2643,7 +2406,7 @@ const PayrollManagement = () => {
                                             </select>
                                         </div>
 
-                                        {formData.country === 'Canada' && (
+                                        {applyTaxes && formData.country === 'Canada' && (
                                             <div className="space-y-4">
                                                 <h6 className="text-sm font-semibold text-headings mb-3">Canada Taxes</h6>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2741,7 +2504,7 @@ const PayrollManagement = () => {
                                             </div>
                                         )}
 
-                                        {formData.country === 'USA' && (
+                                        {applyTaxes && formData.country === 'USA' && (
                                             <div className="space-y-4">
                                                 <h6 className="text-sm font-semibold text-headings mb-3">United States Taxes</h6>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2908,9 +2671,11 @@ const PayrollManagement = () => {
                                         const manualBonus = parseFloat(formData.bonus || '0');
                                         const grossEarnings = baseSalary + manualBonus + totalAdditions;
 
-                                        // Calculate taxes
+                                        // Calculate taxes (only when "Deduct taxes" is ticked)
                                         let totalTax = 0;
-                                        if (formData.country === 'Canada') {
+                                        if (!applyTaxes) {
+                                            totalTax = 0;
+                                        } else if (formData.country === 'Canada') {
                                             totalTax =
                                                 parseFloat(formData.federalIncomeTaxCA || '0') +
                                                 parseFloat(formData.provincialIncomeTaxCA || '0') +
@@ -2959,7 +2724,7 @@ const PayrollManagement = () => {
                                                             )}
                                                             {totalAdditions > 0 && (
                                                                 <div className="flex justify-between">
-                                                                    <span>Additions ({employeeAdditions.length}):</span>
+                                                                    <span>Additions ({employeeAdditions.length + manualAdditions.length}):</span>
                                                                     <span>+${totalAdditions.toFixed(2)}</span>
                                                                 </div>
                                                             )}
@@ -2972,7 +2737,7 @@ const PayrollManagement = () => {
                                                     {totalDeductions > 0 && (
                                                         <div className="pl-4 text-xs text-red-200">
                                                             <div className="flex justify-between">
-                                                                <span>Deductions ({employeeDeductions.length}):</span>
+                                                                <span>Deductions ({employeeDeductions.length + manualDeductions.length}):</span>
                                                                 <span>-${totalDeductions.toFixed(2)}</span>
                                                             </div>
                                                         </div>
@@ -3572,6 +3337,13 @@ const PayrollManagement = () => {
                                             <Download size={18} />
                                             Download PDF
                                         </button>
+<button
+                                            onClick={() => handleDownloadPaystubPDF(selectedPaystub, 'print')}
+                                            className="px-6 py-3 bg-[var(--accent-navyblue)] hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                                        >
+                                            <Printer size={18} />
+                                            Print
+                                        </button>
                                         <button
                                             onClick={() => {
                                                 setShowPaystubModal(false);
@@ -4049,7 +3821,7 @@ const PayrollManagement = () => {
                                             setBulkAIDateRange({
                                                 startDate: '',
                                                 endDate: '',
-                                                payDate: new Date().toISOString().split('T')[0]
+                                                payDate: todayLocalISO()
                                             });
                                         }}
                                         className="text-secondary hover:text-secondary p-2 hover:bg-[rgba(15,31,23,0.03)] rounded-lg transition-colors"
@@ -4361,7 +4133,7 @@ const PayrollManagement = () => {
     setBulkAIDateRange({
       startDate: '',
       endDate: '',
-      payDate: new Date().toISOString().split('T')[0]
+      payDate: todayLocalISO()
     });
   }}
 className="flex-1 px-4 py-2 bg-card hover:bg-gray-200 text-headings border border-gray-300 dark:border-gray-600 rounded-lg transition-colors font-medium"

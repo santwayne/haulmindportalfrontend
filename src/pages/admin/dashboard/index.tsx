@@ -641,7 +641,13 @@ const Index = () => {
                                         zoomControl={false}
                                     >
                                         <MapController center={mapCenter} zoom={mapZoom} />
-                                        <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
+                                        {/* OpenStreetMap tiles (same as the GPS pages) darkened with CSS. The CARTO tiles
+                                            used before show an "API key required" watermark without a key. */}
+                                        <TileLayer
+                                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                            attribution='&copy; OpenStreetMap contributors'
+                                            className="dark-map-tiles"
+                                        />
 
                                         {/* Active orders with real GPS */}
                                         {activeOrders.map((order, i) => {

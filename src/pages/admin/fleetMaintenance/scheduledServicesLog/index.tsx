@@ -72,6 +72,7 @@ interface ScheduledService {
   externalMechanicCompany?: string;
   externalMechanicPhone?: string;
   externalMechanicEmail?: string;
+  maintenanceOrderId?: string | null;
 }
 
 interface UnitOption {
@@ -97,9 +98,14 @@ const getServiceTypeLabel = (value: string, customServices?: Array<{ name: strin
   const match = DEFAULT_SERVICE_TYPE_OPTIONS.find(option => option.value === value);
   if (match) return match.label;
 
-  // Fallback: format the value
-  return value.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+  // Fallback: format the value ("dpf-cleaning" → "DPF Cleaning")
+  return value
+    .replace(/-/g, ' ')
+    .replace(/\b\w+/g, (word) => (SERVICE_ACRONYMS.has(word.toUpperCase()) ? word.toUpperCase() : word.charAt(0).toUpperCase() + word.slice(1)));
 };
+
+// Trucking abbreviations that should stay upper case in typed service types
+const SERVICE_ACRONYMS = new Set(['DPF', 'DEF', 'EGR', 'ABS', 'PM', 'CVIP', 'DOT', 'MTO', 'AC', 'HVAC', 'APU', 'ECM', 'VIN', 'NSC', 'CVSA', 'PTO', 'SCR', 'DOC', 'TPMS', 'ELD', 'GPS', 'LED', 'OEM']);
 
 const formatDate = (dateString?: string) => {
   if (!dateString) return 'N/A';
@@ -146,6 +152,10 @@ const ScheduledServicesLog: React.FC = () => {
   const [showServiceDetails, setShowServiceDetails] = useState(false);
   const [customServices, setCustomServices] = useState<Array<{ name: string }>>([]);
   const [serviceTypeOptions, setServiceTypeOptions] = useState<Array<{ label: string; value: string }>>([]);
+  // What the user typed in the Service Type box (the saved value is its kebab-case form)
+  const [serviceTypeText, setServiceTypeText] = useState('');
+  // Service types typed freely on past services, so they can be filtered too (kept as the list is filtered)
+  const [typedServiceTypes, setTypedServiceTypes] = useState<string[]>([]);
   const [mechanics, setMechanics] = useState<Array<{ _id: string; name: string }>>([]);
 
   // Refs for scrollbar synchronization
@@ -285,6 +295,7 @@ const ScheduledServicesLog: React.FC = () => {
       externalMechanicCompany: (service as any).externalMechanicCompany || undefined,
       externalMechanicPhone: (service as any).externalMechanicPhone || undefined,
       externalMechanicEmail: (service as any).externalMechanicEmail || undefined,
+      maintenanceOrderId: service.maintenanceOrderId || null,
     };
   }, []);
 
@@ -563,6 +574,9 @@ const ScheduledServicesLog: React.FC = () => {
     const allServices = [...services, ...samsaraServices];
 
     const filtered = allServices.filter((service) => {
+      // Completed tasks move to the Maintenance Orders Log once they are logged there
+      if (service.status === 'completed' && service.maintenanceOrderId) return false;
+
       const matchesSearch =
         !searchTerm ||
         service.unitNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -709,10 +723,12 @@ const ScheduledServicesLog: React.FC = () => {
       if (!service.serviceDate) return false;
       const serviceDate = new Date(service.serviceDate);
       serviceDate.setHours(0, 0, 0, 0);
-      return serviceDate >= thirtyDaysAgo;
+      // Last 30 days only — a completed service dated in the future isn't "recent activity"
+      return serviceDate >= thirtyDaysAgo && serviceDate <= today;
     });
 
     const recentActivity = recentServices.length;
+    const totalCompleted = services.filter((service) => service.status === 'completed').length;
 
     // Get most recent service date
     const mostRecentDate = recentServices.length > 0
@@ -737,6 +753,7 @@ const ScheduledServicesLog: React.FC = () => {
       incomingByStatus,
       unitsNeedingMaintenance,
       recentActivity,
+      totalCompleted,
       mostRecentDate,
       topServiceType: topServiceType ? `${topServiceType[0]} (${topServiceType[1]})` : null
     };
@@ -842,7 +859,7 @@ const ScheduledServicesLog: React.FC = () => {
     setFormData({
       serviceDate: new Date().toISOString().split('T')[0],
       unitNo: '',
-      serviceType: (serviceTypeOptions[0]?.value || '') as VehicleServiceType,
+      serviceType: '' as VehicleServiceType,
       odometer: '',
       invoiceNo: '',
       notes: '',
@@ -856,8 +873,30 @@ const ScheduledServicesLog: React.FC = () => {
       externalMechanicPhone: '',
       externalMechanicEmail: '',
     });
+    setServiceTypeText('');
     setShowAddModal(true);
   };
+
+  useEffect(() => {
+    setTypedServiceTypes((prev) => {
+      // With "All Types" the list holds every service, so it is the full set of types in use
+      // (a type nobody uses any more drops out of the filter). With a type filter on, keep the
+      // other types we already know so the dropdown does not shrink to one entry.
+      const next = new Set(filterServiceType === 'all' ? [] : prev);
+      services.forEach((sv) => { if (sv.serviceType) next.add(sv.serviceType); });
+      const arr = Array.from(next);
+      return arr.length === prev.length && arr.every((v) => prev.includes(v)) ? prev : arr;
+    });
+  }, [services, filterServiceType]);
+
+  const filterTypeOptions = useMemo(() => {
+    const known = new Set(serviceTypeOptions.map((o) => o.value));
+    const extra = typedServiceTypes
+      .filter((v) => !known.has(v))
+      .map((v) => ({ label: getServiceTypeLabel(v, customServices), value: v }))
+      .sort((x, y) => x.label.localeCompare(y.label));
+    return [...serviceTypeOptions, ...extra];
+  }, [serviceTypeOptions, typedServiceTypes, customServices]);
 
   const handleEditService = (service: ScheduledService) => {
     setNotification(null);
@@ -881,6 +920,7 @@ const ScheduledServicesLog: React.FC = () => {
       }
     }
 
+    setServiceTypeText(getServiceTypeLabel(service.serviceType, customServices));
     setFormData({
       serviceDate: service.serviceDate ? service.serviceDate.split('T')[0] : new Date().toISOString().split('T')[0],
       unitNo: service.unitNo,
@@ -1118,7 +1158,7 @@ const ScheduledServicesLog: React.FC = () => {
                 )}
                 <div className="flex items-center justify-between text-sm pt-1.5 border-t border-theme">
                   <span className="text-secondary">Total Completed</span>
-                  <span className="font-semibold text-headings">{summaryStats.recentActivity}</span>
+                  <span className="font-semibold text-headings">{summaryStats.totalCompleted}</span>
                 </div>
               </div>
             </div>
@@ -1168,13 +1208,9 @@ const ScheduledServicesLog: React.FC = () => {
                   onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                 >
                   <option className='form-option' value="all">All Types</option>
-                  {serviceTypeOptions.length > 0 ? (
-                    serviceTypeOptions.map(type => (
-                      <option className='form-option' key={type.value} value={type.value}>{type.label}</option>
-                    ))
-                  ) : (
-                    <option className='form-option' value="" disabled>No services configured</option>
-                  )}
+                  {filterTypeOptions.map(type => (
+                    <option className='form-option' key={type.value} value={type.value}>{type.label}</option>
+                  ))}
                 </select>
 
                 {/* Mechanic Type Filter */}
@@ -1720,36 +1756,29 @@ const ScheduledServicesLog: React.FC = () => {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-headings mb-2">Service Type *</label>
-                        {serviceTypeOptions.length === 0 ? (
-                          <div className="w-full px-4 py-2 border border-yellow-300 bg-card rounded-lg">
-                            <p className="text-sm text-yellow-800">
-                              No services configured. Please add services in{' '}
-                              <a
-                                href="/admin/company"
-                                target="_blank"
-                                className="underline font-semibold hover:text-yellow-900"
-                              >
-                                Company Settings
-                              </a>
-                              {' '}first.
-                            </p>
-                          </div>
-                        ) : (
-                          <select
-                            value={formData.serviceType}
-                            onChange={(e) => setFormData({ ...formData, serviceType: e.target.value as VehicleServiceType })}
-                            className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
-                            style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
-                            onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
-                            onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
-                            required
-                          >
-                            <option className='form-option' value="">Select Service Type</option>
-                            {serviceTypeOptions.map(type => (
-                              <option className='form-option' key={type.value} value={type.value}>{type.label}</option>
-                            ))}
-                          </select>
-                        )}
+                        {/* Client (12 Nov): service type is typed freely ("Service B truck inspection", "DOT", ...).
+                            Saved service types from Maintenance Settings are offered as suggestions. */}
+                        <input
+                          list="scheduled-service-type-options"
+                          value={serviceTypeText}
+                          onChange={(e) => {
+                            const text = e.target.value;
+                            setServiceTypeText(text);
+                            const known = serviceTypeOptions.find((o) => o.label.toLowerCase() === text.trim().toLowerCase());
+                            setFormData({ ...formData, serviceType: (known ? known.value : nameToServiceType(text)) as VehicleServiceType });
+                          }}
+                          placeholder="Type a service, e.g. Service B truck inspection"
+                          className="w-full px-4 py-2 border border-theme rounded-lg focus:ring-2 focus:border-transparent"
+                          style={{ '--tw-ring-color': '#047857' } as React.CSSProperties & { '--tw-ring-color': string }}
+                          onFocus={(e) => { e.target.style.borderColor = '#047857'; e.target.style.boxShadow = '0 0 0 2px rgba(4,120,87, 0.2)'; }}
+                          onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
+                          required
+                        />
+                        <datalist id="scheduled-service-type-options">
+                          {serviceTypeOptions.map(type => (
+                            <option key={type.value} value={type.label} />
+                          ))}
+                        </datalist>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-headings mb-2">Odometer/Hour</label>

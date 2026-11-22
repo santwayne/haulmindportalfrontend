@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { message, Modal, Input, Select, Button, Switch, Tag, Tooltip, Dropdown } from 'antd';
 import { getAllPlans, createPlan, updatePlan, deletePlan } from '../../../axios/api/superadmin';
+import { validateTiers } from '../../../utils/planPricing';
 
 interface TruckTier {
   minTrucks: number;
@@ -91,6 +92,7 @@ const Billing = () => {
   const [sortType, setSortType] = useState<SortType>('name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [previewTab, setPreviewTab] = useState<'monthly' | '6months' | 'annual'>('monthly');
+  const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
 
   const [formData, setFormData] = useState({
@@ -214,6 +216,27 @@ const Billing = () => {
         message.error('Plan name is required');
         return;
       }
+      if (formData.planType === 'monthly' && tierError) {
+        message.error(tierError);
+        return;
+      }
+
+      const tiers = formData.monthly?.truckPricing?.tiers;
+      if (Array.isArray(tiers) && tiers.length > 0) {
+        const sorted = [...tiers].sort((a: any, b: any) => a.minTrucks - b.minTrucks);
+        if (sorted[0].minTrucks !== 1) {
+          message.error('Truck pricing tiers must start at 1 truck');
+          return;
+        }
+        for (let i = 1; i < sorted.length; i++) {
+          if (sorted[i].minTrucks !== sorted[i - 1].maxTrucks + 1) {
+            message.error(
+              `Tier gap detected: tier ${i + 1} starts at ${sorted[i].minTrucks} but tier ${i} ends at ${sorted[i - 1].maxTrucks}. Tiers must be contiguous with no gaps.`
+            );
+            return;
+          }
+        }
+      }
 
       const response = await createPlan(formData);
       if (response?.success) {
@@ -232,16 +255,22 @@ const Billing = () => {
 
   const handleEdit = (plan: Plan) => {
     setSelectedPlan(plan);
+    setEditName(plan.planName || '');
     setEditDescription(plan.description || '');
     setShowEditModal(true);
   };
 
   const handleUpdate = async () => {
     if (!selectedPlan) return;
+    const planName = editName.trim();
+    if (!planName) {
+      message.error('Plan name is required');
+      return;
+    }
     try {
-      const response = await updatePlan(selectedPlan._id, { description: editDescription });
+      const response = await updatePlan(selectedPlan._id, { planName, description: editDescription });
       if (response?.success) {
-        message.success('Description updated successfully');
+        message.success('Plan updated successfully');
         setShowEditModal(false);
         fetchPlans();
       } else {
@@ -373,6 +402,30 @@ const Billing = () => {
   const updateTier = (idx: number, field: keyof TruckTier, value: number | string) => {
     updateTruckPricing('tiers', (formData.monthly.truckPricing?.tiers || []).map((t, i) => i === idx ? { ...t, [field]: value } : t));
   };
+
+  // Tiers stay back-to-back: changing a tier's "to" moves the next tier's "from".
+  const setTiers = (tiers: TruckTier[]) => {
+    const fixed = tiers.map((t, i) => ({ ...t, minTrucks: i === 0 ? 1 : (tiers[i - 1].maxTrucks || 0) + 1 }));
+    for (let i = 1; i < fixed.length; i++) fixed[i].minTrucks = fixed[i - 1].maxTrucks + 1;
+    updateTruckPricing('tiers', fixed);
+  };
+  const updateTierMax = (idx: number, value: number) => {
+    const tiers = [...(formData.monthly.truckPricing?.tiers || [])];
+    tiers[idx] = { ...tiers[idx], maxTrucks: isNaN(value) ? 0 : value };
+    setTiers(tiers);
+  };
+  const addTier = () => {
+    const tiers = formData.monthly.truckPricing?.tiers || [];
+    const last = tiers[tiers.length - 1];
+    const from = last ? last.maxTrucks + 1 : 1;
+    setTiers([...tiers, { minTrucks: from, maxTrucks: from + 9, monthlyPrice: last ? last.monthlyPrice : 199, currency: 'CAD' }]);
+  };
+  const removeTier = (idx: number) => {
+    const tiers = formData.monthly.truckPricing?.tiers || [];
+    if (tiers.length <= 1) return;
+    setTiers(tiers.filter((_, i) => i !== idx));
+  };
+  const tierError = validateTiers(formData.monthly.truckPricing?.tiers || []);
 
   const addFeature = () => setFormData(prev => ({ ...prev, features: [...prev.features, { name: '', included: true }] }));
   const removeFeature = (idx: number) => setFormData(prev => ({ ...prev, features: prev.features.filter((_, i) => i !== idx) }));
@@ -508,7 +561,8 @@ const Billing = () => {
 
   const renderPlanFormBody = () => {
     const tp = formData.monthly.truckPricing || createDefaultTruckPricing();
-    const tiers = tp.tiers.length >= 2 ? tp.tiers : createDefaultTruckPricing().tiers;
+    const tiers = tp.tiers;
+    const lastMax = tiers[tiers.length - 1]?.maxTrucks ?? 0;
 
     return (
       <div className="space-y-6 py-4">
@@ -556,55 +610,64 @@ const Billing = () => {
           <div className="px-5 py-3 bg-card border-b border-theme flex items-center gap-2">
             <Zap className="w-4 h-4 text-blue-500" />
             <span className="text-sm font-bold text-primary">Fleet Tier Pricing</span>
-            <span className="ml-auto text-xs text-secondary bg-card border border-theme px-2 py-0.5 rounded-full">Fixed: 2 tiers</span>
+            <span className="ml-auto text-xs text-secondary bg-card border border-theme px-2 py-0.5 rounded-full">
+              {tiers.length} {tiers.length === 1 ? 'tier' : 'tiers'}
+            </span>
           </div>
 
-          <div className="p-5 grid grid-cols-2 gap-4">
-            {/* Tier 1: 1–10 Trucks */}
-            <div className="rounded-xl border-2 bg-card p-4" style={{ borderColor: 'rgba(236,253,245,0.3)' }}>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                  <Zap className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <p className="text-xs text-[#d97706] font-semibold uppercase tracking-wide">Tier 1</p>
-                  <p className="text-sm font-bold text-primary">1 – 10 Trucks</p>
-                </div>
-              </div>
-              <label className="block text-xs text-secondary mb-1">Monthly Price (CAD)</label>
-              <Input
-                type="number"
-                size="large"
-                value={tiers[0]?.monthlyPrice ?? 199}
-                min={0}
-                prefix="$"
-                addonAfter="CAD/mo"
-                onChange={(e) => updateTier(0, 'monthlyPrice', parseFloat(e.target.value) || 0)}
-              />
+          <div className="p-5 space-y-3">
+            <div className="hidden sm:grid grid-cols-[72px_1fr_1fr_1.4fr_40px] gap-3 px-3 text-xs font-medium text-secondary">
+              <span>Tier</span><span>From (trucks)</span><span>To (trucks)</span><span>Monthly price (CAD)</span><span />
             </div>
-
-            {/* Tier 2: 11–20 Trucks */}
-            <div className="rounded-xl border-2 bg-card p-4" style={{ borderColor: 'rgba(5,150,105,0.25)' }}>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 bg-[#059669] rounded-lg flex items-center justify-center">
-                  <Star className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <p className="text-xs text-[#059669] font-semibold uppercase tracking-wide">Tier 2</p>
-                  <p className="text-sm font-bold text-primary">11 – 20 Trucks</p>
-                </div>
+            {tiers.map((tier, idx) => (
+              <div key={idx} className="grid grid-cols-2 sm:grid-cols-[72px_1fr_1fr_1.4fr_40px] gap-3 items-center rounded-xl border p-3"
+                style={{ borderColor: idx % 2 === 0 ? 'rgba(236,253,245,0.3)' : 'rgba(5,150,105,0.25)' }}>
+                <span className="text-xs font-semibold uppercase tracking-wide col-span-2 sm:col-span-1"
+                  style={{ color: idx % 2 === 0 ? '#d97706' : '#059669' }}>Tier {idx + 1}</span>
+                <Input
+                  type="number"
+                  min={1}
+                  value={tier.minTrucks}
+                  // The first tier always starts at 1; later tiers start right after the one above
+                  disabled
+                  title="Starts right after the previous tier"
+                  addonAfter="from"
+                />
+                <Input
+                  type="number"
+                  min={tier.minTrucks}
+                  value={tier.maxTrucks}
+                  onChange={(e) => updateTierMax(idx, parseInt(e.target.value, 10))}
+                  addonAfter="to"
+                  aria-label={`Tier ${idx + 1} maximum trucks`}
+                />
+                <Input
+                  type="number"
+                  min={0}
+                  prefix="$"
+                  value={tier.monthlyPrice}
+                  onChange={(e) => updateTier(idx, 'monthlyPrice', parseFloat(e.target.value) || 0)}
+                  addonAfter="/mo"
+                  aria-label={`Tier ${idx + 1} monthly price`}
+                />
+                <Button
+                  danger
+                  size="small"
+                  disabled={tiers.length <= 1}
+                  onClick={() => removeTier(idx)}
+                  title={tiers.length <= 1 ? 'A plan needs at least one tier' : 'Remove tier'}
+                  icon={<Trash2 className="w-3.5 h-3.5" />}
+                />
               </div>
-              <label className="block text-xs text-secondary mb-1">Monthly Price (CAD)</label>
-              <Input
-                type="number"
-                size="large"
-                value={tiers[1]?.monthlyPrice ?? 399}
-                min={0}
-                prefix="$"
-                addonAfter="CAD/mo"
-                onChange={(e) => updateTier(1, 'monthlyPrice', parseFloat(e.target.value) || 0)}
-              />
-            </div>
+            ))}
+            {tierError && (
+              <p className="text-xs flex items-center gap-1.5" style={{ color: 'var(--accent-red)' }}>
+                <AlertCircle className="w-3.5 h-3.5" /> {tierError}
+              </p>
+            )}
+            <Button icon={<Plus className="w-3.5 h-3.5" />} onClick={addTier} disabled={tiers.length >= 20}>
+              Add Tier
+            </Button>
           </div>
 
           {/* Extra truck price */}
@@ -614,7 +677,7 @@ const Billing = () => {
                 <TrendingUp className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
                   <label className="block text-sm font-semibold text-primary mb-0.5">Additional Truck Rate</label>
-                  <p className="text-xs text-secondary mb-2">Charged per truck beyond 20 (last tier max)</p>
+                  <p className="text-xs text-secondary mb-2">Charged per truck beyond {lastMax} (last tier max)</p>
                   <Input
                     type="number"
                     value={tp.extraTruckPrice}
@@ -1298,10 +1361,12 @@ const Billing = () => {
 
       {/* Create Plan Modal */}
       <Modal open={showCreateModal} onCancel={() => { setShowCreateModal(false); resetForm(); }}
-        footer={null} width={880} title={null} styles={mStyles}>
+        footer={null} width={880} title={null} styles={mStyles} centered>
         <style>{antdDarkInputs}</style>
+        {/* Header, scrolling body and footer share the screen height so the body always scrolls */}
+        <div className="flex flex-col" style={{ maxHeight: 'calc(100vh - 48px)' }}>
         {/* Header */}
-        <div className="px-6 pt-5 pb-4 flex items-center gap-3 border-b" style={divider}>
+        <div className="px-6 pt-5 pb-4 flex items-center gap-3 border-b flex-shrink-0" style={divider}>
           <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(5,150,105,0.12)' }}>
             <Plus className="w-5 h-5" style={{ color: 'var(--accent-navyblue)' }} />
           </div>
@@ -1311,11 +1376,11 @@ const Billing = () => {
           </div>
         </div>
         {/* Body */}
-        <div className="billing-modal overflow-y-auto max-h-[68vh] px-6 py-5">
+        <div className="billing-modal overflow-y-auto flex-1 min-h-0 px-6 py-5" style={{ overscrollBehavior: 'contain' }}>
           {renderPlanFormBody()}
         </div>
         {/* Footer */}
-        <div className="px-6 pb-5 pt-4 flex justify-end gap-3 border-t" style={divider}>
+        <div className="px-6 pb-5 pt-4 flex justify-end gap-3 border-t flex-shrink-0" style={divider}>
           <button onClick={() => { setShowCreateModal(false); resetForm(); }}
             className="px-4 py-2 rounded-lg text-sm font-medium text-secondary border border-theme hover:text-primary transition-colors">
             Cancel
@@ -1327,6 +1392,7 @@ const Billing = () => {
             onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent-navyblue)'; }}>
             <Plus className="w-4 h-4" /> Create Plan
           </button>
+        </div>
         </div>
       </Modal>
 
@@ -1348,7 +1414,11 @@ const Billing = () => {
           <div className="rounded-lg px-3 py-2.5 text-sm border flex items-center gap-2"
             style={{ backgroundColor: 'rgba(245,158,11,0.08)', borderColor: 'rgba(245,158,11,0.2)', color: '#F59E0B' }}>
             <Sparkles className="w-4 h-4 flex-shrink-0" />
-            Only the plan description can be edited after creation.
+            Only the plan name and description can be edited after creation.
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-secondary">Plan Name</label>
+            <Input value={editName} onChange={(e) => setEditName(e.target.value)} placeholder="Plan name" />
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-secondary">Description</label>

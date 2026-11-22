@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Search, Plus, Edit, Trash2, Download, Filter, DollarSign, TrendingDown, TrendingUp, MapPin, FileText, Users, X, AlertCircle, CheckCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Plus, Edit, Trash2, Download, Filter, DollarSign, TrendingDown, TrendingUp, MapPin, FileText, Users, X, AlertCircle, CheckCircle, Truck, Printer } from 'lucide-react';
+import TruckSettlementModal from '../../../../components/accounts/TruckSettlementModal';
+import { outputPayStatement, settlementToStatement } from '../../../../utils/payStatementPdf';
+import { getCompany } from '../../../../axios/api/admin';
 import {
   getSettlements,
   getSettlementStats,
@@ -20,6 +24,15 @@ import { getAllDrivers } from '../../../../axios/api/driver';
 interface Settlement {
   _id: string;
   settlementId: string;
+  settlementType?: 'driver' | 'truck';
+  truck?: { _id: string; internalId?: string; unitNumber?: string; plateNumber?: string } | null;
+  truckNumber?: string;
+  payeeName?: string;
+  lineItems?: unknown[];
+  additionItems?: unknown[];
+  deductionItems?: unknown[];
+  billNumber?: string;
+  chequeNumber?: string;
   driver: {
     _id: string;
     name: string;
@@ -84,6 +97,15 @@ interface Notification {
 }
 
 export default function SettlementSystem() {
+  const navigate = useNavigate();
+  // Open a load from a settlement (its documents on the Trips page of the module we're in)
+  const openLoad = (orderId: string) => {
+    const path = window.location.pathname;
+    const base = path.startsWith('/accounts') ? '/accounts/trips'
+      : path.startsWith('/admin/accounts') ? '/admin/accounts/trips'
+        : '/admin/dispatch/trips';
+    navigate(`${base}?docsOrderId=${encodeURIComponent(orderId)}`);
+  };
   const [activeTab, setActiveTab] = useState('driver-settlements');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
@@ -99,6 +121,8 @@ export default function SettlementSystem() {
 
   // Modal states
   const [showSettlementModal, setShowSettlementModal] = useState(false);
+  const [showTruckSettlement, setShowTruckSettlement] = useState(false);
+  const [allTrucks, setAllTrucks] = useState<Record<string, unknown>[]>([]);
   const [showDeductionModal, setShowDeductionModal] = useState(false);
   const [showMilesModal, setShowMilesModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -207,6 +231,7 @@ export default function SettlementSystem() {
         );
         console.log('✅ Fetched vehicles:', activeVehicles.length, 'out of', response.data.length, activeVehicles);
         setVehicles(activeVehicles);
+        setAllTrucks(response.data);
       } else {
         console.warn('⚠️ No vehicles found or invalid response:', response);
         setVehicles([]);
@@ -217,6 +242,18 @@ export default function SettlementSystem() {
     }
   };
 
+
+  // Print / download an owner-operator pay statement for a settlement
+  const handleSettlementStatement = async (settlement: Settlement, mode: 'download' | 'print') => {
+    try {
+      const companyRes = await getCompany();
+      const company = companyRes?.data || companyRes?.company || {};
+      await outputPayStatement(settlementToStatement(settlement, company), mode);
+    } catch (error) {
+      console.error('Error generating settlement statement:', error);
+      showNotification('error', 'Could not generate the settlement statement');
+    }
+  };
 
   // Fetch settlements
   const fetchSettlements = async () => {
@@ -508,7 +545,9 @@ export default function SettlementSystem() {
   // Filter data based on search
   const filteredSettlements = settlements.filter(s =>
     s.settlementId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    s.driver?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    s.driver?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (s.payeeName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (s.truckNumber || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const filteredDeductions = deductions.filter(d =>
@@ -574,6 +613,16 @@ export default function SettlementSystem() {
                 >
                   <Plus className="w-4 h-4" />
                   New Settlement Generation
+                </button>
+              )}
+              {activeTab === 'driver-settlements' && (
+                <button
+                  onClick={() => setShowTruckSettlement(true)}
+                  className="ml-2 px-4 py-2 hover:shadow-lg hover:scale-105 transform duration-200 !text-white rounded-lg transition-all flex items-center gap-2 bg-[var(--accent-navyblue)]"
+                  title="Owner-operator settlement for all work done by a truck"
+                >
+                  <Truck className="w-4 h-4" />
+                  Settle by Truck (O/O)
                 </button>
               )}
             </div>
@@ -759,7 +808,14 @@ export default function SettlementSystem() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">
                           {formatPayPeriod(settlement.payPeriod.startDate, settlement.payPeriod.endDate)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">{settlement.driver?.name || 'Unknown'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary">
+                          {settlement.payeeName || settlement.driver?.name || 'Unknown'}
+                          {(settlement.truckNumber || settlement.truck) && (
+                            <span className="ml-2 px-2 py-0.5 text-[10px] rounded-full bg-[var(--accent-blue)]/15 text-[var(--accent-blue)]">
+                              Truck #{settlement.truckNumber || settlement.truck?.internalId || settlement.truck?.unitNumber}
+                            </span>
+                          )}
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${settlement.status === 'Paid' ? 'bg-green-100 text-green-800' :
                             settlement.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
@@ -774,12 +830,26 @@ export default function SettlementSystem() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-secondary">${settlement.netPay.toLocaleString()}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleSettlementStatement(settlement, 'print')}
+                              className="p-1 rounded hover:bg-[var(--accent-blue)]/10"
+                              title="Print Pay Statement"
+                            >
+                              <Printer className="w-4 h-4 text-[var(--accent-blue)]" />
+                            </button>
+                            <button
+                              onClick={() => handleSettlementStatement(settlement, 'download')}
+                              className="p-1 rounded hover:bg-[var(--accent-blue)]/10"
+                              title="Download Pay Statement (PDF)"
+                            >
+                              <Download className="w-4 h-4 text-[var(--accent-blue)]" />
+                            </button>
 
                             <button
                               onClick={() => {
                                 setEditingItem(settlement);
                                 setSettlementForm({
-                                  driver: settlement.driver._id,
+                                  driver: settlement.driver?._id || '',
                                   payPeriod: {
                                     startDate: settlement.payPeriod.startDate.split('T')[0],
                                     endDate: settlement.payPeriod.endDate.split('T')[0]
@@ -1613,6 +1683,49 @@ export default function SettlementSystem() {
                         </div>
                       </div>
                     </div>
+
+                    {/* Loads in this settlement - each one opens the load (client 19 Nov) */}
+                    {Array.isArray(selectedItem.lineItems) && selectedItem.lineItems.length > 0 && (
+                      <div className="bg-card rounded-lg p-4 border border-theme">
+                        <h4 className="text-sm font-bold text-headings mb-3 uppercase tracking-wide">Loads ({selectedItem.lineItems.length})</h4>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm">
+                            <thead className="text-xs text-secondary uppercase">
+                              <tr className="border-b border-theme">
+                                <th className="px-2 py-2 text-left">Load #</th>
+                                <th className="px-2 py-2 text-left">Type</th>
+                                <th className="px-2 py-2 text-left">Driver(s)</th>
+                                <th className="px-2 py-2 text-left">From</th>
+                                <th className="px-2 py-2 text-left">To</th>
+                                <th className="px-2 py-2 text-right">Miles</th>
+                                <th className="px-2 py-2 text-right">Amount</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {(selectedItem.lineItems as any[]).map((l, i) => {
+                                const orderId = typeof l.order === 'object' && l.order ? l.order._id : l.order;
+                                return (
+                                  <tr
+                                    key={`${orderId || 'line'}-${i}`}
+                                    onClick={() => orderId && openLoad(String(orderId))}
+                                    className={`border-b border-theme/50 ${orderId ? 'cursor-pointer hover:bg-[rgba(5,150,105,0.06)]' : ''}`}
+                                    title={orderId ? 'Open this load' : ''}
+                                  >
+                                    <td className="px-2 py-2 font-medium text-[#059669]">{l.loadNumber || (l.order?.orderNumber) || '—'}</td>
+                                    <td className="px-2 py-2">{l.tripType || '—'}</td>
+                                    <td className="px-2 py-2">{l.driverNames || '—'}</td>
+                                    <td className="px-2 py-2">{l.origin || '—'}</td>
+                                    <td className="px-2 py-2">{l.destination || '—'}</td>
+                                    <td className="px-2 py-2 text-right">{Number(l.miles || 0).toFixed(2)}</td>
+                                    <td className="px-2 py-2 text-right">${Number(l.amount || 0).toFixed(2)}</td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
                   </>
                 )}
 
@@ -1749,6 +1862,14 @@ export default function SettlementSystem() {
           </div>
         )
       }
+
+      {/* Settle by Truck (O/O). Must sit outside the Detail View Modal, or it only exists while that modal is open */}
+      <TruckSettlementModal
+        open={showTruckSettlement}
+        trucks={allTrucks}
+        onClose={() => setShowTruckSettlement(false)}
+        onCreated={(msg) => { showNotification('success', msg); fetchSettlements(); }}
+      />
     </div >
   );
 }

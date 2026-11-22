@@ -11,6 +11,7 @@ import {
   FaBan,
   FaEdit,
   FaTrash,
+  FaPlus,
   FaEye,
   FaFilter,
   FaSearch,
@@ -18,10 +19,13 @@ import {
   FaFlagUsa,
   FaTimes,
   FaChevronLeft,
-  FaChevronRight
+  FaChevronRight,
+  FaPaperclip,
+  FaFilePdf
 } from 'react-icons/fa';
 import {
   getCvsaInspections,
+  getCvsaInspectionById,
   getCvsaInspectionStats,
   createCvsaInspection,
   updateCvsaInspection,
@@ -30,7 +34,10 @@ import {
 import { getAllVehicles } from '../../../../axios/api/vehicle';
 import { listDriver } from '../../../../axios/api/distapcher';
 import { FLEET_COLORS } from '../../fleetMaintenance/colorUtils';
+import { FileDown } from 'lucide-react';
+import { downloadExcel, summarySheet, countBy, fmtDate, titleCase, monthKey, yesNo } from '../../../../utils/excelExport';
 import AddressSearch from '../../../../components/common/AddressSearch';
+import { extractCvsaReport } from '../../../../axios/api/carrierProfiles';
 
 const ACCENT_PRIMARY = FLEET_COLORS.primary;
 
@@ -284,6 +291,93 @@ const CvsaInspection: React.FC = () => {
     fetchDrivers();
   }, []);
 
+  // Excel export: all inspections for the selected country matching the current filters
+  const [exporting, setExporting] = useState<boolean>(false);
+  const handleExportInspections = async () => {
+    setExporting(true);
+    try {
+      const res = await getCvsaInspections({
+        country: activeTab,
+        status: statusFilter !== 'all' ? statusFilter : undefined,
+        search: searchQuery || undefined,
+        page: 1,
+        limit: 10000
+      });
+      const rows: Inspection[] = res?.success ? (res.data || []) : [];
+      const violationRows = rows.flatMap(i => (i.violations || []).map(v => ({ i, v })));
+      const oos = rows.filter(i => i.status === 'out-of-service' || i.outOfServiceIssued).length;
+      const country = activeTab === 'usa' ? 'USA' : 'Canada';
+
+      await downloadExcel(`CVSA-Inspections-${country}`, [
+        {
+          name: 'Inspections',
+          rows,
+          columns: [
+            { header: 'Inspection ID', width: 16, value: i => i.inspectionId },
+            { header: 'Report #', width: 16, value: i => i.reportNumber },
+            { header: 'Country', width: 10, value: i => (i.country || '').toUpperCase() },
+            { header: 'Date', width: 14, value: i => fmtDate(i.date) },
+            { header: 'Time', width: 10, value: i => i.timeOfInspection },
+            { header: 'Level', width: 8, value: i => i.inspectionLevel },
+            { header: 'Jurisdiction', width: 12, value: i => i.jurisdiction },
+            { header: 'Location', width: 22, value: i => i.location },
+            { header: 'Status', width: 14, value: i => titleCase(i.status) },
+            { header: 'Driver', width: 22, value: i => getDriverName(i.driver) || 'N/A' },
+            { header: 'Driver Licence #', width: 16, value: i => i.driverLicenseNumber },
+            { header: 'Vehicle', width: 22, value: i => getVehicleInfo(i.vehicle) },
+            { header: 'Inspector', width: 18, value: i => i.inspectorName },
+            { header: 'Violations', width: 10, value: (i: Inspection) => (i.violations || []).length },
+            { header: 'Violation Codes', width: 30, value: i => (i.violations || []).map((v: Violation) => v.code).filter(Boolean).join(', ') },
+            { header: 'OOS Issued', width: 10, value: i => yesNo(i.outOfServiceIssued) },
+            { header: 'OOS Released', width: 14, value: i => fmtDate(i.outOfServiceReleaseDate) },
+            { header: 'Defect Repair Needed', width: 12, value: i => yesNo(i.defectRepairNeeded) },
+            { header: 'USDOT #', width: 12, value: i => i.carrierUSDOTNumber },
+            { header: 'MC #', width: 12, value: i => i.carrierMotorCarrierNumber },
+            { header: 'Notes', width: 30, value: i => i.notes },
+          ]
+        },
+        {
+          name: 'Violations',
+          rows: violationRows,
+          columns: [
+            { header: 'Inspection ID', width: 16, value: r => r.i.inspectionId },
+            { header: 'Date', width: 14, value: r => fmtDate(r.i.date) },
+            { header: 'Driver', width: 22, value: r => getDriverName(r.i.driver) || 'N/A' },
+            { header: 'Vehicle', width: 22, value: r => getVehicleInfo(r.i.vehicle) },
+            { header: 'Code', width: 12, value: r => r.v.code },
+            { header: 'Description', width: 40, value: r => r.v.description },
+            { header: 'Severity', width: 12, value: r => titleCase(r.v.severity) },
+          ]
+        },
+        summarySheet([
+          [`Country`, country],
+          ['Total inspections', rows.length],
+          ['Out-of-service', oos],
+          ['Total violations', violationRows.length],
+          ['', ''],
+          ['BY STATUS', ''],
+          ...countBy(rows, i => titleCase(i.status)),
+          ['', ''],
+          ['BY LEVEL', ''],
+          ...countBy(rows, i => (i.inspectionLevel ? `Level ${i.inspectionLevel}` : undefined)),
+          ['', ''],
+          ['VIOLATIONS BY SEVERITY', ''],
+          ...countBy(violationRows, r => titleCase(r.v.severity)),
+          ['', ''],
+          ['BY DRIVER', ''],
+          ...countBy(rows, i => getDriverName(i.driver)),
+          ['', ''],
+          ['BY MONTH', ''],
+          ...countBy(rows, i => monthKey(i.date)).sort((a, b) => a[0].localeCompare(b[0])),
+        ]),
+      ]);
+    } catch (error) {
+      console.error('Error exporting inspections:', error);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   // Function to refresh inspections and stats
   const refreshData = async (useFilters = true, page = currentPage, limit = pageSize) => {
     try {
@@ -505,9 +599,67 @@ const CvsaInspection: React.FC = () => {
     setShowViewModal(true);
   };
 
+  // Quick PDF / image attach for an existing inspection (table row or detail view)
+  const attachInputRef = useRef<HTMLInputElement>(null);
+  const [attachTarget, setAttachTarget] = useState<Inspection | null>(null);
+  const [attachingId, setAttachingId] = useState<string | null>(null);
+
+  const openAttachPicker = (inspection: Inspection) => {
+    setAttachTarget(inspection);
+    attachInputRef.current?.click();
+  };
+
+  const reloadInspection = async (id: string) => {
+    await refreshData(true, currentPage, pageSize);
+    const fresh = await getCvsaInspectionById(id);
+    if (fresh?.success && fresh.data) {
+      setSelectedInspection((prev) => (prev && prev._id === id ? fresh.data : prev));
+    }
+  };
+
+  const handleAttachFiles = async (files: File[]) => {
+    const target = attachTarget;
+    if (!target || files.length === 0) return;
+    const formData = new FormData();
+    files.forEach((file) => formData.append('documents', file));
+    setAttachingId(target._id);
+    try {
+      const res = await updateCvsaInspection(target._id, formData);
+      if (res?.success) {
+        addNotification('success', `${files.length} file${files.length === 1 ? '' : 's'} attached to ${target.inspectionId || 'inspection'}`);
+        await reloadInspection(target._id);
+      } else {
+        addNotification('error', res?.message || 'Failed to attach file');
+      }
+    } catch (error: any) {
+      addNotification('error', error?.message || 'Failed to attach file');
+    } finally {
+      setAttachingId(null);
+      setAttachTarget(null);
+    }
+  };
+
+  const handleRemoveDocument = async (inspection: Inspection, documentUrl: string) => {
+    const formData = new FormData();
+    formData.append('removeDocuments', JSON.stringify([documentUrl]));
+    setAttachingId(inspection._id);
+    try {
+      const res = await updateCvsaInspection(inspection._id, formData);
+      if (res?.success) {
+        addNotification('success', 'Document removed');
+        await reloadInspection(inspection._id);
+      } else {
+        addNotification('error', res?.message || 'Failed to remove document');
+      }
+    } finally {
+      setAttachingId(null);
+    }
+  };
+
   const resetForm = () => {
     setInspectionForm({
-      country: 'canada',
+      // Default to the tab the user is on, so an inspection added from the USA tab is saved as USA
+      country: activeTab,
       date: '',
       location: '',
       status: 'pass',
@@ -532,7 +684,56 @@ const CvsaInspection: React.FC = () => {
     });
   };
 
+  // Read a CVSA inspection report (PDF/photo) and fill the Add Inspection form with it.
+  // Nothing is saved until the user checks the form and clicks Save.
+  const [readingReport, setReadingReport] = useState(false);
+  const [reportNote, setReportNote] = useState<string | null>(null);
+  const handleReadReport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setReadingReport(true);
+    setReportNote(null);
+    const res = await extractCvsaReport(file);
+    setReadingReport(false);
+    if (!res?.success || !res.data) {
+      addNotification('error', res?.message || 'Could not read the report. Please fill the form by hand.');
+      return;
+    }
+    const r = res.data;
+    setInspectionForm(prev => ({
+      ...prev,
+      country: r.country || prev.country,
+      date: r.date || prev.date,
+      timeOfInspection: r.timeOfInspection || prev.timeOfInspection,
+      location: r.location || prev.location,
+      jurisdiction: r.jurisdiction || prev.jurisdiction,
+      reportNumber: r.reportNumber || prev.reportNumber,
+      inspectionLevel: r.inspectionLevel || prev.inspectionLevel,
+      status: r.result || prev.status,
+      inspectorName: r.inspectorName || prev.inspectorName,
+      driverLicenseNumber: r.driverLicenseNumber || prev.driverLicenseNumber,
+      carrierUSDOTNumber: r.carrierUSDOTNumber || prev.carrierUSDOTNumber,
+      carrierMotorCarrierNumber: r.carrierMotorCarrierNumber || prev.carrierMotorCarrierNumber,
+      outOfServiceIssued: r.outOfServiceIssued || r.result === 'out-of-service' || prev.outOfServiceIssued,
+      notes: [prev.notes, r.notes].filter(Boolean).join('\n'),
+      vehicle: r.matchedVehicleId || prev.vehicle,
+      driver: r.matchedDriverId || prev.driver,
+      violations: r.violations.length
+        ? r.violations.map((v, i) => ({ _id: `new-${Date.now()}-${i}`, code: v.code || '', description: v.description || '', severity: v.severity || 'minor' }))
+        : prev.violations,
+      // Keep the report itself with the inspection
+      documents: [...(prev.documents || []), file]
+    }));
+    const missing: string[] = [];
+    if (!r.matchedVehicleId) missing.push(`truck${r.vehiclePlate || r.vehicleUnitNumber ? ` (report says ${r.vehiclePlate || r.vehicleUnitNumber})` : ''}`);
+    if (!r.matchedDriverId) missing.push(`driver${r.driverName ? ` (report says ${r.driverName})` : ''}`);
+    if (r.country && r.country !== activeTab) setActiveTab(r.country);
+    setReportNote(`Filled from ${file.name}. Check every field before saving.${missing.length ? ` Please pick the ${missing.join(' and ')} — no exact match in your records.` : ''}`);
+  };
+
   const handleAddInspection = () => {
+    setReportNote(null);
     resetForm();
     setShowAddModal(true);
   };
@@ -591,6 +792,74 @@ const CvsaInspection: React.FC = () => {
     return '';
   };
 
+  const updateViolation = (index: number, patch: Partial<Violation>) => {
+    setInspectionForm(prev => ({
+      ...prev,
+      violations: (prev.violations || []).map((v, i) => (i === index ? { ...v, ...patch } : v)),
+    }));
+  };
+
+  const renderViolationsEditor = () => (
+    <div>
+      <div className="flex items-center justify-between mb-2">
+        <label className="block text-sm font-medium text-primary">Violations</label>
+        <button
+          type="button"
+          onClick={() => setInspectionForm(prev => ({
+            ...prev,
+            violations: [...(prev.violations || []), { _id: `new-${Date.now()}`, code: '', description: '', severity: 'minor' }],
+          }))}
+          className="flex items-center gap-1 text-sm font-medium text-[var(--accent-navyblue)]"
+        >
+          <FaPlus size={12} /> Add Violation
+        </button>
+      </div>
+      {(inspectionForm.violations || []).length === 0 && (
+        <p className="text-xs text-secondary">No violations added yet.</p>
+      )}
+      <div className="space-y-2">
+        {(inspectionForm.violations || []).map((violation, index) => (
+          <div key={violation._id || index} className="grid grid-cols-2 sm:grid-cols-[1fr_2fr_1fr_auto] gap-2 items-center">
+            <input
+              type="text"
+              aria-label="Violation code"
+              placeholder="Code (required)"
+              value={violation.code}
+              onChange={(e) => updateViolation(index, { code: e.target.value })}
+              className="px-3 py-2 text-sm border border-theme rounded-lg"
+            />
+            <input
+              type="text"
+              aria-label="Violation description"
+              placeholder="Description (required)"
+              value={violation.description}
+              onChange={(e) => updateViolation(index, { description: e.target.value })}
+              className="px-3 py-2 text-sm border border-theme rounded-lg"
+            />
+            <select
+              aria-label="Violation severity"
+              value={violation.severity}
+              onChange={(e) => updateViolation(index, { severity: e.target.value as Violation['severity'] })}
+              className="px-3 py-2 text-sm border border-theme rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+            >
+              <option value="minor">Minor</option>
+              <option value="major">Major</option>
+              <option value="critical">Critical</option>
+            </select>
+            <button
+              type="button"
+              aria-label="Remove violation"
+              onClick={() => setInspectionForm(prev => ({ ...prev, violations: (prev.violations || []).filter((_, i) => i !== index) }))}
+              className="p-2"
+            >
+              <FaTrash size={14} className="text-[var(--accent-red)]" />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   const getDriverName = (driver: Inspection['driver']): string => {
     if (typeof driver === 'string') {
       const d = drivers.find(d => d._id === driver);
@@ -618,7 +887,8 @@ const CvsaInspection: React.FC = () => {
       !!inspectionForm.location &&
       !!inspectionForm.status &&
       !!inspectionForm.vehicle &&
-      !!inspectionForm.driver
+      !!inspectionForm.driver &&
+      (inspectionForm.violations || []).every(v => !!v.code.trim() && !!v.description.trim())
     );
   };
 
@@ -722,6 +992,9 @@ const CvsaInspection: React.FC = () => {
           formData.append(`violations[${i}][description]`, v.description);
           formData.append(`violations[${i}][severity]`, v.severity);
         });
+      } else if (selectedInspection?.violations?.length) {
+        // Every violation was removed: send an empty list so they are cleared
+        formData.append('violations', '[]');
       }
       if (inspectionForm.notes) formData.append('notes', inspectionForm.notes);
       if (inspectionForm.reportNumber) formData.append('reportNumber', inspectionForm.reportNumber);
@@ -833,6 +1106,19 @@ const CvsaInspection: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-10 bg-main" >
+      {/* Hidden picker used by the "Attach PDF" buttons */}
+      <input
+        ref={attachInputRef}
+        type="file"
+        accept=".pdf,.jpg,.jpeg,.png"
+        multiple
+        className="hidden"
+        onChange={(e) => {
+          const files = Array.from(e.target.files || []);
+          e.target.value = '';
+          handleAttachFiles(files);
+        }}
+      />
       {/* Toast Notifications Container - High z-index to be above modal */}
       <div className="fixed top-4 right-4 z-[10002] flex flex-col gap-3 max-w-md">
         {notifications.map(notification => (
@@ -926,6 +1212,14 @@ const CvsaInspection: React.FC = () => {
 
 
 
+                <button
+                  onClick={handleExportInspections}
+                  disabled={exporting}
+                  title="Export to Excel"
+                  className="w-10 h-10 !text-white rounded-lg flex items-center justify-center bg-[var(--accent-navyblue)] hover:bg-[var(--accent-navyblue)] transition-colors shadow-md disabled:opacity-60"
+                >
+                  <FileDown className={`w-5 h-5 ${exporting ? 'animate-pulse' : ''}`} />
+                </button>
                 <button
                   onClick={handleAddInspection}
 
@@ -1323,6 +1617,19 @@ const CvsaInspection: React.FC = () => {
                           <td className="px-4 py-3 whitespace-nowrap text-sm font-medium sticky right-0 bg-card z-10" onClick={(e) => e.stopPropagation()}>
                             <div className="flex gap-2">
                               <button
+                                onClick={() => openAttachPicker(inspection)}
+                                disabled={attachingId === inspection._id}
+                                className="relative text-[var(--accent-color)] p-2 hover:bg-[var(--accent-soft)] rounded-lg transition-colors disabled:opacity-50"
+                                title={inspection.documents?.length ? `${inspection.documents.length} document(s) attached — click to attach more` : 'Attach PDF'}
+                              >
+                                <FaPaperclip size={16} className={inspection.documents?.length ? 'text-[var(--accent-blue)]' : 'text-headings'} />
+                                {!!inspection.documents?.length && (
+                                  <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-[var(--accent-blue)] text-white text-[10px] leading-4 text-center">
+                                    {inspection.documents.length}
+                                  </span>
+                                )}
+                              </button>
+                              <button
                                 onClick={() => handleViewInspection(inspection)}
                                 className="text-[var(--accent-color)] hover:text-[var(--accent-dark)] p-2 hover:bg-[var(--accent-soft)] rounded-lg transition-colors"
                                 title="View Details"
@@ -1593,25 +1900,43 @@ const CvsaInspection: React.FC = () => {
                 )}
 
                 {/* Documentation */}
-                {(selectedInspection.documentLink || (selectedInspection.documents && selectedInspection.documents.length > 0)) && (
+                {(
                   <div className="bg-[var(--accent-soft)] rounded-lg p-3">
-                    <h4 className="text-xs font-bold text-primary mb-2">Documentation</h4>
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-xs font-bold text-primary">Documentation</h4>
+                      <button
+                        type="button"
+                        onClick={() => openAttachPicker(selectedInspection)}
+                        disabled={attachingId === selectedInspection._id}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[var(--accent-navyblue)] !text-white text-xs hover:opacity-90 disabled:opacity-50"
+                      >
+                        <FaPaperclip size={11} /> {attachingId === selectedInspection._id ? 'Uploading…' : 'Upload PDF'}
+                      </button>
+                    </div>
                     {selectedInspection.documents && selectedInspection.documents.length > 0 ? (
                       <div className="space-y-2">
                         {selectedInspection.documents.map((doc: any, index: number) => {
                           const documentUrl = doc.signedUrl || doc.documentUrl;
-                          const fileName = doc.documentUrl?.split('/').pop() || `Document ${index + 1}`;
+                          const fileName = (doc.documentUrl?.split('/').pop() || `Document ${index + 1}`).replace(/^\d{10,}-/, '');
                           return (
-                            <div key={index}>
-                              <label className="block text-xs font-medium text-secondary mb-0.5">Document {index + 1}</label>
+                            <div key={index} className="flex items-center justify-between gap-2">
                               <a
                                 href={documentUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-sm font-semibold text-[var(--accent-color)] hover:text-[var(--accent-dark)] underline break-all cursor-pointer"
+                                className="flex items-center gap-2 text-sm font-semibold text-[var(--accent-color)] hover:text-[var(--accent-dark)] underline break-all cursor-pointer"
                               >
-                                {fileName}
+                                <FaFilePdf className="flex-shrink-0" /> {fileName}
                               </a>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveDocument(selectedInspection, doc.documentUrl)}
+                                disabled={attachingId === selectedInspection._id}
+                                className="p-1 rounded hover:bg-red-500/20"
+                                title="Remove document"
+                              >
+                                <FaTrash size={11} className="text-[var(--accent-red)]" />
+                              </button>
                             </div>
                           );
                         })}
@@ -1628,7 +1953,9 @@ const CvsaInspection: React.FC = () => {
                           {selectedInspection.documentLink}
                         </a>
                       </div>
-                    ) : null}
+                    ) : (
+                      <p className="text-xs text-secondary">No documents attached yet.</p>
+                    )}
                   </div>
                 )}
 
@@ -1704,6 +2031,20 @@ const CvsaInspection: React.FC = () => {
                 </div>
                 <div className="flex-1 overflow-y-auto p-6">
                   <div className="space-y-6">
+                    {/* Fill the form from a CVSA inspection report */}
+                    <div className="rounded-lg border border-dashed border-theme p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div>
+                        <div className="text-sm font-semibold text-primary">Have the inspection report?</div>
+                        <div className="text-xs text-secondary">Upload the PDF or a photo and the form fills itself. You can also enter everything by hand.</div>
+                      </div>
+                      <label className={`px-4 py-2 rounded-lg text-sm font-semibold !text-white bg-[var(--accent-navyblue)] cursor-pointer whitespace-nowrap ${readingReport ? 'opacity-50 pointer-events-none' : ''}`}>
+                        {readingReport ? 'Reading report...' : 'Read from report (PDF/photo)'}
+                        <input type="file" accept="application/pdf,image/jpeg,image/png" className="hidden" onChange={handleReadReport} />
+                      </label>
+                    </div>
+                    {reportNote && (
+                      <div className="rounded-lg px-3 py-2 text-xs bg-amber-500/10 text-amber-600 border border-amber-500/30">{reportNote}</div>
+                    )}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-primary mb-1">Country <span className="text-red-500">*</span></label>
@@ -1712,11 +2053,8 @@ const CvsaInspection: React.FC = () => {
                           onChange={(e) => setInspectionForm(prev => ({ ...prev, country: e.target.value as 'canada' | 'usa' }))}
                           className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-[var(--accent-color)] focus:border-transparent"
                         >
-                          {activeTab === 'canada' ? (
-                            <option className='form-option' value="canada">Canada</option>
-                          ) : (
-                            <option className='form-option' value="usa">USA</option>
-                          )}
+                          <option className='form-option' value="canada">Canada</option>
+                          <option className='form-option' value="usa">USA</option>
                         </select>
                       </div>
                       <div>
@@ -1803,6 +2141,7 @@ const CvsaInspection: React.FC = () => {
                           ))}
                         </select>
                       </div>
+                      <div className="col-span-2">{renderViolationsEditor()}</div>
                       <div className="col-span-2">
                         <label className="block text-sm font-medium text-primary mb-1">Notes</label>
                         <textarea
@@ -2028,11 +2367,8 @@ const CvsaInspection: React.FC = () => {
                           onChange={(e) => setInspectionForm(prev => ({ ...prev, country: e.target.value as 'canada' | 'usa' }))}
                           className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-[var(--accent-color)] focus:border-transparent"
                         >
-                          {(inspectionForm.country || selectedInspection?.country || activeTab) === 'canada' ? (
-                            <option value="canada">Canada</option>
-                          ) : (
-                            <option value="usa">USA</option>
-                          )}
+                          <option value="canada">Canada</option>
+                          <option value="usa">USA</option>
                         </select>
                       </div>
                       <div>
@@ -2088,6 +2424,7 @@ const CvsaInspection: React.FC = () => {
                           ))}
                         </select>
                       </div>
+                      <div className="col-span-2">{renderViolationsEditor()}</div>
                       <div className="col-span-2">
                         <label className="block text-sm font-medium text-primary mb-1">Notes</label>
                         <textarea value={inspectionForm.notes || ''} onChange={(e) => setInspectionForm(prev => ({ ...prev, notes: e.target.value }))} className="w-full px-3 py-2 border border-theme rounded-lg focus:ring-2 focus:ring-[var(--accent-color)] focus:border-transparent" rows={3} />

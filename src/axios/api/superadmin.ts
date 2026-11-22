@@ -89,6 +89,8 @@ export const assignPlanToAdmin = async (
     customAmount?: number;
     allowedRoles?: string[];
     blockedRoles?: string[];
+    paymentStatus?: 'paid' | 'pending';
+    paymentMethod?: string;
   }
 ) => {
   try {
@@ -209,6 +211,65 @@ export const getSuperAdminInvoices = async () => {
   }
 };
 
+export interface CreateInvoicePayload {
+  adminId: string;
+  planId?: string;
+  planName?: string;
+  billingCycle: 'monthly' | '6-months' | 'yearly' | 'one-time' | 'installment';
+  amount: number;
+  taxAmount?: number;
+  discountAmount?: number;
+  currency?: string;
+  paymentStatus: 'pending' | 'paid';
+  paymentMethod?: string;
+  transactionId?: string;
+  subscriptionStartDate: string;
+  subscriptionEndDate?: string;
+  notes?: string;
+}
+
+// ✅ Create an invoice by hand (offline payment, custom charge, renewal)
+export const createSuperAdminInvoice = async (data: CreateInvoicePayload) => {
+  try {
+    const res: AxiosResponse = await apiClient.post('superadmin/invoices', data);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return (error as Error).response?.data;
+  }
+};
+
+// ✅ Mark an invoice paid / pending / refunded, or cancel it
+export const updateSuperAdminInvoice = async (
+  id: string,
+  data: {
+    paymentStatus?: 'pending' | 'paid' | 'failed' | 'refunded';
+    invoiceStatus?: 'generated' | 'cancelled';
+    paymentMethod?: string;
+    transactionId?: string;
+    notes?: string;
+  }
+) => {
+  try {
+    const res: AxiosResponse = await apiClient.patch(`superadmin/invoices/${id}`, data);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return (error as Error).response?.data;
+  }
+};
+
+// ✅ Email an invoice to the customer with its PDF attached
+export const emailSuperAdminInvoice = async (id: string, data: { to: string; pdfBase64: string }) => {
+  try {
+    const res: AxiosResponse = await apiClient.post(`superadmin/invoices/${id}/email`, data);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return (error as Error).response?.data;
+  }
+};
+
 // ============ SYSTEM SETTINGS ============
 
 // ✅ Get Super Admin Settings
@@ -246,3 +307,36 @@ export const getAllowedRolesForAdmin = async () => {
   }
 };
 
+
+// ── Website contact-form leads (logistiqinnovations.ca/contact) ──────────────
+export interface ContactInquiry {
+  _id: string;
+  name: string;
+  email: string;
+  company?: string;
+  fleetSize?: string;
+  message: string;
+  language?: 'en' | 'fr';
+  emailSent?: boolean;
+  emailError?: string;
+  status: 'new' | 'contacted' | 'closed';
+  createdAt: string;
+}
+
+export const getContactInquiries = async (): Promise<{ success: boolean; data: ContactInquiry[]; message?: string }> => {
+  try {
+    const res: AxiosResponse = await apiClient.get('superadmin/contact-inquiries');
+    return res.data;
+  } catch (error) {
+    return { success: false, data: [], message: (error as Error).response?.data?.message || 'Failed to load inquiries' };
+  }
+};
+
+export const updateContactInquiryStatus = async (id: string, status: ContactInquiry['status']) => {
+  try {
+    const res: AxiosResponse = await apiClient.patch(`superadmin/contact-inquiries/${id}/status`, { status });
+    return res.data as { success: boolean; data?: ContactInquiry; message?: string };
+  } catch (error) {
+    return { success: false, message: (error as Error).response?.data?.message || 'Failed to update' };
+  }
+};

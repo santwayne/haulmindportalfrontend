@@ -49,13 +49,19 @@ const DocumentUploadNotification = ({ notification, onClose, userRole = 'admin' 
   }
 
   const handleClick = () => {
-    // Navigate to the order page based on user role
-    const basePath = userRole === 'dispatcher' ? '/dispatch/trips' : '/admin/dispatch/trips';
-    const targetUrl = `${basePath}`;
-    
-    console.log(`📍 Navigating to: ${targetUrl} (role: ${userRole})`);
-    console.log(`📍 User role: ${userRole}, basePath: ${basePath}`);
-    navigate(targetUrl);
+    // Open this load's documents (client 19 Nov: clicking the notification went to the
+    // Trips home page instead of the load). The Trips page reads ?docsOrderId= and opens
+    // the documents of that order. Stay inside the module the user is in, so an
+    // Accounts user isn't bounced to their dashboard by the /admin route guard.
+    const path = window.location.pathname;
+    const basePath = userRole === 'dispatcher' || path.startsWith('/dispatch')
+      ? '/dispatch/trips'
+      : path.startsWith('/accounts')
+        ? '/accounts/trips'
+        : path.startsWith('/admin/accounts')
+          ? '/admin/accounts/trips'
+          : '/admin/dispatch/trips';
+    navigate(`${basePath}?docsOrderId=${encodeURIComponent(notification.orderId)}`);
     onClose();
   };
 

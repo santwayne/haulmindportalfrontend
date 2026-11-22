@@ -16,22 +16,27 @@ import {
   FaCalendarAlt,
   FaTrash,
   FaImage,
-  FaPrint,
   FaVideo,
   FaSave,
   FaChevronDown,
   FaEdit,
+  FaDownload,
+  FaLock,
+  FaLockOpen,
 
 } from 'react-icons/fa';
 import { FaInfoCircle } from 'react-icons/fa';
 import {
   createIncident,
   getIncidents,
+  updateIncident,
   deleteIncident,
   updateInvestigation,
   updateInjuryRecord,
 
 } from '../../../../axios/api/healthSafety';
+import AddressSearch from '../../../../components/common/AddressSearch';
+import { downloadIncidentReport, downloadIncidentRegister } from '../../../../utils/incidentReportPdf';
 
 
 
@@ -128,6 +133,12 @@ interface Incident {
   witnessStatements?: WitnessStatement[];
   capa?: CAPA;
   injuryRecord?: InjuryRecord;
+  closedAt?: string | null;
+  closedByName?: string | null;
+  closureNotes?: string | null;
+  workerStatements?: any[];
+  witnessReports?: any[];
+  wcbClaimNumber?: string;
   investigation?: {
     investigationLead: string;
     rootCauseType: '5-why' | 'fishbone';
@@ -186,7 +197,7 @@ const ToastNotificationComponent = ({ notification, onClose }: { notification: T
   }, [notification.id, onClose]);
 
   return (
-    <div className={`fixed top-4 right-4 flex items-start gap-3 p-3 rounded-lg border shadow-lg z-[10000] ${bgColors[notification.type]} min-w-[300px] max-w-[400px]`}>
+    <div className={`fixed top-4 right-4 flex items-start gap-3 p-3 rounded-lg border shadow-lg z-[10050] ${bgColors[notification.type]} min-w-[300px] max-w-[400px]`}>
       <div className="flex-shrink-0 mt-0.5">
         {icons[notification.type]}
       </div>
@@ -276,6 +287,11 @@ const IncidentManagement: React.FC = () => {
   const [showIncidentForm, setShowIncidentForm] = useState(false);
   const [incidentFormType, setIncidentFormType] = useState<'Driver Injury' | 'Vehicle Accident' | 'Workplace Incident' | 'Near Miss' | null>(null);
 
+  // Close / status change state
+  const [closingIncident, setClosingIncident] = useState<Incident | null>(null);
+  const [closureNotes, setClosureNotes] = useState('');
+  const [statusSaving, setStatusSaving] = useState(false);
+
   // Delete Modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [incidentToDelete, setIncidentToDelete] = useState<string | null>(null);
@@ -348,6 +364,10 @@ const IncidentManagement: React.FC = () => {
           reportedBy: inc.reportedBy,
           reportedByRole: inc.reportedByRole,
           description: inc.description,
+          immediateActionTaken: inc.immediateActionTaken,
+          closedAt: inc.closedAt || null,
+          closedByName: inc.closedByName || null,
+          closureNotes: inc.closureNotes || null,
           hasInjury: inc.hasInjury || false,
           photoEvidence: inc.photoEvidence || [],
           videoEvidence: inc.videoEvidence || [],
@@ -371,9 +391,29 @@ const IncidentManagement: React.FC = () => {
 
 
   // Handle incident creation
+  // Blocks a second save while one is running (a fast double-click created two incidents)
+  const creatingIncidentRef = useRef(false);
   const handleCreateIncident = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!incidentFormType) return;
+    if (!incidentFormType || creatingIncidentRef.current) return;
+
+    // The location box is an address search, which the browser doesn't check as required;
+    // an empty one only came back from the server as "Missing required fields."
+    const missing = [
+      !incidentFormData.date && 'Date',
+      !incidentFormData.time && 'Time',
+      !String(incidentFormData.location || '').trim() && 'Location (type it or pick an address)',
+      !incidentFormData.locationType && 'Location Type',
+      !incidentFormData.severity && 'Severity',
+      !String(incidentFormData.reportedBy || '').trim() && 'Reported By',
+      !String(incidentFormData.description || '').trim() && 'Description',
+    ].filter(Boolean);
+    // The form has noValidate, so this list is the only check: the browser used to stop at the first empty field
+    if (missing.length) {
+      showNotification('error', `Please fill in: ${missing.join(', ')}`);
+      return;
+    }
+    creatingIncidentRef.current = true;
 
     const userInfo = getLocalUserInfo();
     const userName = userInfo?.userData?.name || userInfo?.name || 'Unknown User';
@@ -441,6 +481,7 @@ const IncidentManagement: React.FC = () => {
       showNotification('error', fullErrorMsg);
     } finally {
       setUploadingFiles(false);
+      creatingIncidentRef.current = false;
     }
   };
 
@@ -466,6 +507,38 @@ const IncidentManagement: React.FC = () => {
     } catch (error: any) {
       console.error('Error deleting incident:', error);
       showNotification('error', error?.response?.data?.message || 'Failed to delete incident');
+    }
+  };
+
+  // Change an incident's status; closing records closure notes
+  const changeIncidentStatus = async (incident: Incident, status: string, notes?: string) => {
+    const formData = new FormData();
+    formData.append('status', status);
+    if (notes !== undefined) formData.append('closureNotes', notes);
+    setStatusSaving(true);
+    try {
+      const response = await updateIncident(incident._id, formData);
+      if (response?.success) {
+        showNotification('success', status === 'closed' ? `${incident.incidentNumber} closed` : `${incident.incidentNumber} set to ${status.replace('-', ' ')}`);
+        const updated = response.data || {};
+        const merged: Incident = {
+          ...incident,
+          status: updated.status || status,
+          closedAt: updated.closedAt ?? null,
+          closedByName: updated.closedByName ?? null,
+          closureNotes: updated.closureNotes ?? null,
+        };
+        setSelectedIncidentForDetail((prev) => (prev && prev._id === incident._id ? merged : prev));
+        setClosingIncident(null);
+        setClosureNotes('');
+        await fetchIncidents();
+      } else {
+        showNotification('error', response?.message || 'Failed to update incident status');
+      }
+    } catch (error: any) {
+      showNotification('error', error?.response?.data?.message || 'Failed to update incident status');
+    } finally {
+      setStatusSaving(false);
     }
   };
 
@@ -670,6 +743,7 @@ const IncidentManagement: React.FC = () => {
                 <option value="all">All Status</option>
                 <option value="open">Open</option>
                 <option value="investigating">Investigating</option>
+                <option value="action-required">Action Required</option>
                 <option value="resolved">Resolved</option>
                 <option value="closed">Closed</option>
               </select>
@@ -834,6 +908,29 @@ const IncidentManagement: React.FC = () => {
                           >
                             <FaEye size={12} className='text-[var(--accent-blue)]' />
                           </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              downloadIncidentReport(incident);
+                            }}
+                            className="p-1.5 hover:bg-[var(--accent-navyblue)]/50 rounded-lg transition-colors"
+                            title="Download report (PDF)"
+                          >
+                            <FaDownload size={12} className="text-[var(--accent-blue)]" />
+                          </button>
+                          {incident.status !== 'closed' && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setClosureNotes('');
+                                setClosingIncident(incident);
+                              }}
+                              className="p-1.5 hover:bg-[var(--accent-navyblue)]/50 rounded-lg transition-colors"
+                              title="Close incident"
+                            >
+                              <FaLock size={12} className="text-[var(--accent-green)]" />
+                            </button>
+                          )}
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -1785,17 +1882,88 @@ const IncidentManagement: React.FC = () => {
             {/* But here it says "Related First Aid Treatment". */}
             {/* I will remove the First Aid section from the detail modal as well to be consistent with removal! */}
 
-            <div className="flex justify-end gap-3 pt-6 border-t-2 border-theme">
-              <button
-                onClick={() => setSelectedIncidentForDetail(null)}
-                className="px-6 py-3 bg-gray-200 !text-black rounded-xl font-semibold hover:bg-gray-300 transition-colors"
-              >
-                Close
-              </button>
-              <button className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2">
-                <FaPrint />
-                Print Report
-              </button>
+            {/* Closure details */}
+            {incident.status === 'closed' && (
+              <div className="bg-card border-2 border-theme rounded-xl p-6">
+                <h3 className="font-bold text-lg text-primary mb-3 flex items-center gap-2">
+                  <FaLock className="text-[var(--accent-green)]" /> Incident Closed
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-semibold text-secondary">Closed On</label>
+                    <p className="font-semibold text-primary">{incident.closedAt ? new Date(incident.closedAt).toLocaleString() : '—'}</p>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-secondary">Closed By</label>
+                    <p className="font-semibold text-primary">{incident.closedByName || '—'}</p>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="text-xs font-semibold text-secondary">Closure Notes</label>
+                    <p className="text-primary whitespace-pre-wrap">{incident.closureNotes || '—'}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-wrap justify-between items-center gap-3 pt-6 border-t-2 border-theme">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-semibold text-secondary">Status</label>
+                <select
+                  value={incident.status}
+                  disabled={statusSaving}
+                  onChange={(e) => {
+                    const next = e.target.value;
+                    if (next === 'closed') {
+                      setClosureNotes('');
+                      setClosingIncident(incident);
+                    } else {
+                      changeIncidentStatus(incident, next);
+                    }
+                  }}
+                  className="px-3 py-2 border border-theme rounded-lg text-sm bg-card"
+                >
+                  <option className="form-option" value="open">Open</option>
+                  <option className="form-option" value="investigating">Investigating</option>
+                  <option className="form-option" value="action-required">Action Required</option>
+                  <option className="form-option" value="resolved">Resolved</option>
+                  <option className="form-option" value="closed">Closed</option>
+                </select>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setSelectedIncidentForDetail(null)}
+                  className="px-6 py-3 bg-gray-200 !text-black rounded-xl font-semibold hover:bg-gray-300 transition-colors"
+                >
+                  Close Window
+                </button>
+                {incident.status === 'closed' ? (
+                  <button
+                    onClick={() => changeIncidentStatus(incident, 'open')}
+                    disabled={statusSaving}
+                    className="px-6 py-3 bg-card border border-theme text-primary rounded-xl font-semibold hover:opacity-90 transition-colors flex items-center gap-2 disabled:opacity-50"
+                  >
+                    <FaLockOpen /> Reopen Incident
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setClosureNotes('');
+                      setClosingIncident(incident);
+                    }}
+                    disabled={statusSaving}
+                    className="px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors flex items-center gap-2 disabled:opacity-50"
+                  >
+                    <FaLock /> Close Incident
+                  </button>
+                )}
+                <button
+                  onClick={() => downloadIncidentReport(incident)}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2"
+                >
+                  <FaDownload />
+                  Download Report
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1829,7 +1997,22 @@ const IncidentManagement: React.FC = () => {
             <p className="text-secondary text-xs font-medium opacity-90">Report, investigate, and track safety events</p>
           </div>
 
-          <div className="relative">
+          <div className="relative flex items-center gap-2">
+            <button
+              onClick={() => {
+                const parts = [
+                  filterType !== 'all' ? filterType : 'All types',
+                  filterStatus !== 'all' ? filterStatus.replace('-', ' ') : 'all statuses',
+                  searchTerm ? `search "${searchTerm}"` : '',
+                ].filter(Boolean);
+                downloadIncidentRegister(filteredIncidents, parts.join(' · '));
+              }}
+              disabled={filteredIncidents.length === 0}
+              className="px-3 py-2 bg-card text-primary rounded-lg shadow-sm hover:bg-card/90 transition flex items-center gap-2 font-bold text-xs border border-theme disabled:opacity-50"
+              title="Download the incidents shown below as a PDF"
+            >
+              <FaDownload size={10} /> Download Report
+            </button>
             <button
               onClick={() => setShowNewReportMenu(!showNewReportMenu)}
               className="px-3 py-2 bg-card text-[rgba(5,150,105,0.15)] rounded-lg shadow-sm hover:bg-card/90 transition flex items-center gap-2 font-bold text-xs"
@@ -1838,7 +2021,7 @@ const IncidentManagement: React.FC = () => {
             </button>
 
             {showNewReportMenu && (
-              <div className="absolute right-0 mt-2 w-64 bg-card rounded-lg shadow-xl z-50 
+              <div className="absolute right-0 top-full mt-2 w-64 bg-card rounded-lg shadow-xl z-50 
                 border border-black/10 overflow-hidden backdrop-blur-sm">
 
                 {/* Header */}
@@ -2004,7 +2187,7 @@ const IncidentManagement: React.FC = () => {
                   <FaTimes />
                 </button>
               </div>
-              <form onSubmit={handleCreateIncident} className="space-y-4">
+              <form onSubmit={handleCreateIncident} noValidate className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-primary mb-1">Date *</label>
@@ -2030,13 +2213,12 @@ const IncidentManagement: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-primary mb-1">Location *</label>
-                    <input
-                      type="text"
+                    <AddressSearch
+                      label=""
+                      placeholder="Search address or type a location…"
                       value={incidentFormData.location}
-                      onChange={(e) => setIncidentFormData({ ...incidentFormData, location: e.target.value })}
-                      required
-                      placeholder="Location"
-                      className="w-full border border-theme p-2 rounded-lg"
+                      onAddressSelect={(addr) => setIncidentFormData((prev) => ({ ...prev, location: addr.fullAddress }))}
+                      onChange={(val) => setIncidentFormData((prev) => ({ ...prev, location: val }))}
                     />
                   </div>
                   <div>
@@ -2180,64 +2362,7 @@ const IncidentManagement: React.FC = () => {
 
 
 
-        {/* Modal for Detailed Incident View */}
-        {selectedIncidentForDetail && createPortal(
-          <div className="fixed inset-0 flex justify-center items-center  p-4 bg-black/50 backdrop-blur-md">
-            <div className="bg-card rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6">
-              <div className="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 className="text-xl font-bold text-headings">Incident Detail: {selectedIncidentForDetail.incidentNumber}</h3>
-                <button onClick={() => setSelectedIncidentForDetail(null)} className="text-secondary hover:text-primary">
-                  <FaTimes />
-                </button>
-              </div>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <strong>Type:</strong> {selectedIncidentForDetail.type}
-                  </div>
-                  <div>
-                    <strong>Date/Time:</strong> {new Date(selectedIncidentForDetail.date).toLocaleDateString()} {selectedIncidentForDetail.time}
-                  </div>
-                  <div>
-                    <strong>Location:</strong> {selectedIncidentForDetail.location}
-                  </div>
-                  <div>
-                    <strong>Severity:</strong>
-                    <span
-                      className="ml-2 px-2 py-1 rounded-full text-xs font-semibold"
-                      style={{
-                        backgroundColor: getPriorityColor(selectedIncidentForDetail.severity).bg,
-                        color: getPriorityColor(selectedIncidentForDetail.severity).text
-                      }}
-                    >
-                      {selectedIncidentForDetail.severity.toUpperCase()}
-                    </span>
-                  </div>
-                  <div>
-                    <strong>Status:</strong>
-                    <span
-                      className="ml-2 px-2 py-1 rounded-full text-xs font-semibold"
-                      style={{
-                        backgroundColor: getStatusColor(selectedIncidentForDetail.status).bg,
-                        color: getStatusColor(selectedIncidentForDetail.status).text
-                      }}
-                    >
-                      {selectedIncidentForDetail.status.replace('-', ' ').toUpperCase()}
-                    </span>
-                  </div>
-                  <div>
-                    <strong>Reported By:</strong> {selectedIncidentForDetail.reportedBy} ({selectedIncidentForDetail.reportedByRole})
-                  </div>
-                </div>
-                <div>
-                  <strong>Description:</strong>
-                  <p className="mt-2 text-primary">{selectedIncidentForDetail.description}</p>
-                </div>
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
+
 
 
 
@@ -2315,6 +2440,49 @@ const IncidentManagement: React.FC = () => {
       </div>
 
       {renderIncidentDetail()}
+
+      {closingIncident && createPortal(
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-card rounded-xl shadow-2xl max-w-lg w-full p-6 border border-theme">
+            <h3 className="text-lg font-bold text-primary mb-1 flex items-center gap-2">
+              <FaLock className="text-[var(--accent-green)]" /> Close {closingIncident.incidentNumber}
+            </h3>
+            <p className="text-sm text-secondary mb-4">
+              Closing marks the incident file as complete. It can be reopened later if needed.
+            </p>
+            {closingIncident.capa && closingIncident.capa.status !== 'completed' && (
+              <p className="text-xs mb-3 p-2 rounded border border-yellow-500/40 bg-yellow-500/10 text-primary">
+                Corrective action {closingIncident.capa.capaNumber} is still {closingIncident.capa.status}.
+              </p>
+            )}
+            <label className="block text-sm font-medium text-primary mb-1">Closure notes</label>
+            <textarea
+              value={closureNotes}
+              onChange={(e) => setClosureNotes(e.target.value)}
+              rows={4}
+              placeholder="Outcome, actions completed, sign-off…"
+              className="w-full border border-theme p-2 rounded-lg text-sm"
+            />
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={() => setClosingIncident(null)}
+                disabled={statusSaving}
+                className="px-4 py-2 rounded-lg bg-gray-200 !text-black text-sm font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => changeIncidentStatus(closingIncident, 'closed', closureNotes)}
+                disabled={statusSaving}
+                className="px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-semibold hover:bg-green-700 disabled:opacity-50"
+              >
+                {statusSaving ? 'Closing…' : 'Close Incident'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
 
     </div>
   );

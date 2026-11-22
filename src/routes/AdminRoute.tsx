@@ -22,6 +22,7 @@ const CompanyDocuments = lazy(() => import("../pages/admin/dashboard/documents/i
 
 const DispatchRoutes = lazy(() => import("./AdminFeatures/DispatchRoutes"));
 const GpsVehicleRoutes = lazy(() => import("./AdminFeatures/GpsVehicleRoutes"))
+const NotFound = lazy(() => import("../pages/NotFound"))
 const DriverManagement = lazy(() => import("./AdminFeatures/HRManagementRoutes"))
 const ComplianceRoute = lazy(() => import('./AdminFeatures/CompilanceRoute'))
 const FleetMaintainRoute = lazy(() => import("./AdminFeatures/FleetMaintainRoutes"))
@@ -35,9 +36,9 @@ const ManifestRoutes = lazy(() => import("./AdminFeatures/ManifestRoutes"))
 function AdminRoute() {
   const userRole = getUserRole();
 
-  // If Maintenance Crew (Mechanics) tries to access admin routes, redirect to /mechanics (no admin prefix)
+  // If Maintenance Crew (Mechanics) tries to access admin routes, send them to their dashboard (no admin prefix)
   if (userRole === 'Maintenance Crew (Mechanics)') {
-    return <Navigate to="/mechanics/orders" replace />;
+    return <Navigate to="/mechanics/dashboard" replace />;
   }
 
   // If dispatcher tries to access admin routes, redirect to dispatcher routes
@@ -98,7 +99,9 @@ function AdminRoute() {
           <Route path="truck-profile" element={<ErrorBoundary><TruckProfile /></ErrorBoundary>} />
 
           <Route path="employees" element={<ErrorBoundary><Employees /></ErrorBoundary>} />
-          <Route path="customers" element={<ErrorBoundary><Customers /></ErrorBoundary>} />
+          <Route path="customers" element={<ErrorBoundary><Customers key="all" /></ErrorBoundary>} />
+          <Route path="carriers" element={<ErrorBoundary><Customers key="carriers" lockedCategory="Carrier" /></ErrorBoundary>} />
+          <Route path="customs-brokers" element={<ErrorBoundary><Customers key="customs-brokers" lockedCategory="Customs Broker" /></ErrorBoundary>} />
           <Route path="company" element={<ErrorBoundary><CompanyManage /></ErrorBoundary>} />
           <Route path="drivers" element={<ErrorBoundary><Driver /></ErrorBoundary>} />
           <Route path="integrations" element={<ErrorBoundary><Integrations /></ErrorBoundary>} />
@@ -144,6 +147,9 @@ function AdminRoute() {
           path="manifest/*"
           element={<ManifestRoutes />}
         />
+        {/* The GPS dashboard is shared and lives outside /admin */}
+        <Route path="gps-dashboard/*" element={<Navigate to="/gps-dashboard" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
   );

@@ -271,3 +271,15 @@ export const getMilesTrackingStats = async (params?: {
     }
 };
 
+
+
+// Owner-operator settlement by truck: every load the truck ran in the period
+export const getTruckWork = async (params: { truckId: string; startDate: string; endDate: string; ratePerMile?: number; teamRatePerMile?: number; emptyRatePerMile?: number }) => {
+    try {
+        const res: AxiosResponse = await apiClient.get(`hr/settlement/truck-work`, { params });
+        return res.data;
+    } catch (error) {
+        const err = error as Error;
+        return err.response?.data;
+    }
+};

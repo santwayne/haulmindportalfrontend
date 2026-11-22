@@ -6,6 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import { getUserRole } from "../../utils/auth";
 import { useQuickActions } from "../common/QuickAction";
+import PortalSwitcher from '../common/PortalSwitcher';
+import AttendanceWidget from '../common/AttendanceWidget';
+import DriverMessagesButton from '../chat/DriverMessagesButton';
 
 function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -100,43 +103,47 @@ function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
 
   return (
     <>
-      <header className="flex items-center justify-between px-6 py-4 shadow-sm relative z-20 bg-main">
+      <header className="flex items-center px-6 py-3 shadow-sm z-20 bg-main gap-3">
 
         {/* LEFT: Sidebar toggle + navigation */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 flex-shrink-0">
           <button onClick={onToggleSidebar} className="header-btn" title="Toggle Sidebar">
             <FaBars size={20} />
           </button>
           <button onClick={() => navigate(-1)} className="header-btn" title="Previous">
-            <ArrowLeft size={22} />
+            <ArrowLeft size={20} />
           </button>
           <button onClick={() => navigate(1)} className="header-btn" title="Next">
-            <ArrowRight size={22} />
+            <ArrowRight size={20} />
           </button>
         </div>
 
         {/* CENTER: Page Title */}
-        <div className="absolute left-1/2 -translate-x-1/2">
-          <span className="text-primary font-semibold text-lg tracking-wide">
+        <div className="flex-1 flex justify-center min-w-0">
+          <span className="text-primary font-semibold text-base tracking-wide truncate">
             {pageTitle || 'Accounts & Finance'}
           </span>
         </div>
 
-        {/* RIGHT: Search + Profile dropdown + Logout */}
-        <div className="flex items-center gap-4">
-
-          {/* Search Button */}
+        {/* RIGHT: Search + Attendance + Portal + Logout */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {/* Search — icon-only */}
           <button
             onClick={() => setIsSearchOpen(true)}
-            className="flex items-center gap-3 px-4 py-2 rounded-lg bg-[var(--bg-card)] border border-[rgba(15,31,23,0.08)] hover:border-[#10b981]/40 text-secondary hover:text-primary transition-all"
+            className="header-btn"
             title="Search (Ctrl+K)"
           >
-            <Search size={16} className="flex-shrink-0" />
-            <span className="text-sm hidden sm:block">Search...</span>
-            <kbd className="text-xs bg-[rgba(15,31,23,0.06)] px-2 py-0.5 rounded text-secondary font-mono hidden sm:block">Ctrl K</kbd>
+            <Search size={18} />
           </button>
 
+          {/* Attendance Break/Resume Widget */}
+          <AttendanceWidget />
+
+          {/* Portal Switcher */}
+          <PortalSwitcher />
+
           {/* Logout shortcut */}
+          <DriverMessagesButton className="header-btn" />
           <button onClick={handleLogoutClick} className="header-btn" title="Logout">
             <FaSignOutAlt size={18} />
           </button>

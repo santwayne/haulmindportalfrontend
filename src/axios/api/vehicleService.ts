@@ -111,6 +111,8 @@ export interface VehicleServiceResponse {
   externalMechanicCompany?: string;
   externalMechanicPhone?: string;
   externalMechanicEmail?: string;
+  /** Set when a completed service has been logged in the Maintenance Orders Log */
+  maintenanceOrderId?: string | null;
   createdAt: string;
   updatedAt: string;
 }

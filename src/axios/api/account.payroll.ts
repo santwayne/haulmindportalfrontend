@@ -286,3 +286,14 @@ export const getPaystubByPayrollId = async (payrollId: string) => {
         return err.response?.data;
     }
 };
+
+// Mark a payroll paid / pending (dashboard shows paid vs pending payrolls)
+export const updatePayrollPaymentStatus = async (id: string, data: { paymentStatus: 'paid' | 'pending'; paymentMethod?: string; chequeNumber?: string; paidAt?: string }) => {
+    try {
+        const res: AxiosResponse = await apiClient.patch(`hr/payroll/${id}/payment-status`, data);
+        return res.data;
+    } catch (error) {
+        const err = error as Error;
+        return err.response?.data;
+    }
+};

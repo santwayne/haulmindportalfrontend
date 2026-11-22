@@ -34,6 +34,8 @@ import { getAllVehicles } from '../../../../axios/api/vehicle';
 import { getAllTrailers } from '../../../../axios/api/trailer';
 import { FLEET_COLORS } from '../colorUtils';
 import AddressSearch from '../../../../components/common/AddressSearch';
+import { MONEY_FMT } from '../../../../utils/excelExport';
+import { getUserRole } from '../../../../utils/auth';
 
 const ACCENT_PRIMARY = FLEET_COLORS.primary;
 const ACCENT_GRADIENT = FLEET_COLORS.gradient;
@@ -195,6 +197,8 @@ const Notification = ({ notification, onClose }: { notification: Notification; o
 };
 
 const SparePartsInventory = () => {
+    // Mechanics use this page inside their own portal (no delete rights there)
+    const isMechanic = getUserRole() === 'Maintenance Crew (Mechanics)';
     // const [activeTab, setActiveTab] = useState('inventory');
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState<string>('');
@@ -596,7 +600,8 @@ const SparePartsInventory = () => {
 
     const handleCreateInvoice = () => {
         setShowInvoiceModal(false);
-        navigate('/admin/fleetmaintenance/invoices');
+        const path = window.location.pathname;
+        navigate(path.includes('mechanics/') ? path.replace(/\/parts\/?$/, '/invoices') : '/admin/fleetmaintenance/invoices');
     };
 
     const handleUsePart = async (e: React.FormEvent) => {
@@ -756,8 +761,8 @@ const SparePartsInventory = () => {
                 { header: 'Stock Qty', key: 'stockQty', width: 12 },
                 { header: 'Min Level', key: 'minStockLevel', width: 12 },
                 { header: 'Location', key: 'location', width: 18 },
-                { header: 'Buying Price', key: 'buyingPrice', width: 14 },
-                { header: 'Selling Price', key: 'sellingPrice', width: 14 },
+                { header: 'Buying Price', key: 'buyingPrice', width: 14, style: { numFmt: MONEY_FMT } },
+                { header: 'Selling Price', key: 'sellingPrice', width: 14, style: { numFmt: MONEY_FMT } },
                 { header: 'Purchase Date', key: 'purchaseDate', width: 16 },
                 { header: 'Supplier', key: 'supplier', width: 24 },
                 { header: 'Warranty Expiry', key: 'warrantyExpiry', width: 18 },
@@ -942,6 +947,7 @@ const SparePartsInventory = () => {
                             <FaEye size={14} className="text-green-600" />
                             View Details
                         </button>
+                        {!isMechanic && (<>
                         <div className="border-t border-theme my-1"></div>
                         <button
                             onClick={() => {
@@ -953,6 +959,7 @@ const SparePartsInventory = () => {
                             <FaTrash size={14} />
                             Delete Part
                         </button>
+                        </>)}
                     </div>
                 )}
             </div>

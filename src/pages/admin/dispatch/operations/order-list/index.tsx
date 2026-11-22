@@ -1,15 +1,18 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
-import { Edit, Plus, X, Package, DollarSign, Route, Truck, MessageCircle, File, Download, ChevronDown } from "lucide-react";
+import { Edit, Plus, X, Package, DollarSign, Route, Truck, MessageCircle, File, Download, ChevronDown, Trash2 } from "lucide-react";
 import { FaCheckCircle, FaExclamationCircle, FaTimes, FaTruck } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import NewOrderSidebar from "./NewOrderSidebar";
-import { listOrder, deleteOrder, getOrderById, updateOrder, approveOrderDocuments } from "../../../../../axios/api/distapcher";
+import { downloadExcel, summarySheet, countBy, MONEY_FMT } from "../../../../../utils/excelExport";
+import { listOrder, deleteOrder, getOrderById, updateOrder, approveOrderDocuments, getOrderAttachmentSignedUrl, uploadOrderDocumentByDispatch, updateOrderStatus } from "../../../../../axios/api/distapcher";
 import { listPlace } from "../../../../../axios/api/dispatcher.places";
 import ConfirmationModal from "../../../../../components/common/ConfirmationModal";
 import OrderChat from "../../../../../components/chat/OrderChat";
 import { getOrderUnreadMessageCount } from "../../../../../axios/api/chat";
 import { createPortal } from "react-dom";
 import { socketService } from "../../../../../services/socketService";
+import { canAccessPortal } from "../../../../../utils/portalAccess";
+import { getUserRole } from "../../../../../utils/auth";
 
 // Color constants
 const PRIMARY_GRADIENT = 'linear-gradient(90deg, #0ea5c0 0%, #1e3a8a 100%)';
@@ -277,11 +280,80 @@ interface Order {
 }
 
 const OrderList = () => {
+  // Dispatch marks Delivered, Accounts marks Completed (client request, Nov 2026). Backend enforces too.
+  const myRole = getUserRole();
+  const isOwnerRole = myRole === 'admin' || myRole === 'superadmin';
+  const canMarkDelivered = isOwnerRole || canAccessPortal('dispatch_load');
+  const canMarkCompleted = isOwnerRole || canAccessPortal('accounts');
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState<any>(null);
   const [notifications, setNotifications] = useState<ToastNotification[]>([]);
   const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; orderId: string | null }>({ show: false, orderId: null });
+  // Order documents: fresh signed links to open/print or download, and dispatch uploads (BOL etc.)
+  const [docUploadType, setDocUploadType] = useState('bol');
+  const [docUploading, setDocUploading] = useState(false);
+  // Open/print or download an order document (client retest 18 Nov: still couldn't print/download).
+  // Nothing here opens a popup any more, so no browser can block it:
+  //  - Open / Print shows the file inside the page (preview overlay). The overlay's
+  //    "Open in new tab / Print" is a real link the user clicks, which browsers always allow.
+  //  - Download navigates this tab to a signed link sent with "Content-Disposition: attachment":
+  //    the browser saves the file and the page stays where it is.
+  const [docPreview, setDocPreview] = useState<{
+    url: string;
+    name: string;
+    orderId: string;
+    attachment: { id?: string | number; _id?: string; url?: string; name?: string };
+  } | null>(null);
+  const [docOpening, setDocOpening] = useState<string | null>(null);
+  const openOrderDocument = async (
+    orderId: string,
+    attachment: { id?: string | number; _id?: string; url?: string; name?: string },
+    disposition: 'inline' | 'attachment'
+  ) => {
+    const attachmentId = attachment.id ?? attachment._id;
+    const busyKey = `${orderId}:${attachmentId}:${disposition}`;
+    setDocOpening(busyKey);
+    let url = '';
+    let signed = false;
+    try {
+      if (attachmentId !== undefined && attachmentId !== null && attachmentId !== '') {
+        const res = await getOrderAttachmentSignedUrl(orderId, String(attachmentId), disposition);
+        url = res?.data?.signedUrl || res?.data?.url || res?.signedUrl || res?.url || '';
+        signed = !!url;
+        if (!url && !attachment.url) throw new Error(res?.message || 'Document link not available');
+      }
+      // Older documents without an id: fall back to the link that came with the order
+      if (!url) url = attachment.url || '';
+      if (!url) throw new Error('Document link not available');
+
+      if (disposition === 'attachment' && signed) {
+        window.location.assign(url);
+      } else {
+        // Inline view (and downloads of old unsigned links, which would otherwise navigate away)
+        setDocPreview({ url, name: attachment.name || 'Document', orderId, attachment });
+      }
+    } catch (err) {
+      addNotification('error', (err as Error)?.message || 'Could not open the document');
+    } finally {
+      setDocOpening(null);
+    }
+  };
+  const uploadOrderDocument = async (orderId: string, file: File) => {
+    setDocUploading(true);
+    try {
+      const res = await uploadOrderDocumentByDispatch(orderId, file, docUploadType);
+      if (!res?.success) {
+        addNotification('error', res?.message || 'Upload failed');
+        return;
+      }
+      addNotification('success', 'Document uploaded');
+      const updated = await getOrderById(orderId);
+      if (updated?.success) setSelectedOrderForDocuments(updated.data);
+    } finally {
+      setDocUploading(false);
+    }
+  };
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
@@ -354,14 +426,33 @@ const OrderList = () => {
   }, [orders, showChat, chatOrderId]);
 
   // Handle document notification click - open documents modal
-  const handleDocumentNotificationClick = useCallback((orderId: string) => {
-    const order = orders.find(o => o.id === orderId);
-    if (order) {
-      console.log('📄 Opening documents modal for order:', orderId);
-      setSelectedOrderForDocuments(order);
+  const handleDocumentNotificationClick = useCallback(async (orderId: string) => {
+    // Full order (with its attachments), also when the load isn't on the page shown
+    const response = await getOrderById(orderId);
+    if (response?.success && response.data) {
+      setSelectedOrderForDocuments(response.data as any);
       setShowDocumentsModal(true);
+    } else {
+      addNotification('error', response?.message || 'Could not open the documents of this load');
     }
-  }, [orders]);
+  }, [addNotification]);
+
+  // ?docsOrderId=<id> (from the "Documents Uploaded" notification): open that load's documents.
+  // The order is fetched by id, so it opens even when it isn't on the page of the list shown.
+  useEffect(() => {
+    const docsOrderId = new URLSearchParams(location.search).get('docsOrderId');
+    if (!docsOrderId) return;
+    navigate(location.pathname, { replace: true });
+    getOrderById(docsOrderId).then((response) => {
+      if (response?.success && response.data) {
+        setSelectedOrderForDocuments(response.data as any);
+        setShowDocumentsModal(true);
+      } else {
+        addNotification('error', response?.message || 'Could not open the documents of this load');
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
 
   // Handle orderId query parameter to open chat
   useEffect(() => {
@@ -1132,10 +1223,70 @@ const OrderList = () => {
   };
 
 
+  // Report of the orders/trips currently shown (filters applied), with their documents
+  const handleDownloadOrdersReport = async () => {
+    const rows = filteredOrders;
+    if (!rows.length) {
+      addNotification('error', 'No orders to download for the current filters');
+      return;
+    }
+    const docTypes = (o: Order, ...types: string[]) =>
+      (o.attachments || []).some((a) => types.includes(String(a.type || '').toLowerCase())) ? 'Yes' : 'No';
+    const amount = (o: Order) => {
+      const n = parseFloat(String(o.totalAmount ?? '').replace(/[^0-9.-]/g, ''));
+      return Number.isFinite(n) ? n : null;
+    };
+    await downloadExcel(`Orders-Trips-${new Date().toISOString().slice(0, 10)}`, [
+      {
+        name: 'Orders & Trips',
+        rows,
+        columns: [
+          { header: 'Order #', value: (o: Order) => o.orderNo },
+          { header: 'Customer Order #', value: (o: Order) => o.custOrderNo },
+          { header: 'Trip #', value: (o: Order) => o.tripNo },
+          { header: 'Order Date', value: (o: Order) => o.orderDate },
+          { header: 'Status', value: (o: Order) => o.status },
+          { header: 'Customer', value: (o: Order) => o.customerName || o.companyName, width: 26 },
+          { header: 'Pickup Date', value: (o: Order) => o.pickupDate },
+          { header: 'Pickup Location', value: (o: Order) => o.pickupLocation, width: 32 },
+          { header: 'Pickup Ref #', value: (o: Order) => o.pickupRefNo },
+          { header: 'Delivery Date', value: (o: Order) => o.deliveryDate },
+          { header: 'Delivery Location', value: (o: Order) => o.deliveryLocation, width: 32 },
+          { header: 'Delivery Ref #', value: (o: Order) => o.deliveryRefNo },
+          { header: 'Driver', value: (o: Order) => o.driver },
+          { header: 'Co-Driver', value: (o: Order) => o.coDriver },
+          { header: 'Truck', value: (o: Order) => o.truckNo },
+          { header: 'Trailer', value: (o: Order) => o.trailerNo },
+          { header: 'Amount', value: (o: Order) => amount(o), numFmt: MONEY_FMT },
+          { header: 'Currency', value: (o: Order) => o.currency },
+          { header: 'Accounting Status', value: (o: Order) => o.accountingStatus },
+          { header: 'BOL', value: (o: Order) => docTypes(o, 'bol') },
+          { header: 'POD', value: (o: Order) => docTypes(o, 'pod', 'proof_of_delivery') },
+          { header: 'Manifest', value: (o: Order) => docTypes(o, 'manifest', 'border_manifest', 'stamped_manifest') },
+          { header: 'Documents Approved', value: (o: Order) => (o.documentsApproved ? 'Yes' : 'No') },
+        ],
+      },
+      summarySheet([
+        ['Orders', rows.length],
+        ['Downloaded', new Date().toLocaleString()],
+        ...countBy(rows, (o) => o.status, 'Status: '),
+      ]),
+    ]);
+  };
+
   return (
     <div className="p-6 bg-main min-h-screen">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-[var(--accent-navyblue)]">Order List</h1>
+        <div className="flex items-center gap-2">
+        <button
+          onClick={handleDownloadOrdersReport}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-theme text-primary hover:bg-[rgba(15,31,23,0.05)] transition-colors"
+          title="Download the orders shown (filters applied) as Excel"
+        >
+          <Download className="w-5 h-5" />
+          Download Report
+        </button>
         <button
           onClick={handleCreateOrder}
           style={{ background: PRIMARY_GRADIENT }}
@@ -1144,6 +1295,7 @@ const OrderList = () => {
           <Plus className="w-5 h-5" />
           Create Order
         </button>
+        </div>
       </div>
 
       {/* Load Board Style Filters */}
@@ -1438,19 +1590,22 @@ const OrderList = () => {
                 <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--accent-navyblue)] uppercase tracking-wider">
                   Documents
                 </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--accent-navyblue)] uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="bg-card">
               {loading ? (
                 <tr>
-                  <td colSpan={26} className="px-6 py-12 text-center text-secondary">
+                  <td colSpan={29} className="px-6 py-12 text-center text-secondary">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 mx-auto" style={{ borderBottomColor: PRIMARY_COLOR }}></div>
                     <p className="mt-2">Loading orders...</p>
                   </td>
                 </tr>
               ) : paginatedOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={26} className="px-6 py-12 text-center text-secondary">
+                  <td colSpan={29} className="px-6 py-12 text-center text-secondary">
                     <p className="text-lg font-medium">No orders found</p>
                     <p className="text-sm">Create a new order to get started</p>
                   </td>
@@ -1519,7 +1674,13 @@ const OrderList = () => {
                   const dispatcherName = (order as any).dispatcher || fullOrder.dispatcher || fullOrder.dispatcherName || '-';
 
                   // Carrier (could be from driver assignment or separate field)
-                  const carrierName = (order as any).carrier || fullOrder.carrier || fullOrder.carrierName || '-';
+                  // New orders store `carrier` as a Vendor ID and the name in `carrierName`; never show the raw ID
+                  const rawCarrier = fullOrder.carrier ?? (order as any).carrier;
+                  const isObjectId = (v: unknown) => typeof v === 'string' && /^[a-f0-9]{24}$/i.test(v);
+                  const carrierName = fullOrder.carrierName
+                    || (rawCarrier && typeof rawCarrier === 'object' ? (rawCarrier.name || rawCarrier.vendorName || rawCarrier.companyName) : '')
+                    || (rawCarrier && !isObjectId(rawCarrier) ? String(rawCarrier) : '')
+                    || '-';
 
                   // Truck, Trailer, Driver, Co-Driver
                   const truckDisplay = order.truckNo || '-';
@@ -1578,7 +1739,7 @@ const OrderList = () => {
                               const newStatus = e.target.value;
                               const previousStatus = order.status || 'quoted';
                               try {
-                                const res = await updateOrder(order.id, { status: newStatus });
+                                const res = await updateOrderStatus(order.id, newStatus);
                                 if (res?.success) {
                                   addNotification('success', 'Order status updated');
                                   fetchOrders();
@@ -1609,10 +1770,10 @@ const OrderList = () => {
                             <option value="planned" className="bg-card text-primary">Planned</option>
                             <option value="quoted" className="bg-card text-primary">Quoted</option>
                             <option value="in-delivery" className="bg-card text-primary">In Delivery</option>
-                            <option value="delivered" className="bg-card text-primary">Delivered</option>
+                            <option value="delivered" className="bg-card text-primary" disabled={!canMarkDelivered && order.status !== 'delivered'}>Delivered{!canMarkDelivered ? ' (Dispatch only)' : ''}</option>
                             <option value="pending_review" className="bg-card text-primary">Pending Review</option>
                             <option value="verification_pending" className="bg-card text-primary">Verification Pending</option>
-                            <option value="completed" className="bg-card text-primary">Completed</option>
+                            <option value="completed" className="bg-card text-primary" disabled={!canMarkCompleted && order.status !== 'completed'}>Completed{!canMarkCompleted ? ' (Accounts only)' : ''}</option>
                             <option value="canceled" className="bg-card text-red-400">Canceled</option>
                           </select>
                           <ChevronDown className={`pointer-events-none absolute right-2 w-3 h-3 opacity-60
@@ -1784,6 +1945,20 @@ const OrderList = () => {
                           );
                         })()}
                       </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        {/* The only Delete button lived in an Order Details popup that nothing opened */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteConfirm({ show: true, orderId: order.id });
+                          }}
+                          className="flex items-center gap-1 px-3 py-2 border border-red-500/50 text-red-400 rounded hover:bg-red-500/10 transition-colors text-sm"
+                          title="Delete order"
+                        >
+                          <Trash2 size={16} />
+                          Delete
+                        </button>
+                      </td>
                     </tr>
                   );
                 })
@@ -1837,7 +2012,7 @@ const OrderList = () => {
             <div className="flex-shrink-0 bg-card border-b px-6 py-4 flex items-center justify-between rounded-t-xl">
               <div>
                 <h3 className="text-xl font-bold text-primary">Order Documents</h3>
-                <p className="text-sm text-secondary mt-1">Order: {selectedOrderForDocuments.orderNo || selectedOrderForDocuments.custOrderNo || 'N/A'}</p>
+                <p className="text-sm text-secondary mt-1">Order: {(() => { const o = selectedOrderForDocuments as unknown as Record<string, string | undefined>; return o.orderNo || o.orderNumber || o.custOrderNo || o.customerOrderNo || 'N/A'; })()}</p>
               </div>
               <button
                 onClick={() => {
@@ -1908,7 +2083,40 @@ const OrderList = () => {
 
               {/* Documents List */}
               <div>
-                <div className="text-sm font-semibold text-primary mb-3">Uploaded Documents:</div>
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <div className="text-sm font-semibold text-primary">Uploaded Documents:</div>
+                  {/* Dispatch upload: BOL, POD, rate confirmation, manifest, other */}
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={docUploadType}
+                      onChange={(e) => setDocUploadType(e.target.value)}
+                      className="px-2 py-1.5 text-xs border border-theme rounded bg-card text-primary"
+                      aria-label="Document type"
+                    >
+                      <option className="form-option" value="bol">BOL</option>
+                      <option className="form-option" value="pod">POD</option>
+                      <option className="form-option" value="rate_confirmation">Rate Confirmation</option>
+                      <option className="form-option" value="manifest">Manifest</option>
+                      <option className="form-option" value="customs">Customs</option>
+                      <option className="form-option" value="other">Other</option>
+                    </select>
+                    <label className={`px-3 py-1.5 text-xs font-medium rounded border border-blue-200 text-[#059669] cursor-pointer hover:bg-blue-50 ${docUploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                      {docUploading ? 'Uploading...' : 'Upload document'}
+                      <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.doc,.docx"
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          const od = selectedOrderForDocuments as { _id?: string; id?: string } | null;
+                          const odId = od?._id || od?.id;
+                          if (f && odId) uploadOrderDocument(odId, f);
+                          e.target.value = '';
+                        }}
+                      />
+                    </label>
+                  </div>
+                </div>
                 {(() => {
                   const orderData = selectedOrderForDocuments as any;
                   const attachments = orderData?.attachments || [];
@@ -1935,6 +2143,12 @@ const OrderList = () => {
                           } else if (docType === 'border_manifest' || docType === 'manifest' || docType === 'stamped_manifest') {
                             displayName = 'Border Manifest';
                             typeLabel = 'Manifest';
+                          } else if (docType === 'bol') {
+                            displayName = 'Bill of Lading (BOL)';
+                            typeLabel = 'BOL';
+                          } else if (docType === 'rate_confirmation') {
+                            displayName = 'Rate Confirmation';
+                            typeLabel = 'Rate Conf.';
                           }
 
                           return (
@@ -1955,22 +2169,33 @@ const OrderList = () => {
                                     )}
                                   </div>
                                 </div>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (docUrl) {
-                                      console.log('🔗 Opening document with pre-signed URL');
-                                      window.open(docUrl, '_blank', 'noopener,noreferrer');
-                                    } else {
-                                      alert('Document URL not available');
-                                    }
-                                  }}
-                                  className="px-3 py-1.5 text-xs font-medium text-[#059669] hover:text-blue-700 hover:bg-blue-50 rounded border border-blue-200 transition-colors flex items-center gap-1 flex-shrink-0"
-                                  title="View Document in New Tab"
-                                >
-                                  <Download className="w-3 h-3" />
-                                  View
-                                </button>
+                                <div className="flex items-center gap-2 flex-shrink-0">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (!docUrl && !(attachment.id || attachment._id)) { addNotification('error', 'Document link not available'); return; }
+                                      openOrderDocument(orderData._id || orderData.id, attachment, 'inline');
+                                    }}
+                                    disabled={docOpening === `${orderData._id || orderData.id}:${attachment.id ?? attachment._id}:inline`}
+                                    className="px-3 py-1.5 text-xs font-medium text-[#059669] hover:bg-blue-50 rounded border border-blue-200 transition-colors flex items-center gap-1 disabled:opacity-60"
+                                    title="View or print the document"
+                                  >
+                                    <File className="w-3 h-3" />
+                                    {docOpening === `${orderData._id || orderData.id}:${attachment.id ?? attachment._id}:inline` ? 'Opening…' : 'Open / Print'}
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      openOrderDocument(orderData._id || orderData.id, attachment, 'attachment');
+                                    }}
+                                    disabled={docOpening === `${orderData._id || orderData.id}:${attachment.id ?? attachment._id}:attachment`}
+                                    className="px-3 py-1.5 text-xs font-medium text-[#059669] hover:bg-blue-50 rounded border border-blue-200 transition-colors flex items-center gap-1 disabled:opacity-60"
+                                    title="Download"
+                                  >
+                                    <Download className="w-3 h-3" />
+                                    {docOpening === `${orderData._id || orderData.id}:${attachment.id ?? attachment._id}:attachment` ? 'Preparing…' : 'Download'}
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           );
@@ -2337,6 +2562,17 @@ const OrderList = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
+                      // The delete confirmation existed but nothing opened it, so orders could not be deleted
+                      setDeleteConfirm({ show: true, orderId: selectedOrder.id });
+                      setShowOrderDetails(false);
+                    }}
+                    className="px-6 py-2.5 border border-red-500/50 text-red-400 font-medium rounded-lg hover:bg-red-500/10 transition-all"
+                  >
+                    Delete Order
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
                       handleEditOrder(selectedOrder);
                       setShowOrderDetails(false);
                     }}
@@ -2351,6 +2587,62 @@ const OrderList = () => {
           </div>
         </>
       )}
+
+      {/* Document preview (Open / Print) — shown in the page so no popup blocker is involved */}
+      {docPreview &&
+        createPortal(
+          <div
+            className="fixed inset-0 bg-black/70 flex items-center justify-center p-4"
+            style={{ zIndex: 100002 }}
+            onClick={() => setDocPreview(null)}
+          >
+            <div
+              className="bg-card rounded-lg shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-label={`Preview of ${docPreview.name}`}
+            >
+              <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-theme">
+                <span className="text-sm font-medium text-primary truncate">{docPreview.name}</span>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <a
+                    href={docPreview.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 text-xs font-medium text-[#059669] rounded border border-blue-200 hover:bg-blue-50"
+                    title="Opens the file in a new tab, where you can print it (Ctrl+P)"
+                  >
+                    Open in new tab / Print
+                  </a>
+                  <button
+                    onClick={() => openOrderDocument(docPreview.orderId, docPreview.attachment, 'attachment')}
+                    className="px-3 py-1.5 text-xs font-medium text-[#059669] rounded border border-blue-200 hover:bg-blue-50"
+                  >
+                    Download
+                  </button>
+                  <button
+                    onClick={() => setDocPreview(null)}
+                    className="p-1.5 rounded hover:bg-[rgba(15,31,23,0.08)]"
+                    aria-label="Close preview"
+                  >
+                    <FaTimes className="w-4 h-4 text-secondary" />
+                  </button>
+                </div>
+              </div>
+              <div className="flex-1 bg-white">
+                {/\.(png|jpe?g|gif|webp|bmp)(\?|$)/i.test(docPreview.name) || /\.(png|jpe?g|gif|webp|bmp)(\?|$)/i.test(docPreview.url.split('?')[0]) ? (
+                  <div className="w-full h-full overflow-auto flex items-start justify-center">
+                    <img src={docPreview.url} alt={docPreview.name} className="max-w-full h-auto" />
+                  </div>
+                ) : (
+                  <iframe src={docPreview.url} title={docPreview.name} className="w-full h-full border-0" />
+                )}
+              </div>
+            </div>
+          </div>,
+          document.body
+        )
+      }
 
       {sidebarOpen &&
         createPortal(

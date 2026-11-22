@@ -5,6 +5,7 @@ import { TrialExpiredToastProvider } from './contexts/TrialExpiredToastContext';
 import { ChatProvider } from './contexts/ChatContext';
 import { CallProvider } from './contexts/CreateCallContext';
 import { GlobalCallHandler } from './components/common/GlobalCallHandler';
+import DriverMessenger from './components/chat/DriverMessenger';
 
 function App() {
   return (
@@ -16,6 +17,10 @@ function App() {
             <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <ErrorBoundary>
                 <AppRoutes />
+              </ErrorBoundary>
+              {/* Driver message pop-ups + messenger panel for every staff department */}
+              <ErrorBoundary>
+                <DriverMessenger />
               </ErrorBoundary>
             </Router>
           </TrialExpiredToastProvider>

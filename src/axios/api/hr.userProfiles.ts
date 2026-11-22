@@ -61,6 +61,9 @@ export interface UserProfilesQuery {
   page?: number;
   limit?: number;
   timeRange?: UserProfilesTimeRange;
+  /** Custom period (YYYY-MM-DD). When both are set they override timeRange. */
+  startDate?: string;
+  endDate?: string;
 }
 
 export const fetchUserProfiles = async (

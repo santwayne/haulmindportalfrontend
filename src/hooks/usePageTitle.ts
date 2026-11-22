@@ -32,6 +32,8 @@ const SEGMENT_TITLES: Record<string, string> = {
     'scheduling': 'Trip Scheduling',
     'fleets': 'Fleets',
     'contacts': 'Customer Contacts',
+    'carriers': 'Carriers',
+    'customs-brokers': 'Customs Brokers',
     'utilization': 'Truck & Trailer Utilization',
     'revenue-per-mile': 'Revenue Per Mile',
     'deliveries': 'Deliveries',
@@ -41,6 +43,7 @@ const SEGMENT_TITLES: Record<string, string> = {
     'chat': 'Chat',
 
     // GPS
+    'gpsvehicle': 'GPS Vehicle',
     'livetracking': 'Live Tracking',
     'vehicles': 'Fleets',
     'truck': 'Truck Tracking',
@@ -97,6 +100,7 @@ const SEGMENT_TITLES: Record<string, string> = {
     'orders': 'Maintenance Orders',
     'completed-orders': 'Completed Orders',
     'services': 'Services',
+    'assign-tasks': 'Assign Tasks',
 
     // Role dashboard pages (shown for all roles except admin home)
     'dashboard': 'Dashboard',

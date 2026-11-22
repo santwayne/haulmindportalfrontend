@@ -20,10 +20,12 @@ import {
   FaTrashAlt,
   FaUpload
 } from 'react-icons/fa';
-import { getCvsaMonthlyReport, deleteOldCvsaData, uploadCarrierProfileDocument, saveCarrierProfileData, getCarrierPerformance } from '../../../../axios/api/admin';
+import { getCvsaMonthlyReport, deleteOldCvsaData, uploadCarrierProfileDocument, saveCarrierProfileData, getCarrierPerformance, getCarrierProfileImports, deleteCarrierProfileImport } from '../../../../axios/api/admin';
 import { getViolationsForMonthlyReport, getViolationStats } from '../../../../axios/api/violations';
 import jsPDF from 'jspdf';
 import DocLogo from '../../../../assets/doclogo.png';
+import { FileDown } from 'lucide-react';
+import { downloadExcel, summarySheet, titleCase } from '../../../../utils/excelExport';
 
 // Types
 interface MonthlyStats {
@@ -134,6 +136,23 @@ interface OldDataPreview {
 }
 
 
+interface CarrierProfileImportRow {
+  _id: string;
+  fileName: string | null;
+  carrierName: string | null;
+  period: string | null;
+  safetyRating: string | null;
+  uploadedAt: string | null;
+  uploadedBy: string | null;
+  inspectionCount: number;
+  firstInspection: string | null;
+  lastInspection: string | null;
+  legacy: boolean;
+}
+
+const formatShortDate = (value?: string | null) =>
+  value ? new Date(value).toLocaleDateString('en-CA', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }) : '—';
+
 const sanitizeNumber = (value: any): number => {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
@@ -174,18 +193,22 @@ const MonthlyReport: React.FC = () => {
   const [duplicateWarnings, setDuplicateWarnings] = useState<string[]>([]);
   const [carrierPerformance, setCarrierPerformance] = useState<any>(null);
   const [performanceLoading, setPerformanceLoading] = useState<boolean>(false);
+  const [previousYearData, setPreviousYearData] = useState<MonthlyStats[]>([]);
+  const [extractionIssues, setExtractionIssues] = useState<string[]>([]);
+  const [profileImports, setProfileImports] = useState<CarrierProfileImportRow[]>([]);
+  const [importToDelete, setImportToDelete] = useState<CarrierProfileImportRow | null>(null);
+  const [deletingImport, setDeletingImport] = useState<boolean>(false);
 
   // Calculate 2-year performance data statically from monthlyData
   const calculateTwoYearData = (): TwoYearData | null => {
     if (monthlyData.length === 0) return null;
 
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const lastYear = currentYear - 1;
+    // The selected year and the one before it (each fetched with the country filter)
+    const currentYear = selectedYear;
+    const lastYear = selectedYear - 1;
 
-    // Filter data for last 2 years
-    const year1Data = monthlyData.filter(d => d.year === lastYear);
-    const year2Data = monthlyData.filter(d => d.year === currentYear);
+    const year1Data = previousYearData;
+    const year2Data = monthlyData;
 
     const year1Stats = {
       totalInspections: year1Data.reduce((sum, d) => sum + d.totalInspections, 0),
@@ -270,13 +293,8 @@ const MonthlyReport: React.FC = () => {
 
       // Weighted penalty: critical=5, major=3, moderate=1
       violationPenalty = Math.min((criticalCount * 5 + majorCount * 3 + moderateCount * 1), 30);
-    } else {
-      // Fallback to estimates if no real data
-      totalTickets = Math.floor(totalInspections * 0.1);
-      speedingCount = Math.floor(totalInspections * 0.05);
-      violationPenalty = Math.min((totalTickets + speedingCount) * 2, 30);
-      totalViolations = totalTickets + speedingCount;
     }
+    // Without violation records there is no penalty — the score is the inspection pass rate alone
 
     const finalScore = Math.max(0, Math.min(100, inspectionScore - violationPenalty));
 
@@ -322,35 +340,10 @@ const MonthlyReport: React.FC = () => {
     const oldWarning = oldDataMonths.reduce((sum, d) => sum + d.warningCount, 0);
     const oldOutOfService = oldDataMonths.reduce((sum, d) => sum + d.outOfServiceCount, 0);
 
-    // Create sample preview data (static)
-    const sampleInspections = Array.from({ length: Math.min(20, totalOldInspections) }, (_, i) => ({
-      _id: `old-inspection-${i}`,
-      inspectionId: `CVSA-${twoYearsAgo.getFullYear() - 1}-${String(i + 1).padStart(4, '0')}`,
-      date: new Date(twoYearsAgo.getTime() - (i * 86400000)).toISOString(),
-      status: i % 4 === 0 ? 'pass' : i % 4 === 1 ? 'fail' : i % 4 === 2 ? 'warning' : 'out-of-service',
-      country: i % 2 === 0 ? 'canada' : 'usa',
-      location: `Location ${i + 1}`,
-      vehicle: { unitNo: `UNIT-${i + 1}`, licensePlate: `PLATE-${i + 1}` },
-      driver: { name: `Driver ${i + 1}`, email: `driver${i + 1}@example.com` },
-      inspectorName: `Inspector ${i + 1}`,
-      violationsCount: i % 3
-    }));
-
-    const estimatedOldTickets = Math.floor(totalOldInspections * 0.1);
-    const sampleTickets = Array.from({ length: Math.min(20, estimatedOldTickets) }, (_, i) => ({
-      _id: `old-ticket-${i}`,
-      ticketNumber: `TK-${twoYearsAgo.getFullYear() - 1}-${String(i + 1).padStart(4, '0')}`,
-      dateIssued: new Date(twoYearsAgo.getTime() - (i * 86400000)).toISOString(),
-      violationType: ['Speeding', 'Traffic Light', 'Parking', 'Lane Violation'][i % 4],
-      violationDescription: `Violation description ${i + 1}`,
-      status: ['paid', 'unpaid', 'dismissed', 'fight'][i % 4] as any,
-      amount: (i + 1) * 50,
-      country: i % 2 === 0 ? 'canada' : 'usa',
-      location: `Location ${i + 1}`,
-      vehicle: { unitNo: `UNIT-${i + 1}`, licensePlate: `PLATE-${i + 1}` },
-      driver: { name: `Driver ${i + 1}`, email: `driver${i + 1}@example.com` },
-      officerName: `Officer ${i + 1}`
-    }));
+    // Only counts are known here (from the monthly totals); no per-record preview is invented
+    const sampleInspections: OldDataPreview['inspections']['preview'] = [];
+    const estimatedOldTickets = 0;
+    const sampleTickets: OldDataPreview['tickets']['preview'] = [];
 
     return {
       cutoffDate: twoYearsAgo.toISOString(),
@@ -368,14 +361,8 @@ const MonthlyReport: React.FC = () => {
       tickets: {
         total: estimatedOldTickets,
         preview: sampleTickets,
-        byStatus: {
-          paid: Math.floor(estimatedOldTickets * 0.4),
-          unpaid: Math.floor(estimatedOldTickets * 0.3),
-          fight: Math.floor(estimatedOldTickets * 0.1),
-          dismissed: Math.floor(estimatedOldTickets * 0.15),
-          reduced: Math.floor(estimatedOldTickets * 0.05)
-        },
-        oldestDate: sampleTickets.length > 0 ? sampleTickets[sampleTickets.length - 1].dateIssued : null
+        byStatus: { paid: 0, unpaid: 0, fight: 0, dismissed: 0, reduced: 0 },
+        oldestDate: null
       }
     };
   };
@@ -411,10 +398,11 @@ const MonthlyReport: React.FC = () => {
   const fetchCarrierPerformance = async () => {
     setPerformanceLoading(true);
     try {
-      const response = await getCarrierPerformance();
+      const response = await getCarrierPerformance(selectedCountry === 'all' ? undefined : { country: selectedCountry });
       if (response?.success && response?.data) {
         setCarrierPerformance(response.data);
-        console.log('✅ Carrier performance data fetched:', response.data);
+      } else {
+        setCarrierPerformance(null);
       }
     } catch (error) {
       console.error('Error fetching carrier performance:', error);
@@ -423,12 +411,53 @@ const MonthlyReport: React.FC = () => {
     }
   };
 
+  const fetchProfileImports = async () => {
+    try {
+      const response = await getCarrierProfileImports();
+      setProfileImports(response?.success && Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Error fetching carrier profile uploads:', error);
+    }
+  };
+
+  const refreshAll = () => {
+    fetchMonthlyReport();
+    fetchCarrierPerformance();
+    fetchProfileImports();
+  };
+
+  const confirmDeleteImport = async () => {
+    if (!importToDelete) return;
+    setDeletingImport(true);
+    try {
+      const response = await deleteCarrierProfileImport(importToDelete._id);
+      if (response?.success) {
+        setUploadMessage({ type: 'success', text: response.message || 'Upload deleted' });
+        setImportToDelete(null);
+        refreshAll();
+      } else {
+        setUploadMessage({ type: 'error', text: response?.message || 'Failed to delete the upload' });
+      }
+    } catch (error: any) {
+      setUploadMessage({ type: 'error', text: error?.message || 'Failed to delete the upload' });
+    } finally {
+      setDeletingImport(false);
+      setTimeout(() => setUploadMessage(null), 5000);
+    }
+  };
+
   // Fetch monthly report data (defined at component level so handlers can call it)
   const fetchMonthlyReport = async () => {
     setLoading(true);
     try {
       const countryFilter = selectedCountry === 'all' ? undefined : selectedCountry;
-      const res = await getCvsaMonthlyReport(selectedYear, countryFilter);
+      const [res, prevRes] = await Promise.all([
+        getCvsaMonthlyReport(selectedYear, countryFilter),
+        getCvsaMonthlyReport(selectedYear - 1, countryFilter)
+      ]);
+      setPreviousYearData(
+        prevRes?.success && Array.isArray(prevRes?.data?.monthlyData) ? prevRes.data.monthlyData.map(normalizeMonthlyStat) : []
+      );
 
       if (res?.success && Array.isArray(res?.data?.monthlyData)) {
         const sanitized = res.data.monthlyData.map(normalizeMonthlyStat);
@@ -465,18 +494,13 @@ const MonthlyReport: React.FC = () => {
       if (response?.success) {
         setUploadMessage({
           type: 'success',
-          text: `Successfully saved! Created ${response.data?.createdCount || 0} inspection record(s).`
+          text: response.message || `Saved ${response.data?.createdCount || 0} inspection(s).`
         });
 
-        // Close modal and refresh data
         setShowExtractedDataModal(false);
         setExtractedData(null);
-
-        // Refresh data after successful save
-        setTimeout(() => {
-          fetchMonthlyReport();
-          fetchCarrierPerformance();
-        }, 1000);
+        setExtractionIssues([]);
+        refreshAll();
       } else {
         setUploadMessage({
           type: 'error',
@@ -500,6 +524,24 @@ const MonthlyReport: React.FC = () => {
     setShowExtractedDataModal(false);
     setExtractedData(null);
     setDuplicateWarnings([]);
+    setExtractionIssues([]);
+  };
+
+  // Edit / remove a row in the review table before saving
+  const updateExtractedRow = (index: number, changes: Record<string, any>) => {
+    setExtractedData((prev: any) => {
+      if (!prev) return prev;
+      const inspections = [...prev.inspections];
+      inspections[index] = { ...inspections[index], ...changes };
+      return { ...prev, inspections };
+    });
+  };
+
+  const removeExtractedRow = (index: number) => {
+    setExtractedData((prev: any) => {
+      if (!prev) return prev;
+      return { ...prev, inspections: prev.inspections.filter((_: any, i: number) => i !== index) };
+    });
   };
 
   // Handle carrier profile document upload
@@ -529,18 +571,14 @@ const MonthlyReport: React.FC = () => {
         // Show modal with extracted data
         setExtractedData(response.data.extractedData);
         setDuplicateWarnings(response.data.duplicateWarnings || []);
+        setExtractionIssues(response.data.issues || []);
         setShowExtractedDataModal(true);
       } else if (response?.success) {
-        // Legacy support: if not preview mode, save directly
         setUploadMessage({
           type: 'success',
-          text: `Successfully processed document! Created ${response.data?.createdCount || 0} inspection record(s).`
+          text: response.message || `Saved ${response.data?.createdCount || 0} inspection(s).`
         });
-
-        // Refresh data after successful upload
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
+        refreshAll();
       } else {
         setUploadMessage({
           type: 'error',
@@ -567,6 +605,10 @@ const MonthlyReport: React.FC = () => {
     fetchRealViolations();
     fetchCarrierPerformance();
   }, [selectedYear, selectedCountry]);
+
+  useEffect(() => {
+    fetchProfileImports();
+  }, []);
 
   // Update current month data when selection changes
   useEffect(() => {
@@ -851,10 +893,7 @@ const MonthlyReport: React.FC = () => {
           text: `Successfully deleted ${response.data.deletedCount} old record(s)`
         });
 
-        // Refresh data after 2 seconds
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
+        refreshAll();
       } else {
         setDeleteMessage({
           type: 'error',
@@ -876,6 +915,102 @@ const MonthlyReport: React.FC = () => {
   // Cancel deletion
   const cancelDelete = () => {
     setShowDeleteConfirm(false);
+  };
+
+  // Excel export of the Carrier Profile: monthly CVSA summary for the selected year/country,
+  // carrier performance history and violation breakdown
+  const handleDownloadExcel = async () => {
+    const months = monthlyData || [];
+    const sum = (k: keyof MonthlyStats) => months.reduce((a, m) => a + (Number(m[k]) || 0), 0);
+    const total = sum('totalInspections');
+    const pass = sum('passCount');
+    const latest = carrierPerformance?.summary?.latestRecord;
+    const trends = carrierPerformance?.trends;
+    const perfRows: Array<Record<string, any>> = Array.isArray(carrierPerformance?.monthlyData) ? carrierPerformance.monthlyData : [];
+    const vs = violationStats || {};
+    const kv = (obj: any): Array<[string, any]> =>
+      obj && typeof obj === 'object' ? Object.entries(obj).map(([k, v]) => [titleCase(k), typeof v === 'object' ? JSON.stringify(v) : v]) : [];
+    const countryLabel = selectedCountry === 'all' ? 'All' : selectedCountry.toUpperCase();
+
+    const sheets: any[] = [
+      summarySheet([
+        ['Year', selectedYear],
+        ['Country', countryLabel],
+        ['Total inspections', total],
+        ['Pass', pass],
+        ['Fail', sum('failCount')],
+        ['Warning', sum('warningCount')],
+        ['Out-of-service', sum('outOfServiceCount')],
+        ['Pass rate (inspections this period)', total ? `${((pass / total) * 100).toFixed(1)}%` : ''],
+        ['Canada inspections', sum('canadaInspections')],
+        ['USA inspections', sum('usaInspections')],
+        ['', ''],
+        ['LAST 12 MONTHS', ''],
+        ['Latest month with inspections', latest ? new Date(latest.year, latest.month - 1).toLocaleString('default', { month: 'long', year: 'numeric' }) : ''],
+        ['Pass rate (that month)', latest?.passRate != null ? `${latest.passRate}%` : ''],
+        ['OOS rate (that month)', latest?.ossRate != null ? `${latest.ossRate}%` : ''],
+        ['12-month pass rate', carrierPerformance?.summary?.avgPassRate != null ? `${carrierPerformance.summary.avgPassRate}%` : ''],
+        ['Trend', trends && trends.passRateTrend != null ? (trends.isImproving ? 'Improving' : trends.isDeclining ? 'Declining' : 'Stable') : ''],
+        ['Last 3 months pass rate', trends?.recentAvgPassRate != null ? `${trends.recentAvgPassRate}%` : ''],
+        ['Previous 3 months pass rate', trends?.previousAvgPassRate != null ? `${trends.previousAvgPassRate}%` : ''],
+        ['Safety rating (latest upload)', carrierPerformance?.summary?.lastImport?.safetyRating ?? ''],
+        ['', ''],
+        ['VIOLATIONS', ''],
+        ['Total violations', vs.total ?? ''],
+        ...kv(vs.bySeverity).map(([k, v]) => [`Severity: ${k}`, v] as [string, any]),
+        ...kv(vs.byType).map(([k, v]) => [`Type: ${k}`, v] as [string, any]),
+      ]),
+      {
+        name: 'Monthly CVSA',
+        rows: months,
+        columns: [
+          { header: 'Month', width: 14, value: (m: MonthlyStats) => m.month },
+          { header: 'Year', width: 8, value: (m: MonthlyStats) => m.year },
+          { header: 'Total', width: 10, value: (m: MonthlyStats) => m.totalInspections },
+          { header: 'Pass', width: 10, value: (m: MonthlyStats) => m.passCount },
+          { header: 'Fail', width: 10, value: (m: MonthlyStats) => m.failCount },
+          { header: 'Warning', width: 10, value: (m: MonthlyStats) => m.warningCount },
+          { header: 'Out-of-Service', width: 14, value: (m: MonthlyStats) => m.outOfServiceCount },
+          { header: 'Canada', width: 10, value: (m: MonthlyStats) => m.canadaInspections },
+          { header: 'USA', width: 10, value: (m: MonthlyStats) => m.usaInspections },
+          { header: 'Vehicles Inspected', width: 16, value: (m: MonthlyStats) => m.vehiclesInspected },
+          { header: 'Drivers Inspected', width: 16, value: (m: MonthlyStats) => m.driversInspected },
+        ],
+      },
+    ];
+    if (perfRows.length) {
+      sheets.push({
+        name: 'Last 12 Months',
+        rows: perfRows,
+        columns: [
+          { header: 'Month', width: 14, value: (m: any) => m.monthName },
+          { header: 'Year', width: 8, value: (m: any) => m.year },
+          { header: 'Inspections', width: 12, value: (m: any) => m.totalInspections },
+          { header: 'Pass', width: 8, value: (m: any) => m.passCount },
+          { header: 'Fail', width: 8, value: (m: any) => m.failCount },
+          { header: 'Warning', width: 10, value: (m: any) => m.warningCount },
+          { header: 'Out-of-Service', width: 14, value: (m: any) => m.outOfServiceCount },
+          { header: 'Pass Rate %', width: 12, value: (m: any) => m.passRate ?? '' },
+          { header: 'OOS Rate %', width: 12, value: (m: any) => m.ossRate ?? '' },
+        ],
+      });
+    }
+    // Always included, so an empty sheet reads as "no violators" rather than a missing report
+    sheets.push({
+      name: 'Top Violators',
+      rows: Array.isArray(vs.topViolators) ? vs.topViolators : [],
+      columns: [
+        { header: 'Driver', width: 24, value: (v: any) => v.driver?.name },
+        { header: 'Driver ID', width: 14, value: (v: any) => v.driver?.internalId },
+        { header: 'Violations', width: 12, value: (v: any) => v.count },
+        { header: 'Total Points', width: 12, value: (v: any) => v.totalPoints },
+      ],
+    });
+    try {
+      await downloadExcel(`Carrier-Profile-${selectedYear}-${countryLabel}`, sheets);
+    } catch (error) {
+      console.error('Error exporting carrier profile:', error);
+    }
   };
 
   // Handle PDF download
@@ -911,116 +1046,200 @@ const MonthlyReport: React.FC = () => {
       });
     } catch { }
 
-    // Header
-    doc.setFillColor(67, 56, 202);
-    doc.rect(0, 0, pageWidth, 40, 'F');
+    const countryLabel = selectedCountry === 'all' ? 'Canada & USA' : selectedCountry === 'canada' ? 'Canada' : 'USA';
+    const pct = (part: number, total: number) => (total > 0 ? `${Math.round((part / total) * 100)}%` : '—');
 
-    // Platform logo in top-left of header
+    const ensureSpace = (needed: number) => {
+      if (yPos + needed > pageHeight - 15) {
+        doc.addPage();
+        yPos = margin;
+      }
+    };
+
+    const sectionTitle = (title: string) => {
+      ensureSpace(18);
+      doc.setTextColor(30, 41, 59);
+      doc.setFontSize(13);
+      doc.setFont('helvetica', 'bold');
+      doc.text(title, margin, yPos);
+      yPos += 2;
+      doc.setDrawColor(67, 56, 202);
+      doc.setLineWidth(0.5);
+      doc.line(margin, yPos, pageWidth - margin, yPos);
+      yPos += 6;
+    };
+
+    const keyValues = (rows: Array<[string, string | number]>) => {
+      doc.setFontSize(10);
+      rows.forEach(([k, v]) => {
+        ensureSpace(6);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(100, 116, 139);
+        doc.text(k, margin, yPos);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(15, 23, 42);
+        doc.text(String(v), margin + 70, yPos);
+        yPos += 6;
+      });
+      yPos += 2;
+    };
+
+    // Simple table: column widths in mm, first column left-aligned, others right-aligned
+    const table = (headers: string[], widths: number[], rows: Array<Array<string | number>>) => {
+      const rowH = 6;
+      const drawHeader = () => {
+        doc.setFillColor(238, 242, 255);
+        doc.rect(margin, yPos - 4.5, widths.reduce((a, b) => a + b, 0), rowH, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(8.5);
+        doc.setTextColor(30, 41, 59);
+        let x = margin;
+        headers.forEach((h, i) => {
+          if (i === 0) doc.text(h, x + 1.5, yPos);
+          else doc.text(h, x + widths[i] - 1.5, yPos, { align: 'right' });
+          x += widths[i];
+        });
+        yPos += rowH;
+      };
+      ensureSpace(rowH * 3);
+      drawHeader();
+      doc.setFont('helvetica', 'normal');
+      rows.forEach((row, r) => {
+        if (yPos + rowH > pageHeight - 15) {
+          doc.addPage();
+          yPos = margin;
+          drawHeader();
+          doc.setFont('helvetica', 'normal');
+        }
+        if (r % 2 === 1) {
+          doc.setFillColor(248, 250, 252);
+          doc.rect(margin, yPos - 4.5, widths.reduce((a, b) => a + b, 0), rowH, 'F');
+        }
+        doc.setFontSize(8.5);
+        doc.setTextColor(15, 23, 42);
+        let x = margin;
+        row.forEach((cell, i) => {
+          const text = String(cell ?? '');
+          if (i === 0) doc.text(text, x + 1.5, yPos);
+          else doc.text(text, x + widths[i] - 1.5, yPos, { align: 'right' });
+          x += widths[i];
+        });
+        yPos += rowH;
+      });
+      yPos += 4;
+    };
+
+    // Header band
+    doc.setFillColor(67, 56, 202);
+    doc.rect(0, 0, pageWidth, 34, 'F');
     if (docLogoBase64) {
       doc.addImage(docLogoBase64, 'PNG', margin, 4, docLogoW, docLogoH);
     }
-
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
+    doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
-    doc.text('Carrier Profile Report', pageWidth / 2, 25, { align: 'center' });
+    doc.text('Carrier Profile Report', pageWidth / 2, 18, { align: 'center' });
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`${countryLabel} · ${selectedYear - 1}–${selectedYear} · Generated ${new Date().toLocaleString()}`, pageWidth / 2, 27, { align: 'center' });
+    yPos = 44;
 
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(10);
-    doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth / 2, 35, { align: 'center' });
-
-    yPos = 50;
-
-    // 2-Year Performance Summary
-    if (twoYearData) {
-      doc.setFontSize(16);
-      doc.setFont('helvetica', 'bold');
-      doc.text('2-Year Performance Summary', margin, yPos);
-      yPos += 10;
-
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Period: ${twoYearData.summary.period}`, margin, yPos);
-      yPos += 7;
-      doc.text(`Total Inspections: ${twoYearData.summary.totalInspections}`, margin, yPos);
-      yPos += 7;
-      doc.text(`Pass: ${twoYearData.summary.totalPass} | Fail: ${twoYearData.summary.totalFail} | Warning: ${twoYearData.summary.totalWarning} | Out of Service: ${twoYearData.summary.totalOutOfService}`, margin, yPos);
-      yPos += 7;
-      doc.text(`Overall Pass Rate: ${twoYearData.summary.overallPassRate}%`, margin, yPos);
-      yPos += 15;
-
-      // Year 1
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`Year ${twoYearData.year1.year}:`, margin, yPos);
-      yPos += 7;
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`  Inspections: ${twoYearData.year1.totalInspections} | Pass Rate: ${twoYearData.year1.passRate}%`, margin, yPos);
-      yPos += 10;
-
-      // Year 2
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`Year ${twoYearData.year2.year}:`, margin, yPos);
-      yPos += 7;
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`  Inspections: ${twoYearData.year2.totalInspections} | Pass Rate: ${twoYearData.year2.passRate}%`, margin, yPos);
-      yPos += 15;
+    // 1. Summary
+    const lastImport = carrierPerformance?.summary?.lastImport;
+    sectionTitle('Inspection Summary');
+    if (twoYearData && twoYearData.summary.totalInspections > 0) {
+      const s2 = twoYearData.summary;
+      keyValues([
+        ['Period', s2.period],
+        ['Country', countryLabel],
+        ['Total inspections', s2.totalInspections],
+        ['Pass / Fail / Warning / OOS', `${s2.totalPass} / ${s2.totalFail} / ${s2.totalWarning} / ${s2.totalOutOfService}`],
+        ['Pass rate', pct(s2.totalPass, s2.totalInspections)],
+        ['Out-of-service rate', pct(s2.totalOutOfService, s2.totalInspections)],
+        ['Safety rating (latest upload)', lastImport?.safetyRating || '—'],
+        ['Latest carrier profile upload', lastImport ? `${lastImport.fileName || 'Carrier profile'} (${new Date(lastImport.uploadedAt).toLocaleDateString()})` : '—'],
+      ]);
+      table(
+        ['Year', 'Inspections', 'Pass', 'Fail', 'Warning', 'OOS', 'Pass rate'],
+        [30, 26, 22, 22, 22, 22, 26],
+        [twoYearData.year1, twoYearData.year2].map((y) => [
+          y.year, y.totalInspections, y.passCount, y.failCount, y.warningCount, y.outOfServiceCount, pct(y.passCount, y.totalInspections)
+        ])
+      );
+    } else {
+      keyValues([['Period', `${selectedYear - 1} – ${selectedYear}`], ['Country', countryLabel], ['Total inspections', 0]]);
     }
 
-    // Driver Violations (static estimate)
-    if (twoYearData) {
-      if (yPos > pageHeight - 40) {
-        doc.addPage();
-        yPos = margin;
-      }
-      doc.setFontSize(16);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Driver Violations (Estimated)', margin, yPos);
-      yPos += 10;
-
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      const estimatedSpeeding = Math.floor(twoYearData.summary.totalInspections * 0.05);
-      const estimatedTickets = Math.floor(twoYearData.summary.totalInspections * 0.1);
-      doc.text(`Speeding Violations: ${estimatedSpeeding}`, margin, yPos);
-      yPos += 7;
-      doc.text(`Traffic Tickets: ${estimatedTickets}`, margin, yPos);
-      yPos += 10;
+    // 2. Monthly breakdown (months that had inspections)
+    const allMonths = [...previousYearData, ...monthlyData].filter((m) => m.totalInspections > 0);
+    sectionTitle('Monthly Breakdown');
+    if (allMonths.length > 0) {
+      table(
+        ['Month', 'Inspections', 'Pass', 'Fail', 'Warning', 'OOS', 'Canada', 'USA', 'Pass rate'],
+        [32, 22, 15, 15, 18, 15, 17, 15, 21],
+        allMonths.map((m) => [
+          `${m.month} ${m.year}`, m.totalInspections, m.passCount, m.failCount, m.warningCount, m.outOfServiceCount,
+          m.canadaInspections, m.usaInspections, pct(m.passCount, m.totalInspections)
+        ])
+      );
+    } else {
+      keyValues([['No inspections recorded', '']]);
     }
 
-    // Audit Compliance Score
+    // 3. Last 12 months performance
+    const perfMonths: any[] = Array.isArray(carrierPerformance?.monthlyData) ? carrierPerformance.monthlyData : [];
+    if (perfMonths.length > 0) {
+      sectionTitle('Last 12 Months');
+      const trends = carrierPerformance?.trends;
+      keyValues([
+        ['Last 3 months pass rate', trends?.recentAvgPassRate != null ? `${trends.recentAvgPassRate}% (${trends.recentInspections} insp.)` : '—'],
+        ['Previous 3 months pass rate', trends?.previousAvgPassRate != null ? `${trends.previousAvgPassRate}% (${trends.previousInspections} insp.)` : '—'],
+        ['12-month pass rate', carrierPerformance?.summary?.avgPassRate != null ? `${carrierPerformance.summary.avgPassRate}%` : '—'],
+      ]);
+      table(
+        ['Month', 'Inspections', 'Pass', 'Fail', 'Warning', 'OOS', 'Pass rate', 'OOS rate'],
+        [36, 24, 18, 18, 20, 18, 18, 18],
+        perfMonths.map((m) => [
+          `${m.monthName} ${m.year}`, m.totalInspections, m.passCount, m.failCount, m.warningCount, m.outOfServiceCount,
+          m.passRate != null ? `${m.passRate}%` : '—', m.ossRate != null ? `${m.ossRate}%` : '—'
+        ])
+      );
+    }
+
+    // 4. Violations (real records only)
+    sectionTitle('Driver Violations');
+    if (violationStats && violationStats.total > 0) {
+      keyValues([
+        ['Total violations', violationStats.total],
+        ['Critical / Major / Moderate / Minor', `${violationStats.bySeverity?.critical || 0} / ${violationStats.bySeverity?.major || 0} / ${violationStats.bySeverity?.moderate || 0} / ${violationStats.bySeverity?.minor || 0}`],
+        ...Object.entries(violationStats.byType || {}).map(([k, v]) => [titleCase(k.replace(/-/g, ' ')), v as number] as [string, number]),
+      ]);
+    } else {
+      keyValues([['No violation records on file', '']]);
+    }
+
+    // 5. Audit score
     if (complianceScore) {
-      if (yPos > pageHeight - 40) {
-        doc.addPage();
-        yPos = margin;
-      }
-      doc.setFontSize(16);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Audit Compliance Score', margin, yPos);
-      yPos += 10;
+      sectionTitle('Audit Compliance Score');
+      keyValues([
+        ['Score', `${complianceScore.score}%`],
+        ['Eligible for detailed audits', complianceScore.eligibleForAudit ? 'Yes' : 'No'],
+        ['Inspection pass score', `${complianceScore.breakdown.inspectionScore.toFixed(1)}%`],
+        ['Violation penalty', complianceScore.usingRealData ? `${complianceScore.breakdown.violationPenalty.toFixed(1)} pts` : 'None (no violation records)'],
+      ]);
+    }
 
-      doc.setFontSize(14);
-      doc.setFont('helvetica', 'bold');
-      const scoreColor = complianceScore.score >= 80 ? [34, 197, 94] : [239, 68, 68];
-      doc.setTextColor(scoreColor[0], scoreColor[1], scoreColor[2]);
-      doc.text(`Score: ${complianceScore.score}%`, margin, yPos);
-      yPos += 8;
-
-      doc.setTextColor(0, 0, 0);
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Eligible for Detailed Audits: ${complianceScore.eligibleForAudit ? 'Yes' : 'No'}`, margin, yPos);
-      yPos += 7;
-      doc.text(`Inspection Score: ${complianceScore.breakdown.inspectionScore.toFixed(1)}%`, margin, yPos);
-      yPos += 7;
-      doc.text(`Violation Penalty: ${complianceScore.breakdown.violationPenalty.toFixed(1)}%`, margin, yPos);
+    // Page numbers
+    const pageCount = doc.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(148, 163, 184);
+      doc.text(`Page ${i} of ${pageCount}`, pageWidth - margin, pageHeight - 8, { align: 'right' });
     }
 
     // Save PDF
-    doc.save(`carrier-profile-report-${new Date().toISOString().split('T')[0]}.pdf`);
+    doc.save(`carrier-profile-report-${selectedCountry}-${selectedYear}-${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
   const StatCard = ({
@@ -1069,6 +1288,35 @@ const MonthlyReport: React.FC = () => {
 
   return (
     <>
+      {/* Delete carrier profile upload */}
+      {importToDelete && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-card rounded-lg shadow-xl max-w-md w-full p-6 border border-theme">
+            <h3 className="text-lg font-bold text-primary mb-2">Delete this upload?</h3>
+            <p className="text-sm text-secondary mb-1">{importToDelete.fileName || 'Carrier profile'}</p>
+            <p className="text-sm text-primary mb-4">
+              This permanently deletes the {importToDelete.inspectionCount} CVSA inspection(s) created from it. Inspections entered by hand are not affected.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setImportToDelete(null)}
+                disabled={deletingImport}
+                className="px-4 py-2 rounded-lg bg-gray-200 !text-black text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteImport}
+                disabled={deletingImport}
+                className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm hover:bg-red-700 disabled:opacity-50"
+              >
+                {deletingImport ? 'Deleting…' : 'Delete upload'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -1200,13 +1448,13 @@ const MonthlyReport: React.FC = () => {
 
       {/* Extracted Data Review Modal */}
       {showExtractedDataModal && extractedData && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0)' }}>
-          <div className="bg-card rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col border-2 border-theme">
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4 bg-black/50">
+          <div className="bg-card rounded-lg shadow-xl max-w-7xl w-full max-h-[92vh] overflow-hidden flex flex-col border-2 border-theme">
             {/* Modal Header */}
             <div className="px-6 py-4 border-b border-theme flex items-center justify-between bg-card">
               <div>
                 <h2 className="text-xl font-bold text-primary">Review Extracted Data</h2>
-                <p className="text-sm text-secondary mt-1">Please review the extracted data before saving</p>
+                <p className="text-sm text-secondary mt-1">Check each row against the document. Fix anything that was read wrong, remove rows that should not be saved, then save.</p>
               </div>
               <button
                 onClick={handleCancelSave}
@@ -1217,294 +1465,176 @@ const MonthlyReport: React.FC = () => {
               </button>
             </div>
 
-            {/* Duplicate Warnings */}
-            {duplicateWarnings && duplicateWarnings.length > 0 && (
-              <div className="px-6 py-3 bg-card border-b border-yellow-200">
-                <div className="flex items-start gap-3">
-                  <FaExclamationTriangle className="text-[#059669] flex-shrink-0 mt-0.5" size={20} />
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-yellow-900 mb-1">
-                      Duplicate Warnings ({duplicateWarnings.length})
-                    </p>
-                    <ul className="text-xs text-yellow-800 space-y-1 max-h-32 overflow-y-auto">
-                      {duplicateWarnings.slice(0, 5).map((warning, index) => (
-                        <li key={index}>• {warning}</li>
-                      ))}
-                      {duplicateWarnings.length > 5 && (
-                        <li className="text-[#059669] italic">... and {duplicateWarnings.length - 5} more</li>
-                      )}
-                    </ul>
-                    <p className="text-xs text-yellow-700 mt-2 font-medium">
-                      ⚠️ These inspections may already exist in the database. Duplicates will be skipped during save.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Modal Body */}
             <div className="px-6 py-4 overflow-y-auto flex-1">
-              {/* Summary Section */}
-              {extractedData.summary && (() => {
-                // Helper function to infer country from location
-                const inferCountryFromLocation = (location: string | null | undefined): string | null => {
-                  if (!location) return null;
-                  const locationUpper = location.toUpperCase();
-                  const locationLower = location.toLowerCase();
-
-                  // Canadian province/territory codes (2-letter) - most reliable
-                  const canadaProvinceCodes = ['MB', 'BC', 'ON', 'AB', 'SK', 'QC', 'NS', 'NB', 'NL', 'PE', 'YT', 'NT', 'NU'];
-
-                  // US state codes (2-letter)
-                  const usaStateCodes = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'DC'];
-
-                  // Check for province/state codes first (most reliable)
-                  for (const code of canadaProvinceCodes) {
-                    // Check if location contains the code as a standalone word or at start/end
-                    if (locationUpper.includes(` ${code} `) || locationUpper.startsWith(`${code} `) || locationUpper.endsWith(` ${code}`) || locationUpper === code) {
-                      return 'canada';
-                    }
-                  }
-
-                  for (const code of usaStateCodes) {
-                    if (locationUpper.includes(` ${code} `) || locationUpper.startsWith(`${code} `) || locationUpper.endsWith(` ${code}`) || locationUpper === code) {
-                      return 'usa';
-                    }
-                  }
-
-                  // Canada indicators (full names and cities)
-                  const canadaIndicators = ['ontario', 'quebec', 'british columbia', 'alberta', 'manitoba', 'saskatchewan', 'nova scotia', 'new brunswick', 'newfoundland', 'prince edward island', 'yukon', 'northwest territories', 'nunavut', 'toronto', 'vancouver', 'montreal', 'calgary', 'edmonton', 'ottawa', 'winnipeg', 'halifax', 'quebec city', 'canada', 'cad', 'cbsa'];
-
-                  // USA indicators
-                  const usaIndicators = ['california', 'texas', 'florida', 'new york', 'illinois', 'pennsylvania', 'ohio', 'georgia', 'north carolina', 'michigan', 'new jersey', 'virginia', 'washington', 'arizona', 'massachusetts', 'tennessee', 'indiana', 'missouri', 'maryland', 'wisconsin', 'colorado', 'minnesota', 'south carolina', 'alabama', 'louisiana', 'kentucky', 'oregon', 'oklahoma', 'connecticut', 'utah', 'iowa', 'nevada', 'arkansas', 'mississippi', 'kansas', 'new mexico', 'nebraska', 'west virginia', 'idaho', 'hawaii', 'new hampshire', 'maine', 'montana', 'rhode island', 'delaware', 'south dakota', 'north dakota', 'alaska', 'vermont', 'wyoming', 'usa', 'us', 'united states', 'dot', 'federal', 'cvs'];
-
-                  for (const indicator of canadaIndicators) {
-                    if (locationLower.includes(indicator)) return 'canada';
-                  }
-
-                  for (const indicator of usaIndicators) {
-                    if (locationLower.includes(indicator)) return 'usa';
-                  }
-
-                  return null;
-                };
-
-                // Calculate Canada/USA counts from individual inspections if summary values are missing or 0
-                let canadaCount = extractedData.summary.canadaInspections || 0;
-                let usaCount = extractedData.summary.usaInspections || 0;
-
-                // If counts are 0, try to calculate from individual inspections
-                if ((canadaCount === 0 && usaCount === 0) && extractedData.inspections && Array.isArray(extractedData.inspections) && extractedData.inspections.length > 0) {
-                  let calculatedCanada = 0;
-                  let calculatedUSA = 0;
-
-                  for (const inspection of extractedData.inspections) {
-                    let country: string | null = null;
-
-                    // Check explicit country field first
-                    if (inspection.country) {
-                      country = inspection.country.toLowerCase();
-                    }
-                    // Check province/state codes (most reliable)
-                    else if (inspection.province) {
-                      // Canadian provinces
-                      const canadaProvinces = ['MB', 'BC', 'ON', 'AB', 'SK', 'QC', 'NS', 'NB', 'NL', 'PE', 'YT', 'NT', 'NU'];
-                      if (canadaProvinces.includes(inspection.province.toUpperCase())) {
-                        country = 'canada';
-                      }
-                    } else if (inspection.state) {
-                      // US states (2-letter codes)
-                      const usaStates = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'DC'];
-                      if (usaStates.includes(inspection.state.toUpperCase())) {
-                        country = 'usa';
-                      }
-                    }
-                    // Infer from location if country/province/state not set
-                    else if (inspection.location) {
-                      country = inferCountryFromLocation(inspection.location);
-                    }
-
-                    if (country === 'canada') {
-                      calculatedCanada++;
-                    } else if (country === 'usa') {
-                      calculatedUSA++;
-                    }
-                  }
-
-                  canadaCount = calculatedCanada;
-                  usaCount = calculatedUSA;
-                }
+              {(() => {
+                const rows: any[] = Array.isArray(extractedData.inspections) ? extractedData.inspections : [];
+                const count = (fn: (r: any) => boolean) => rows.filter(fn).length;
+                const total = rows.length;
+                const pass = count((r) => r.status === 'pass');
+                const oos = count((r) => r.status === 'out-of-service');
+                const needsAttention = count((r) => !r.date || !r.status || !r.country);
+                const docTotal = extractedData.documentTotals?.totalInspections;
+                const inputCls = 'w-full px-2 py-1 text-xs border border-theme rounded bg-card text-primary focus:outline-none focus:ring-1 focus:ring-[var(--accent-blue)]';
 
                 return (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-primary mb-3 flex items-center gap-2">
-                      <FaChartBar /> Summary Statistics
-                    </h3>
-                    <div className="bg-card rounded-lg p-4 border border-theme">
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                        <div className="bg-card rounded p-3 border border-theme">
-                          <p className="text-sm text-secondary mb-1">Total Inspections</p>
-                          <p className="text-2xl font-bold text-primary">{extractedData.summary.totalInspections || 0}</p>
-                        </div>
-                        <div className="bg-card rounded p-3 border border-theme">
-                          <p className="text-sm text-secondary mb-1">Pass</p>
-                          <p className="text-2xl font-bold text-green-600">{extractedData.summary.totalPass || 0}</p>
-                        </div>
-                        <div className="bg-card rounded p-3 border border-theme">
-                          <p className="text-sm text-secondary mb-1">Fail</p>
-                          <p className="text-2xl font-bold text-[#A855F7]">{extractedData.summary.totalFail || 0}</p>
-                        </div>
-                        <div className="bg-card rounded p-3 border border-theme">
-                          <p className="text-sm text-secondary mb-1">Out of Service</p>
-                          <p className="text-2xl font-bold text-[#d97706]">{extractedData.summary.totalOutOfService || 0}</p>
-                        </div>
+                  <>
+                    {/* Document details */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm">
+                      <div className="bg-card rounded p-3 border border-theme">
+                        <p className="text-xs text-secondary">File</p>
+                        <p className="font-semibold text-primary truncate" title={extractedData.fileName || ''}>{extractedData.fileName || '—'}</p>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                        {extractedData.summary.totalWarning !== undefined && extractedData.summary.totalWarning > 0 && (
-                          <div className="bg-card rounded p-3 border border-theme">
-                            <p className="text-sm text-secondary mb-1">Warning</p>
-                            <p className="text-xl font-bold text-[#059669]">{extractedData.summary.totalWarning || 0}</p>
-                          </div>
-                        )}
-                        <div className="bg-card rounded p-3 border border-theme">
-                          <p className="text-sm text-secondary mb-1 flex items-center gap-2">
-                            <FaFlag /> Canada Inspections
-                          </p>
-                          <p className="text-xl font-bold text-[#059669]">{canadaCount}</p>
-                          {canadaCount === 0 && usaCount === 0 && (!extractedData.inspections || extractedData.inspections.length === 0) && (
-                            <p className="text-xs text-[#d97706] mt-1 italic">⚠️ Individual inspections not extracted - cannot calculate country breakdown</p>
-                          )}
-                          {canadaCount === 0 && usaCount === 0 && extractedData.inspections && extractedData.inspections.length > 0 && (
-                            <p className="text-xs text-secondary mt-1 italic">Country not specified in document</p>
-                          )}
-                        </div>
-                        <div className="bg-card rounded p-3 border border-theme">
-                          <p className="text-sm text-secondary mb-1 flex items-center gap-2">
-                            <FaFlagUsa /> USA Inspections
-                          </p>
-                          <p className="text-xl font-bold text-[#059669]">{usaCount}</p>
-                          {canadaCount === 0 && usaCount === 0 && (!extractedData.inspections || extractedData.inspections.length === 0) && (
-                            <p className="text-xs text-[#d97706] mt-1 italic">⚠️ Individual inspections not extracted - cannot calculate country breakdown</p>
-                          )}
-                          {canadaCount === 0 && usaCount === 0 && extractedData.inspections && extractedData.inspections.length > 0 && (
-                            <p className="text-xs text-secondary mt-1 italic">Country not specified in document</p>
-                          )}
-                        </div>
+                      <div className="bg-card rounded p-3 border border-theme">
+                        <p className="text-xs text-secondary">Carrier</p>
+                        <p className="font-semibold text-primary truncate">{extractedData.carrier?.name || '—'}</p>
                       </div>
-                      {extractedData.summary.period && (
-                        <div className="mt-4 pt-4 border-t border-theme">
-                          <p className="text-sm text-secondary mb-1">Period</p>
-                          <p className="text-lg font-semibold text-primary">{extractedData.summary.period}</p>
-                        </div>
-                      )}
+                      <div className="bg-card rounded p-3 border border-theme">
+                        <p className="text-xs text-secondary">Period</p>
+                        <p className="font-semibold text-primary">
+                          {extractedData.period?.label || (extractedData.period?.start ? `${formatShortDate(extractedData.period.start)} – ${formatShortDate(extractedData.period.end)}` : '—')}
+                        </p>
+                      </div>
+                      <div className="bg-card rounded p-3 border border-theme">
+                        <p className="text-xs text-secondary">Safety Rating</p>
+                        <p className="font-semibold text-primary">{extractedData.carrier?.safetyRating || '—'}</p>
+                      </div>
                     </div>
-                  </div>
-                );
-              })()}
 
-              {/* Inspections List */}
-              {extractedData.inspections && Array.isArray(extractedData.inspections) && extractedData.inspections.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-primary mb-3 flex items-center gap-2">
-                    <FaTruck /> Individual Inspections ({extractedData.inspections.length})
-                  </h3>
-                  <div className="bg-card rounded-lg p-4 border border-theme max-h-96 overflow-y-auto">
-                    <div className="space-y-3">
-                      {extractedData.inspections.map((inspection: any, index: number) => (
-                        <div key={index} className="bg-card rounded-lg p-4 border border-theme shadow-sm">
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-3">
-                              <span className="font-semibold text-primary">
-                                {inspection.inspectionId || `Inspection ${index + 1}`}
-                              </span>
-                              {inspection.reportNumber && (
-                                <span className="text-sm text-secondary">Report #: {inspection.reportNumber}</span>
-                              )}
-                            </div>
-                            <span className={`px-3 py-1 rounded text-xs font-semibold ${inspection.status === 'pass' ? 'bg-green-100 text-green-800' :
-                              inspection.status === 'fail' ? 'bg-red-100 text-red-800' :
-                                inspection.status === 'out-of-service' ? 'bg-orange-100 text-orange-800' :
-                                  'bg-yellow-100 text-yellow-800'
-                              }`}>
-                              {inspection.status ? inspection.status.toUpperCase().replace('-', ' ') : 'UNKNOWN'}
-                            </span>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                            <div>
-                              {inspection.date && (
-                                <p className="text-secondary">
-                                  <span className="font-medium">Date:</span> {new Date(inspection.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                                </p>
-                              )}
-                              {inspection.location && (
-                                <p className="text-secondary mt-1">
-                                  <span className="font-medium">Location:</span> {inspection.location}
-                                </p>
-                              )}
-                              {inspection.country && (
-                                <p className="text-secondary mt-1">
-                                  <span className="font-medium">Country:</span> {inspection.country.toUpperCase()}
-                                </p>
-                              )}
-                            </div>
-                            <div>
-                              {inspection.inspectionType && (
-                                <p className="text-secondary">
-                                  <span className="font-medium">Type:</span> {inspection.inspectionType.replace('-', ' ').toUpperCase()}
-                                </p>
-                              )}
-                              {inspection.inspectorName && (
-                                <p className="text-secondary mt-1">
-                                  <span className="font-medium">Inspector:</span> {inspection.inspectorName}
-                                </p>
-                              )}
-                              {inspection.driverName && (
-                                <p className="text-secondary mt-1">
-                                  <span className="font-medium">Driver:</span> {inspection.driverName}
-                                </p>
-                              )}
-                              {inspection.vehicleUnitNo && (
-                                <p className="text-secondary mt-1">
-                                  <span className="font-medium">Vehicle:</span> {inspection.vehicleUnitNo}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                          {inspection.violations && Array.isArray(inspection.violations) && inspection.violations.length > 0 && (
-                            <div className="mt-3 pt-3 border-t border-theme">
-                              <p className="text-sm font-medium text-primary mb-2">Violations ({inspection.violations.length}):</p>
-                              <div className="space-y-1">
-                                {inspection.violations.slice(0, 3).map((violation: any, vIndex: number) => (
-                                  <p key={vIndex} className="text-xs text-secondary">
-                                    • {violation.code || 'N/A'}: {violation.description || 'No description'}
-                                    {violation.severity && <span className="ml-2 text-[#d97706]">({violation.severity})</span>}
-                                  </p>
-                                ))}
-                                {inspection.violations.length > 3 && (
-                                  <p className="text-xs text-secondary italic">... and {inspection.violations.length - 3} more violations</p>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                          {inspection.notes && (
-                            <div className="mt-3 pt-3 border-t border-theme">
-                              <p className="text-sm font-medium text-primary mb-1">Notes:</p>
-                              <p className="text-xs text-secondary">{inspection.notes}</p>
-                            </div>
-                          )}
+                    {/* Totals of the rows below (recalculated as rows are edited) */}
+                    <div className="grid grid-cols-3 md:grid-cols-7 gap-2 mb-4">
+                      {[
+                        { label: 'Rows', value: total },
+                        { label: 'Pass', value: pass, cls: 'text-green-500' },
+                        { label: 'Fail', value: count((r) => r.status === 'fail'), cls: 'text-red-400' },
+                        { label: 'Warning', value: count((r) => r.status === 'warning'), cls: 'text-yellow-400' },
+                        { label: 'OOS', value: oos, cls: 'text-orange-400' },
+                        { label: 'Canada', value: count((r) => r.country === 'canada') },
+                        { label: 'USA', value: count((r) => r.country === 'usa') },
+                      ].map((c) => (
+                        <div key={c.label} className="bg-card rounded p-2 border border-theme text-center">
+                          <p className="text-[10px] uppercase text-secondary">{c.label}</p>
+                          <p className={`text-lg font-bold ${c.cls || 'text-primary'}`}>{c.value}</p>
                         </div>
                       ))}
                     </div>
-                  </div>
-                </div>
-              )}
 
-              {(!extractedData.summary && (!extractedData.inspections || extractedData.inspections.length === 0)) && (
-                <div className="text-center py-8 text-secondary">
-                  <FaInfoCircle size={48} className="mx-auto mb-4 text-secondary" />
-                  <p>No data extracted from the document.</p>
-                </div>
-              )}
+                    {(extractionIssues.length > 0 || needsAttention > 0 || (docTotal != null && docTotal !== total)) && (
+                      <div className="mb-4 p-3 rounded-lg border border-yellow-500/40 bg-yellow-500/10 text-xs text-primary space-y-1">
+                        <p className="font-semibold flex items-center gap-2"><FaExclamationTriangle className="text-yellow-400" /> Please check before saving</p>
+                        {docTotal != null && docTotal !== total && (
+                          <p>• The document lists {docTotal} inspections; {total} row(s) are below. Compare with the document and fix or remove rows as needed.</p>
+                        )}
+                        {needsAttention > 0 && <p>• {needsAttention} row(s) are highlighted because a date, result or country is missing — they will not be saved until filled in.</p>}
+                        {extractionIssues.filter((i) => !/document lists/i.test(i) && !/need a/i.test(i)).map((issue, i) => (
+                          <p key={i}>• {issue}</p>
+                        ))}
+                      </div>
+                    )}
+
+                    {duplicateWarnings.length > 0 && (
+                      <p className="mb-3 text-xs text-secondary">
+                        {duplicateWarnings.length} row(s) marked “Already saved” match report numbers already on file and will be skipped.
+                      </p>
+                    )}
+
+                    {/* Editable rows */}
+                    {total > 0 ? (
+                      <div className="border border-theme rounded-lg overflow-x-auto max-h-[45vh]">
+                        <table className="min-w-full text-xs">
+                          <thead className="bg-card sticky top-0 z-10">
+                            <tr className="text-left text-secondary uppercase">
+                              <th className="px-2 py-2">#</th>
+                              <th className="px-2 py-2">Inspection Date</th>
+                              <th className="px-2 py-2">Report #</th>
+                              <th className="px-2 py-2">Prov/State</th>
+                              <th className="px-2 py-2">Country</th>
+                              <th className="px-2 py-2">Location</th>
+                              <th className="px-2 py-2">Level</th>
+                              <th className="px-2 py-2">Result</th>
+                              <th className="px-2 py-2">Plate / Unit</th>
+                              <th className="px-2 py-2">Driver</th>
+                              <th className="px-2 py-2"></th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-theme">
+                            {rows.map((row, index) => {
+                              const incomplete = !row.date || !row.status || !row.country;
+                              return (
+                                <tr key={index} className={incomplete ? 'bg-yellow-500/10' : row.alreadyExists ? 'opacity-60' : ''}>
+                                  <td className="px-2 py-1 text-secondary">
+                                    {index + 1}
+                                    {row.alreadyExists && <div className="text-[9px] text-yellow-400 whitespace-nowrap">Already saved</div>}
+                                  </td>
+                                  <td className="px-2 py-1 min-w-[130px]">
+                                    <input type="date" className={inputCls} value={row.date || ''} onChange={(e) => updateExtractedRow(index, { date: e.target.value || null })} />
+                                  </td>
+                                  <td className="px-2 py-1 min-w-[120px]">
+                                    <input className={inputCls} value={row.reportNumber || ''} onChange={(e) => updateExtractedRow(index, { reportNumber: e.target.value || null, alreadyExists: false })} />
+                                  </td>
+                                  <td className="px-2 py-1 w-16">
+                                    <input className={inputCls} maxLength={2} value={row.jurisdiction || ''} onChange={(e) => updateExtractedRow(index, { jurisdiction: e.target.value.toUpperCase() || null })} />
+                                  </td>
+                                  <td className="px-2 py-1 min-w-[95px]">
+                                    <select className={inputCls} value={row.country || ''} onChange={(e) => updateExtractedRow(index, { country: e.target.value || null })}>
+                                      <option className="form-option" value="">Select…</option>
+                                      <option className="form-option" value="canada">Canada</option>
+                                      <option className="form-option" value="usa">USA</option>
+                                    </select>
+                                  </td>
+                                  <td className="px-2 py-1 min-w-[140px]">
+                                    <input className={inputCls} value={row.location || ''} onChange={(e) => updateExtractedRow(index, { location: e.target.value || null })} />
+                                  </td>
+                                  <td className="px-2 py-1 min-w-[70px]">
+                                    <select className={inputCls} value={row.inspectionType || 'level-1'} onChange={(e) => updateExtractedRow(index, { inspectionType: e.target.value })}>
+                                      {[1, 2, 3, 4, 5, 6].map((n) => (
+                                        <option className="form-option" key={n} value={`level-${n}`}>{n}</option>
+                                      ))}
+                                    </select>
+                                  </td>
+                                  <td className="px-2 py-1 min-w-[100px]">
+                                    <select className={inputCls} value={row.status || ''} onChange={(e) => updateExtractedRow(index, { status: e.target.value || null })}>
+                                      <option className="form-option" value="">Select…</option>
+                                      <option className="form-option" value="pass">Pass</option>
+                                      <option className="form-option" value="fail">Fail</option>
+                                      <option className="form-option" value="warning">Warning</option>
+                                      <option className="form-option" value="out-of-service">OOS</option>
+                                    </select>
+                                  </td>
+                                  <td className="px-2 py-1 min-w-[90px]">
+                                    <input className={inputCls} value={row.vehicleUnitNo || ''} onChange={(e) => updateExtractedRow(index, { vehicleUnitNo: e.target.value || null })} />
+                                  </td>
+                                  <td className="px-2 py-1 min-w-[120px]">
+                                    <input className={inputCls} value={row.driverName || ''} onChange={(e) => updateExtractedRow(index, { driverName: e.target.value || null })} />
+                                  </td>
+                                  <td className="px-2 py-1">
+                                    <button
+                                      type="button"
+                                      onClick={() => removeExtractedRow(index)}
+                                      className="p-1.5 rounded hover:bg-red-500/20"
+                                      title="Remove this row"
+                                    >
+                                      <FaTrashAlt className="text-[var(--accent-red)]" size={12} />
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-secondary">
+                        <FaInfoCircle size={36} className="mx-auto mb-3 text-secondary" />
+                        <p>No inspection rows left to save.</p>
+                      </div>
+                    )}
+                    <p className="mt-3 text-[11px] text-secondary">
+                      Pass rate of these rows: {total ? Math.round((pass / total) * 100) : 0}% · OOS rate: {total ? Math.round((oos / total) * 100) : 0}%. You can delete this whole upload later from “Uploaded Carrier Profiles”.
+                    </p>
+                  </>
+                );
+              })()}
             </div>
 
             {/* Modal Footer */}
@@ -1518,7 +1648,7 @@ const MonthlyReport: React.FC = () => {
               </button>
               <button
                 onClick={handleSaveExtractedData}
-                disabled={isSaving}
+                disabled={isSaving || !extractedData?.inspections?.length}
                 className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {isSaving ? (
@@ -1571,6 +1701,13 @@ const MonthlyReport: React.FC = () => {
                   >
                     <FaDownload size={16} />
                     Download PDF
+                  </button>
+                  <button
+                    onClick={handleDownloadExcel}
+                    className="flex items-center gap-2 px-4 py-2 bg-[var(--accent-navyblue)] !text-white rounded-lg hover:bg-[var(--accent-navyblue)]/80 transition-colors shadow-sm"
+                  >
+                    <FileDown size={16} />
+                    Download Excel
                   </button>
                   <button
                     onClick={handleDeleteOldData}
@@ -1629,6 +1766,61 @@ const MonthlyReport: React.FC = () => {
               </div>
             </div>
 
+            {/* Uploaded Carrier Profiles */}
+            <div className="mb-6 bg-card rounded-lg shadow-sm border border-theme p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h2 className="text-lg font-bold text-headings">Uploaded Carrier Profiles</h2>
+                  <p className="text-xs text-secondary">Deleting an upload removes every inspection it created.</p>
+                </div>
+              </div>
+              {profileImports.length === 0 ? (
+                <p className="text-sm text-secondary py-2">No carrier profile uploads yet.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="min-w-full text-sm">
+                    <thead>
+                      <tr className="text-left text-xs uppercase text-secondary border-b border-theme">
+                        <th className="px-3 py-2">File</th>
+                        <th className="px-3 py-2">Uploaded</th>
+                        <th className="px-3 py-2">Inspections</th>
+                        <th className="px-3 py-2">Inspection dates</th>
+                        <th className="px-3 py-2">Safety rating</th>
+                        <th className="px-3 py-2 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-theme">
+                      {profileImports.map((imp) => (
+                        <tr key={imp._id}>
+                          <td className="px-3 py-2 text-primary">
+                            <div className="font-medium">{imp.fileName || 'Carrier profile'}</div>
+                            {imp.legacy && <div className="text-xs text-yellow-400">Imported by the old uploader — likely the wrong data</div>}
+                          </td>
+                          <td className="px-3 py-2 text-secondary whitespace-nowrap">
+                            {imp.uploadedAt ? new Date(imp.uploadedAt).toLocaleDateString() : '—'}
+                            {imp.uploadedBy ? ` · ${imp.uploadedBy}` : ''}
+                          </td>
+                          <td className="px-3 py-2 text-primary">{imp.inspectionCount}</td>
+                          <td className="px-3 py-2 text-secondary whitespace-nowrap">
+                            {imp.firstInspection ? `${formatShortDate(imp.firstInspection)} – ${formatShortDate(imp.lastInspection)}` : '—'}
+                          </td>
+                          <td className="px-3 py-2 text-secondary">{imp.safetyRating || '—'}</td>
+                          <td className="px-3 py-2 text-right">
+                            <button
+                              onClick={() => setImportToDelete(imp)}
+                              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs hover:bg-red-700"
+                            >
+                              <FaTrashAlt size={12} /> Delete upload
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
             {/* Carrier Performance Dashboard - Auto-Tracked from Documents */}
             {carrierPerformance && (
               <div className="mb-6 bg-card rounded-lg shadow-sm border border-theme p-6">
@@ -1639,10 +1831,12 @@ const MonthlyReport: React.FC = () => {
                     </div>
                     <div>
                       <h2 className="text-xl font-bold text-headings">Carrier Performance Dashboard</h2>
-                      <p className="text-sm text-secondary">Automatically tracked from carrier profile documents</p>
+                      <p className="text-sm text-secondary">
+                        Calculated from saved CVSA inspections{selectedCountry !== 'all' ? ` — ${selectedCountry === 'canada' ? 'Canada' : 'USA'} only` : ''}
+                      </p>
                     </div>
                   </div>
-                  {carrierPerformance.trends && (
+                  {carrierPerformance.trends && carrierPerformance.trends.passRateTrend !== null && (
                     <div className={`px-4 py-2 rounded-lg font-semibold border ${carrierPerformance.trends.isImproving
                       ? 'bg-green-500/10 text-green-400 border-green-500/30'
                       : carrierPerformance.trends.isDeclining
@@ -1660,13 +1854,13 @@ const MonthlyReport: React.FC = () => {
                 {carrierPerformance.summary?.latestRecord && (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div className="bg-card rounded-lg p-4 border border-theme">
-                      <p className="text-xs text-secondary mb-1">Latest Month</p>
+                      <p className="text-xs text-secondary mb-1">Latest Month With Inspections</p>
                       <p className="text-lg font-bold text-primary">
                         {new Date(carrierPerformance.summary.latestRecord.year, carrierPerformance.summary.latestRecord.month - 1).toLocaleString('default', { month: 'long', year: 'numeric' })}
                       </p>
                     </div>
                     <div className="bg-card rounded-lg p-4 border border-theme">
-                      <p className="text-xs text-secondary mb-1">Pass Rate</p>
+                      <p className="text-xs text-secondary mb-1">Pass Rate That Month ({carrierPerformance.summary.latestRecord.totalInspections} insp.)</p>
                       <p className={`text-2xl font-bold ${carrierPerformance.summary.latestRecord.passRate >= 80 ? 'text-green-400' : carrierPerformance.summary.latestRecord.passRate >= 60 ? 'text-yellow-400' : 'text-red-400'}`}>
                         {carrierPerformance.summary.latestRecord.passRate}%
                       </p>
@@ -1697,11 +1891,17 @@ const MonthlyReport: React.FC = () => {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div>
                         <p className="text-xs text-secondary">Recent Avg Pass Rate</p>
-                        <p className="text-lg font-bold text-primary">{carrierPerformance.trends.recentAvgPassRate}%</p>
+                        <p className="text-lg font-bold text-primary">
+                          {carrierPerformance.trends.recentAvgPassRate !== null ? `${carrierPerformance.trends.recentAvgPassRate}%` : '—'}
+                        </p>
+                        <p className="text-[10px] text-secondary">{carrierPerformance.trends.recentInspections ?? 0} inspections</p>
                       </div>
                       <div>
                         <p className="text-xs text-secondary">Previous Avg Pass Rate</p>
-                        <p className="text-lg font-bold text-primary">{carrierPerformance.trends.previousAvgPassRate}%</p>
+                        <p className="text-lg font-bold text-primary">
+                          {carrierPerformance.trends.previousAvgPassRate !== null ? `${carrierPerformance.trends.previousAvgPassRate}%` : '—'}
+                        </p>
+                        <p className="text-[10px] text-secondary">{carrierPerformance.trends.previousInspections ?? 0} inspections</p>
                       </div>
                       <div>
                         <p className="text-xs text-secondary">Change</p>
@@ -1709,14 +1909,26 @@ const MonthlyReport: React.FC = () => {
                           carrierPerformance.trends.passRateTrend < 0 ? 'text-red-400' :
                             'text-secondary'
                           }`}>
-                          {carrierPerformance.trends.passRateTrend > 0 ? '+' : ''}{carrierPerformance.trends.passRateTrend}%
+                          {carrierPerformance.trends.passRateTrend === null
+                            ? '—'
+                            : `${carrierPerformance.trends.passRateTrend > 0 ? '+' : ''}${carrierPerformance.trends.passRateTrend} pts`}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-secondary">Overall Avg Pass Rate</p>
-                        <p className="text-lg font-bold text-primary">{carrierPerformance.summary?.avgPassRate || 0}%</p>
+                        <p className="text-xs text-secondary">12-Month Pass Rate</p>
+                        <p className="text-lg font-bold text-primary">
+                          {carrierPerformance.summary?.avgPassRate !== null && carrierPerformance.summary?.avgPassRate !== undefined ? `${carrierPerformance.summary.avgPassRate}%` : '—'}
+                        </p>
+                        <p className="text-[10px] text-secondary">{carrierPerformance.summary?.totalInspections ?? 0} inspections</p>
                       </div>
                     </div>
+                    {/* Client (14 Nov): the figures did not seem to match the inspection list. Say how they are worked out. */}
+                    <p className="text-[11px] text-secondary mt-3">
+                      Rates count dated inspections only. "Recent" is the last 3 months, "Previous" the 3 months before; "—" means no inspections in that period.
+                      {carrierPerformance.undatedInspections > 0 && (
+                        <span className="text-yellow-400"> {carrierPerformance.undatedInspections} inspection{carrierPerformance.undatedInspections === 1 ? ' has' : 's have'} no date and {carrierPerformance.undatedInspections === 1 ? 'is' : 'are'} not counted. Add a date on the CVSA Inspection page to include {carrierPerformance.undatedInspections === 1 ? 'it' : 'them'}.</span>
+                      )}
+                    </p>
                   </div>
                 )}
 
@@ -1725,29 +1937,33 @@ const MonthlyReport: React.FC = () => {
                   <div className="bg-card rounded-lg p-4 border border-theme">
                     <h3 className="text-sm font-bold text-headings mb-4">12-Month Performance History</h3>
                     <div className="space-y-2">
-                      {carrierPerformance.monthlyData.slice(-6).map((month: any, index: number) => (
+                      {carrierPerformance.monthlyData.map((month: any, index: number) => (
                         <div key={index} className="flex items-center gap-4">
-                          <div className="w-24 text-xs text-secondary flex-shrink-0">
+                          <div className="w-28 text-xs text-secondary flex-shrink-0">
                             {month.monthName} {month.year}
                           </div>
                           <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <div className="flex-1 bg-gray-700/40 rounded-full h-6 relative overflow-hidden">
-                                <div
-                                  className={`h-full rounded-full transition-all ${month.passRate >= 80 ? 'bg-green-500/80' :
-                                    month.passRate >= 60 ? 'bg-yellow-500/80' :
-                                      'bg-red-500/80'
-                                    }`}
-                                  style={{ width: `${Math.min(month.passRate, 100)}%` }}
-                                />
+                            {month.totalInspections > 0 ? (
+                              <div className="flex items-center gap-2">
+                                <div className="flex-1 bg-gray-700/40 rounded-full h-5 relative overflow-hidden">
+                                  <div
+                                    className={`h-full rounded-full transition-all ${month.passRate >= 80 ? 'bg-green-500/80' :
+                                      month.passRate >= 60 ? 'bg-yellow-500/80' :
+                                        'bg-red-500/80'
+                                      }`}
+                                    style={{ width: `${Math.max(Math.min(month.passRate, 100), 2)}%` }}
+                                  />
+                                </div>
+                                <span className="text-xs font-semibold text-primary w-12 text-right">
+                                  {month.passRate}%
+                                </span>
                               </div>
-                              <span className="text-xs font-semibold text-primary w-12 text-right">
-                                {month.passRate}%
-                              </span>
-                            </div>
+                            ) : (
+                              <span className="text-xs text-secondary italic">No inspections</span>
+                            )}
                           </div>
-                          <div className="text-xs text-secondary w-20 text-right">
-                            {month.totalInspections} inspections
+                          <div className="text-xs text-secondary w-24 text-right">
+                            {month.totalInspections} inspection{month.totalInspections === 1 ? '' : 's'}
                           </div>
                         </div>
                       ))}
@@ -1765,8 +1981,8 @@ const MonthlyReport: React.FC = () => {
                 {!performanceLoading && (!carrierPerformance || !carrierPerformance.summary?.latestRecord) && (
                   <div className="text-center py-8 text-secondary bg-card rounded-lg border border-theme">
                     <FaInfoCircle className="mx-auto mb-2" size={24} />
-                    <p className="font-semibold mb-1">No Performance Data Yet</p>
-                    <p className="text-sm">Upload a carrier profile document to automatically track performance metrics.</p>
+                    <p className="font-semibold mb-1">No Inspections Yet</p>
+                    <p className="text-sm">Upload a carrier profile or add CVSA inspections to see performance{selectedCountry !== 'all' ? ' for this country' : ''}.</p>
                   </div>
                 )}
               </div>
@@ -1881,7 +2097,7 @@ const MonthlyReport: React.FC = () => {
                     background="var(--accent-blue)"
                   />
                   <StatCard
-                    title="Overall Pass Rate"
+                    title="2-Year Pass Rate (Inspections)"
                     value={`${twoYearData.summary.overallPassRate}%`}
                     icon={<FaCheckCircle />}
                     bgColor=""
@@ -2095,43 +2311,13 @@ const MonthlyReport: React.FC = () => {
                   </div>
                 )}
 
-                {/* Show estimated violations as fallback if no real data */}
                 {!violationStats && twoYearData && (
                   <div className="bg-card rounded-lg shadow-sm border border-theme p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-xl font-bold text-primary">Driver Violations (Past 2 Years)</h3>
-                      <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-semibold rounded-full">
-                        Estimated Data
-                      </span>
-                    </div>
-                    <p className="text-sm text-secondary mb-6 bg-card p-4 rounded-lg border border-blue-200">
+                    <h3 className="text-xl font-bold text-primary mb-2">Driver Violations (Past 2 Years)</h3>
+                    <p className="text-sm text-secondary">
                       <FaInfoCircle className="inline mr-2 text-[#059669]" />
-                      No real violation data available. Please sync with Geotab or add violations manually to see actual data.
+                      No violation records found. Sync with Geotab or add violations manually to include them here.
                     </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Estimated Speeding */}
-                      <div>
-                        <div className="flex items-center gap-3 mb-4">
-                          <FaTachometerAlt className="text-[#A855F7]" size={20} />
-                          <h4 className="text-lg font-semibold text-primary">Estimated Speeding</h4>
-                        </div>
-                        <div className="flex justify-between p-3 bg-card rounded-lg">
-                          <span className="font-medium text-primary">Est. Speeding Events</span>
-                          <span className="font-bold text-red-800">{Math.floor(twoYearData.summary.totalInspections * 0.05)}</span>
-                        </div>
-                      </div>
-                      {/* Estimated Tickets */}
-                      <div>
-                        <div className="flex items-center gap-3 mb-4">
-                          <FaExclamationCircle className="text-[#d97706]" size={20} />
-                          <h4 className="text-lg font-semibold text-primary">Estimated Tickets</h4>
-                        </div>
-                        <div className="flex justify-between p-3 bg-card rounded-lg">
-                          <span className="font-medium text-primary">Est. Traffic Tickets</span>
-                          <span className="font-bold text-orange-800">{Math.floor(twoYearData.summary.totalInspections * 0.1)}</span>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 )}
               </div>

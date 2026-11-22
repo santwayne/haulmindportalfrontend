@@ -1,3 +1,4 @@
+import { todayLocalISO } from '../../../../utils/fuelDate';
 import { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, Download, Filter, X, Save } from 'lucide-react';
 import { FaCheckCircle, FaExclamationCircle, FaInfoCircle, FaTimes } from 'react-icons/fa';
@@ -385,7 +386,7 @@ export default function AccountsSetup() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${activeTab}-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `${activeTab}-${todayLocalISO()}.csv`;
     a.click();
     showNotification('success', 'Data exported successfully');
   };

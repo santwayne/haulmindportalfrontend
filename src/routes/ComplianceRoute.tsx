@@ -3,7 +3,7 @@ import { Suspense, lazy } from "react";
 import React from "react";
 import Loading from "../components/common/Loading";
 import ErrorBoundary from "../components/common/ErrorBoundary";
-import { getUserRole } from "../utils/auth";
+import { canAccessPortal } from "../utils/portalAccess";
 
 const CompilanceRoutes = lazy(() => import("./AdminFeatures/CompilanceRoute"));
 
@@ -17,10 +17,9 @@ const RouteDebugger = ({ children }: { children: React.ReactNode }) => {
 
 function ComplianceRoute() {
   // Check if user is Compliance Manager
-  const userRole = getUserRole();
   
   // If not Compliance Manager, redirect to login
-  if (userRole !== 'Compliance Manager') {
+  if (!canAccessPortal('compliance')) {
     return <Navigate to="/" replace />;
   }
 

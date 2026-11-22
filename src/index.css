@@ -879,3 +879,8 @@ body :is(h1,h2,h3,h4,h5,h6,p,li,ul,ol,label,th,td,dt,dd,span,div,a,button,svg,sm
   color: #0f1f17;
   background: #ffffff;
 }
+/* Dark look for OpenStreetMap tiles on the admin dashboard's Live Fleet Map */
+.leaflet-tile-pane .dark-map-tiles,
+.dark-map-tiles {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}

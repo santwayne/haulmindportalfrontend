@@ -132,14 +132,25 @@ const AttendanceTracking = () => {
   }, [filterType, filterDate, filterMonth, filterYear]);
 
   // Calculate stats
-  const today = new Date().toDateString();
-  const todayRecords = attendanceRecords.filter(r => {
-    const d = r.date ? new Date(r.date).toDateString() : '';
-    return d === today;
-  });
-  const presentToday = todayRecords.filter(r => r.status === 'present').length;
-  const absentToday = todayRecords.filter(r => r.status === 'absent').length;
+  // Attendance dates are stored as calendar dates (midnight UTC). Converting them with the
+  // browser's timezone shifted them a day back in Canada, so "today" never matched. Compare
+  // the stored calendar date with today's local calendar date instead.
+  const now = new Date();
+  const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const recordDateKey = (date?: string) => (date ? String(date).slice(0, 10) : '');
+  const employeeIdOf = (r: AttendanceRecord) => (typeof r.employee === 'string' ? r.employee : r.employee?._id) || '';
+  const todayRecords = attendanceRecords.filter(r => recordDateKey(r.date) === todayKey);
+  // Present today: anyone with a present/late record for today, plus anyone still logged in
+  // from a session that started earlier (e.g. checked in last night and still active)
+  const presentIds = new Set<string>();
+  todayRecords.forEach(r => { if (r.status === 'present' || r.status === 'late') presentIds.add(employeeIdOf(r)); });
+  attendanceRecords.forEach(r => { if (r.isActiveSession) presentIds.add(employeeIdOf(r)); });
+  presentIds.delete('');
+  const onLeaveIds = new Set(todayRecords.filter(r => r.status === 'leave').map(employeeIdOf).filter(Boolean));
+  const presentToday = presentIds.size;
   const totalEmployees = employees.length;
+  // Absent: employees with no present/leave record today and no open work session
+  const absentToday = employees.filter(e => !presentIds.has(e._id) && !onLeaveIds.has(e._id)).length;
 
   const calculateHours = (checkIn: string, checkOut: string): number => {
     if (!checkIn || !checkOut || checkIn === '--' || checkOut === '--') return 0;

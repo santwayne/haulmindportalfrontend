@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Search, Download, Calendar, FileText, Users, X, Eye } from 'lucide-react';
+import { Search, Download, Calendar, FileText, Users, X, Eye, Printer } from 'lucide-react';
 import { getPaystubs, getPaystubById } from '../../../../axios/api/account.payroll';
-import jsPDF from 'jspdf';
-import DocLogo from '../../../../assets/doclogo.png';
+import { outputPayStatement, paystubToStatement, settlementToStatement } from '../../../../utils/payStatementPdf';
+import { getSettlementById } from '../../../../axios/api/account.settlement';
+import { getCompany } from '../../../../axios/api/admin';
 
 interface Paystub {
   _id: string;
@@ -23,6 +24,10 @@ interface Paystub {
   employeeEmail?: string;
   employeeRole?: string;
   workType?: 'Employee' | 'Driver' | 'Owner-Operator';
+  // Owner-operator settlements are listed here too (backend sets source: 'settlement')
+  source?: 'settlement';
+  settlementId?: string;
+  truckNumber?: string;
   payPeriod: {
     startDate: string;
     endDate: string;
@@ -147,6 +152,11 @@ const PaystubsList = () => {
   const handleViewPaystub = async (paystub: Paystub) => {
     setModalLoading(true);
     setShowPaystubModal(true);
+    if (paystub.source === 'settlement') {
+      setSelectedPaystub(paystub);
+      setModalLoading(false);
+      return;
+    }
     try {
       const response = await getPaystubById(paystub._id);
       const fullPaystub = response?.success && response.data ? response.data : paystub;
@@ -171,787 +181,21 @@ const PaystubsList = () => {
     fetchPaystubs();
   };
 
-  const handleDownloadPDF = async (paystub: Paystub) => {
+  // Pay statement in the company's layout - same generator as Payroll and Driver Payroll
+  const handleDownloadPDF = async (paystub: Paystub, mode: 'download' | 'print' = 'download') => {
     try {
-      // Fetch full paystub details for complete PDF
+      // Owner-operator settlement: same statement as Accounts > Settlements prints
+      if (paystub.source === 'settlement') {
+        const [stRes, companyRes] = await Promise.all([getSettlementById(paystub._id), getCompany()]);
+        if (!stRes?.success || !stRes.data) throw new Error(stRes?.message || 'Settlement not found');
+        const company = companyRes?.data || companyRes?.company || {};
+        await outputPayStatement(settlementToStatement(stRes.data, company), mode);
+        return;
+      }
+      // Full paystub (trip lines, memos, signed logo)
       const response = await getPaystubById(paystub._id);
       const fullPaystub = response?.success && response.data ? response.data : paystub;
-
-      const doc = new jsPDF('p', 'mm', 'a4');
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const pageHeight = doc.internal.pageSize.getHeight();
-      const margin = 15;
-
-      const checkPageBreak = (requiredSpace: number) => {
-        if (yPos + requiredSpace > pageHeight - margin) {
-          doc.addPage();
-          yPos = margin;
-          return true;
-        }
-        return false;
-      };
-
-      const textR = 31, textG = 41, textB = 55;
-
-      let yPos = margin;
-
-      // Pre-load doclogo for use in header
-      let docLogoBase64 = '';
-      let docLogoW = 22, docLogoH = 11;
-      try {
-        const logoImg = new Image();
-        logoImg.src = DocLogo;
-        await new Promise<void>((resolve) => {
-          logoImg.onload = () => {
-            try {
-              const cv = document.createElement('canvas');
-              cv.width = logoImg.width; cv.height = logoImg.height;
-              const ctx = cv.getContext('2d');
-              if (ctx) {
-                ctx.drawImage(logoImg, 0, 0);
-                docLogoBase64 = cv.toDataURL('image/png');
-                docLogoW = 22;
-                docLogoH = (logoImg.height / logoImg.width) * docLogoW;
-              }
-            } catch { }
-            resolve();
-          };
-          logoImg.onerror = () => resolve();
-        });
-      } catch { }
-
-      // Determine if this is an employee (not a driver)
-      const isEmployee = (fullPaystub.employeeRole?.toLowerCase() !== 'driver' &&
-        fullPaystub.userId?.role?.toLowerCase() !== 'driver') ||
-        (fullPaystub.workType?.toLowerCase() === 'employee');
-
-      if (isEmployee) {
-        // PAY STUB format - Blue header (matching employee payroll format)
-        const contentWidth = pageWidth - (margin * 2);
-        const primaryR = 37, primaryG = 99, primaryB = 235;
-        const lightGrayR = 243, lightGrayG = 244, lightGrayB = 246;
-        const greenR = 34, greenG = 197, greenB = 94;
-        const redR = 239, redG = 68, redB = 68;
-
-        // Blue header background
-        doc.setFillColor(primaryR, primaryG, primaryB);
-        doc.rect(0, 0, pageWidth, 45, 'F');
-
-        // Company name (left side, white text)
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(14);
-        doc.setFont('helvetica', 'bold');
-        const companyName = fullPaystub.companyDetails?.companyName || fullPaystub.company?.name || 'Company Name';
-        doc.text(companyName, margin, 18);
-
-        doc.setFontSize(9);
-        doc.setFont('helvetica', 'normal');
-        let companyY = 25;
-        const companyAddress = fullPaystub.companyDetails?.companyAddress || fullPaystub.company?.address || '';
-        const companyPhone = fullPaystub.companyDetails?.companyPhone || fullPaystub.company?.phone || '';
-        const companyEmail = fullPaystub.companyDetails?.companyEmail || '';
-        if (companyAddress) {
-          const addressLines = doc.splitTextToSize(companyAddress, 70);
-          doc.text(addressLines, margin, companyY);
-          companyY += addressLines.length * 4.5;
-        }
-        if (companyPhone) {
-          doc.text(`Phone: ${companyPhone}`, margin, companyY);
-          companyY += 4.5;
-        }
-        if (companyEmail) {
-          doc.text(`Email: ${companyEmail}`, margin, companyY);
-        }
-
-        // PAY STUB title (right side, white text)
-        doc.setFontSize(22);
-        doc.setFont('helvetica', 'bold');
-        doc.text('PAY STUB', pageWidth - margin, 18, { align: 'right' });
-        doc.setFontSize(9);
-        doc.setFont('helvetica', 'normal');
-        doc.text('EARNINGS STATEMENT', pageWidth - margin, 25, { align: 'right' });
-        if (fullPaystub.paystubId) {
-          doc.setFontSize(7);
-          doc.text(`ID: ${fullPaystub.paystubId}`, pageWidth - margin, 32, { align: 'right' });
-        }
-
-        // Platform logo in bottom-right of header
-        if (docLogoBase64) {
-          doc.addImage(docLogoBase64, 'PNG', pageWidth - margin - docLogoW, 44 - docLogoH, docLogoW, docLogoH);
-        }
-
-        doc.setTextColor(textR, textG, textB);
-        yPos = 55;
-
-        // Pay Period Box (right-aligned)
-        const payBoxWidth = 75;
-        const payBoxHeight = 25;
-        doc.setFillColor(lightGrayR, lightGrayG, lightGrayB);
-        doc.roundedRect(pageWidth - margin - payBoxWidth, yPos, payBoxWidth, payBoxHeight, 2, 2, 'F');
-
-        doc.setFontSize(7);
-        doc.setTextColor(107, 114, 128);
-        doc.text('Pay Period Start', pageWidth - margin - payBoxWidth + 3, yPos + 6);
-        doc.text('Pay Period End', pageWidth - margin - payBoxWidth + 3, yPos + 12);
-        doc.text('Pay Date', pageWidth - margin - payBoxWidth + 3, yPos + 18);
-
-        doc.setFontSize(8);
-        doc.setTextColor(textR, textG, textB);
-        doc.setFont('helvetica', 'bold');
-        const startDateStr = new Date(fullPaystub.payPeriod.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        const endDateStr = new Date(fullPaystub.payPeriod.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        const payDateStr = new Date(fullPaystub.payPeriod.payDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        doc.text(startDateStr, pageWidth - margin - 3, yPos + 6, { align: 'right' });
-        doc.text(endDateStr, pageWidth - margin - 3, yPos + 12, { align: 'right' });
-        doc.text(payDateStr, pageWidth - margin - 3, yPos + 18, { align: 'right' });
-
-        yPos += payBoxHeight + 8;
-
-        // Employee Information Section
-        checkPageBreak(25);
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Employee Information', margin, yPos);
-        yPos += 7;
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 6;
-
-        doc.setFontSize(9);
-        doc.setFont('helvetica', 'normal');
-        doc.text(`Name: ${fullPaystub.employeeName || fullPaystub.userId?.name || 'N/A'}`, margin, yPos);
-        yPos += 6;
-        const empInternalId = fullPaystub.employeeId || fullPaystub.userId?.internalId;
-        if (empInternalId) {
-          doc.text(`Employee ID: ${empInternalId}`, margin, yPos);
-          yPos += 6;
-        }
-        doc.text(`Role: ${fullPaystub.employeeRole || fullPaystub.userId?.role || 'N/A'}`, margin, yPos);
-        yPos += 6;
-        doc.text(`Work Type: ${fullPaystub.workType || 'Employee'}`, margin, yPos);
-        yPos += 6;
-        if (fullPaystub.employeeAddress) {
-          const addrLines = doc.splitTextToSize(`Address: ${fullPaystub.employeeAddress}`, contentWidth);
-          doc.text(addrLines, margin, yPos);
-          yPos += addrLines.length * 5;
-        }
-        yPos += 8;
-
-        // Earnings Section
-        checkPageBreak(40);
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Earnings', margin, yPos);
-        yPos += 7;
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 5;
-
-        doc.setFillColor(lightGrayR, lightGrayG, lightGrayB);
-        doc.rect(margin, yPos - 2, contentWidth, 7, 'F');
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Earning Type', margin + 2, yPos + 4);
-        doc.text('Units', margin + 70, yPos + 4);
-        doc.text('Rate', margin + 100, yPos + 4);
-        doc.text('Amount', pageWidth - margin - 2, yPos + 4, { align: 'right' });
-        yPos += 9;
-
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'normal');
-        if (fullPaystub.earnings?.earningsBreakdown && fullPaystub.earnings.earningsBreakdown.length > 0) {
-          fullPaystub.earnings.earningsBreakdown.forEach((earning: any) => {
-            checkPageBreak(6);
-            const typeText = doc.splitTextToSize(earning.type || 'N/A', 60);
-            doc.text(typeText, margin + 2, yPos + 4);
-            doc.text(String(earning.units || '-'), margin + 70, yPos + 4);
-            doc.text(earning.rate > 0 ? `$${earning.rate.toFixed(2)}` : '-', margin + 100, yPos + 4);
-            doc.text(`$${earning.amount.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            yPos += Math.max(6, typeText.length * 5);
-          });
-        } else {
-          checkPageBreak(6);
-          doc.text('Basic Pay', margin + 2, yPos + 4);
-          doc.text(`$${(fullPaystub.earnings?.baseSalary || fullPaystub.summary?.grossPay || 0).toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-          yPos += 6;
-          if ((fullPaystub.earnings?.bonus || 0) > 0) {
-            checkPageBreak(6);
-            doc.text('Bonus', margin + 2, yPos + 4);
-            doc.text(`$${fullPaystub.earnings.bonus.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            yPos += 6;
-          }
-        }
-
-        yPos += 3;
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 6;
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(9);
-        doc.text('Total Earnings', margin + 2, yPos + 4);
-        doc.setTextColor(greenR, greenG, greenB);
-        doc.text(`$${(fullPaystub.earnings?.totalEarnings || fullPaystub.summary?.grossPay || 0).toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-        doc.setTextColor(textR, textG, textB);
-        yPos += 10;
-
-        // Deductions Section
-        checkPageBreak(40);
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Deductions', margin, yPos);
-        yPos += 7;
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 5;
-
-        doc.setFillColor(lightGrayR, lightGrayG, lightGrayB);
-        doc.rect(margin, yPos - 2, contentWidth, 7, 'F');
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Deduction Type', margin + 2, yPos + 4);
-        doc.text('Amount', pageWidth - margin - 2, yPos + 4, { align: 'right' });
-        yPos += 9;
-
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'normal');
-        const deductionsBreakdown = fullPaystub.deductions?.deductionsBreakdown;
-        if (deductionsBreakdown && deductionsBreakdown.length > 0) {
-          deductionsBreakdown.forEach((deduction: any) => {
-            checkPageBreak(6);
-            const typeText = doc.splitTextToSize(deduction.type || 'N/A', 120);
-            doc.text(typeText, margin + 2, yPos + 4);
-            doc.setTextColor(redR, redG, redB);
-            doc.text(`$${deduction.amount.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            doc.setTextColor(textR, textG, textB);
-            yPos += Math.max(6, typeText.length * 5);
-          });
-        } else {
-          if ((fullPaystub.deductions?.otherDeductions || 0) > 0) {
-            checkPageBreak(6);
-            doc.text('Other Deductions', margin + 2, yPos + 4);
-            doc.setTextColor(redR, redG, redB);
-            doc.text(`$${fullPaystub.deductions.otherDeductions.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            doc.setTextColor(textR, textG, textB);
-            yPos += 6;
-          }
-          if ((fullPaystub.summary?.totalTaxes || 0) > 0) {
-            checkPageBreak(6);
-            doc.text('Taxes', margin + 2, yPos + 4);
-            doc.setTextColor(redR, redG, redB);
-            doc.text(`$${fullPaystub.summary.totalTaxes.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            doc.setTextColor(textR, textG, textB);
-            yPos += 6;
-          }
-        }
-
-        yPos += 3;
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 6;
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(9);
-        doc.text('Total Deductions', margin + 2, yPos + 4);
-        doc.setTextColor(redR, redG, redB);
-        doc.text(`$${(fullPaystub.deductions?.totalDeductions || fullPaystub.summary?.totalDeductions || 0).toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-        doc.setTextColor(textR, textG, textB);
-        yPos += 12;
-
-        // Pay Summary Box (blue)
-        checkPageBreak(40);
-        doc.setFillColor(primaryR, primaryG, primaryB);
-        doc.roundedRect(margin, yPos, contentWidth, 32, 2, 2, 'F');
-        yPos += 8;
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Pay Summary', margin + 3, yPos);
-        yPos += 9;
-
-        doc.setFontSize(9);
-        doc.setFont('helvetica', 'normal');
-        doc.text('Gross Earnings:', margin + 3, yPos);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`$${(fullPaystub.summary?.grossPay || 0).toFixed(2)}`, pageWidth - margin - 3, yPos, { align: 'right' });
-        yPos += 7;
-
-        doc.setFont('helvetica', 'normal');
-        doc.text('Total Deductions:', margin + 3, yPos);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`$${(fullPaystub.summary?.totalDeductions || 0).toFixed(2)}`, pageWidth - margin - 3, yPos, { align: 'right' });
-        yPos += 6;
-
-        doc.setDrawColor(255, 255, 255);
-        doc.line(margin + 3, yPos, pageWidth - margin - 3, yPos);
-        yPos += 6;
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Net Pay', margin + 3, yPos);
-        doc.setFontSize(13);
-        doc.text(`$${(fullPaystub.summary?.netPay || 0).toFixed(2)}`, pageWidth - margin - 3, yPos, { align: 'right' });
-        doc.setTextColor(textR, textG, textB);
-        yPos += 15;
-
-        // YTD Summary (if available)
-        if (fullPaystub.ytd) {
-          checkPageBreak(25);
-          doc.setFontSize(10);
-          doc.setFont('helvetica', 'bold');
-          doc.text('Year-to-Date (YTD) Summary', margin, yPos);
-          yPos += 7;
-          doc.setDrawColor(200, 200, 200);
-          doc.line(margin, yPos, pageWidth - margin, yPos);
-          yPos += 7;
-
-          doc.setFontSize(8);
-          doc.setFont('helvetica', 'normal');
-          doc.text('YTD Earnings:', margin, yPos);
-          doc.text(`$${fullPaystub.ytd.earnings.toFixed(2)}`, margin + 70, yPos);
-          yPos += 6;
-          doc.text('YTD Deductions:', margin, yPos);
-          doc.text(`$${fullPaystub.ytd.deductions.toFixed(2)}`, margin + 70, yPos);
-          yPos += 6;
-          doc.text('YTD Net Pay:', margin, yPos);
-          doc.setFont('helvetica', 'bold');
-          doc.text(`$${fullPaystub.ytd.netPay.toFixed(2)}`, margin + 70, yPos);
-          yPos += 10;
-        }
-
-        // Footer
-        const empFooterY = pageHeight - 20;
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, empFooterY, pageWidth - margin, empFooterY);
-        doc.setFontSize(7);
-        doc.setTextColor(107, 114, 128);
-        let empFooterTextY = empFooterY + 5;
-        if (fullPaystub.notes) {
-          const notesLines = doc.splitTextToSize(`Notes: ${fullPaystub.notes}`, contentWidth);
-          doc.text(notesLines, margin, empFooterTextY);
-          empFooterTextY += notesLines.length * 4;
-        }
-        if (fullPaystub.hrName) {
-          doc.text(`HR Signature: ${fullPaystub.hrName}`, margin, empFooterTextY);
-          empFooterTextY += 4;
-        }
-        const statusText = fullPaystub.status || 'issued';
-        doc.text(`Status: ${statusText.charAt(0).toUpperCase() + statusText.slice(1)}`, margin, empFooterTextY);
-        doc.text(`Generated: ${new Date(fullPaystub.createdAt || new Date()).toLocaleString()}`, pageWidth - margin, empFooterTextY, { align: 'right' });
-
-      } else {
-        // Driver/Owner Operator Format - Blue header (matching driver payroll format)
-        const contentWidth = pageWidth - (margin * 2);
-        const primaryR = 37, primaryG = 99, primaryB = 235;
-        const lightGrayR = 243, lightGrayG = 244, lightGrayB = 246;
-        const greenR = 34, greenG = 197, greenB = 94;
-        const redR = 239, redG = 68, redB = 68;
-
-        // Blue header background
-        doc.setFillColor(primaryR, primaryG, primaryB);
-        doc.rect(0, 0, pageWidth, 45, 'F');
-
-        // Company name (left side, white text)
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(14);
-        doc.setFont('helvetica', 'bold');
-        const companyName = fullPaystub.companyDetails?.companyName || fullPaystub.company?.name || 'Company Name';
-
-        doc.text(companyName, margin, 12);
-
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'normal');
-        let companyY = 19;
-        if (fullPaystub.companyDetails?.companyAddress) {
-          const addressLines = doc.splitTextToSize(fullPaystub.companyDetails.companyAddress, 70);
-          doc.text(addressLines, margin, companyY);
-          companyY += addressLines.length * 4;
-        }
-        if (fullPaystub.companyDetails?.companyPhone) {
-          doc.text(fullPaystub.companyDetails.companyPhone, margin, companyY);
-          companyY += 4;
-        }
-
-        // Employee info on right side of header
-        const drvWorkType = fullPaystub.workType;
-        if (drvWorkType === 'Owner-Operator' || drvWorkType === 'Driver') {
-          const employeeInfoX = pageWidth - margin - 70;
-          doc.setFontSize(8);
-          const drvHeaderEmpId = fullPaystub.employeeId || fullPaystub.userId?.internalId;
-          if (drvHeaderEmpId) {
-            doc.text(drvHeaderEmpId, employeeInfoX, 12);
-          }
-          const drvHeaderName = fullPaystub.employeeName || fullPaystub.userId?.name;
-          if (drvHeaderName) {
-            const nameLines = doc.splitTextToSize(drvHeaderName, 65);
-            doc.text(nameLines, employeeInfoX, 16);
-            companyY = Math.max(companyY, 16 + nameLines.length * 4);
-          }
-          if (fullPaystub.employeeAddress) {
-            const addrLines = doc.splitTextToSize(fullPaystub.employeeAddress, 65);
-            doc.text(addrLines, employeeInfoX, companyY + 2);
-          }
-        }
-
-        // Title on right
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'bold');
-        if (drvWorkType === 'Owner-Operator') {
-          doc.text('OWNER OPERATOR PAY STATEMENT', pageWidth - margin, 12, { align: 'right' });
-        } else {
-          doc.text('PAY STUB', pageWidth - margin, 12, { align: 'right' });
-        }
-
-        doc.setFontSize(7);
-        doc.setFont('helvetica', 'normal');
-        let rightHeaderY = 16;
-        if (fullPaystub.companyDetails?.gstNumber) {
-          doc.text(`GST No. ${fullPaystub.companyDetails.gstNumber}`, pageWidth - margin, rightHeaderY, { align: 'right' });
-          rightHeaderY += 4;
-        }
-        const drvPeriodStartFmt = new Date(fullPaystub.payPeriod.startDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
-        const drvPeriodEndFmt = new Date(fullPaystub.payPeriod.endDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
-        doc.text(`PAY PERIOD ${drvPeriodStartFmt} - ${drvPeriodEndFmt}`, pageWidth - margin, rightHeaderY, { align: 'right' });
-        rightHeaderY += 4;
-        const drvPayDueFmt = new Date(fullPaystub.payPeriod.payDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
-        doc.text(`PAYROLL DUE: ${drvPayDueFmt}`, pageWidth - margin, rightHeaderY, { align: 'right' });
-
-        // Platform logo in bottom-right of header
-        if (docLogoBase64) {
-          doc.addImage(docLogoBase64, 'PNG', pageWidth - margin - docLogoW, 44 - docLogoH, docLogoW, docLogoH);
-        }
-
-        doc.setTextColor(textR, textG, textB);
-        yPos = 55;
-
-        // Pay Period Box (right-aligned)
-        const drvBoxWidth = 75;
-        const drvBoxHeight = 25;
-        doc.setFillColor(lightGrayR, lightGrayG, lightGrayB);
-        doc.roundedRect(pageWidth - margin - drvBoxWidth, yPos, drvBoxWidth, drvBoxHeight, 2, 2, 'F');
-        doc.setFontSize(7);
-        doc.setTextColor(107, 114, 128);
-        doc.text('Pay Period Start', pageWidth - margin - drvBoxWidth + 3, yPos + 6);
-        doc.text('Pay Period End', pageWidth - margin - drvBoxWidth + 3, yPos + 12);
-        doc.text('Pay Date', pageWidth - margin - drvBoxWidth + 3, yPos + 18);
-        doc.setFontSize(8);
-        doc.setTextColor(textR, textG, textB);
-        doc.setFont('helvetica', 'bold');
-        const drvStartDate = new Date(fullPaystub.payPeriod.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        const drvEndDate = new Date(fullPaystub.payPeriod.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        const drvPayDateFmt = new Date(fullPaystub.payPeriod.payDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        doc.text(drvStartDate, pageWidth - margin - 3, yPos + 6, { align: 'right' });
-        doc.text(drvEndDate, pageWidth - margin - 3, yPos + 12, { align: 'right' });
-        doc.text(drvPayDateFmt, pageWidth - margin - 3, yPos + 18, { align: 'right' });
-        yPos += drvBoxHeight + 8;
-
-        // Employee Information
-        checkPageBreak(25);
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Employee Information', margin, yPos);
-        yPos += 7;
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 6;
-        doc.setFontSize(9);
-        doc.setFont('helvetica', 'normal');
-        doc.text(`Name: ${fullPaystub.employeeName || fullPaystub.userId?.name || 'N/A'}`, margin, yPos);
-        yPos += 6;
-        const drvEmpId = fullPaystub.employeeId || fullPaystub.userId?.internalId;
-        if (drvEmpId) {
-          doc.text(`Employee ID: ${drvEmpId}`, margin, yPos);
-          yPos += 6;
-        }
-        doc.text(`Role: ${fullPaystub.employeeRole || fullPaystub.userId?.role || 'N/A'}`, margin, yPos);
-        yPos += 6;
-        doc.text(`Work Type: ${fullPaystub.workType || 'Driver'}`, margin, yPos);
-        yPos += 6;
-        if (fullPaystub.employeeAddress) {
-          const empAddrLines = doc.splitTextToSize(`Address: ${fullPaystub.employeeAddress}`, contentWidth);
-          doc.text(empAddrLines, margin, yPos);
-          yPos += empAddrLines.length * 5;
-        }
-        yPos += 8;
-
-        // Trip Details (if available)
-        if (fullPaystub.tripDetails && fullPaystub.tripDetails.length > 0) {
-          checkPageBreak(30);
-          doc.setFillColor(lightGrayR, lightGrayG, lightGrayB);
-          doc.rect(margin, yPos, contentWidth, 6, 'F');
-          doc.setFontSize(6);
-          doc.setFont('helvetica', 'bold');
-          doc.setTextColor(textR, textG, textB);
-          const col1 = margin + 1, col2 = margin + 15, col3 = margin + 30, col4 = margin + 42;
-          const col5 = margin + 50, col6 = margin + 65, col7 = margin + 80;
-          const col8 = margin + 92, col9 = margin + 108, col10 = margin + 125;
-          doc.text('Truck #', col1, yPos + 4);
-          doc.text('Pay Type', col2, yPos + 4);
-          doc.text('Load #', col3, yPos + 4);
-          doc.text('Type', col4, yPos + 4);
-          doc.text('Period', col5, yPos + 4);
-          doc.text('From', col5, yPos + 5.5);
-          doc.text('To', col6, yPos + 4);
-          doc.text('Pay Rate', col7, yPos + 4);
-          doc.text('Miles/', col8, yPos + 4);
-          doc.text('Hours', col8, yPos + 5.5);
-          doc.text('CAD', col9, yPos + 4);
-          doc.text('USD', col10, yPos + 4);
-          yPos += 7;
-          doc.setFont('helvetica', 'normal');
-          doc.setFontSize(6);
-          let totalMilesDrv = 0;
-          for (const trip of fullPaystub.tripDetails) {
-            checkPageBreak(8);
-            const truckNum = trip.truckNumber || 'N/A';
-            const payType = trip.payType || 'Paid Per Mile';
-            const loadNum = trip.loadNumber || 'N/A';
-            const tripType = trip.tripType || 'N/A';
-            const fromDate = trip.periodFrom ? new Date(trip.periodFrom).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) : 'N/A';
-            const toDate = trip.periodTo ? new Date(trip.periodTo).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) : 'N/A';
-            const origin = trip.origin || 'N/A';
-            const destination = trip.destination || 'N/A';
-            const originLines = doc.splitTextToSize(origin, 12);
-            const destLines = doc.splitTextToSize(destination, 12);
-            const payRate = trip.payRate || 0;
-            const miles = trip.miles || 0;
-            const hours = trip.hours || 0;
-            const amountCAD = trip.amountCAD || 0;
-            const amountUSD = trip.amountUSD || 0;
-            totalMilesDrv += miles;
-            const maxLines = Math.max(originLines.length, destLines.length);
-            const rowHeight = Math.max(6, maxLines * 3.5);
-            doc.text(truckNum, col1, yPos + 3);
-            doc.text(payType, col2, yPos + 3);
-            doc.text(loadNum, col3, yPos + 3);
-            doc.text(tripType, col4, yPos + 3);
-            doc.text(fromDate, col5, yPos + 3);
-            if (origin !== 'N/A') {
-              doc.setFontSize(5); doc.setTextColor(107, 114, 128);
-              doc.text(originLines[0] || origin.substring(0, 15), col5, yPos + 5.5);
-              doc.setFontSize(6); doc.setTextColor(textR, textG, textB);
-            }
-            doc.text(toDate, col6, yPos + 3);
-            if (destination !== 'N/A') {
-              doc.setFontSize(5); doc.setTextColor(107, 114, 128);
-              doc.text(destLines[0] || destination.substring(0, 15), col6, yPos + 5.5);
-              doc.setFontSize(6); doc.setTextColor(textR, textG, textB);
-            }
-            doc.text(`$${payRate.toFixed(2)}`, col7, yPos + 3);
-            if (miles > 0) {
-              doc.text(miles.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), col8, yPos + 3);
-            } else if (hours > 0) {
-              doc.text(hours.toFixed(2), col8, yPos + 3);
-            } else {
-              doc.text('-', col8, yPos + 3);
-            }
-            doc.text(`$${amountCAD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, col9, yPos + 3);
-            doc.text(`$${amountUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, col10, yPos + 3);
-            yPos += rowHeight;
-          }
-          yPos += 2;
-          doc.setDrawColor(200, 200, 200);
-          doc.line(margin, yPos, pageWidth - margin, yPos);
-          yPos += 5;
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(7);
-          doc.text(`Total Miles: ${totalMilesDrv.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, margin, yPos);
-          yPos += 8;
-        } else {
-          // Fallback: Earnings section
-          checkPageBreak(40);
-          doc.setFontSize(11);
-          doc.setFont('helvetica', 'bold');
-          doc.text('Earnings', margin, yPos);
-          yPos += 7;
-          doc.setDrawColor(200, 200, 200);
-          doc.line(margin, yPos, pageWidth - margin, yPos);
-          yPos += 5;
-          doc.setFillColor(lightGrayR, lightGrayG, lightGrayB);
-          doc.rect(margin, yPos - 2, contentWidth, 7, 'F');
-          doc.setFontSize(8);
-          doc.setFont('helvetica', 'bold');
-          doc.text('Earning Type', margin + 2, yPos + 4);
-          doc.text('Units', margin + 70, yPos + 4);
-          doc.text('Rate', margin + 100, yPos + 4);
-          doc.text('Amount', pageWidth - margin - 2, yPos + 4, { align: 'right' });
-          yPos += 9;
-          doc.setFontSize(8);
-          doc.setFont('helvetica', 'normal');
-          const drvEarningsBreakdown = fullPaystub.earnings?.earningsBreakdown;
-          if (drvEarningsBreakdown && drvEarningsBreakdown.length > 0) {
-            drvEarningsBreakdown.forEach((earning: any) => {
-              checkPageBreak(6);
-              const typeText = doc.splitTextToSize(earning.type || 'N/A', 60);
-              doc.text(typeText, margin + 2, yPos + 4);
-              doc.text(String(earning.units || '-'), margin + 70, yPos + 4);
-              doc.text(earning.rate > 0 ? `$${earning.rate.toFixed(2)}` : '-', margin + 100, yPos + 4);
-              doc.text(`$${earning.amount.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-              yPos += Math.max(6, typeText.length * 5);
-            });
-          } else {
-            checkPageBreak(6);
-            doc.text('Basic Pay', margin + 2, yPos + 4);
-            doc.text(`$${(fullPaystub.earnings?.baseSalary || fullPaystub.summary?.grossPay || 0).toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            yPos += 6;
-          }
-          yPos += 3;
-          doc.setDrawColor(200, 200, 200);
-          doc.line(margin, yPos, pageWidth - margin, yPos);
-          yPos += 6;
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(9);
-          doc.text('Total Earnings', margin + 2, yPos + 4);
-          doc.setTextColor(greenR, greenG, greenB);
-          doc.text(`$${(fullPaystub.earnings?.totalEarnings || fullPaystub.summary?.grossPay || 0).toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-          doc.setTextColor(textR, textG, textB);
-          yPos += 10;
-        }
-
-        // Deductions Section
-        checkPageBreak(40);
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Deductions', margin, yPos);
-        yPos += 7;
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 5;
-        doc.setFillColor(lightGrayR, lightGrayG, lightGrayB);
-        doc.rect(margin, yPos - 2, contentWidth, 7, 'F');
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Deduction Type', margin + 2, yPos + 4);
-        doc.text('Amount', pageWidth - margin - 2, yPos + 4, { align: 'right' });
-        yPos += 9;
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'normal');
-        const drvDeductionsBreakdown = fullPaystub.deductions?.deductionsBreakdown;
-        if (drvDeductionsBreakdown && drvDeductionsBreakdown.length > 0) {
-          drvDeductionsBreakdown.forEach((deduction: any) => {
-            checkPageBreak(6);
-            const typeText = doc.splitTextToSize(deduction.type || 'N/A', 120);
-            doc.text(typeText, margin + 2, yPos + 4);
-            doc.setTextColor(redR, redG, redB);
-            doc.text(`$${deduction.amount.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            doc.setTextColor(textR, textG, textB);
-            yPos += Math.max(6, typeText.length * 5);
-          });
-        } else {
-          if ((fullPaystub.deductions?.otherDeductions || 0) > 0) {
-            checkPageBreak(6);
-            doc.text('Other Deductions', margin + 2, yPos + 4);
-            doc.setTextColor(redR, redG, redB);
-            doc.text(`$${fullPaystub.deductions.otherDeductions.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            doc.setTextColor(textR, textG, textB);
-            yPos += 6;
-          }
-          if ((fullPaystub.summary?.totalTaxes || 0) > 0) {
-            checkPageBreak(6);
-            doc.text('Taxes', margin + 2, yPos + 4);
-            doc.setTextColor(redR, redG, redB);
-            doc.text(`$${fullPaystub.summary.totalTaxes.toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-            doc.setTextColor(textR, textG, textB);
-            yPos += 6;
-          }
-        }
-        yPos += 3;
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 6;
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(9);
-        doc.text('Total Deductions', margin + 2, yPos + 4);
-        doc.setTextColor(redR, redG, redB);
-        doc.text(`$${(fullPaystub.deductions?.totalDeductions || fullPaystub.summary?.totalDeductions || 0).toFixed(2)}`, pageWidth - margin - 2, yPos + 4, { align: 'right' });
-        doc.setTextColor(textR, textG, textB);
-        yPos += 12;
-
-        // Pay Summary Box (blue)
-        checkPageBreak(40);
-        doc.setFillColor(primaryR, primaryG, primaryB);
-        doc.roundedRect(margin, yPos, contentWidth, 32, 2, 2, 'F');
-        yPos += 8;
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Pay Summary', margin + 3, yPos);
-        yPos += 9;
-        doc.setFontSize(9);
-        doc.setFont('helvetica', 'normal');
-        doc.text('Gross Pay', margin + 3, yPos);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`$${(fullPaystub.summary?.grossPay || 0).toFixed(2)}`, pageWidth - margin - 3, yPos, { align: 'right' });
-        yPos += 7;
-        if (fullPaystub.additions && Array.isArray(fullPaystub.additions) && fullPaystub.additions.length > 0) {
-          const totalAdditions = fullPaystub.additions.reduce((sum: number, add: any) => sum + (add.totalCAD || add.amount || 0), 0);
-          doc.setFont('helvetica', 'normal');
-          doc.text('Additions (+)', margin + 3, yPos);
-          doc.setFont('helvetica', 'bold');
-          doc.text(`$${totalAdditions.toFixed(2)}`, pageWidth - margin - 3, yPos, { align: 'right' });
-          yPos += 7;
-        }
-        doc.setFont('helvetica', 'normal');
-        doc.text('Total Deductions:', margin + 3, yPos);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`$${(fullPaystub.summary?.totalDeductions || fullPaystub.deductions?.totalDeductions || 0).toFixed(2)}`, pageWidth - margin - 3, yPos, { align: 'right' });
-        yPos += 6;
-        doc.setDrawColor(255, 255, 255);
-        doc.line(margin + 3, yPos, pageWidth - margin - 3, yPos);
-        yPos += 6;
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Net Pay', margin + 3, yPos);
-        doc.setFontSize(13);
-        doc.text(`$${(fullPaystub.summary?.netPay || 0).toFixed(2)}`, pageWidth - margin - 3, yPos, { align: 'right' });
-        doc.setTextColor(textR, textG, textB);
-        yPos += 15;
-
-        // YTD Summary
-        if (fullPaystub.ytd) {
-          checkPageBreak(25);
-          doc.setFontSize(10);
-          doc.setFont('helvetica', 'bold');
-          doc.text('Year-to-Date (YTD) Summary', margin, yPos);
-          yPos += 7;
-          doc.setDrawColor(200, 200, 200);
-          doc.line(margin, yPos, pageWidth - margin, yPos);
-          yPos += 7;
-          doc.setFontSize(8);
-          doc.setFont('helvetica', 'normal');
-          doc.text('YTD Earnings:', margin, yPos);
-          doc.text(`$${fullPaystub.ytd.earnings.toFixed(2)}`, margin + 70, yPos);
-          yPos += 6;
-          doc.text('YTD Deductions:', margin, yPos);
-          doc.text(`$${fullPaystub.ytd.deductions.toFixed(2)}`, margin + 70, yPos);
-          yPos += 6;
-          doc.text('YTD Net Pay:', margin, yPos);
-          doc.setFont('helvetica', 'bold');
-          doc.text(`$${fullPaystub.ytd.netPay.toFixed(2)}`, margin + 70, yPos);
-          yPos += 10;
-        }
-
-        // Footer
-        const drvFooterY = pageHeight - 20;
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, drvFooterY, pageWidth - margin, drvFooterY);
-        doc.setFontSize(7);
-        doc.setTextColor(107, 114, 128);
-        let drvFooterTextY = drvFooterY + 5;
-        if (fullPaystub.notes) {
-          const notesLines = doc.splitTextToSize(`Notes: ${fullPaystub.notes}`, contentWidth);
-          doc.text(notesLines, margin, drvFooterTextY);
-          drvFooterTextY += notesLines.length * 4;
-        }
-        if (fullPaystub.hrName) {
-          doc.text(`HR Signature: ${fullPaystub.hrName}`, margin, drvFooterTextY);
-          drvFooterTextY += 4;
-        }
-        const drvStatus = fullPaystub.status || 'issued';
-        doc.text(`Status: ${drvStatus.charAt(0).toUpperCase() + drvStatus.slice(1)}`, margin, drvFooterTextY);
-        doc.text(`Generated: ${new Date(fullPaystub.createdAt || new Date()).toLocaleString()}`, pageWidth - margin, drvFooterTextY, { align: 'right' });
-
-      }
-
-      const fileName = `Paystub_${(fullPaystub.employeeName || fullPaystub.userId?.name || 'Unknown').replace(/\s+/g, '_')}_${fullPaystub.paystubId || fullPaystub._id.slice(-8)}.pdf`;
-      doc.save(fileName);
+      await outputPayStatement(paystubToStatement(fullPaystub), mode);
     } catch (error) {
       console.error('Error generating PDF:', error);
       alert('Error generating PDF. Please try again.');
@@ -1301,6 +545,14 @@ const PaystubsList = () => {
                             <span className="hidden md:inline">View</span>
                           </button>
                           <button
+                            onClick={() => handleDownloadPDF(paystub, 'print')}
+                            className="p-2 rounded-lg transition-colors inline-flex items-center gap-1 text-[var(--text-secondary)] hover:text-[var(--accent-navyblue)] hover:bg-[rgba(5,150,105,0.08)]"
+                            title="Print"
+                          >
+                            <Printer size={18} />
+                            <span className="hidden md:inline">Download</span>
+                          </button>
+                          <button
                             onClick={() => handleDownloadPDF(paystub)}
                             className="p-2 rounded-lg transition-colors inline-flex items-center gap-1 text-[var(--text-secondary)] hover:text-[var(--accent-navyblue)] hover:bg-[rgba(5,150,105,0.08)]"
                             title="Download PDF"
@@ -1513,6 +765,7 @@ const PaystubsList = () => {
           <div className="p-6 border-t-2 border-theme bg-card">
             <div className="flex justify-between items-center">
               {selectedPaystub ? (
+                <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleDownloadPDF(selectedPaystub)}
                   className="px-6 py-3 bg-[var(--accent-navyblue)] hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
@@ -1520,6 +773,14 @@ const PaystubsList = () => {
                   <Download size={18} />
                   Download PDF
                 </button>
+                <button
+                  onClick={() => handleDownloadPDF(selectedPaystub, 'print')}
+                  className="px-6 py-3 bg-[var(--accent-navyblue)] hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                >
+                  <Printer size={18} />
+                  Print
+                </button>
+                </div>
               ) : (
                 <div />
               )}

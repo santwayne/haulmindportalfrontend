@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { FaClipboardList, FaTachometerAlt, FaUser, FaCheckCircle, FaWrench, FaSatelliteDish } from "react-icons/fa";
+import { FaTasks, FaTachometerAlt, FaUser, FaCheckCircle, FaBoxes, FaFileInvoiceDollar, FaSatelliteDish } from "react-icons/fa";
 import Logo from "../../assets/images/LI.png";
 import FullLogo from "../../assets/FleetGo.png";
 import { getDashboardRoute } from "../../utils/auth";
@@ -19,9 +19,9 @@ const getSidebarLinks = (basePath: string) => [
     icon: <FaTachometerAlt />,
   },
   {
-    key: `${basePath}/orders`,
-    label: "Orders",
-    icon: <FaClipboardList />,
+    key: `${basePath}/assign-tasks`,
+    label: "Assign Tasks",
+    icon: <FaTasks />,
   },
   {
     key: `${basePath}/completed-orders`,
@@ -29,14 +29,14 @@ const getSidebarLinks = (basePath: string) => [
     icon: <FaCheckCircle />,
   },
   {
-    key: `${basePath}/services`,
-    label: "Services",
-    icon: <FaWrench />,
+    key: `${basePath}/parts`,
+    label: "Parts",
+    icon: <FaBoxes />,
   },
   {
-    key: `${basePath}/profile`,
-    label: "Profile",
-    icon: <FaUser />,
+    key: `${basePath}/invoices`,
+    label: "Invoices",
+    icon: <FaFileInvoiceDollar />,
   },
   {
     key: "/gps-dashboard",
@@ -158,32 +158,28 @@ const MechanicsSidebar: React.FC<MechanicsSidebarProps> = ({
           </div>
         </div>
 
-        {/* Profile section — fixed at bottom */}
+        {/* Signed-in user — fixed at bottom (profile page removed for mechanics) */}
         <div className="flex-shrink-0 border-t border-[rgba(15,31,23,0.08)]">
           {isCollapsed ? (
             <div className="flex flex-col items-center gap-2 py-3 px-2">
-              <button
-                onClick={() => navigate(`${basePath}/profile`)}
-                className="w-9 h-9 rounded-full bg-[#10b981]/20 flex items-center justify-center text-[#10b981] hover:bg-[#10b981]/30 transition-all"
-                title={userInfo?.userData?.name || "Profile"}
+              <div
+                className="w-9 h-9 rounded-full bg-[#10b981]/20 flex items-center justify-center text-[#10b981]"
+                title={userInfo?.userData?.name || "Mechanic"}
               >
                 <FaUser size={14} />
-              </button>
+              </div>
             </div>
           ) : (
             <div className="flex items-center gap-3 px-4 py-3">
               <div className="w-9 h-9 rounded-full bg-[#10b981]/20 flex-shrink-0 flex items-center justify-center text-[#10b981]">
                 <FaUser size={14} />
               </div>
-              <button
-                onClick={() => navigate(`${basePath}/profile`)}
-                className="flex-1 text-left min-w-0 hover:opacity-80 transition-opacity"
-              >
+              <div className="flex-1 text-left min-w-0">
                 <p className="text-sm font-semibold text-primary truncate">
                   {userInfo?.userData?.name || "Mechanic"}
                 </p>
                 <p className="text-xs text-secondary truncate">Mechanic</p>
-              </button>
+              </div>
             </div>
           )}
         </div>

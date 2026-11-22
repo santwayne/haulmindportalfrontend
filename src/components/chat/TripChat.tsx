@@ -149,12 +149,24 @@ const TripChat: React.FC<TripChatProps> = ({ tripId, tripNumber, onClose }) => {
         }
         setUploadingFile(false);
       } else {
-        // Send via socket for real-time
-        socketService.sendChatMessage({
-          tripId,
-          message: newMessage,
-        });
-        setNewMessage("");
+        if (socketService.isConnected() && socketService.getIsAuthenticated()) {
+          // Send via socket for real-time
+          socketService.sendChatMessage({
+            tripId,
+            message: newMessage,
+          });
+          setNewMessage("");
+        } else {
+          // Live connection down: send over HTTP instead of dropping the message
+          const response = await sendChatMessageAPI(tripId, newMessage);
+          if (response?.success && response.data) {
+            setMessages((prev) => (prev.some((m) => m._id === response.data!._id) ? prev : [...prev, response.data!]));
+            setNewMessage("");
+            scrollToBottom();
+          } else {
+            alert(response?.message || "Message not sent. Please check your connection and try again.");
+          }
+        }
       }
     } catch (error) {
       console.error("Error sending message:", error);

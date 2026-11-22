@@ -18,9 +18,11 @@ import {
   FaTimes,
   FaChevronLeft,
   FaChevronRight,
-  FaDollarSign
+  FaDollarSign,
+  FaDownload
 } from 'react-icons/fa';
 import { FLEET_COLORS } from '../../fleetMaintenance/colorUtils';
+import { downloadExcel, MONEY_FMT, type ExcelColumn } from '../../../../utils/excelExport';
 
 const ACCENT_PRIMARY = FLEET_COLORS.primary;
 const ACCENT_DARK = FLEET_COLORS.dark;
@@ -71,8 +73,11 @@ interface InsuranceClaim {
   adjusterContact?: string;
   description: string;
   location?: string;
+  country?: 'canada' | 'usa';
+  countryIsGuess?: boolean; // older claims: worked out from the linked accident / location
   notes?: string;
   documents?: string[];
+  documentLinks?: Array<{ key: string; name: string; url: string }>;
   createdAt: string;
   updatedAt: string;
 }
@@ -111,6 +116,7 @@ interface ClaimForm {
   adjusterContact: string;
   description: string;
   location: string;
+  country: string;
   notes: string;
 }
 
@@ -154,6 +160,9 @@ const InsuranceClaims: React.FC = () => {
   const [claims, setClaims] = useState<InsuranceClaim[]>([]);
   const [filteredClaims, setFilteredClaims] = useState<InsuranceClaim[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [downloading, setDownloading] = useState<boolean>(false);
+  // Every claim matching the filters, in table order; filteredClaims holds only the visible page
+  const allMatchingClaims = useRef<InsuranceClaim[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [drivers, setDrivers] = useState<Driver[]>([]);
 
@@ -163,6 +172,8 @@ const InsuranceClaims: React.FC = () => {
 
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  // Canada / USA tabs (client: all claims showed in one place)
+  const [countryFilter, setCountryFilter] = useState<'all' | 'canada' | 'usa'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortField, setSortField] = useState<string>('claimDate');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
@@ -183,6 +194,9 @@ const InsuranceClaims: React.FC = () => {
   const [notifications, setNotifications] = useState<Array<{ id: number; type: 'success' | 'error' | 'info'; message: string }>>([]);
   const [notificationId, setNotificationId] = useState(0);
 
+  const [newDocuments, setNewDocuments] = useState<File[]>([]);
+  const [removedDocuments, setRemovedDocuments] = useState<string[]>([]);
+
   const [claimForm, setClaimForm] = useState<ClaimForm>({
     claimNumber: '',
     accidentNumber: '',
@@ -200,6 +214,7 @@ const InsuranceClaims: React.FC = () => {
     adjusterContact: '',
     description: '',
     location: '',
+    country: '',
     notes: ''
   });
 
@@ -213,7 +228,7 @@ const InsuranceClaims: React.FC = () => {
   // Apply filters and search
   useEffect(() => {
     applyFilters();
-  }, [claims, statusFilter, typeFilter, searchQuery, sortField, sortDirection]);
+  }, [claims, statusFilter, typeFilter, searchQuery, sortField, sortDirection, countryFilter]);
 
   const addNotification = (type: 'success' | 'error' | 'info', message: string) => {
     const id = notificationId + 1;
@@ -229,13 +244,21 @@ const InsuranceClaims: React.FC = () => {
     setLoading(true);
     try {
       const { getInsuranceClaims } = await import('../../../../axios/api/insuranceClaim');
-      const response = await getInsuranceClaims({
+      // The API returns 10 claims by default, but this page filters and pages on the client
+      const filters = {
         status: statusFilter !== 'all' ? statusFilter : undefined,
         claimType: typeFilter !== 'all' ? typeFilter : undefined,
-        search: searchQuery || undefined
-      });
+        search: searchQuery || undefined,
+        limit: 200
+      };
+      let response = await getInsuranceClaims({ ...filters, page: 1 });
       if (response?.success) {
-        setClaims(response.data || []);
+        const all: InsuranceClaim[] = [...(response.data || [])];
+        for (let page = 2; page <= (response.pagination?.pages || 1); page++) {
+          response = await getInsuranceClaims({ ...filters, page });
+          all.push(...(response?.data || []));
+        }
+        setClaims(all);
       }
     } catch (error) {
       console.error('Error fetching insurance claims:', error);
@@ -280,6 +303,11 @@ const InsuranceClaims: React.FC = () => {
     // Type filter
     if (typeFilter !== 'all') {
       filtered = filtered.filter(claim => claim.claimType === typeFilter);
+    }
+
+    // Country tab
+    if (countryFilter !== 'all') {
+      filtered = filtered.filter(claim => claim.country === countryFilter);
     }
 
     // Search filter
@@ -335,6 +363,7 @@ const InsuranceClaims: React.FC = () => {
     const endIndex = startIndex + pageSize;
     setTotal(filtered.length);
     setTotalPages(Math.ceil(filtered.length / pageSize));
+    allMatchingClaims.current = filtered;
     setFilteredClaims(filtered.slice(startIndex, endIndex));
   };
 
@@ -347,7 +376,52 @@ const InsuranceClaims: React.FC = () => {
     }
   };
 
+  const handleDownloadReport = async () => {
+    const rows = allMatchingClaims.current;
+    if (rows.length === 0) {
+      addNotification('info', 'No insurance claims match these filters');
+      return;
+    }
+    setDownloading(true);
+    try {
+      // Claim dates are saved as a calendar day at midnight UTC, so read the day directly
+      const day = (value?: string) => (value ? value.slice(0, 10) : '');
+      const label = (value: string) => value.charAt(0).toUpperCase() + value.slice(1).replace('-', ' ');
+      const columns: ExcelColumn<InsuranceClaim>[] = [
+        { header: 'Claim #', width: 18, value: (c) => c.claimNumber },
+        { header: 'Accident #', width: 18, value: (c) => c.accidentNumber },
+        { header: 'Incident Date', width: 13, value: (c) => day(c.incidentDate) },
+        { header: 'Claim Date', width: 13, value: (c) => day(c.claimDate) },
+        { header: 'Type', width: 12, value: (c) => label(c.claimType) },
+        { header: 'Status', width: 13, value: (c) => label(c.status) },
+        { header: 'Driver', width: 20, value: (c) => (typeof c.driver === 'object' ? c.driver?.name : '') },
+        { header: 'Vehicle', width: 16, value: (c) => (typeof c.vehicle === 'object' ? c.vehicle?.internalId || c.vehicle?.plateNumber : '') },
+        { header: 'Country', width: 10, value: (c) => (c.country === 'canada' ? 'Canada' : c.country === 'usa' ? 'USA' : '') },
+        { header: 'Insurance Company', width: 24, value: (c) => c.insuranceCompany },
+        { header: 'Policy #', width: 18, value: (c) => c.policyNumber },
+        { header: 'Adjuster', width: 18, value: (c) => c.adjusterName },
+        { header: 'Adjuster Contact', width: 20, value: (c) => c.adjusterContact },
+        { header: 'Amount', width: 13, numFmt: MONEY_FMT, value: (c) => c.amount },
+        { header: 'Deductible', width: 13, numFmt: MONEY_FMT, value: (c) => c.deductible },
+        { header: 'Claim Amount', width: 14, numFmt: MONEY_FMT, value: (c) => c.claimAmount },
+        { header: 'Location', width: 24, value: (c) => c.location },
+        { header: 'Description', width: 40, value: (c) => c.description },
+        { header: 'Notes', width: 30, value: (c) => c.notes },
+      ];
+      await downloadExcel('Insurance_Claims_Report', [{ name: 'Insurance Claims', columns, rows }]);
+      addNotification('success', `Downloaded ${rows.length} insurance claim${rows.length === 1 ? '' : 's'}`);
+    } catch (error) {
+      console.error('Error downloading insurance claims report:', error);
+      addNotification('error', 'Failed to download the report. Please try again.');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   const handleAdd = () => {
+    setSelectedClaim(null);
+    setNewDocuments([]);
+    setRemovedDocuments([]);
     setClaimForm({
       claimNumber: '',
       accidentNumber: '',
@@ -365,6 +439,7 @@ const InsuranceClaims: React.FC = () => {
       adjusterContact: '',
       description: '',
       location: '',
+      country: countryFilter !== 'all' ? countryFilter : '',
       notes: ''
     });
     setShowAddModal(true);
@@ -372,6 +447,8 @@ const InsuranceClaims: React.FC = () => {
 
   const handleEdit = (claim: InsuranceClaim) => {
     setSelectedClaim(claim);
+    setNewDocuments([]);
+    setRemovedDocuments([]);
     setClaimForm({
       claimNumber: claim.claimNumber || '',
       accidentNumber: claim.accidentNumber || '',
@@ -389,6 +466,7 @@ const InsuranceClaims: React.FC = () => {
       adjusterContact: claim.adjusterContact || '',
       description: claim.description || '',
       location: claim.location || '',
+      country: claim.country || '',
       notes: claim.notes || ''
     });
     setShowEditModal(true);
@@ -406,15 +484,24 @@ const InsuranceClaims: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!claimForm.country) {
+      addNotification('error', 'Please choose the country (Canada or USA)');
+      return;
+    }
     setLoading(true);
     try {
       const { createInsuranceClaim, updateInsuranceClaim } = await import('../../../../axios/api/insuranceClaim');
-      const claimData = {
+      // Sent as multipart so document files can go with the claim
+      const claimData = new FormData();
+      Object.entries({
         ...claimForm,
-        amount: parseFloat(claimForm.amount) || 0,
-        deductible: parseFloat(claimForm.deductible) || 0,
-        claimAmount: (parseFloat(claimForm.amount) || 0) - (parseFloat(claimForm.deductible) || 0)
-      };
+        amount: String(parseFloat(claimForm.amount) || 0),
+        deductible: String(parseFloat(claimForm.deductible) || 0),
+      }).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) claimData.append(key, String(value));
+      });
+      newDocuments.forEach((file) => claimData.append('documents', file));
+      if (removedDocuments.length > 0) claimData.append('removeDocuments', JSON.stringify(removedDocuments));
 
       if (selectedClaim) {
         const response = await updateInsuranceClaim(selectedClaim._id, claimData);
@@ -550,13 +637,23 @@ const InsuranceClaims: React.FC = () => {
             </h1>
             <p className="text-secondary mt-2">Manage and track all insurance claims</p>
           </div>
-          <button
-            onClick={handleAdd}
-            className="flex items-center gap-2 px-4 py-2 bg-[var(--accent-navyblue)] !text-white rounded-lg hover:bg-[var(--accent-navyblue)]/80 transition-colors font-medium"
-          >
-            <FaPlus size={16} />
-            Add Claim
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleDownloadReport}
+              disabled={downloading || loading}
+              className="flex items-center gap-2 px-4 py-2 border border-theme text-primary rounded-lg hover:bg-[var(--accent-navyblue)]/10 transition-colors font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <FaDownload size={14} />
+              {downloading ? 'Downloading...' : 'Download Report'}
+            </button>
+            <button
+              onClick={handleAdd}
+              className="flex items-center gap-2 px-4 py-2 bg-[var(--accent-navyblue)] !text-white rounded-lg hover:bg-[var(--accent-navyblue)]/80 transition-colors font-medium"
+            >
+              <FaPlus size={16} />
+              Add Claim
+            </button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -603,6 +700,30 @@ const InsuranceClaims: React.FC = () => {
               <FaDollarSign className="text-[var(--accent-purple)]" size={24} />
             </div>
           </div>
+        </div>
+
+        {/* Country tabs */}
+        <div className="bg-card rounded-lg shadow-sm border border-theme p-4 mb-4 flex flex-wrap gap-2">
+          {([
+            { key: 'all', label: 'All', count: claims.length },
+            { key: 'canada', label: 'Canada', count: claims.filter(c => c.country === 'canada').length },
+            { key: 'usa', label: 'USA', count: claims.filter(c => c.country === 'usa').length },
+          ] as const).map(t => (
+            <button
+              key={t.key}
+              onClick={() => setCountryFilter(t.key)}
+              className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${countryFilter === t.key
+                ? 'bg-[var(--accent-navyblue)] text-white'
+                : 'text-secondary hover:bg-[rgba(15,31,23,0.03)]'}`}
+            >
+              {t.label} ({t.count})
+            </button>
+          ))}
+          {claims.some(c => !c.country) && (
+            <span className="text-xs text-secondary self-center ml-2">
+              {claims.filter(c => !c.country).length} claim(s) have no country yet. They show under All; edit them to choose Canada or USA.
+            </span>
+          )}
         </div>
 
         {/* Filters */}
@@ -786,10 +907,10 @@ const InsuranceClaims: React.FC = () => {
                         <td className="px-6 py-4">
                           <div className="flex flex-col h-[3.5rem] justify-center">
                             <div className="text-sm text-primary leading-5">
-                              {claim.incidentDate ? new Date(claim.incidentDate).toLocaleDateString() : 'N/A'}
+                              {claim.incidentDate ? new Date(claim.incidentDate).toLocaleDateString(undefined, { timeZone: 'UTC' }) : 'N/A'}
                             </div>
                             <div className="text-xs text-secondary leading-4">
-                              Claim: {claim.claimDate ? new Date(claim.claimDate).toLocaleDateString() : 'N/A'}
+                              Claim: {claim.claimDate ? new Date(claim.claimDate).toLocaleDateString(undefined, { timeZone: 'UTC' }) : 'N/A'}
                             </div>
                           </div>
                         </td>
@@ -824,6 +945,7 @@ const InsuranceClaims: React.FC = () => {
                         <td className="px-6 py-4">
                           <div className="flex flex-col h-[3.5rem] justify-center">
                             <div className="text-sm text-primary leading-5">{claim.insuranceCompany || 'N/A'}</div>
+                            <div className="text-xs text-secondary">{claim.country === 'canada' ? 'Canada' : claim.country === 'usa' ? 'USA' : 'Country not set'}{claim.countryIsGuess ? ' (check)' : ''}</div>
                             <div className="text-xs text-secondary leading-4">
                               {claim.adjusterName ? `Adjuster: ${claim.adjusterName}` : '\u00A0'}
                             </div>
@@ -1221,6 +1343,21 @@ const InsuranceClaims: React.FC = () => {
                     placeholder="Phone or email"
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-headings mb-2">
+                    Country *
+                  </label>
+                  <select
+                    value={claimForm.country}
+                    onChange={(e) => setClaimForm({ ...claimForm, country: e.target.value })}
+                    className="w-full px-4 py-2 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)]"
+                    required
+                  >
+                    <option className="form-option" value="">Select country</option>
+                    <option className="form-option" value="canada">Canada</option>
+                    <option className="form-option" value="usa">USA</option>
+                  </select>
+                </div>
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-headings mb-2">
                     Location
@@ -1257,6 +1394,58 @@ const InsuranceClaims: React.FC = () => {
                     rows={3}
                     placeholder="Additional notes..."
                   />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-headings mb-2">
+                    Documents (PDF / images)
+                  </label>
+                  {showEditModal && selectedClaim?.documentLinks && selectedClaim.documentLinks.filter((d) => !removedDocuments.includes(d.key)).length > 0 && (
+                    <div className="mb-2 space-y-1">
+                      {selectedClaim.documentLinks
+                        .filter((d) => !removedDocuments.includes(d.key))
+                        .map((d) => (
+                          <div key={d.key} className="flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg border border-theme">
+                            <a href={d.url} target="_blank" rel="noopener noreferrer" className="text-sm text-[var(--accent-blue)] underline truncate">
+                              {d.name}
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => setRemovedDocuments((prev) => [...prev, d.key])}
+                              className="text-xs text-[var(--accent-red)] hover:underline"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                    multiple
+                    onChange={(e) => {
+                      const files = Array.from(e.target.files || []);
+                      if (files.length) setNewDocuments((prev) => [...prev, ...files]);
+                      e.target.value = '';
+                    }}
+                    className="w-full px-4 py-2 border border-theme rounded-lg text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-[var(--accent-navyblue)] file:text-white"
+                  />
+                  {newDocuments.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      {newDocuments.map((file, i) => (
+                        <div key={`${file.name}-${i}`} className="flex items-center justify-between text-sm px-3 py-1 rounded border border-theme">
+                          <span className="truncate text-primary">{file.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => setNewDocuments((prev) => prev.filter((_, idx) => idx !== i))}
+                            className="text-xs text-[var(--accent-red)] hover:underline"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex items-center justify-end gap-4 pt-4 border-t border-theme">
@@ -1325,13 +1514,13 @@ const InsuranceClaims: React.FC = () => {
                 <div>
                   <label className="block text-sm font-medium text-secondary mb-1">Incident Date</label>
                   <p className="text-primary">
-                    {selectedClaim.incidentDate ? new Date(selectedClaim.incidentDate).toLocaleDateString() : 'N/A'}
+                    {selectedClaim.incidentDate ? new Date(selectedClaim.incidentDate).toLocaleDateString(undefined, { timeZone: 'UTC' }) : 'N/A'}
                   </p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-secondary mb-1">Claim Date</label>
                   <p className="text-primary">
-                    {selectedClaim.claimDate ? new Date(selectedClaim.claimDate).toLocaleDateString() : 'N/A'}
+                    {selectedClaim.claimDate ? new Date(selectedClaim.claimDate).toLocaleDateString(undefined, { timeZone: 'UTC' }) : 'N/A'}
                   </p>
                 </div>
                 <div>
@@ -1377,6 +1566,10 @@ const InsuranceClaims: React.FC = () => {
                     )}
                   </div>
                 )}
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-1">Country</label>
+                  <p className="text-primary">{selectedClaim.country === 'canada' ? 'Canada' : selectedClaim.country === 'usa' ? 'USA' : 'Not set'}</p>
+                </div>
                 {selectedClaim.location && (
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-secondary mb-1">Location</label>
@@ -1393,6 +1586,20 @@ const InsuranceClaims: React.FC = () => {
                     <p className="text-primary whitespace-pre-wrap">{selectedClaim.notes}</p>
                   </div>
                 )}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-secondary mb-1">Documents</label>
+                  {selectedClaim.documentLinks && selectedClaim.documentLinks.length > 0 ? (
+                    <div className="space-y-1">
+                      {selectedClaim.documentLinks.map((d) => (
+                        <a key={d.key} href={d.url} target="_blank" rel="noopener noreferrer" className="block text-sm text-[var(--accent-blue)] underline truncate">
+                          {d.name}
+                        </a>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-secondary">No documents attached.</p>
+                  )}
+                </div>
               </div>
               <div className="flex items-center justify-end gap-4 pt-4 border-t border-theme">
                 <button

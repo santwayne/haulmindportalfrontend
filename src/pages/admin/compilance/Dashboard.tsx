@@ -27,6 +27,17 @@ interface CvsaStats {
   outOfService: number;
 }
 
+// "Paid: 3 | Unpaid: 4 | Fighting: 2" — always adds up to the total; anything not in a
+// named bucket (e.g. dismissed or reduced tickets) is shown as "Other".
+const breakdown = (total: number, parts: [string, number][]) => {
+  const shown = parts.filter(([, n]) => (n || 0) > 0 || parts.length <= 2);
+  const counted = parts.reduce((sum, [, n]) => sum + (n || 0), 0);
+  const other = (total || 0) - counted;
+  const items = (shown.length ? shown : parts).map(([label, n]) => `${label}: ${n || 0}`);
+  if (other > 0) items.push(`Other: ${other}`);
+  return items.join(' | ');
+};
+
 interface TicketStats {
   total: number;
   paid: number;
@@ -294,7 +305,11 @@ function Dashboard() {
               <StatCard
                 title="Total Tickets"
                 value={ticketStats.total}
-                subtitle={`Paid: ${ticketStats.paid} | Unpaid: ${ticketStats.unpaid}`}
+                subtitle={breakdown(ticketStats.total, [
+                  ['Paid', ticketStats.paid],
+                  ['Unpaid', ticketStats.unpaid],
+                  ['Fighting', ticketStats.fight],
+                ])}
                 icon={FaFileInvoiceDollar}
                 bgColor=""
                 iconColor="text-[var(--accent-purple)]"
@@ -304,7 +319,11 @@ function Dashboard() {
               <StatCard
                 title="Total Incidents"
                 value={incidentStats.total}
-                subtitle={`Open: ${incidentStats.open} | Closed: ${incidentStats.closed}`}
+                subtitle={breakdown(incidentStats.total, [
+                  ['Open', incidentStats.open],
+                  ['Under review', incidentStats.underReview],
+                  ['Closed', incidentStats.closed],
+                ])}
                 icon={FaCarCrash}
                 bgColor=""
                 iconColor="text-[var(--accent-orange)]"

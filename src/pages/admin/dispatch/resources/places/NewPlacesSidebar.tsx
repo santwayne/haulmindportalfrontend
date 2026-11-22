@@ -2,17 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, ChevronDown, ChevronUp } from 'lucide-react';
 import { FaCheckCircle, FaExclamationCircle, FaTimes } from 'react-icons/fa';
 import { createPlace } from '../../../../../axios/api/dispatcher.places';
+import { COUNTRIES } from '../../../../../utils/countries';
 
 interface NewPlaceSidebarProps {
   isOpen: boolean;
   onClose: () => void;
-}
-
-interface Country {
-  name: string;
-  code: string;
-  flag: string;
-  dialCode: string;
 }
 
 interface ToastNotification {
@@ -57,8 +51,8 @@ const ToastNotification = ({ notification, onClose }: { notification: ToastNotif
 
 const NewPlacesSidebar: React.FC<NewPlaceSidebarProps> = ({ isOpen, onClose }) => {
   const [openDetails, setOpenDetails] = useState(true);
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState('');
+  const countries = COUNTRIES;
+  const [selectedCountry, setSelectedCountry] = useState('US');
   const [formData, setFormData] = useState({
     name: '',
     street1: '',
@@ -83,35 +77,6 @@ const NewPlacesSidebar: React.FC<NewPlaceSidebarProps> = ({ isOpen, onClose }) =
   const removeNotification = (id: number) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
-
-  // Fetch countries data
-  useEffect(() => {
-    fetch('https://restcountries.com/v3.1/all?fields=name,flag,idd,cca2')
-      .then(res => res.json())
-      .then(data => {
-        const sortedCountries = data
-          .filter((c: any) => c.idd && c.idd.root)
-          .map((c: any) => ({
-            name: c.name.common,
-            code: c.cca2,
-            flag: c.flag,
-            dialCode: c.idd.root + (c.idd.suffixes ? c.idd.suffixes[0] : ''),
-          }))
-          .sort((a: Country, b: Country) => a.name.localeCompare(b.name));
-
-        setCountries(sortedCountries);
-        const defaultCountry = sortedCountries.find((c: Country) => c.code === 'US');
-        if (defaultCountry) setSelectedCountry(defaultCountry.code);
-      })
-      .catch(() => {
-        const fallback = [
-          { name: 'United States', code: 'US', flag: '🇺🇸', dialCode: '+1' },
-          { name: 'India', code: 'IN', flag: '🇮🇳', dialCode: '+91' },
-        ];
-        setCountries(fallback);
-        setSelectedCountry('US');
-      });
-  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

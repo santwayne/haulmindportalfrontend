@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Outlet } from "react-router-dom";
 import DispatchSidebar from "./Sidebar";
 import DispatchHeader from "./Header";
 import ExpiringDriverDocumentsPopup from "../common/ExpiringDriverDocumentsPopup";
@@ -7,95 +7,11 @@ import DocumentUploadNotification from "../common/DocumentUploadNotification";
 import { useExpiringDriverDocuments } from "../../hooks/useExpiringDriverDocuments";
 import AIChatAssistant from "../ai/AIChatAssistant";
 import { socketService } from "../../services/socketService";
-import { useChat } from "../../contexts/ChatContext";
-import { MessageCircle, X } from "lucide-react";
-
-// WhatsApp-style popup toast for incoming driver messages
-const ChatMessagePopup = ({ navigate }: { navigate: (path: string) => void }) => {
-    const { chatNotification, clearChatNotification, setActiveDriverId } = useChat();
-    const [visible, setVisible] = useState(false);
-    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    useEffect(() => {
-        if (chatNotification) {
-            setVisible(true);
-            if (timerRef.current) clearTimeout(timerRef.current);
-            timerRef.current = setTimeout(() => {
-                setVisible(false);
-                clearChatNotification();
-            }, 5000);
-        }
-        return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-    }, [chatNotification]);
-
-    if (!visible || !chatNotification) return null;
-
-    const handleView = () => {
-        setVisible(false);
-        clearChatNotification();
-        setActiveDriverId(chatNotification.driverId);
-        navigate("/dispatch/chat");
-    };
-
-    const handleDismiss = () => {
-        setVisible(false);
-        clearChatNotification();
-    };
-
-    return (
-        <div className="fixed bottom-6 right-6 z-[9999] animate-chat-popup">
-            <div className="bg-card rounded-2xl shadow-2xl border border-theme w-80 overflow-hidden">
-                {/* Green header bar like WhatsApp */}
-                <div className="bg-[#25D366] px-4 py-2 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <MessageCircle size={16} className="text-white" />
-                        <span className="text-white text-xs font-semibold tracking-wide">New Message</span>
-                    </div>
-                    <button onClick={handleDismiss} className="text-white/80 hover:text-[var(--accent-navyblue)] transition-colors">
-                        <X size={14} />
-                    </button>
-                </div>
-                {/* Body */}
-                <div className="p-4">
-                    <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-full bg-[#25D366]/10 flex items-center justify-center flex-shrink-0">
-                            <span className="text-[#25D366] font-bold text-sm">
-                                {chatNotification.driverName.charAt(0).toUpperCase()}
-                            </span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-primary text-sm truncate">{chatNotification.driverName}</p>
-                            <p className="text-secondary text-sm mt-0.5 line-clamp-2">{chatNotification.message}</p>
-                        </div>
-                    </div>
-                    <button
-                        onClick={handleView}
-                        className="mt-3 w-full py-2 bg-[#25D366] hover:bg-[#20c05c] text-white text-sm font-semibold rounded-lg transition-colors"
-                    >
-                        View Chat
-                    </button>
-                </div>
-                {/* Auto-dismiss progress bar */}
-                <div className="h-1 bg-card">
-                    <div className="h-full bg-[#25D366] animate-[shrink_5s_linear_forwards]" style={{ transformOrigin: 'left' }} />
-                </div>
-            </div>
-        </div>
-    );
-};
 
 const Layout = () => {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [documentNotification, setDocumentNotification] = useState<any>(null);
     const [showDocumentNotification, setShowDocumentNotification] = useState(false);
-    const { activeDriverId, addUnread, setChatNotification } = useChat();
-    const activeDriverIdRef = useRef<string | null>(null);
-    const navigate = useNavigate();
-
-    // Keep ref in sync so socket handlers avoid stale closures
-    useEffect(() => {
-        activeDriverIdRef.current = activeDriverId;
-    }, [activeDriverId]);
 
     // Debug: Component mount
     useEffect(() => {
@@ -252,8 +168,6 @@ const Layout = () => {
             // Register via service
             socketService.onDocumentUploadNotification(handleDocumentUpload);
             console.log('✅ DISPATCHER GLOBAL: Socket.IO listener registered via service');
-            socketService.offNewMessage(handleIncomingMessage);
-            socketService.onNewMessage(handleIncomingMessage);
 
             // Also add direct socket listener as PRIMARY handler
             const directListener = (data: any) => {
@@ -306,7 +220,6 @@ const Layout = () => {
                 // Note: onAnyHandler is registered inside registerListener, cleanup happens there
                 socketService.offDocumentUploadNotification(handleDocumentUpload);
                 console.log('🔇 DISPATCHER GLOBAL: Stopped listening');
-                socketService.offNewMessage(handleIncomingMessage);
             };
         } else {
             return () => {
@@ -315,28 +228,6 @@ const Layout = () => {
             };
         }
     }, []); // Empty deps - handler uses functional setState to avoid stale closures
-
-    const handleIncomingMessage = (message: any) => {
-        // Only notify for messages sent by drivers (not dispatchers or system)
-        if (message.senderType && message.senderType !== 'driver') return;
-
-        let driverId = message.driverId;
-        if (typeof driverId === "object") {
-            driverId = driverId?._id;
-        }
-        if (!driverId) return;
-
-        // Use ref to avoid stale closure (effect registered once on mount)
-        if (activeDriverIdRef.current !== driverId) {
-            const driverName = message.senderName || message.driverName || "Driver";
-            addUnread(driverId);
-            setChatNotification({
-                driverId,
-                driverName,
-                message: message.message || "New message received",
-            });
-        }
-    };
 
     return (
         <div className="flex h-screen bg-[#eeeeee]">
@@ -385,9 +276,6 @@ const Layout = () => {
                     userRole="dispatcher"
                 />
             )}
-
-            {/* WhatsApp-style Driver Message Popup */}
-            <ChatMessagePopup navigate={navigate} />
 
         </div>
     );

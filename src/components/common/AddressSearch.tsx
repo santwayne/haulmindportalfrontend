@@ -58,6 +58,21 @@ interface AddressResult {
 }
 
 
+
+// The fleet operates in Canada and the USA. Prefer results in those countries so a
+// search like "Headingley" resolves to Headingley, MB rather than Headingley, Leeds (UK).
+// Results from other countries are only shown when nothing in Canada/USA matched.
+const NORTH_AMERICA = ['ca', 'us', 'canada', 'usa', 'united states', 'united states of america'];
+const preferNorthAmerica = (list: AddressResult[]): AddressResult[] => {
+  const isNA = (r: AddressResult) => {
+    const code = (r.address?.country_code || '').toLowerCase();
+    const name = (r.address?.country || '').toLowerCase();
+    return NORTH_AMERICA.includes(code) || NORTH_AMERICA.includes(name);
+  };
+  const na = list.filter(isNA);
+  return na.length > 0 ? na : list;
+};
+
 interface AddressSearchProps {
   placeholder?: string;
   value?: string;
@@ -228,7 +243,7 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
 
           if (validResults.length > 0) {
             console.log('✅ [AddressSearch] Text Search API: Successfully processed', validResults.length, 'address results');
-            setResults(validResults);
+            setResults(preferNorthAmerica(validResults));
             setShowResults(true);
             setSelectedIndex(-1);
             setIsSearching(false);
@@ -356,7 +371,7 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
 
             if (validResults.length > 0) {
               console.log('✅ [AddressSearch] Google Places API: Successfully processed', validResults.length, 'address results');
-              setResults(validResults);
+              setResults(preferNorthAmerica(validResults));
               setShowResults(true);
               setSelectedIndex(-1);
               setIsSearching(false);
@@ -388,7 +403,7 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
       console.log('🔄 [AddressSearch] Using Photon API (Komoot) as fallback...');
       console.log('📍 [AddressSearch] Using: Photon API (Free, Open Source - No API Key Required)');
       console.log('📍 [AddressSearch] Photon API URL: https://photon.komoot.io/api/');
-      const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=10&lang=en`;
+      const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=10&lang=en&lat=49.9&lon=-97.1`; // bias towards Manitoba/North America
 
       const response = await fetch(url, {
         headers: {
@@ -453,7 +468,7 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
       });
 
       console.log('✅ [AddressSearch] Photon API: Successfully converted', convertedResults.length, 'address results');
-      setResults(convertedResults);
+      setResults(preferNorthAmerica(convertedResults));
       setShowResults(true);
       setSelectedIndex(-1);
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   FaUsersCog, FaPlus, FaTimes, FaCheckCircle, FaInfoCircle,
   FaExclamationTriangle, FaTrash
@@ -203,6 +203,19 @@ const EnhancedCommitteeCAPA = () => {
   const [capas, setCapas] = useState<CAPA[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
+  // One save at a time: a second click while saving created a second (or third) copy
+  const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
+  const startSave = () => {
+    if (savingRef.current) return false;
+    savingRef.current = true;
+    setSaving(true);
+    return true;
+  };
+  const endSave = () => {
+    savingRef.current = false;
+    setSaving(false);
+  };
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterPriority, setFilterPriority] = useState<string>('all');
@@ -450,6 +463,7 @@ const EnhancedCommitteeCAPA = () => {
 
   const handleSubmitMember = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!startSave()) return;
     try {
       if (editingMember) {
         const response = await updateCommitteeMember(editingMember._id, memberFormData);
@@ -473,6 +487,8 @@ const EnhancedCommitteeCAPA = () => {
     } catch (error: any) {
       console.error('Error saving committee member:', error);
       showNotification('error', error?.response?.data?.message || 'Failed to save committee member');
+    } finally {
+      endSave();
     }
   };
 
@@ -533,6 +549,7 @@ const EnhancedCommitteeCAPA = () => {
       return;
     }
 
+    if (!startSave()) return;
     try {
       // Prepare payload for API
       const payload = {
@@ -573,6 +590,8 @@ const EnhancedCommitteeCAPA = () => {
     } catch (error: any) {
       console.error('Error saving CAPA:', error);
       showNotification('error', error?.response?.data?.message || error?.message || 'Failed to save CAPA');
+    } finally {
+      endSave();
     }
   };
 
@@ -1193,10 +1212,10 @@ const EnhancedCommitteeCAPA = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-lg !text-white bg-[var(--accent-navyblue)]"
-
+                    className="px-4 py-2 rounded-lg !text-white bg-[var(--accent-navyblue)] disabled:opacity-50"
+                  disabled={saving}
                   >
-                    {editingMember ? 'Update' : 'Create'}
+                    {saving ? 'Saving...' : editingMember ? 'Update' : 'Create'}
                   </button>
                 </div>
               </form>
@@ -1367,10 +1386,10 @@ const EnhancedCommitteeCAPA = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-lg !text-white bg-[var(--accent-navyblue)]"
-                   
+                    className="px-4 py-2 rounded-lg !text-white bg-[var(--accent-navyblue)] disabled:opacity-50"
+                  disabled={saving}
                   >
-                    {editingCAPA ? 'Update' : 'Create'}
+                    {saving ? 'Saving...' : editingCAPA ? 'Update' : 'Create'}
                   </button>
                 </div>
               </form>

@@ -20,6 +20,10 @@ class SocketService {
           resolve();
           return;
         }
+        // A socket closed by the server does not reconnect by itself
+        if (!this.socket.connected && !this.socket.active) {
+          this.socket.connect();
+        }
         // Socket exists but still connecting/authenticating — wait for it
         const onAuth = () => { cleanup(); resolve(); };
         const onAuthErr = (err: any) => { cleanup(); reject(new Error(err?.message || "Auth failed")); };
@@ -41,6 +45,7 @@ class SocketService {
       }
 
       this.token = token;
+      this.isAuthenticated = false;
       // Extract base URL from VITE_APP_BASE_URL (remove /api/v1)
       const baseUrl = import.meta.env.VITE_APP_BASE_URL || "http://localhost:3000/api/v1";
       const socketUrl = baseUrl.replace("/api/v1", "") || "http://localhost:3000";
@@ -49,8 +54,10 @@ class SocketService {
         path: "/socket.io/",
         transports: ["polling", "websocket"],
         reconnection: true,
-        reconnectionAttempts: 5,
+        // Keep trying: a laptop can sleep or lose Wi-Fi for longer than any fixed limit
+        reconnectionAttempts: Infinity,
         reconnectionDelay: 1000,
+        reconnectionDelayMax: 10000,
         query: {
           token: token,
         },
@@ -105,9 +112,13 @@ class SocketService {
       });
       console.log('✅ [FRONTEND] Catch-all event listener (onAny) registered immediately');
 
-      this.socket.on("disconnect", () => {
-        console.log("❌ Socket disconnected");
+      this.socket.on("disconnect", (reason) => {
+        console.log("❌ Socket disconnected:", reason);
         this.isAuthenticated = false;
+        // socket.io only stops retrying when the server closed the connection
+        if (reason === "io server disconnect") {
+          this.socket?.connect();
+        }
       });
 
       this.socket.on("connect_error", (error) => {
